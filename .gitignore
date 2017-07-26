@@ -1,0 +1,51 @@
+# HF master gitignore 9/25/16.1
+
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.gz
+*.log
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+*.zip
+*~
+
+# OS or Editor folders
+._*
+.cache
+.directory
+.DS_Store
+.Icon?
+.idea
+.project
+.settings
+.tmproj
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Folders to ignore
+bower_components
+node_modules
+web_modules
+examples
+compost
+
+# EagleCAD files
+*.b#*
+*.s#*
+*.brd.lck
+*.sch.lck
+eagle.epf
+
+# Nuxt extras
+npm-debug.log
+.nuxt
+/dist

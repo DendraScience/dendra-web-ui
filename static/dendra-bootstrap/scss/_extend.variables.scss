@@ -1,0 +1,35 @@
+// Bootstrap overrides
+//
+// Copy variables from `_variables.scss` to this file to override default values
+// without modifying source files.
+
+
+// Colors
+//
+// Grayscale and brand colors for use across Bootstrap.
+
+// Start with assigning color names to specific hex values.
+$white:  #fff;
+$black:  #000;
+$red:    #dc635c;
+$orange: #dcac5c;
+$yellow: #d8dc5c;
+$green:  #aedc5c;
+$blue:   #5ca1dc;
+$teal:   #5cdcbf;
+$pink:   #dc95b6;
+$purple: #a695dc;
+
+// Create grayscale
+$gray-dark:                 #292b2c;
+$gray:                      #464a4c;
+$gray-light:                #636c72;
+$gray-lighter:              #eceeef;
+$gray-lightest:             #f7f7f9;
+
+
+// Fonts
+//
+// Font, line-height, and color for body text, headings, and more.
+
+$headings-font-weight:   400;
