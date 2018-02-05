@@ -1,0 +1,146 @@
+<template>
+  <div class="pt-header pb-4">
+    <section v-if="currentDashboard">
+      <div class="container-fluid">
+        <div class="row py-2 border-bottom-darken-10">
+          <div class="col-12 text-muted">{{ currentDashboard.name }} Dashboard</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-3" v-if="currentDashboard && currentDashboard.content">
+      <div class="container-fluid">
+        <div class="row" :class="row.classes" :style="row.style"
+          v-if="currentDashboard.content.rows"
+          v-for="row in currentDashboard.content.rows">
+
+          <div class="col-12" v-if="row.title">
+            <h2>{{ row.title }}</h2>
+          </div>
+
+          <div :class="column.classes" :style="column.style" v-if="row.columns" v-for="column in row.columns">
+            <h3 class="text-muted" v-if="column.title">{{ column.title }}</h3>
+
+            <component :is="column.component.name"
+              :channel="getChannel(column.component.topic)"
+              :options="Object.freeze(column.component.options)"
+              v-if="column.component" />
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script>
+import {mapGetters, mapMutations} from 'vuex'
+import {GenericSource, InitialSources, SourceTemplates} from '@/lib/dashboard'
+import {TaskMachine} from '@dendra-science/task-machine'
+import Highchart from '@/components/dashboard/Highchart'
+
+// TODO: Handle sync extremes for charts
+
+export default {
+  components: {
+    Highchart
+  },
+
+  middleware: [
+    'check-org',
+    'check-org-dash'
+  ],
+
+  created () {
+    this.initTopics(this.currentDashboard.sources.map(source => source.topic))
+  },
+
+  mounted () {
+    this.loadData()
+  },
+
+  beforeDestroy () {
+    this.clearReloadTimer()
+    this.clearAllChannels()
+    this.destroyLoader()
+  },
+
+  computed: {
+    ...mapGetters({
+      currentDashboard: 'dashboards/current',
+      getChannel: 'channels/get'
+    })
+  },
+
+  methods: {
+    ...mapMutations({
+      clearAllChannels: 'channels/clearAll',
+      initTopics: 'channels/initTopics'
+    }),
+
+    clearReloadTimer () {
+      if (this.reloadTid) clearInterval(this.reloadTid)
+      this.reloadTid = null
+    },
+
+    startReloadTimer () {
+      this.clearReloadTimer()
+
+      // Update data every 5 minutes
+      this.reloadTid = setTimeout(() => {
+        this.reloadTid = null
+        this.reloadData()
+      }, 300000)
+    },
+
+    destroyLoader () {
+      if (this.loader) this.loader.destroy()
+      this.loader = null
+    },
+
+    loadData () {
+      this.clearReloadTimer()
+      this.destroyLoader()
+
+      // this.isReady = true
+
+      const dashboard = this.currentDashboard
+
+      if (!(dashboard && dashboard.sources)) return
+
+      this.loader = new TaskMachine({
+        // $channelStore: this.channelStore,
+        $store: this.$store
+      }, dashboard.sources.reduce((sources, spec) => {
+        const t = spec.template || '_default'
+        sources[spec.key || spec.topic] = Object.assign({}, GenericSource, {
+          $spec: SourceTemplates[t] ? Object.assign({}, SourceTemplates[t], spec) : spec
+        })
+        return sources
+      }, Object.assign({}, InitialSources)), {
+        // Allow for 100 series * 10 fetches each * 10 attempts
+        maxExecutions: 10000
+      })
+
+      return this.reloadData()
+    },
+
+    reloadData () {
+      this.clearReloadTimer()
+
+      const loader = this.loader
+
+      if (!loader) return
+
+      return loader.clear().start().then(success => {
+        this.$root.$options.$logger.info('_dashSlug:methods.reloadData::success,vm', success, this)
+
+        this.startReloadTimer()
+      })
+    }
+  },
+
+  watch: {
+    $route: 'loadData'
+  }
+}
+</script>

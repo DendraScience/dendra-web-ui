@@ -1,0 +1,124 @@
+@import './_extend.variables.scss';
+
+$darken-10: rgba(0, 0, 0, .1);
+$darken-20: rgba(0, 0, 0, .2);
+$lighten-10: rgba(255, 255, 255, .1);
+$lighten-20: rgba(255, 255, 255, .2);
+
+$drawer-left-width: 240px;
+$drawer-shadow-color: rgba(0, 0, 0, .4);
+
+$header-height: 72px;
+$header-height-collapse: 56px;
+$header-logo-padding: 28px;
+
+.bg-header-tint-red { background-color: rgba(darken($red, 12%), .94) !important; }
+.bg-header-tint-orange { background-color: rgba(darken($orange, 12%), .94) !important; }
+.bg-header-tint-yellow { background-color: rgba(darken($yellow, 12%), .94) !important; }
+.bg-header-tint-green { background-color: rgba(darken($green, 12%), .94) !important; }
+.bg-header-tint-blue { background-color: rgba(darken($blue, 12%), .94) !important; }
+.bg-header-tint-teal { background-color: rgba(darken($teal, 12%), .94) !important; }
+.bg-header-tint-pink { background-color: rgba(darken($pink, 12%), .94) !important; }
+.bg-header-tint-purple { background-color: rgba(darken($purple, 12%), .94) !important; }
+
+.bg-color-gray { background-color: $gray !important; }
+.bg-color-white { background-color: $white !important; }
+.bg-color-black { background-color: $black !important; }
+.bg-color-red { background-color: $red !important; }
+.bg-color-orange { background-color: $orange !important; }
+.bg-color-yellow { background-color: $yellow !important; }
+.bg-color-green { background-color: $green !important; }
+.bg-color-blue { background-color: $blue !important; }
+.bg-color-teal { background-color: $teal !important; }
+.bg-color-pink { background-color: $pink !important; }
+.bg-color-purple { background-color: $purple !important; }
+
+.bg-darken-10 { background-color: $darken-10; }
+.bg-darken-20 { background-color: $darken-20; }
+.bg-lighten-10 { background-color: $lighten-10; }
+.bg-lighten-20 { background-color: $lighten-20; }
+
+.bg-none { background: none; }
+
+.border-bottom-darken-10 { border-bottom: 1px solid $darken-10; }
+.border-bottom-darken-20 { border-bottom: 1px solid $darken-20; }
+.border-left-gray { border-left: 1px solid $gray; }
+.border-left-white { border-left: 1px solid $white; }
+.border-right-gray { border-right: 1px solid $gray; }
+.border-right-white { border-right: 1px solid $white; }
+
+.color-gray { color: $gray !important; }
+.color-white { color: $white !important; }
+.color-black { color: $black !important; }
+.color-red { color: $red !important; }
+.color-orange { color: $orange !important; }
+.color-yellow { color: $yellow !important; }
+.color-green { color: $green !important; }
+.color-blue { color: $blue !important; }
+.color-teal { color: $teal !important; }
+.color-pink { color: $pink !important; }
+.color-purple { color: $purple !important; }
+
+/*Extra small devices (portrait phones, less than 576px)*/
+/*No media query since this is the default in Bootstrap*/
+.h-header { height: $header-height-collapse; }
+.mh-header { max-height: $header-height-collapse; }
+.pt-header { padding-top: $header-height-collapse; }
+
+.img-header-logo {
+  max-height: ($header-height-collapse - $header-logo-padding);
+  max-width: (160 / 40 * ($header-height-collapse - $header-logo-padding));
+  width: 100%;
+  height: auto;
+}
+
+/*Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) {
+  .h-header { height: $header-height; }
+  .mh-header { max-height: $header-height; }
+  .pt-header { padding-top: $header-height; }
+
+  .img-header-logo {
+    max-height: ($header-height - $header-logo-padding);
+    max-width: (160 / 40 * ($header-height - $header-logo-padding));
+    width: 100%;
+    height: auto;
+  }
+}
+
+.drawer-left-indent {
+  margin-left: 0;
+  transition: .5s;
+}
+.drawer-left-translate {
+  transition: .5s;
+}
+.drawer-left-open .drawer-left-indent {
+  margin-left: $drawer-left-width;
+}
+.drawer-left-open .drawer-left-translate {
+  transform: translateX($drawer-left-width);
+}
+
+.drawer-left {
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: width .5s;
+}
+.drawer-left-shadow-inset {
+  box-shadow: -7px 0 9px -7px $drawer-shadow-color inset;
+}
+.drawer-left-shadow-outset {
+  box-shadow: 1px 0 7px 1px $drawer-shadow-color;
+}
+
+.drawer-left-open {
+  overflow-x: hidden;
+}
+.drawer-left-open .drawer-left {
+  width: $drawer-left-width;
+}

@@ -1,9 +1,5 @@
 module.exports = {
   build: {
-    babel: {
-      plugins: ['transform-runtime']
-    },
-
     // Run eslint on save
     extend (config, ctx) {
       if (ctx.isClient) {
@@ -14,12 +10,24 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
+
+    vendor: [
+      'chroma-js',
+      'highcharts'
+    ]
   },
 
   css: [
-    { src: '~assets/css/global.scss', lang: 'scss' }
+    { src: '~/assets/css/global.scss', lang: 'scss' }
   ],
+
+  env: {
+    WEB_UI_API_PATH: process.env.WEB_UI_API_PATH || '/socket.io',
+    WEB_UI_API_URI: process.env.WEB_UI_API_URI || 'http://localhost:3030',
+    WEB_UI_CLIENT_API_PATH: process.env.WEB_UI_CLIENT_API_PATH,
+    WEB_UI_CLIENT_API_URI: process.env.WEB_UI_CLIENT_API_URI
+  },
 
   head: {
     title: 'Dendra',
@@ -53,13 +61,17 @@ module.exports = {
 
   loading: { color: '#3B8070' },
 
+  modules: [
+    '~/modules/process-env.js'
+  ],
+
   plugins: [
-    { src: '~plugins/logger.js' },
-    { src: '~plugins/dataloader.js', ssr: false },
-    { src: '~plugins/services.js' }
+    { src: '~/plugins/logger.js', ssr: false }
   ],
 
   router: {
     linkActiveClass: 'active'
-  }
+  },
+
+  srcDir: 'src'
 }
