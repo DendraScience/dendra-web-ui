@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import chroma from 'chroma-js'
 import dendraColors from '@dendra-science/colors'
 import Highcharts from 'highcharts'
@@ -21,6 +22,7 @@ export default {
 
   mounted () {
     this.chart = Highcharts.chart(this.$refs.chart, this.options.chart)
+
     this.chart.showLoading()
   },
 
@@ -46,7 +48,20 @@ export default {
         this.seriesData = []
         this.seriesNames = []
       } else if (this.seriesData) {
-        newResult.forEach((datastream, i) => {
+        let modResult = newResult
+
+        const filterOpt = this.options.filter
+        if (filterOpt) modResult = _.filter(modResult, filterOpt)
+
+        const rejectOpt = this.options.reject
+        if (rejectOpt) modResult = _.reject(modResult, rejectOpt)
+
+        const orderByOpt = this.options.orderBy
+        if (orderByOpt && Array.isArray(orderByOpt.iteratees)) {
+          modResult = _.orderBy(modResult, orderByOpt.iteratees, orderByOpt.orders)
+        }
+
+        modResult.forEach((datastream, i) => {
           // Dynamically add series based on the number of datastreams
           if (i >= this.seriesData.length) {
             this.seriesData.push([])
@@ -98,14 +113,21 @@ export default {
           if (seriesColors && seriesColors[i]) opts.color = seriesColors[i]
           this.chart.addSeries(opts)
         })
+
         this.seriesData = this.seriesNames = null
+
         this.chart.hideLoading()
         // TODO: Deal with title, dynamic???
         // this.chart.setTitle({
         //   text: `xxx`
         // })
+
         this.$emit('series-added')
       }
+    },
+
+    'options': function (newOptions) {
+      this.chart.update(newOptions.chart)
     }
   }
 }

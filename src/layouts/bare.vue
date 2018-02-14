@@ -3,7 +3,6 @@
     <main-menu class="drawer-left drawer-left-shadow-inset" />
     <main-nav-header class="drawer-left-indent" />
     <nuxt class="drawer-left-translate" />
-    <email-footer class="drawer-left-translate" />
   </div>
 </template>
 

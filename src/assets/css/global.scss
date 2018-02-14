@@ -62,6 +62,7 @@ $header-logo-padding: 28px;
 /*Extra small devices (portrait phones, less than 576px)*/
 /*No media query since this is the default in Bootstrap*/
 .h-header { height: $header-height-collapse; }
+.h-viewport { height: calc(100vh - #{$header-height-collapse}); }
 .mh-header { max-height: $header-height-collapse; }
 .pt-header { padding-top: $header-height-collapse; }
 
@@ -75,6 +76,7 @@ $header-logo-padding: 28px;
 /*Medium devices (tablets, 768px and up)*/
 @media (min-width: 768px) {
   .h-header { height: $header-height; }
+  .h-viewport { height: calc(100vh - #{$header-height}); }
   .mh-header { max-height: $header-height; }
   .pt-header { padding-top: $header-height; }
 

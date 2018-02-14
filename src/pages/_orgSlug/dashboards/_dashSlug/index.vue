@@ -36,13 +36,13 @@
 import {mapGetters, mapMutations} from 'vuex'
 import {GenericSource, InitialSources, SourceTemplates} from '@/lib/dashboard'
 import {TaskMachine} from '@dendra-science/task-machine'
-import Highchart from '@/components/dashboard/Highchart'
+import HcTimeSeries from '@/components/dashboard/HcTimeSeries'
 
 // TODO: Handle sync extremes for charts
 
 export default {
   components: {
-    Highchart
+    HcTimeSeries
   },
 
   middleware: [
@@ -101,14 +101,11 @@ export default {
       this.clearReloadTimer()
       this.destroyLoader()
 
-      // this.isReady = true
-
       const dashboard = this.currentDashboard
 
       if (!(dashboard && dashboard.sources)) return
 
       this.loader = new TaskMachine({
-        // $channelStore: this.channelStore,
         $store: this.$store
       }, dashboard.sources.reduce((sources, spec) => {
         const t = spec.template || '_default'
@@ -132,15 +129,15 @@ export default {
       if (!loader) return
 
       return loader.clear().start().then(success => {
-        this.$root.$options.$logger.info('_dashSlug:methods.reloadData::success,vm', success, this)
-
         this.startReloadTimer()
       })
     }
   },
 
   watch: {
-    $route: 'loadData'
+    $route: 'loadData',
+
+    currentDashboard: 'loadData'
   }
 }
 </script>

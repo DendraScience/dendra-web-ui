@@ -17,4 +17,21 @@ export const plugins = [
 ]
 
 export const state = () => ({
+  isMenuOpen: false
 })
+
+export const getters = {
+  isMenuOpen (state) {
+    return state.isMenuOpen
+  }
+}
+
+export const mutations = {
+  setIsMenuOpen (state, flag) {
+    state.isMenuOpen = flag
+  },
+
+  toggleMenu (state) {
+    state.isMenuOpen = !state.isMenuOpen
+  }
+}
