@@ -12,13 +12,15 @@
 
 <script>
 import Highcharts from 'highcharts/highstock'
-import HighchartsMore from 'highcharts-more'
+// Deprecated
+// import HighchartsMore from 'highcharts-more'
 import Heatmap from 'highcharts/modules/heatmap'
 import {TaskMachine} from '@dendra-science/task-machine'
 import feathersClient from '@/lib/feathersClient'
 
 if (process.client) {
-  HighchartsMore(Highcharts)
+  // Deprecated
+  // HighchartsMore(Highcharts)
   Heatmap(Highcharts)
 }
 

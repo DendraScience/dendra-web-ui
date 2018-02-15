@@ -19,7 +19,7 @@
       <div class="row">
         <div class="col-md-4 d-flex py-2"
           :key="organization._id"
-          v-for="organization in findOrganizations(organizations.pagination.default.query).data">
+          v-for="organization in findOrganizations({$sort: {name: 1}}).data">
 
           <div class="card w-100">
             <div class="card-block">
@@ -51,7 +51,6 @@ export default {
     return store.dispatch('organizations/find', {
       query: {
         slug: {$exists: true},
-        $sort: {name: 1},
         $limit: 2000
       }
     })

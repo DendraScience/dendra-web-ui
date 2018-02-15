@@ -29,7 +29,7 @@
       </nav>
     </section>
 
-    <section class="px-2 py-2 border-bottom-darken-10">
+    <section class="px-2 py-2 border-bottom-darken-10" v-if="orgSlug">
       <h6 class="text-muted text-uppercase">Debug</h6>
       <nav class="nav nav-pills text-truncate flex-column">
         <router-link class="nav-link" :to="{name: 'orgSlug-debug-datastreams', params: {orgSlug: orgSlug}}">Datastreams</router-link>

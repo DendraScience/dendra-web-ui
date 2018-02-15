@@ -8,6 +8,19 @@
       </div>
     </section>
 
+    <section v-if="!isLoading && errorChannels && errorChannels.length">
+      <div class="alert alert-danger" role="alert">
+        <h4>Oops!</h4>
+        <ul>
+          <li v-for="channel in errorChannels">
+            There was a problem loading data for topic <strong>{{ channel.topic }}</strong>,
+            {{ channel.error.message }}
+            {{ channel.error.data && channel.error.data.error ? `(${channel.error.data.error})` : '' }}
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <section class="py-3" v-if="currentDashboard && currentDashboard.content">
       <div class="container-fluid">
         <div class="row" :class="row.classes" :style="row.style"
@@ -50,6 +63,12 @@ export default {
     'check-org-dash'
   ],
 
+  data () {
+    return {
+      isLoading: false
+    }
+  },
+
   created () {
     this.initTopics(this.currentDashboard.sources.map(source => source.topic))
   },
@@ -67,8 +86,13 @@ export default {
   computed: {
     ...mapGetters({
       currentDashboard: 'dashboards/current',
-      getChannel: 'channels/get'
-    })
+      getChannel: 'channels/get',
+      listChannels: 'channels/list'
+    }),
+
+    errorChannels () {
+      return this.listChannels.filter(channel => !channel.errorLimit)
+    }
   },
 
   methods: {
@@ -128,7 +152,10 @@ export default {
 
       if (!loader) return
 
+      this.isLoading = true
+
       return loader.clear().start().then(success => {
+        this.isLoading = false
         this.startReloadTimer()
       })
     }

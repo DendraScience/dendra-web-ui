@@ -25,6 +25,12 @@ export default {
         if (Array.isArray(res) && res.length > 0) {
           result = result.concat(res)
         }
+      }).catch(err => {
+        model.$store.commit('channels/setError', {
+          topic: spec.topic,
+          error: err
+        })
+        throw err
       })
     })
 
