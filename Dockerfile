@@ -8,6 +8,9 @@ MAINTAINER J. Scott Smith <scott@newleafsolutionsinc.com>
 # 	https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
 #
 
+RUN groupmod -g 2000 node \
+  && usermod -u 2000 -g 2000 node
+
 WORKDIR /home/node/app
 
 # Best practice: run with NODE_ENV set to production

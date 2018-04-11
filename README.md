@@ -24,13 +24,13 @@ For detailed explanation on how things work, checkout the [Nuxt.js docs](https:/
 
 ## To build and publish the Docker image
 
-1. Make this project directory the current directory, i.e. `cd dendro-web-ui`.
+1. Make this project directory the current directory, i.e. `cd dendra-web-ui`.
 
-2. Build the project `docker build -t dendro:dendra-web-ui .`.
+2. Build the project `docker build -t dendra:dendra-web-ui .`.
 
-3. Tag the desired image, e.g. `docker tag f0ec409b5194 dendro/dendra-web-ui:latest`.
+3. Tag the desired image, e.g. `docker tag f0ec409b5194 dendra/dendra-web-ui:latest`.
 
-4. Push it via `docker push dendro/dendra-web-ui`.
+4. Push it via `docker push dendra/dendra-web-ui`.
 
 
 ## Snippets

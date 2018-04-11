@@ -19,7 +19,7 @@
       </nav>
     </section>
 
-    <section class="px-2 py-2  border-bottom-darken-10" v-else>
+    <section class="px-2 py-2 border-bottom-darken-10" v-else>
       <nav class="nav nav-pills text-truncate flex-column">
         <router-link class="nav-link" to="/" exact>Home</router-link>
         <router-link class="nav-link" to="about">About</router-link>

@@ -10,13 +10,11 @@
 import {mapGetters, mapMutations} from 'vuex'
 import MainMenu from '../components/MainMenu'
 import MainNavHeader from '../components/MainNavHeader'
-import EmailFooter from '../components/EmailFooter'
 
 export default {
   components: {
     MainMenu,
-    MainNavHeader,
-    EmailFooter
+    MainNavHeader
   },
 
   computed: {
