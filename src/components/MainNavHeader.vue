@@ -1,7 +1,7 @@
 <template>
   <nav-header class="fixed-top" :class="`bg-header-tint-${this.orgTint}`" fa-class="fa-bars" @clicked="toggleMenu">
     <span slot="title" class="h3 py-1 mb-0 ml-3 text-white text-truncate" v-if="orgName">{{ orgName }}</span>
-    <img slot="title" class="img-header-logo mx-3" src="~assets/images/Dendra_web_480_120.png" v-else />
+    <!-- <img slot="title" class="img-header-logo mx-3" src="~assets/images/Dendra_web_480_120.png" v-else /> -->
 
     <!-- Units Dropdown -->
     <!-- TODO: Implement this! -->

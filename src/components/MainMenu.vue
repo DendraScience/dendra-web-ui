@@ -7,7 +7,7 @@
         <router-link class="nav-link small" to="/" exact>Dendra Home</router-link>
       </nav>
     </section>
-
+<!--
     <section class="px-2 py-2 border-bottom-darken-10" v-if="orgSlug">
       <nav class="nav nav-pills text-truncate flex-column">
         <router-link class="nav-link" :to="{name: 'orgSlug', params: {orgSlug: orgSlug}}" exact>Info</router-link>
@@ -49,11 +49,12 @@
         <a class="nav-link" href="#"><i class="fa fa-fw fa-sign-in" aria-hidden="true"></i> Login</a>
       </nav>
     </section>
-
+ -->
     <section class="px-2 py-2 border-bottom-darken-10" v-if="!organization">
       <nav class="nav nav-pills text-truncate flex-column">
-        <a class="nav-link" href="#"><i class="fa fa-fw fa-envelope" aria-hidden="true"></i> Support</a>
-        <a class="nav-link" href="#"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a>
+        <a class="nav-link" href="mailto:collin@berkeley.edu"><i class="fa fa-fw fa-envelope" aria-hidden="true"></i> Support</a>
+        <a class="nav-link" href="https://github.com/DendraScience/issues/issues" target="_blank"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Report Issues</a>
+        <a class="nav-link" href="https://github.com/DendraScience" target="_blank"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a>
       </nav>
     </section>
   </div>

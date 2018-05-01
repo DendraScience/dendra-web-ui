@@ -1,5 +1,5 @@
 <template>
-  <div :class="isMenuOpen ? 'drawer-left-open' : ''">
+  <div class="d-flex flex-column justify-content-between" :class="isMenuOpen ? 'drawer-left-open' : ''" style="min-height: 100vh;">
     <main-menu class="drawer-left drawer-left-shadow-inset" />
     <main-nav-header class="drawer-left-indent" />
     <nuxt class="drawer-left-translate" />

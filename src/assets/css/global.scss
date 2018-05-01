@@ -33,12 +33,22 @@ $header-logo-padding: 28px;
 .bg-color-pink { background-color: $pink !important; }
 .bg-color-purple { background-color: $purple !important; }
 
+.bg-gradient-main {
+  background: rgba(darken($blue, 12%), .94);  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to bottom, rgba(darken($blue, 12%), .94), rgba(darken($blue, 22%), .94));  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to bottom, rgba(darken($blue, 12%), .94), rgba(darken($blue, 22%), .94)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 .bg-darken-10 { background-color: $darken-10; }
 .bg-darken-20 { background-color: $darken-20; }
 .bg-lighten-10 { background-color: $lighten-10; }
 .bg-lighten-20 { background-color: $lighten-20; }
 
 .bg-none { background: none; }
+
+.body-copy {
+  line-height: 1.7rem;
+}
 
 .border-bottom-darken-10 { border-bottom: 1px solid $darken-10; }
 .border-bottom-darken-20 { border-bottom: 1px solid $darken-20; }
