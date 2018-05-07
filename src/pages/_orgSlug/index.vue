@@ -1,10 +1,10 @@
 <template>
   <div class="pt-header pb-4">
-    <section class="container-fluid py-4" v-if="currentOrganization">
+    <section class="container-fluid pt-2" v-if="currentOrganization">
       <div class="row">
         <div class="col-12">
-          <p class="lead" v-if="currentOrganization.description">{{ currentOrganization.description }}</p>
-          <p class="lead" v-else>No description.</p>
+          <span class="lead" v-if="currentOrganization.description">{{ currentOrganization.description }}</span>
+          <span class="lead" v-else>No description.</span>
         </div>
       </div>
     </section>

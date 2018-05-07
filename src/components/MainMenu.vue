@@ -35,7 +35,7 @@
         <router-link class="nav-link" :to="{name: 'orgSlug-debug-datastreams', params: {orgSlug: orgSlug}}">Datastreams</router-link>
       </nav>
     </section>
-
+ -->
     <section class="px-2 py-2 border-bottom-darken-10" v-if="orgSlug && hasDashboards">
       <h6 class="text-muted text-uppercase">Dashboards</h6>
       <nav class="nav nav-pills text-truncate flex-column">
@@ -43,14 +43,14 @@
         <router-link class="nav-link" :to="{name: 'orgSlug-dashboards-dashSlug', params: {orgSlug: orgSlug, dashSlug: dashboard.slug}}" :key="dashboard._id" v-for="dashboard in dashboards">{{ dashboard.name }}</router-link>
       </nav>
     </section>
-
+<!--
     <section class="px-2 py-2 border-bottom-darken-10">
       <nav class="nav nav-pills text-truncate flex-column">
         <a class="nav-link" href="#"><i class="fa fa-fw fa-sign-in" aria-hidden="true"></i> Login</a>
       </nav>
     </section>
  -->
-    <section class="px-2 py-2 border-bottom-darken-10" v-if="!organization">
+    <section class="px-2 py-2 border-bottom-darken-10">
       <nav class="nav nav-pills text-truncate flex-column">
         <a class="nav-link" href="mailto:collin@berkeley.edu"><i class="fa fa-fw fa-envelope" aria-hidden="true"></i> Support</a>
         <a class="nav-link" href="https://github.com/DendraScience/issues/issues" target="_blank"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Report Issues</a>

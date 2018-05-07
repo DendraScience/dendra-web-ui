@@ -1,16 +1,14 @@
 <template>
   <div class="pt-header pb-4">
-    <section class="container-fluid py-4">
+    <section class="container-fluid pt-2">
       <div class="row">
-        <div class="col-12">
-          <h2>Org Dashboards</h2>
+        <div class="col-12 py-2">
+          <h2>Dashboards</h2>
 
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          <span class="lead">
+            Dashboards allow for custom monitoring of individual or multiple stations.
+            These are used both for analysis of environmental data and for equipment maintenance and operations monitoring.
+          </span>
         </div>
       </div>
     </section>

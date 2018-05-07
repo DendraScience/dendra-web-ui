@@ -109,11 +109,11 @@ export default {
     startReloadTimer () {
       this.clearReloadTimer()
 
-      // Update data every 5 minutes
+      // Update data every 10 minutes
       this.reloadTid = setTimeout(() => {
         this.reloadTid = null
         this.reloadData()
-      }, 300000)
+      }, 600000)
     },
 
     destroyLoader () {
@@ -138,6 +138,8 @@ export default {
         })
         return sources
       }, Object.assign({}, InitialSources)), {
+        interval: 1200,
+
         // Allow for 100 series * 10 fetches each * 10 attempts
         maxExecutions: 10000
       })
