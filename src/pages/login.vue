@@ -13,7 +13,7 @@
 
     <v-flex>
       <v-container grid-list-lg>
-        <v-layout row wrap>
+        <v-layout row>
           <v-flex xs12>
             <h3 class="display-2 mb-2">Log in to Dendra</h3>
             <span class="body-2"
@@ -21,31 +21,33 @@
               <nuxt-link to="/contact">Contact us</nuxt-link></span
             >
           </v-flex>
+        </v-layout>
 
+        <v-layout row wrap>
           <v-flex xs12 sm6>
             <form @submit.prevent="submit">
               <v-text-field
                 v-model="email"
                 v-validate="'required|email'"
-                browser-autocomplete="username"
                 :error-messages="errors.collect('email')"
-                label="Email"
-                data-vv-name="email"
-                required
                 box
+                browser-autocomplete="username"
+                data-vv-name="email"
+                label="Email"
+                required
               ></v-text-field>
 
               <v-text-field
                 v-model="password"
-                v-validate="'required|min:6'"
-                browser-autocomplete="current-password"
+                v-validate="'required|min:6|max:100'"
                 :append-icon="isPasswordShown ? 'visibility_off' : 'visibility'"
                 :error-messages="errors.collect('password')"
-                label="Password"
                 :type="isPasswordShown ? 'text' : 'password'"
-                data-vv-name="password"
-                required
                 box
+                browser-autocomplete="current-password"
+                data-vv-name="password"
+                label="Password"
+                required
                 @click:append="isPasswordShown = !isPasswordShown"
               ></v-text-field>
 
@@ -66,7 +68,7 @@ export default {
     validator: 'new'
   },
 
-  middleware: ['no-auth-redirect-orgs'],
+  middleware: ['auth-redirect-orgs'],
 
   data: () => ({
     isPasswordShown: false,
@@ -92,7 +94,7 @@ export default {
       })
         .then(() => {
           this.$store.commit('ability/clearAll')
-          this.$router.push({ name: 'index' })
+          this.$router.push({ name: 'orgs' })
         })
         .catch(err => {
           this.$logger.error('submit', err)

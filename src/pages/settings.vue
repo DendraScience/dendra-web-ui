@@ -3,51 +3,37 @@
     <v-flex px-1>
       <v-alert
         :value="status"
-        type="info"
+        :type="status && status.type"
         dismissible
         transition="slide-y-transition"
       >
-        {{ status }}
+        {{ status && status.message }}
       </v-alert>
     </v-flex>
 
     <v-flex>
       <v-container grid-list-lg>
-        <v-layout row wrap>
+        <v-layout row>
           <v-flex xs12>
             <h3 class="display-2 mb-2">User settings</h3>
           </v-flex>
+        </v-layout>
 
-          <v-flex xs12 sm6>
-            <v-card>
-              <form @submit.prevent="submit">
-                <v-card-text>
-                  <h5 class="headline">Account</h5>
+        <v-layout row wrap>
+          <v-flex xs12 sm8>
+            <user-account-card
+              :user="getUser(auth.user._id)"
+              @status="status = $event"
+            />
+          </v-flex>
+        </v-layout>
 
-                  <v-text-field
-                    v-model="name"
-                    v-validate="'required'"
-                    :error-messages="errors.collect('name')"
-                    label="Name"
-                    data-vv-name="name"
-                    required
-                  ></v-text-field>
-
-                  <v-text-field
-                    v-model="email"
-                    v-validate="'required|email'"
-                    :error-messages="errors.collect('email')"
-                    label="Email"
-                    data-vv-name="email"
-                    required
-                  ></v-text-field>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-btn color="primary" type="submit">Save</v-btn>
-                </v-card-actions>
-              </form>
-            </v-card>
+        <v-layout row wrap>
+          <v-flex xs12 sm8>
+            <user-password-card
+              :user="getUser(auth.user._id)"
+              @status="status = $event"
+            />
           </v-flex>
         </v-layout>
       </v-container>
@@ -56,50 +42,41 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import UserAccountCard from '@/components/UserAccountCard'
+import UserPasswordCard from '@/components/UserPasswordCard'
+
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   $_veeValidate: {
     validator: 'new'
   },
 
-  // middleware: ['no-auth-redirect-login'],
+  components: {
+    UserAccountCard,
+    UserPasswordCard
+  },
+
+  middleware: ['no-auth-redirect-login'],
 
   data: () => ({
-    currentPassword: '',
-    email: '',
-    name: '',
     status: null
   }),
 
   computed: {
+    ...mapGetters({
+      getUser: 'users/get'
+    }),
+
     ...mapState(['auth'])
   },
 
-  async fetch({ store }) {
+  async fetch({ app, store }) {
     const { auth } = store.state
 
     await store.dispatch('users/get', auth.user._id)
   },
 
-  methods: {
-    // ...mapActions('auth', ['authenticate']),
-
-    async submit() {
-      // if (!(await this.$validator.validateAll())) return
-      // return this.authenticate({
-      //   strategy: 'local',
-      //   email: this.email.toLowerCase(),
-      //   password: this.password
-      // })
-      //   .then(() => {
-      //     this.$store.commit('ability/clearAll')
-      //     this.$router.push({ name: 'index' })
-      //   })
-      //   .catch(err => {
-      //     this.$logger.error('submit', err)
-      //   })
-    }
-  }
+  methods: {}
 }
 </script>

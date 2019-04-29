@@ -37,10 +37,16 @@
       </div>
     </v-navigation-drawer>
 
-    <v-toolbar app flat prominent color="green">
-      <v-toolbar-side-icon color="white--text" @click="drawer = !drawer" />
+    <v-toolbar
+      app
+      flat
+      prominent
+      dark
+      :color="$router.currentRoute.name === 'index' ? 'green' : ''"
+    >
+      <v-toolbar-side-icon @click="drawer = !drawer" />
       <v-spacer />
-      <v-btn icon color="white--text">
+      <v-btn icon>
         <v-icon>search</v-icon>
       </v-btn>
 
