@@ -4,7 +4,7 @@ Vue.mixin({
   computed: {
     $can() {
       return (...args) => {
-        return this.$store.getters.abilityUpdated > 0
+        return this.$store.getters.abilityUpdateTime > 0
           ? this.$ability.can(...args)
           : false
       }
@@ -12,7 +12,7 @@ Vue.mixin({
 
     $cannot() {
       return (...args) => {
-        return this.$store.getters.abilityUpdated > 0
+        return this.$store.getters.abilityUpdateTime > 0
           ? this.$ability.cannot(...args)
           : true
       }

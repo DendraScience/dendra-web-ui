@@ -65,10 +65,7 @@ export default {
   },
 
   props: {
-    user: {
-      default: null,
-      type: Object
-    }
+    user: { default: null, type: Object }
   },
 
   data() {

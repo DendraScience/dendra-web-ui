@@ -36,7 +36,9 @@ module.exports = {
 
   env: {
     apiPath: process.env.API_PATH || '/socket.io',
-    apiUri: process.env.API_URI || 'http://localhost:3030'
+    apiUri: process.env.API_URI || 'http://localhost:3030',
+
+    googleMapsAPIKey: 'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
   },
 
   /**
@@ -84,7 +86,8 @@ module.exports = {
     { src: '~/plugins/vuetify', ssr: false },
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },
-    { src: '~/plugins/mixins', ssr: false }
+    { src: '~/plugins/global-filters', ssr: false },
+    { src: '~/plugins/global-mixin', ssr: false }
   ],
 
   router: {

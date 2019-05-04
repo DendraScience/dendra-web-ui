@@ -23,6 +23,7 @@
             :key="i"
             :to="item.to"
             exact
+            nuxt
           >
             <v-list-tile-action>
               <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
@@ -42,9 +43,10 @@
       flat
       prominent
       dark
-      :color="$router.currentRoute.name === 'index' ? 'green' : ''"
+      :color="$route.name === 'index' ? 'green' : ''"
     >
       <v-toolbar-side-icon @click="drawer = !drawer" />
+      <v-toolbar-title>{{ orgName }}</v-toolbar-title>
       <v-spacer />
       <v-btn icon>
         <v-icon>search</v-icon>
@@ -120,7 +122,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
   data() {
@@ -131,17 +133,8 @@ export default {
         {
           items: [
             {
-              title: 'Home',
+              title: 'Dendra home',
               to: '/'
-            }
-          ]
-        },
-        {
-          items: [
-            {
-              title: 'Graph tool',
-              to: '/graph',
-              icon: 'show_chart'
             }
           ]
         },
@@ -151,23 +144,25 @@ export default {
               can: ['read', 'organizations'],
               title: 'Organizations',
               to: '/orgs'
-            },
+            }
+          ]
+        },
+        {
+          items: [
             {
+              org: true,
               title: 'Stations',
               to: '/stations'
             },
             {
+              org: true,
               title: 'Datastreams',
               to: '/datastreams'
             },
             {
+              org: true,
               title: 'Equipment',
               to: '/equipment'
-            },
-            {
-              can: ['read', 'users'],
-              title: 'Users',
-              to: '/users'
             }
           ]
         },
@@ -198,10 +193,16 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      orgName: 'orgName',
+      orgSlug: 'orgSlug'
+    }),
+
     ...mapState(['auth']),
 
     filteredLists() {
       const auth = !!this.auth.payload
+      const org = !!this.orgSlug
       const { $can } = this
 
       return this.lists
@@ -210,6 +211,7 @@ export default {
             items: list.items.filter(item => {
               return (
                 (item.auth === undefined || item.auth === auth) &&
+                (item.org === undefined || item.org === org) &&
                 (item.can === undefined || $can(...item.can))
               )
             })

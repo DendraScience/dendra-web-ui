@@ -2,6 +2,8 @@ import Vue from 'vue'
 import feathersClient from '@/lib/feathers-client'
 import feathersVuex from 'feathers-vuex'
 import helpersVuex from '@/lib/helpers-vuex'
+import math from '@/lib/math'
+import moment from 'moment'
 
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: '_id',
@@ -18,6 +20,29 @@ export const plugins = [
   service('places'),
   service('schemes'),
   service('soms'),
+  service('stations', {
+    instanceDefaults(data, { store, Model, Models }) {
+      return {
+        get time() {
+          try {
+            const utc = store.getters['time/get']('utc')
+            return moment(utc.now).valueOf() + (data.utc_offset | 0) * 1000
+          } catch (err) {
+            return null
+          }
+        },
+
+        get utcOffsetHours() {
+          return math.round(
+            math.unit(data.utc_offset | 0, 's').toNumber('h'),
+            2
+          )
+        }
+      }
+    },
+
+    paginate: true
+  }),
   service('system/schemas'),
   service('system/time'),
   service('system/timezones'),
@@ -33,16 +58,31 @@ export const plugins = [
 export const strict = true
 
 export const state = () => ({
-  abilityUpdated: 0,
+  abilityUpdateTime: 0,
 
   orgId: null,
   stationId: null,
   datastreamId: null
 })
 
+export const actions = {
+  getSystemTimeUTC({ dispatch }) {
+    return dispatch('time/get', 'utc')
+  }
+}
+
 export const getters = {
-  abilityUpdated(state) {
-    return state.abilityUpdated
+  abilityUpdateTime(state) {
+    return state.abilityUpdateTime
+  },
+
+  getUnitAbbr(state, { 'vocabularies/get': get }) {
+    return (label, id = 'dt-unit') => {
+      const vocabulary = get(id)
+      const term = vocabulary.terms.find(term => term.label === label)
+
+      return term && term.abbreviation
+    }
   },
 
   org(state, { 'organizations/get': get }) {
@@ -77,15 +117,15 @@ export const mutations = {
   clearOrg(state) {
     state.orgId = null
   },
-  clearstation(state) {
+  clearStation(state) {
     state.stationId = null
   },
   clearDatastream(state) {
     state.datastreamId = null
   },
 
-  setAbilityUpdated(state, value) {
-    state.abilityUpdated = value
+  setAbilityUpdateTime(state, value) {
+    state.abilityUpdateTime = value
   },
 
   setOrg(state, value) {

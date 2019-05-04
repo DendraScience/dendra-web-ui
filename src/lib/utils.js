@@ -1,0 +1,7 @@
+/**
+ * Escapes user input that is to be treated as a literal string within a regular expression.
+ * SEE: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+ */
+export function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+}

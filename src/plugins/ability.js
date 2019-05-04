@@ -17,7 +17,7 @@ export default ({ store }, inject) => {
   const ability = new Ability([], { subjectName })
 
   ability.on('update', () => {
-    store.commit('setAbilityUpdated', Date.now())
+    store.commit('setAbilityUpdateTime', Date.now())
   })
 
   inject('ability', ability)

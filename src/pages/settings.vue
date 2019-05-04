@@ -12,7 +12,7 @@
     </v-flex>
 
     <v-flex>
-      <v-container grid-list-lg>
+      <v-container grid-list-xl>
         <v-layout row>
           <v-flex xs12>
             <h3 class="display-2 mb-2">User settings</h3>
@@ -20,7 +20,7 @@
         </v-layout>
 
         <v-layout row wrap>
-          <v-flex xs12 sm8>
+          <v-flex xs12 md8>
             <user-account-card
               :user="getUser(auth.user._id)"
               @status="status = $event"
@@ -29,7 +29,7 @@
         </v-layout>
 
         <v-layout row wrap>
-          <v-flex xs12 sm8>
+          <v-flex xs12 md8>
             <user-password-card
               :user="getUser(auth.user._id)"
               @status="status = $event"
@@ -57,7 +57,7 @@ export default {
     UserPasswordCard
   },
 
-  middleware: ['no-auth-redirect-login'],
+  middleware: ['no-org', 'no-auth-redirect-login'],
 
   data: () => ({
     status: null
@@ -71,12 +71,10 @@ export default {
     ...mapState(['auth'])
   },
 
-  async fetch({ app, store }) {
+  async fetch({ store }) {
     const { auth } = store.state
 
     await store.dispatch('users/get', auth.user._id)
-  },
-
-  methods: {}
+  }
 }
 </script>

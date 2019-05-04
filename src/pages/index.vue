@@ -19,7 +19,7 @@
     <v-flex green darken-2 shrink>
       <v-container grid-list-sm>
         <v-layout column>
-          <v-flex xs12 heading white--text>
+          <v-flex xs12 subheading white--text>
             Dendra is a cyberinfrastructure project for real-time sensor data
             storage, retrieval, management, and curation. It is a cloud-based,
             multi-organizational system, designed to support massive permanent
@@ -43,8 +43,7 @@
       <v-container>
         <v-layout justify-center row wrap>
           <v-flex xs12 text-xs-center white--text>
-            <v-btn color="white" flat round>Orgs</v-btn>
-            <v-btn color="white" flat round>Equipment</v-btn>
+            <v-btn color="white" flat round to="/orgs">Orgs</v-btn>
             <v-btn color="white" flat round to="/about">About</v-btn>
             <v-btn color="white" flat round to="/contact">Contact</v-btn>
           </v-flex>
@@ -60,7 +59,9 @@ import DendraLogo from '@/components/DendraLogo.vue'
 export default {
   components: {
     DendraLogo
-  }
+  },
+
+  middleware: ['no-org']
 }
 </script>
 
