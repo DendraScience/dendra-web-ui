@@ -15,6 +15,7 @@ Vue.use(FeathersVuex)
 
 export const plugins = [
   service('ability'),
+  service('datastreams', { paginate: true }),
   service('organizations'),
   service('persons'),
   service('places'),

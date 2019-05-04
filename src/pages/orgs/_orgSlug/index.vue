@@ -157,7 +157,7 @@
         </feathers-vuex-get>
 
         <v-layout row wrap mt-4>
-          <v-flex xs12 sm4>
+          <v-flex v-if="stationsPagination" xs12 sm4>
             <v-hover>
               <v-card
                 slot-scope="{ hover }"
@@ -166,10 +166,28 @@
                 class="white--text"
               >
                 <v-card-title primary-title class="headline">
-                  {{ pagination.orgStationsTotal.total }} stations
+                  {{ stationsPagination }} stations
                 </v-card-title>
                 <v-card-actions>
                   <v-btn flat dark>Map</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-hover>
+          </v-flex>
+
+          <v-flex v-if="datastreamsPagination" xs12 sm4>
+            <v-hover>
+              <v-card
+                slot-scope="{ hover }"
+                :class="`elevation-${hover ? 8 : 2}`"
+                color="blue-grey darken-2"
+                class="white--text"
+              >
+                <v-card-title primary-title class="headline">
+                  {{ datastreamsPagination }} datastreams
+                </v-card-title>
+                <v-card-actions>
+                  <v-btn flat dark>Explore</v-btn>
                 </v-card-actions>
               </v-card>
             </v-hover>
@@ -205,7 +223,10 @@ export default {
   computed: {
     ...mapGetters(['getUnitAbbr', 'org']),
 
-    ...mapState('stations', ['pagination'])
+    ...mapState({
+      datastreamsPagination: 'datastreams/pagination.orgDatastreamsTotal',
+      stationsPagination: 'stations/pagination.orgStationsTotal'
+    })
   },
 
   async fetch({ app, store }) {
@@ -216,6 +237,16 @@ export default {
         $limit: 0
       }
     })
+
+    await store.dispatch('datastreams/find', {
+      qid: 'orgDatastreamsTotal',
+      query: {
+        organization_id: store.getters.org._id,
+        $limit: 0
+      }
+    })
+
+    app.$logger.log('>>>', store)
   },
 
   methods: {
