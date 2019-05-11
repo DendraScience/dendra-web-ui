@@ -68,7 +68,7 @@ export default {
     validator: 'new'
   },
 
-  middleware: ['no-org', 'no-auth-redirect-orgs'],
+  middleware: ['no-org', 'auth-redirect-orgs'],
 
   data: () => ({
     isPasswordShown: false,

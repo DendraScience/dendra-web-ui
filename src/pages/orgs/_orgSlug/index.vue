@@ -14,6 +14,7 @@
 
         <feathers-vuex-find
           :query="{
+            is_hidden: false,
             organization_id: org._id,
             station_type: 'weather',
             $sort: { name: 1 }
@@ -29,13 +30,13 @@
               <v-autocomplete
                 v-model="selectedStationId"
                 :items="stations"
+                :label="loading ? 'Loading...' : 'Search for a station'"
                 :loading="loading"
                 flat
                 hide-details
                 hide-no-data
                 item-text="name"
                 item-value="_id"
-                :label="loading ? 'Loading...' : 'Search for a station'"
                 outline
                 solo
               ></v-autocomplete>
@@ -89,7 +90,10 @@
                           <v-list-tile>
                             <v-list-tile-content>
                               <v-list-tile-title
-                                >{{ station.time | formatUTC('h:mm A') }}
+                                >{{
+                                  station.time
+                                    | moment('', ['utc'], ['format', 'h:mm A'])
+                                }}
                                 {{ station.time_zone }}
                                 <em
                                   >(UTC {{ station.utcOffsetHours }} hours)</em
@@ -125,7 +129,10 @@
                           >
                             <v-list-tile-content>
                               <v-list-tile-title
-                                >{{ station.geo.coordinates[0] | round }}
+                                >{{
+                                  station.geo.coordinates[0]
+                                    | math('', ['round', 1])
+                                }}
                                 {{ getUnitAbbr('Meter') }}</v-list-tile-title
                               >
                               <v-list-tile-sub-title
@@ -139,9 +146,26 @@
                   </v-layout>
                 </v-card-text>
 
-                <v-card-actions v-if="station.external_links">
+                <v-card-actions>
                   <v-btn
-                    v-for="(link, i) in station.external_links"
+                    :to="{
+                      name: 'orgs-orgSlug-datastreams',
+                      params: {
+                        orgSlug: org.slug
+                      },
+                      query: {
+                        stationId: selectedStationId
+                      }
+                    }"
+                    color="primary"
+                    exact
+                    flat
+                    nuxt
+                    >Datastreams</v-btn
+                  >
+
+                  <v-btn
+                    v-for="(link, i) in station.external_links || []"
                     :key="i"
                     :href="link.url"
                     color="primary"
@@ -157,41 +181,63 @@
         </feathers-vuex-get>
 
         <v-layout row wrap mt-4>
-          <v-flex v-if="stationsPagination" xs12 sm4>
-            <v-hover>
-              <v-card
-                slot-scope="{ hover }"
-                :class="`elevation-${hover ? 8 : 2}`"
-                color="blue-grey darken-2"
-                class="white--text"
-              >
-                <v-card-title primary-title class="headline">
-                  {{ stationsPagination }} stations
-                </v-card-title>
-                <v-card-actions>
-                  <v-btn flat dark>Map</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-hover>
-          </v-flex>
+          <feathers-vuex-find
+            :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
+            service="stations"
+          >
+            <v-flex v-if="pagination" slot-scope="{ pagination }" xs12 sm4>
+              <v-hover>
+                <v-card
+                  slot-scope="{ hover }"
+                  :class="`elevation-${hover ? 8 : 2}`"
+                  color="blue-grey darken-2"
+                  class="white--text"
+                >
+                  <v-card-title primary-title class="headline">
+                    {{ pagination | get('total', 0) }} stations
+                  </v-card-title>
+                  <v-card-actions>
+                    <v-btn flat dark>Map</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-hover>
+            </v-flex>
+          </feathers-vuex-find>
 
-          <v-flex v-if="datastreamsPagination" xs12 sm4>
-            <v-hover>
-              <v-card
-                slot-scope="{ hover }"
-                :class="`elevation-${hover ? 8 : 2}`"
-                color="blue-grey darken-2"
-                class="white--text"
-              >
-                <v-card-title primary-title class="headline">
-                  {{ datastreamsPagination }} datastreams
-                </v-card-title>
-                <v-card-actions>
-                  <v-btn flat dark>Explore</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-hover>
-          </v-flex>
+          <feathers-vuex-find
+            :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
+            service="datastreams"
+          >
+            <v-flex v-if="pagination" slot-scope="{ pagination }" xs12 sm4>
+              <v-hover>
+                <v-card
+                  slot-scope="{ hover }"
+                  :class="`elevation-${hover ? 8 : 2}`"
+                  color="blue-grey darken-2"
+                  class="white--text"
+                >
+                  <v-card-title primary-title class="headline">
+                    {{ pagination | get('total', 0) }} datastreams
+                  </v-card-title>
+                  <v-card-actions>
+                    <v-btn
+                      :to="{
+                        name: 'orgs-orgSlug-datastreams',
+                        params: {
+                          orgSlug: org.slug
+                        }
+                      }"
+                      exact
+                      flat
+                      dark
+                      nuxt
+                      >View</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-hover>
+            </v-flex>
+          </feathers-vuex-find>
         </v-layout>
       </v-container>
     </v-flex>
@@ -203,7 +249,7 @@ import GoogleMap from '@/components/GoogleMap'
 import MediaPhoto from '@/components/MediaPhoto'
 import timer from '@/mixins/timer'
 
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -217,36 +263,12 @@ export default {
 
   data: () => ({
     selectedStationId: null,
+
     timerInterval: 60000
   }),
 
   computed: {
-    ...mapGetters(['getUnitAbbr', 'org']),
-
-    ...mapState({
-      datastreamsPagination: 'datastreams/pagination.orgDatastreamsTotal',
-      stationsPagination: 'stations/pagination.orgStationsTotal'
-    })
-  },
-
-  async fetch({ app, store }) {
-    await store.dispatch('stations/find', {
-      qid: 'orgStationsTotal',
-      query: {
-        organization_id: store.getters.org._id,
-        $limit: 0
-      }
-    })
-
-    await store.dispatch('datastreams/find', {
-      qid: 'orgDatastreamsTotal',
-      query: {
-        organization_id: store.getters.org._id,
-        $limit: 0
-      }
-    })
-
-    app.$logger.log('>>>', store)
+    ...mapGetters(['getUnitAbbr', 'org'])
   },
 
   methods: {

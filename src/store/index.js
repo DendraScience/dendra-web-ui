@@ -7,7 +7,8 @@ import moment from 'moment'
 
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: '_id',
-  replaceItems: true
+  replaceItems: true,
+  whitelist: ['$and', '$text']
 })
 const { passport } = helpersVuex(feathersClient)
 
@@ -56,7 +57,7 @@ export const plugins = [
   passport()
 ]
 
-export const strict = true
+export const strict = process.env.NODE_ENV !== 'production'
 
 export const state = () => ({
   abilityUpdateTime: 0,

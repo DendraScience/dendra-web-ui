@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import debounce from 'lodash/debounce'
+import _debounce from 'lodash/debounce'
 import loadGoogleMapsAPI from 'load-google-maps-api'
 
 const DEFAULT_MAP_OPTIONS = {
@@ -96,7 +96,7 @@ export default {
         this.panToMarker()
 
         // Adjust the map after the center position changes
-        this.centerChangedListener = debounce(this.panToMarker, 2000)
+        this.centerChangedListener = _debounce(this.panToMarker, 2000)
 
         this.map.addListener('center_changed', this.centerChangedListener)
         this.marker.addListener('click', this.selectMarker)
