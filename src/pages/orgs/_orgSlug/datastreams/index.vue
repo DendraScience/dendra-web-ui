@@ -81,9 +81,17 @@
                 </feathers-vuex-find>
 
                 <feathers-vuex-find
+                  :fetch-query="datastreamsFetchQuery"
                   :query="datastreamsQuery"
+                  :watch="[
+                    'fetchQuery.$and',
+                    'fetchQuery.$limit',
+                    'fetchQuery.$skip',
+                    'fetchQuery.$text',
+                    'fetchQuery.station_id'
+                  ]"
+                  qid="browser"
                   service="datastreams"
-                  watch="query"
                 >
                   <v-layout
                     slot-scope="{
@@ -95,8 +103,17 @@
                     wrap
                   >
                     <v-flex xs12>
+                      <v-text-field
+                        v-model.trim="datastreamsSearchDebounce"
+                        append-icon="search"
+                        label="Filter datastreams"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    </v-flex>
+
+                    <v-flex xs12>
                       <v-data-table
-                        v-model="selectedDatastreams"
                         :headers="datastreamsHeaders"
                         :items="datastreams"
                         :loading="loading"
@@ -105,26 +122,30 @@
                         :total-items="pagination ? pagination.total : 0"
                         disable-initial-sort
                         item-key="_id"
-                        select-all
                       >
                         <template v-slot:items="props">
-                          <td>
-                            <v-checkbox
-                              v-model="props.selected"
-                              primary
-                              hide-details
-                            ></v-checkbox>
+                          <td class="text-xs-center">
+                            <v-btn
+                              color="primary"
+                              fab
+                              outline
+                              small
+                              @click="
+                                flagDatastream({
+                                  id: props.item._id,
+                                  flags: ['Y1', 'Y2']
+                                })
+                              "
+                            >
+                              <span v-if="props.item.flag">{{
+                                props.item.flag
+                              }}</span>
+                              <span v-else>&mdash;</span>
+                            </v-btn>
                           </td>
+
                           <td>{{ props.item.name }}</td>
                           <td>{{ props.item.description }}</td>
-                          <td class="justify-center layout px-0">
-                            <v-icon small class="mr-2">
-                              info
-                            </v-icon>
-                            <v-icon small>
-                              add
-                            </v-icon>
-                          </td>
                         </template>
                       </v-data-table>
                     </v-flex>
@@ -133,9 +154,55 @@
               </v-container>
 
               <v-card-actions>
-                <v-btn :disabled="selectedDatastreams.length === 0" flat
-                  >Graph Selected</v-btn
+                <v-btn :disabled="!flaggedDatastreamCount" color="primary"
+                  >Graph
+                  {{ flaggedDatastreamCount }}
+                  {{ flaggedDatastreamCount | pluralize('Datastream') }}
+                </v-btn>
+
+                <v-btn
+                  :disabled="!flaggedDatastreamCount"
+                  @click="updateDatastreamsFlag()"
+                  >Reset</v-btn
                 >
+
+                <v-menu offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-btn v-on="on">
+                      All
+                    </v-btn>
+                  </template>
+
+                  <v-list>
+                    <v-list-tile
+                      @click="
+                        updateDatastreamsFlag({
+                          ids: queryDatastreamIds,
+                          flag: 'Y1'
+                        })
+                      "
+                    >
+                      <v-list-tile-title>Y1 axis</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile
+                      @click="
+                        updateDatastreamsFlag({
+                          ids: queryDatastreamIds,
+                          flag: 'Y2'
+                        })
+                      "
+                    >
+                      <v-list-tile-title>Y2 axis</v-list-tile-title>
+                    </v-list-tile>
+                    <v-list-tile
+                      @click="
+                        updateDatastreamsFlag({ ids: queryDatastreamIds })
+                      "
+                    >
+                      <v-list-tile-title>None</v-list-tile-title>
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -149,9 +216,11 @@
 // TODO: Remove
 // import GoogleMap from '@/components/GoogleMap'
 // import MediaPhoto from '@/components/MediaPhoto'
-import timer from '@/mixins/timer'
 
-import { mapActions, mapGetters } from 'vuex'
+import timer from '@/mixins/timer'
+import _debounce from 'lodash/debounce'
+
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: {},
@@ -163,21 +232,23 @@ export default {
   data: () => ({
     datastreamsHeaders: [
       {
+        align: 'center',
+        sortable: false,
+        text: 'Axis',
+        value: '_id'
+      },
+      {
         align: 'left',
         sortable: false,
         text: 'Name',
-        value: 'name'
+        value: 'name',
+        width: '40%'
       },
       {
         align: 'left',
         sortable: false,
         text: 'Description',
         value: 'description'
-      },
-      {
-        text: 'Actions',
-        sortable: false,
-        value: '_id'
       }
     ],
     datastreamsPagination: {
@@ -187,8 +258,11 @@ export default {
       sortBy: null,
       totalItems: null
     },
+    datastreamsSearch: '',
+    datastreamsSearchDebounce: '',
 
-    selectedDatastreams: [],
+    queryDatastreamIds: [],
+
     selectedStationIds: null,
     selectedTermLabels: {},
 
@@ -198,9 +272,10 @@ export default {
   computed: {
     ...mapGetters(['getUnitAbbr', 'org']),
 
-    datastreamsQuery() {
+    datastreamsFetchQuery() {
       const {
         datastreamsPagination,
+        datastreamsSearch,
         selectedStationIds,
         selectedTermLabels
       } = this
@@ -217,11 +292,13 @@ export default {
           'name',
           'description',
           'organization_id',
-          'station_id',
-          'terms_info.class_tags'
+          'station_id'
         ],
         $sort: { name: 1 }
       }
+
+      if (datastreamsSearch.length)
+        query.$text = { $search: `${this.datastreamsSearch}` }
 
       if (selectedStationIds && selectedStationIds.length)
         query.station_id = { $in: selectedStationIds }
@@ -238,9 +315,26 @@ export default {
 
       if (tagExprs.length) query.$and = tagExprs
 
-      this.$logger.log('query', JSON.stringify(query))
-
       return query
+    },
+
+    datastreamsPaginationBrowser() {
+      return this.$store.state.datastreams.pagination.browser
+    },
+
+    datastreamsQuery() {
+      return {
+        _id: { $in: this.queryDatastreamIds },
+        $sort: { name: 1 }
+      }
+    },
+
+    flagsByDatastreamId() {
+      return this.$store.state.flagsByDatastreamId
+    },
+
+    flaggedDatastreamCount() {
+      return Object.keys(this.flagsByDatastreamId).length
     }
   },
 
@@ -255,6 +349,14 @@ export default {
     // TODO: Remove
     // selectedDatastreams() {
     // },
+
+    datastreamsPaginationBrowser(newValue) {
+      this.queryDatastreamIds = newValue && newValue.ids
+    },
+
+    datastreamsSearchDebounce(newValue) {
+      this.debouncedDatastreamsSearch(newValue)
+    },
 
     selectedStationIds() {
       this.datastreamsPagination.page = 1
@@ -272,10 +374,23 @@ export default {
     const { query } = this.$route
 
     if (query && query.stationId) this.selectedStationIds = [query.stationId]
+
+    this.debouncedDatastreamsSearch = _debounce(value => {
+      this.datastreamsSearch = value
+    }, 400)
+
+    this.clearAllDatastreamFlags()
+  },
+
+  beforeDestroy() {
+    this.debouncedDatastreamsSearch.cancel()
+    this.debouncedDatastreamsSearch = null
   },
 
   methods: {
-    ...mapActions(['getSystemTimeUTC']),
+    ...mapActions(['getSystemTimeUTC', 'updateDatastreamsFlag']),
+
+    ...mapMutations(['clearAllDatastreamFlags', 'flagDatastream']),
 
     timerCallback() {
       return this.getSystemTimeUTC()

@@ -22,3 +22,7 @@ Vue.filter('moment', (value, defaultValue = '', ...calls) => {
     return m[args.shift()](...args)
   }, moment(value))
 })
+
+Vue.filter('pluralize', (value, singular, plural) => {
+  return value === 1 ? singular : plural || `${singular}s`
+})

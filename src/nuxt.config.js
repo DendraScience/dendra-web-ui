@@ -26,6 +26,14 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+
+      if (ctx.isClient) {
+        config.module.rules.push({
+          test: /\.worker\.js$/, // this will pick up all .js files that ends with ".worker.js"
+          loader: 'worker-loader',
+          exclude: /(node_modules)/
+        })
+      }
     }
   },
 
