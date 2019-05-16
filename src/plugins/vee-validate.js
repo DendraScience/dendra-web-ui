@@ -8,7 +8,11 @@ const dictionary = {
       email: 'email',
       new_password: 'new password',
       new_password_confirm: 'new password',
-      password: 'password'
+      password: 'password',
+
+      chartTitle: 'chart title',
+      fromDate: 'from date',
+      toDate: 'to date'
     }
   }
 }

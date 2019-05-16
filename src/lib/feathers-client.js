@@ -7,10 +7,10 @@ import logger from '@dendra-science/console-logger'
 const apiPath = process.env.apiPath
 const apiUri = process.env.apiUri
 
-logger.info(`Configuring Feathers client: ${apiUri}${apiPath}`)
+logger.info(`Configuring Feathers client: ${apiUri}${apiPath}/socket.io`)
 
 const socket = io(apiUri, {
-  path: apiPath,
+  path: `${apiPath}/socket.io`,
   transports: ['websocket']
 })
 

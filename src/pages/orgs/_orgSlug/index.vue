@@ -197,7 +197,7 @@
                     {{ pagination | get('total', 0) }} stations
                   </v-card-title>
                   <v-card-actions>
-                    <v-btn flat dark>Map</v-btn>
+                    <v-btn disabled flat dark>Map</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-hover>

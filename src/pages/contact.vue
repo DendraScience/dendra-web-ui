@@ -26,7 +26,7 @@ export default {
 
   data() {
     return {
-      email: 'collin@berkeley.edu'
+      email: 'metahuman@dendra.science'
     }
   }
 }

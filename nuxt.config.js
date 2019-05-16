@@ -25,6 +25,9 @@ module.exports = {
           loader: 'eslint-loader',
           exclude: /(node_modules)/
         })
+
+        // SEE: https://github.com/nuxt/nuxt.js/pull/3480#issuecomment-404150387
+        config.output.globalObject = 'this'
       }
 
       if (ctx.isClient) {
@@ -32,9 +35,12 @@ module.exports = {
           test: /\.worker\.js$/, // this will pick up all .js files that ends with ".worker.js"
           loader: 'worker-loader',
           exclude: /(node_modules)/
+          // options: { inline: true }
         })
       }
-    }
+    },
+
+    vendor: ['chroma-js', 'highcharts', 'lodash', 'moment']
   },
 
   /**
@@ -43,7 +49,7 @@ module.exports = {
   css: ['~/assets/style/app.styl'],
 
   env: {
-    apiPath: process.env.API_PATH || '/socket.io',
+    apiPath: process.env.API_PATH || '',
     apiUri: process.env.API_URI || 'http://localhost:3030',
 
     googleMapsAPIKey: 'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
@@ -84,7 +90,7 @@ module.exports = {
   /**
    * Nuxt.js modules
    */
-  modules: ['@nuxtjs/pwa'],
+  modules: [],
 
   /**
    * Plugins to load before mounting the App
@@ -95,7 +101,8 @@ module.exports = {
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },
     { src: '~/plugins/global-filters', ssr: false },
-    { src: '~/plugins/global-mixin', ssr: false }
+    { src: '~/plugins/global-mixin', ssr: false },
+    { src: '~/plugins/web-workers', ssr: false }
   ],
 
   router: {

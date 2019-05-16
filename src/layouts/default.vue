@@ -21,7 +21,8 @@
           <v-list-tile
             v-for="(item, i) in list.items"
             :key="i"
-            :to="item.to"
+            :disabled="item.disabled"
+            :to="item.org ? { name: item.name, params: { orgSlug } } : item.to"
             exact
             nuxt
           >
@@ -144,6 +145,11 @@ export default {
               can: ['read', 'organizations'],
               title: 'Organizations',
               to: '/orgs'
+            },
+            {
+              disabled: true,
+              title: 'Vocabulary',
+              to: '/vocabulary'
             }
           ]
         },
@@ -151,18 +157,44 @@ export default {
           items: [
             {
               org: true,
+              disabled: true,
+              name: 'orgs-orgSlug-stations',
               title: 'Stations',
               to: '/stations'
             },
             {
               org: true,
+              name: 'orgs-orgSlug-datastreams',
               title: 'Datastreams',
               to: '/datastreams'
             },
             {
               org: true,
+              disabled: true,
+              name: 'orgs-orgSlug-annotations',
+              title: 'Annotations',
+              to: '/annotation'
+            },
+            {
+              org: true,
+              disabled: true,
+              name: 'orgs-orgSlug-equipment',
               title: 'Equipment',
               to: '/equipment'
+            },
+            {
+              org: true,
+              disabled: true,
+              name: 'orgs-orgSlug-people',
+              title: 'People',
+              to: '/people'
+            },
+            {
+              org: true,
+              disabled: true,
+              name: 'orgs-orgSlug-teams',
+              title: 'Teams',
+              to: '/teams'
             }
           ]
         },

@@ -17,10 +17,10 @@ Vue.use(FeathersVuex)
 export const plugins = [
   service('ability'),
   service('datastreams', {
-    instanceDefaults(data, { store, Model, Models }) {
+    instanceDefaults(data, { commit, store, Model, Models }) {
       return {
-        get flag() {
-          return store.state.flagsByDatastreamId[data._id]
+        get quantitySelected() {
+          return store.state.cart.quantitiesById[data._id]
         }
       }
     },
@@ -72,8 +72,6 @@ export const strict = process.env.NODE_ENV !== 'production'
 export const state = () => ({
   abilityUpdateTime: 0,
 
-  flagsByDatastreamId: {},
-
   orgId: null,
   stationId: null,
   datastreamId: null
@@ -82,16 +80,6 @@ export const state = () => ({
 export const actions = {
   getSystemTimeUTC({ dispatch }) {
     return dispatch('time/get', 'utc')
-  },
-
-  async updateDatastreamsFlag({ commit, state }, value = {}) {
-    const ids = value.ids || Object.keys(state.flagsByDatastreamId)
-
-    for (let i = 0; i < ids.length; i++) {
-      commit('setDatastreamFlag', { id: ids[i], flag: value.flag })
-
-      if (!(i % 10)) await new Promise(resolve => setTimeout(resolve, 0))
-    }
   }
 }
 
@@ -138,9 +126,6 @@ export const getters = {
 }
 
 export const mutations = {
-  clearAllDatastreamFlags(state) {
-    state.flagsByDatastreamId = {}
-  },
   clearOrg(state) {
     state.orgId = null
   },
@@ -163,27 +148,5 @@ export const mutations = {
   },
   setDatastream(state, value) {
     state.datastreamId = value && value._id
-  },
-
-  setDatastreamFlag(state, { id, flag }) {
-    if (flag) Vue.set(state.flagsByDatastreamId, id, flag)
-    else Vue.delete(state.flagsByDatastreamId, id)
-  },
-
-  flagDatastream(state, { id, flags }) {
-    const flag = state.flagsByDatastreamId[id]
-
-    if (!flag) {
-      if (flags.length) Vue.set(state.flagsByDatastreamId, id, flags[0])
-      return
-    }
-
-    const index = flags.indexOf(flag)
-
-    if (index === -1 || index === flag.length - 1) {
-      Vue.delete(state.flagsByDatastreamId, id)
-    } else {
-      Vue.set(state.flagsByDatastreamId, id, flags[index + 1])
-    }
   }
 }

@@ -75,6 +75,9 @@
                         <v-list-tile>
                           <v-list-tile-title>Datastreams</v-list-tile-title>
                         </v-list-tile>
+                        <v-list-tile>
+                          <v-list-tile-title>Equipment</v-list-tile-title>
+                        </v-list-tile>
                       </v-list>
                     </v-menu>
                   </v-card-actions>
