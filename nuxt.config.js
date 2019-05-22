@@ -49,8 +49,10 @@ module.exports = {
   css: ['~/assets/style/app.styl'],
 
   env: {
-    apiPath: process.env.API_PATH || '',
-    apiUri: process.env.API_URI || 'http://localhost:3030',
+    // apiPath: process.env.API_PATH || '',
+    // apiUri: process.env.API_URI || 'http://localhost:3030',
+    apiPath: process.env.API_PATH || '/v2',
+    apiUri: process.env.API_URI || 'https://api.dendra.science',
 
     googleMapsAPIKey: 'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
   },

@@ -6,7 +6,7 @@
           <v-flex>
             <v-tabs v-model="tabIndex" class="elevation-2" fixed-tabs>
               <v-tab>
-                Browse
+                Search
               </v-tab>
               <v-tab>
                 Chart

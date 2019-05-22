@@ -231,7 +231,7 @@
                       flat
                       dark
                       nuxt
-                      >View</v-btn
+                      >Search</v-btn
                     >
                   </v-card-actions>
                 </v-card>
