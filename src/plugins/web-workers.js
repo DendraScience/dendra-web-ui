@@ -1,9 +1,7 @@
 import SeriesFetchWorker from '@/assets/workers/series-fetch.worker'
 
-export default ({ store }, inject) => {
+export default (_, inject) => {
   inject('workers', {
-    createSeriesFetchWorker() {
-      return new SeriesFetchWorker()
-    }
+    createSeriesFetchWorker: () => new SeriesFetchWorker()
   })
 }

@@ -359,7 +359,18 @@
         <v-layout column>
           <v-flex v-for="(chart, i) in charts" :key="chart.id"
             ><v-card>
+              <v-card-text v-if="chart.alert">
+                <v-alert
+                  v-model="chart.alert.isShown"
+                  :type="chart.alert.type"
+                  outline
+                >
+                  {{ chart.alert.message }}
+                </v-alert>
+              </v-card-text>
+
               <hc-time-series
+                v-if="seriesFetchWorker"
                 :id="chart.id"
                 :options="Object.freeze(chart.options)"
                 :series-options="Object.freeze(chart.seriesOptions)"
@@ -492,6 +503,8 @@ export default {
     selectedStationIds: null,
     selectedTermLabels: {},
 
+    seriesFetchWorker: null,
+
     timerInterval: 60000
   }),
 
@@ -616,8 +629,21 @@ export default {
 
     this.seriesFetchWorker = this.$workers.createSeriesFetchWorker()
     this.seriesFetchWorker.postMessage({
-      accessToken: this.auth.accessToken
+      accessToken: this.auth.accessToken,
+      api: this.$api
     })
+    // Handle HMR so we can debug
+    // SEE: https://webpack.github.io/docs/hot-module-replacement.html
+    if (module.hot) {
+      this.seriesFetchWorker.removeEventListener(
+        'message',
+        this.workerMessageHandler
+      )
+    }
+    this.seriesFetchWorker.addEventListener(
+      'message',
+      this.workerMessageHandler
+    )
 
     this.uniqueCounter = (Math.random() * 0x80000000) | 0
 
@@ -631,6 +657,10 @@ export default {
     this.debouncedDatastreamsSearch.cancel()
     this.debouncedDatastreamsSearch = null
 
+    this.seriesFetchWorker.removeEventListener(
+      'message',
+      this.workerMessageHandler
+    )
     this.seriesFetchWorker.terminate()
     this.seriesFetchWorker = null
   },
@@ -698,7 +728,8 @@ export default {
       })
 
       this.charts.unshift({
-        id: this.uniqueCounter++,
+        alert: null,
+        id: ++this.uniqueCounter,
         options,
         seriesOptions,
         fetchSpec
@@ -707,14 +738,36 @@ export default {
       this.resetCart()
     },
 
-    print(on) {
-      this.$logger.log(on)
-    },
-
     goToChart() {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
       })
+    },
+
+    workerMessageHandler(event) {
+      const { data } = event
+
+      if (data.message) {
+        const chart = this.charts.find(c => c.id === data.id)
+        if (chart) {
+          chart.alert = {
+            isShown: true,
+            message: data.message,
+            type: 'info'
+          }
+        }
+      }
+
+      if (data.error) {
+        const chart = this.charts.find(c => c.id === data.id)
+        if (chart) {
+          chart.alert = {
+            isShown: true,
+            message: data.error.message,
+            type: 'error'
+          }
+        }
+      }
     },
 
     timerCallback() {

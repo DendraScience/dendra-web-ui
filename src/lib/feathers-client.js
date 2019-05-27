@@ -3,14 +3,12 @@ import socketio from '@feathersjs/socketio-client'
 import auth from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
 import logger from '@dendra-science/console-logger'
+import api from '@/lib/api'
 
-const apiPath = process.env.apiPath
-const apiUri = process.env.apiUri
+logger.info(`Configuring Feathers client: ${api.uri}${api.path}/socket.io`)
 
-logger.info(`Configuring Feathers client: ${apiUri}${apiPath}/socket.io`)
-
-const socket = io(apiUri, {
-  path: `${apiPath}/socket.io`,
+const socket = io(api.uri, {
+  path: `${api.path}/socket.io`,
   transports: ['websocket']
 })
 

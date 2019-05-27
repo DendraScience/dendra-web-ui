@@ -3,8 +3,6 @@
 </template>
 
 <script>
-// import _ from 'lodash'
-// import chroma from 'chroma-js'
 import Highcharts from 'highcharts'
 
 export default {
@@ -62,7 +60,6 @@ export default {
     if (module.hot) {
       this.worker.removeEventListener('message', this.workerMessageHandler)
     }
-
     this.worker.addEventListener('message', this.workerMessageHandler)
   },
 
@@ -79,6 +76,10 @@ export default {
     this.chart.destroy()
     this.chart = null
 
+    this.worker.postMessage({
+      id: this.id,
+      cancel: true
+    })
     this.worker.removeEventListener('message', this.workerMessageHandler)
   },
 
@@ -97,8 +98,13 @@ export default {
 
       if (data.id !== this.id) return
 
+      if (data.isFetching === true) {
+        this.removeAllSeries()
+        this.chart.showLoading()
+      }
+
       if (data.series) {
-        const { series, total } = data
+        const { series } = data
         const options = Object.assign(
           {
             step: true,
@@ -108,17 +114,13 @@ export default {
           { data: series.data }
         )
         this.chart.addSeries(options)
-        this.chart.showLoading(`Loaded ${total} points...`)
-        return
       }
 
-      if (data.isFetching) {
-        this.removeAllSeries()
-        this.chart.showLoading()
-        return
+      if (data.total) {
+        this.chart.showLoading(`Loaded ${data.total} points...`)
       }
 
-      if (data.isDone) {
+      if (data.isFetching === false) {
         this.chart.hideLoading()
       }
     }

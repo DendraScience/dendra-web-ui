@@ -49,6 +49,6 @@ Dockerfile
 README.md
 src
 !src/modules
-!src/server
+# !src/server
 !src/static
 test

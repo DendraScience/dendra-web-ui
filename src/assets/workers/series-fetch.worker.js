@@ -1,26 +1,32 @@
-const apiPath = process.env.apiPath
-const apiUri = process.env.apiUri
-
+const api = {}
+const processIds = {}
+const datapointsMax = process.env.datapointsMax
 const headers = new Headers()
 
 headers.append('Content-Type', 'application/json')
+headers.append('Dendra-Fetch-Action', 'graph')
 
 async function processFetchSpec(
   id,
   { baseQuery, queries, startTime, untilTime }
 ) {
-  self.postMessage({ id, isFetching: true })
-
   let total = 0
 
   for (let index = 0; index < queries.length; index++) {
     const query = queries[index]
-    let data = []
+    const data = []
     let fromTime = startTime
 
-    // TODO: Remove hard limit
-    while (data.length < 201600) {
-      const url = new URL(`${apiUri}${apiPath}/datapoints`)
+    while (processIds[id] !== undefined) {
+      if (data.length > datapointsMax) {
+        self.postMessage({
+          id,
+          message: `The maximum number of datapoints (${datapointsMax}) has been exceeded.`
+        })
+        break
+      }
+
+      const url = new URL(`${api.uri}${api.path}/datapoints`)
       const params = Object.assign({}, baseQuery, query, {
         t_int: true,
         t_local: true,
@@ -42,35 +48,63 @@ async function processFetchSpec(
 
       const json = await response.json()
 
-      if (!(json && json.data && json.data.length)) break
+      if (!response.ok) {
+        if (json && json.name && json.message) {
+          throw json
+        } else {
+          throw new Error(`Non-success status code ${response.status}`)
+        }
+      }
 
-      data = data.concat(json.data.map(point => [point.lt, point.v]))
+      if (!(json && Array.isArray(json.data) && json.data.length)) break
+
+      for (let i = 0; i < json.data.length; i++) {
+        const { lt, v } = json.data[i]
+        data.push([lt, v])
+      }
+
+      total += json.data.length
+
+      self.postMessage({ id, total })
+
       fromTime = new Date(json.data[json.data.length - 1].lt).toISOString()
     }
 
-    total += data.length
-
-    self.postMessage({ id, series: { data, index }, total })
+    self.postMessage({ id, series: { data, index } })
   }
 }
 
 // Respond to message from parent thread
 self.addEventListener('message', event => {
   const { data } = event
+  const { id } = data
 
   if (data.accessToken) {
     headers.set('Authorization', data.accessToken)
   }
 
-  if (data.fetchSpec) {
-    const { id } = data
+  if (data.api) {
+    Object.assign(api, data.api)
+  }
 
+  if (id !== undefined && data.cancel === true) {
+    delete processIds[id]
+  }
+
+  if (id !== undefined && data.fetchSpec) {
+    self.postMessage({ id, isFetching: true })
+
+    processIds[id] = true
     processFetchSpec(id, data.fetchSpec)
-      .then(() => {
-        self.postMessage({ id, isDone: true })
-      })
-      .catch(error => {
-        self.postMessage({ id, error })
+      .then(
+        () => {},
+        error => {
+          self.postMessage({ id, error })
+        }
+      )
+      .finally(() => {
+        self.postMessage({ id, isFetching: false })
+        delete processIds[id]
       })
   }
 })
