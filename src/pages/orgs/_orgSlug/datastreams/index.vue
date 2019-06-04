@@ -170,7 +170,7 @@
                     <v-btn :disabled="!cartCount" @click="resetCart"
                       >Reset</v-btn
                     >
-                    <v-btn :disabled="!cartCount" @click="goToChart"
+                    <v-btn :disabled="!cartCount" @click="goToChartTab"
                       >Chart</v-btn
                     >
                     <v-btn disabled>Download</v-btn>
@@ -369,30 +369,98 @@
                 </v-alert>
               </v-card-text>
 
-              <hc-time-series
-                v-if="seriesFetchWorker"
-                :id="chart.id"
-                :options="Object.freeze(chart.options)"
-                :series-options="Object.freeze(chart.seriesOptions)"
-                :fetch-spec="Object.freeze(chart.fetchSpec)"
-                :worker="Object.freeze(seriesFetchWorker)"
-              />
+              <div class="pt-1" style="position: relative;">
+                <hc-time-series
+                  v-if="seriesFetchWorker"
+                  :id="chart.id"
+                  :bus="chart.bus"
+                  :export-chart-options="exportChartOptions"
+                  :options="Object.freeze(chart.options)"
+                  :series-options="Object.freeze(chart.seriesOptions)"
+                  :fetch-spec="Object.freeze(chart.fetchSpec)"
+                  :worker="Object.freeze(seriesFetchWorker)"
+                />
 
-              <v-fab-transition>
-                <v-btn
-                  absolute
-                  color="grey lighten1"
-                  dark
-                  fab
-                  right
-                  small
-                  top
-                  @click="charts.splice(i, 1)"
-                >
-                  <v-icon>remove</v-icon>
-                </v-btn>
-              </v-fab-transition>
+                <v-menu bottom left offset-y>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      absolute
+                      flat
+                      icon
+                      right
+                      small
+                      style="margin-top: 30px;"
+                      top
+                      v-on="on"
+                    >
+                      <v-icon>more_vert</v-icon>
+                    </v-btn>
+                  </template>
+
+                  <v-list>
+                    <v-list-tile @click="charts.splice(i, 1)">
+                      <v-list-tile-title>Remove</v-list-tile-title>
+                    </v-list-tile>
+
+                    <v-list-tile
+                      :disabled="!chart.isReady"
+                      @click="exportDialog = true"
+                    >
+                      <v-list-tile-title>Export as...</v-list-tile-title>
+                    </v-list-tile>
+
+                    <v-list-tile
+                      v-if="previousExport > -1"
+                      :disabled="!chart.isReady"
+                      @click="exportChart(chart)"
+                    >
+                      <v-list-tile-title
+                        >Export as
+                        {{
+                          exportItems[previousExport].title
+                        }}</v-list-tile-title
+                      >
+                    </v-list-tile>
+                  </v-list>
+                </v-menu>
+              </div>
             </v-card>
+
+            <v-dialog
+              ref="exportDialog"
+              v-model="exportDialog"
+              lazy
+              max-width="340"
+            >
+              <v-card>
+                <v-card-title class="headline">Export as</v-card-title>
+
+                <v-container grid-list-lg>
+                  <v-layout align-center justify-center column>
+                    <v-flex>
+                      <v-radio-group v-model="selectedExport" column>
+                        <v-radio
+                          v-for="(item, j) in exportItems"
+                          :key="j"
+                          :label="item.title"
+                          :value="j"
+                        />
+                      </v-radio-group>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn flat color="primary" @click="exportChart(chart)"
+                    >Export</v-btn
+                  >
+                  <v-btn flat color="primary" @click="exportDialog = false"
+                    >Cancel</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-flex>
         </v-layout>
       </v-container>
@@ -403,6 +471,7 @@
 <script>
 // TODO: Refactor and break out!!!
 import HcTimeSeries from '@/components/HcTimeSeries'
+import Vue from 'vue'
 
 import moment from 'moment'
 import timer from '@/mixins/timer'
@@ -470,6 +539,61 @@ export default {
     toDate: moment()
       .endOf('d')
       .format('YYYY-MM-DD'),
+
+    exportChartOptions: {
+      plotOptions: {
+        series: {
+          dataLabels: {
+            enabled: false
+          }
+        }
+      }
+    },
+    exportDialog: false,
+    exportItems: [
+      {
+        event: 'download-csv',
+        title: 'CSV file'
+      },
+      {
+        event: 'export',
+        options: {
+          sourceHeight: 450,
+          sourceWidth: 800,
+          type: 'image/jpeg'
+        },
+        title: 'JPEG image'
+      },
+      {
+        event: 'export',
+        options: {
+          sourceHeight: 450,
+          sourceWidth: 800
+        },
+        title: 'PNG image'
+      },
+      {
+        event: 'export',
+        options: {
+          sourceHeight: 450,
+          sourceWidth: 800,
+          type: 'image/svg+xml'
+        },
+        title: 'SVG image'
+      },
+      {
+        event: 'export',
+        options: {
+          sourceHeight: 450,
+          sourceWidth: 800,
+          type: 'application/pdf'
+        },
+        title: 'PDF document'
+      }
+    ],
+
+    previousExport: -1,
+    selectedExport: 0,
 
     queryDatastreamIds: [],
 
@@ -680,6 +804,23 @@ export default {
           height: 500,
           zoomType: 'x'
         },
+        exporting: {
+          chartOptions: {
+            plotOptions: {
+              series: {
+                dataLabels: {
+                  enabled: true
+                }
+              }
+            }
+          },
+          fallbackToExportServer: false
+        },
+        navigation: {
+          buttonOptions: {
+            enabled: false
+          }
+        },
         title: {
           text: this.chartTitle
         },
@@ -729,7 +870,9 @@ export default {
 
       this.charts.unshift({
         alert: null,
+        bus: new Vue(),
         id: ++this.uniqueCounter,
+        isReady: false,
         options,
         seriesOptions,
         fetchSpec
@@ -738,7 +881,17 @@ export default {
       this.resetCart()
     },
 
-    goToChart() {
+    exportChart(chart) {
+      const { selectedExport } = this
+      const item = this.exportItems[selectedExport]
+
+      this.exportDialog = false
+      this.previousExport = selectedExport
+
+      chart.bus.$emit(item.event, item.options)
+    },
+
+    goToChartTab() {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
       })
@@ -746,26 +899,27 @@ export default {
 
     workerMessageHandler(event) {
       const { data } = event
+      const chart = this.charts.find(c => c.id === data.id)
+
+      if (!chart) return
+
+      if (data.isFetching === false) {
+        chart.isReady = true
+      }
 
       if (data.message) {
-        const chart = this.charts.find(c => c.id === data.id)
-        if (chart) {
-          chart.alert = {
-            isShown: true,
-            message: data.message,
-            type: 'info'
-          }
+        chart.alert = {
+          isShown: true,
+          message: data.message,
+          type: 'info'
         }
       }
 
       if (data.error) {
-        const chart = this.charts.find(c => c.id === data.id)
-        if (chart) {
-          chart.alert = {
-            isShown: true,
-            message: data.error.message,
-            type: 'error'
-          }
+        chart.alert = {
+          isShown: true,
+          message: data.error.message,
+          type: 'error'
         }
       }
     },

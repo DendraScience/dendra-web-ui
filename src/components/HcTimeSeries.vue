@@ -4,12 +4,27 @@
 
 <script>
 import Highcharts from 'highcharts'
+import exporting from 'highcharts/modules/exporting'
+import exportData from 'highcharts/modules/export-data'
+import offline from 'highcharts/modules/offline-exporting'
+
+exporting(Highcharts)
+exportData(Highcharts)
+offline(Highcharts)
 
 export default {
   props: {
+    bus: {
+      default: null,
+      type: Object
+    },
     id: {
       default: 0,
       type: Number
+    },
+    exportChartOptions: {
+      default: () => {},
+      type: Object
     },
     options: {
       default: () => ({
@@ -66,6 +81,9 @@ export default {
   mounted() {
     this.chart = Highcharts.chart(this.$refs.chart, this.options)
 
+    this.bus.$on('download-csv', this.downloadCSV)
+    this.bus.$on('export', this.export)
+
     this.worker.postMessage({
       id: this.id,
       fetchSpec: this.fetchSpec
@@ -84,6 +102,22 @@ export default {
   },
 
   methods: {
+    downloadCSV() {
+      const { chart } = this
+
+      this.$nextTick(() => {
+        if (chart) chart.downloadCSV()
+      })
+    },
+
+    export(options) {
+      const { chart } = this
+
+      this.$nextTick(() => {
+        if (chart) chart.exportChartLocal(options, this.exportChartOptions)
+      })
+    },
+
     removeAllSeries() {
       const { chart } = this
       if (!chart) return
