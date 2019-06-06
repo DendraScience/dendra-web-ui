@@ -21,6 +21,11 @@ export const plugins = [
       return {
         get quantitySelected() {
           return store.state.cart.quantitiesById[data._id]
+        },
+
+        // HACK: Do this right, see: https://feathers-vuex.feathers-plus.com/common-patterns.html#relationships-for-populated-data
+        get station() {
+          return store.getters['stations/get'](data.station_id)
         }
       }
     },

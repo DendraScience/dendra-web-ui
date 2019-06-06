@@ -29,7 +29,12 @@
                   <v-card-text
                     class="grow"
                     :style="organization.slug ? { cursor: 'pointer' } : {}"
-                    @click="doIt"
+                    @click="
+                      $router.push({
+                        name: 'orgs-orgSlug',
+                        params: { orgSlug: organization.slug }
+                      })
+                    "
                   >
                     <h4 class="display-1 mb-2">{{ organization.name }}</h4>
                     <p class="subheading">{{ organization.description }}</p>
@@ -43,7 +48,7 @@
                       flat
                       target="_blank"
                     >
-                      Website</v-btn
+                      Visit Site</v-btn
                     >
 
                     <v-spacer />
@@ -69,15 +74,24 @@
                       </template>
 
                       <v-list>
+                        <!--
                         <v-list-tile>
                           <v-list-tile-title>Stations</v-list-tile-title>
                         </v-list-tile>
-                        <v-list-tile>
+ -->
+                        <v-list-tile
+                          :to="{
+                            name: 'orgs-orgSlug-datastreams',
+                            params: { orgSlug: organization.slug }
+                          }"
+                        >
                           <v-list-tile-title>Datastreams</v-list-tile-title>
                         </v-list-tile>
+                        <!--
                         <v-list-tile>
                           <v-list-tile-title>Equipment</v-list-tile-title>
                         </v-list-tile>
+ -->
                       </v-list>
                     </v-menu>
                   </v-card-actions>

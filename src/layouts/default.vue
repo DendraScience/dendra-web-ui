@@ -206,18 +206,6 @@ export default {
               to: '/login'
             }
           ]
-        },
-        {
-          items: [
-            {
-              title: 'About',
-              to: '/about'
-            },
-            {
-              title: 'Contact',
-              to: '/contact'
-            }
-          ]
         }
       ],
       title: 'Vuetify.js'

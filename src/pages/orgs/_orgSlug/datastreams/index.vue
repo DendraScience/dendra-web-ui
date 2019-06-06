@@ -157,6 +157,7 @@
                                 </v-btn>
                               </td>
 
+                              <td>{{ props.item.station.name }}</td>
                               <td>{{ props.item.name }}</td>
                               <td>{{ props.item.description }}</td>
                             </template>
@@ -508,7 +509,14 @@ export default {
       {
         align: 'left',
         sortable: false,
-        text: 'Name',
+        text: 'Station',
+        value: 'station.name',
+        width: '20%'
+      },
+      {
+        align: 'left',
+        sortable: false,
+        text: 'Datastream',
         value: 'name',
         width: '40%'
       },
@@ -607,7 +615,7 @@ export default {
       {
         align: 'left',
         sortable: false,
-        text: 'Name',
+        text: 'Datastream',
         value: 'name',
         width: '40%'
       },
