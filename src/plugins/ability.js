@@ -1,6 +1,5 @@
 import { Ability } from '@casl/ability'
-
-const TYPE_KEY = Symbol.for('type')
+import { TYPE_KEY } from '@/lib/ability'
 
 Ability.addAlias('read', ['get', 'find'])
 Ability.addAlias('delete', 'remove')

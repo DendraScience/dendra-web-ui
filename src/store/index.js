@@ -5,6 +5,8 @@ import helpersVuex from '@/lib/helpers-vuex'
 import math from '@/lib/math'
 import moment from 'moment'
 
+import { TYPE_KEY } from '@/lib/ability'
+
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: '_id',
   replaceItems: true,
@@ -26,7 +28,9 @@ export const plugins = [
         // HACK: Do this right, see: https://feathers-vuex.feathers-plus.com/common-patterns.html#relationships-for-populated-data
         get station() {
           return store.getters['stations/get'](data.station_id)
-        }
+        },
+
+        [TYPE_KEY]: 'datastreams'
       }
     },
 

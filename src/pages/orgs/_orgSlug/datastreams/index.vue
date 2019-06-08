@@ -405,20 +405,24 @@
 
                     <v-list-tile
                       :disabled="!chart.isReady"
-                      @click="exportDialog = true"
+                      @click="showExportDialog(chart)"
                     >
                       <v-list-tile-title>Export as...</v-list-tile-title>
                     </v-list-tile>
 
                     <v-list-tile
-                      v-if="previousExport > -1"
-                      :disabled="!chart.isReady"
-                      @click="exportChart(chart)"
+                      v-if="previousExportIndex > -1"
+                      :disabled="
+                        !chart.isReady ||
+                          (exportItems[previousExportIndex].download &&
+                            !chart.canDownload)
+                      "
+                      @click="exportChart(chart, previousExportIndex)"
                     >
                       <v-list-tile-title
                         >Export as
                         {{
-                          exportItems[previousExport].title
+                          exportItems[previousExportIndex].title
                         }}</v-list-tile-title
                       >
                     </v-list-tile>
@@ -426,46 +430,47 @@
                 </v-menu>
               </div>
             </v-card>
-
-            <v-dialog
-              ref="exportDialog"
-              v-model="exportDialog"
-              lazy
-              max-width="340"
-            >
-              <v-card>
-                <v-card-title class="headline">Export as</v-card-title>
-
-                <v-container grid-list-lg>
-                  <v-layout align-center justify-center column>
-                    <v-flex>
-                      <v-radio-group v-model="selectedExport" column>
-                        <v-radio
-                          v-for="(item, j) in exportItems"
-                          :key="j"
-                          :label="item.title"
-                          :value="j"
-                        />
-                      </v-radio-group>
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-
-                <v-card-actions>
-                  <v-spacer />
-                  <v-btn flat color="primary" @click="exportChart(chart)"
-                    >Export</v-btn
-                  >
-                  <v-btn flat color="primary" @click="exportDialog = false"
-                    >Cancel</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
           </v-flex>
         </v-layout>
       </v-container>
     </v-flex>
+
+    <v-dialog ref="exportDialog" v-model="exportDialog" lazy max-width="340">
+      <v-card>
+        <v-card-title class="headline">Export as</v-card-title>
+
+        <v-container grid-list-lg>
+          <v-layout align-center justify-center column>
+            <v-flex>
+              <v-radio-group v-model="selectedExportIndex" column>
+                <v-radio
+                  v-for="(item, j) in exportItems"
+                  :key="j"
+                  :disabled="
+                    item.download && selectedChart && !selectedChart.canDownload
+                  "
+                  :label="item.title"
+                  :value="j"
+                />
+              </v-radio-group>
+            </v-flex>
+          </v-layout>
+        </v-container>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            flat
+            color="primary"
+            @click="exportChart(selectedChart, selectedExportIndex)"
+            >Export</v-btn
+          >
+          <v-btn flat color="primary" @click="exportDialog = false"
+            >Cancel</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -560,10 +565,6 @@ export default {
     exportDialog: false,
     exportItems: [
       {
-        event: 'download-csv',
-        title: 'CSV file'
-      },
-      {
         event: 'export',
         options: {
           sourceHeight: 450,
@@ -597,11 +598,18 @@ export default {
           type: 'application/pdf'
         },
         title: 'PDF document'
+      },
+      {
+        download: true,
+        event: 'download-csv',
+        title: 'CSV file'
       }
     ],
 
-    previousExport: -1,
-    selectedExport: 0,
+    previousExportIndex: -1,
+    selectedExportIndex: 0,
+
+    selectedChart: null,
 
     queryDatastreamIds: [],
 
@@ -672,6 +680,7 @@ export default {
           'is_hidden',
           'name',
           'description',
+          'access_levels_resolved',
           'organization_id',
           'station_id'
         ],
@@ -866,8 +875,12 @@ export default {
           .toISOString()
       }
 
+      let canDownload = true
+
       _forEach(this.quantitiesById, (value, id) => {
         const datastream = this.getDatastream(id)
+
+        if (this.$cannot('download', datastream)) canDownload = false
 
         seriesOptions.push({
           name: datastream.name,
@@ -879,6 +892,7 @@ export default {
       this.charts.unshift({
         alert: null,
         bus: new Vue(),
+        canDownload,
         id: ++this.uniqueCounter,
         isReady: false,
         options,
@@ -889,12 +903,11 @@ export default {
       this.resetCart()
     },
 
-    exportChart(chart) {
-      const { selectedExport } = this
-      const item = this.exportItems[selectedExport]
+    exportChart(chart, exportIndex) {
+      const item = this.exportItems[exportIndex]
 
       this.exportDialog = false
-      this.previousExport = selectedExport
+      this.previousExportIndex = exportIndex
 
       chart.bus.$emit(item.event, item.options)
     },
@@ -903,6 +916,12 @@ export default {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
       })
+    },
+
+    showExportDialog(chart) {
+      this.selectedChart = chart
+      this.selectedExportIndex = 0
+      this.exportDialog = true
     },
 
     workerMessageHandler(event) {
