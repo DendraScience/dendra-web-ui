@@ -54,7 +54,9 @@ module.exports = {
 
     datapointsMax: 288 * 365 * 10, // 10 years of 5 minute data
 
-    googleMapsAPIKey: 'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
+    googleMapsAPIKey:
+      process.env.GOOGLE_MAPS_API_KEY ||
+      'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
   },
 
   /**
@@ -173,6 +175,7 @@ module.exports = {
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },
     { src: '~/plugins/api', ssr: false },
+    { src: '~/plugins/maps', ssr: false },
     { src: '~/plugins/global-filters', ssr: false },
     { src: '~/plugins/global-mixin', ssr: false },
     { src: '~/plugins/web-workers', ssr: false }

@@ -13,6 +13,7 @@
         </v-layout>
 
         <feathers-vuex-find
+          v-slot="{ isFindPending: loading, items: stations }"
           :query="{
             is_hidden: false,
             organization_id: org._id,
@@ -21,11 +22,7 @@
           }"
           service="stations"
         >
-          <v-layout
-            slot-scope="{ isFindPending: loading, items: stations }"
-            row
-            wrap
-          >
+          <v-layout row wrap>
             <v-flex xs12 md8>
               <v-autocomplete
                 v-model="selectedStationId"
@@ -46,11 +43,12 @@
 
         <feathers-vuex-get
           v-if="selectedStationId"
+          v-slot="{ item: station }"
           :id="selectedStationId"
           local
           service="stations"
         >
-          <v-layout slot-scope="{ item: station }">
+          <v-layout>
             <v-flex>
               <v-card>
                 <v-card-title primary-title class="headline">
@@ -69,6 +67,7 @@
                     >
                       <v-responsive aspect-ratio="1">
                         <google-map
+                          auto-pan
                           :lat-lng-literal="{
                             lat: station.geo.coordinates[1],
                             lng: station.geo.coordinates[0]
@@ -182,13 +181,13 @@
 
         <v-layout row wrap mt-4>
           <feathers-vuex-find
+            v-slot="{ pagination }"
             :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
             service="stations"
           >
-            <v-flex v-if="pagination" slot-scope="{ pagination }" xs12 sm4>
-              <v-hover>
+            <v-flex v-if="pagination" xs12 sm4>
+              <v-hover v-slot="{ hover }">
                 <v-card
-                  slot-scope="{ hover }"
                   :class="`elevation-${hover ? 8 : 2}`"
                   color="blue-grey darken-2"
                   class="white--text"
@@ -205,13 +204,13 @@
           </feathers-vuex-find>
 
           <feathers-vuex-find
+            v-slot="{ pagination }"
             :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
             service="datastreams"
           >
-            <v-flex v-if="pagination" slot-scope="{ pagination }" xs12 sm4>
-              <v-hover>
+            <v-flex v-if="pagination" xs12 sm4>
+              <v-hover v-slot="{ hover }">
                 <v-card
-                  slot-scope="{ hover }"
                   :class="`elevation-${hover ? 8 : 2}`"
                   color="blue-grey darken-2"
                   class="white--text"

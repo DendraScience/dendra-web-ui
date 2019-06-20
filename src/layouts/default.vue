@@ -1,6 +1,6 @@
 <template>
   <v-app light>
-    <v-navigation-drawer v-model="drawer" app dark>
+    <v-navigation-drawer v-model="drawer" app dark fixed>
       <v-toolbar flat prominent color="transparent">
         <!-- TODO: Remove this -->
         <!--
@@ -41,6 +41,7 @@
 
     <v-toolbar
       app
+      fixed
       flat
       prominent
       dark
@@ -145,6 +146,11 @@ export default {
               can: ['read', 'organizations'],
               title: 'Organizations',
               to: '/orgs'
+            },
+            {
+              can: ['read', 'stations'],
+              title: 'Stations',
+              to: '/stations'
             },
             {
               disabled: true,

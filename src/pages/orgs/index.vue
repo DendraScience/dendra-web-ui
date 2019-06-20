@@ -9,10 +9,11 @@
         </v-layout>
 
         <feathers-vuex-find
+          v-slot="{ items: organizations }"
           :query="{ $sort: { sort_value: 1, name: 1 } }"
           service="organizations"
         >
-          <v-layout slot-scope="{ items: organizations }" row wrap>
+          <v-layout row wrap>
             <v-flex
               v-for="organization in organizations"
               :key="organization._id"
@@ -20,9 +21,8 @@
               md6
               d-flex
             >
-              <v-hover>
+              <v-hover v-slot="{ hover }">
                 <v-card
-                  slot-scope="{ hover }"
                   :class="`elevation-${hover ? 8 : 2}`"
                   style="display: flex; flex-direction: column;"
                 >
@@ -107,12 +107,6 @@
 
 <script>
 export default {
-  middleware: ['no-org'],
-
-  methods: {
-    doIt() {
-      this.$logger.log('Did it!')
-    }
-  }
+  middleware: ['no-org']
 }
 </script>

@@ -64,8 +64,8 @@ export default {
   },
 
   watch: {
-    options(newOptions) {
-      this.chart.update(newOptions)
+    options(newValue) {
+      this.chart.update(newValue)
     }
   },
 

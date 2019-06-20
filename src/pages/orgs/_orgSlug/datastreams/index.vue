@@ -23,6 +23,7 @@
 
                   <v-container fluid>
                     <feathers-vuex-find
+                      v-slot="{ isFindPending: loading, items: stations }"
                       :query="{
                         is_hidden: false,
                         organization_id: org._id,
@@ -31,11 +32,7 @@
                       }"
                       service="stations"
                     >
-                      <v-layout
-                        slot-scope="{ isFindPending: loading, items: stations }"
-                        row
-                        wrap
-                      >
+                      <v-layout row wrap>
                         <v-flex xs12>
                           <v-autocomplete
                             v-model="selectedStationIds"
@@ -58,6 +55,7 @@
                     </feathers-vuex-find>
 
                     <feathers-vuex-find
+                      v-slot="{ items: vocabularies }"
                       :query="{
                         is_hidden: false,
                         scheme_id: 'ds',
@@ -66,7 +64,7 @@
                       }"
                       service="vocabularies"
                     >
-                      <v-layout slot-scope="{ items: vocabularies }" row wrap>
+                      <v-layout row wrap>
                         <v-flex
                           v-for="vocabulary in vocabularies"
                           :key="vocabulary._id"
@@ -93,6 +91,11 @@
                     </feathers-vuex-find>
 
                     <feathers-vuex-find
+                      v-slot="{
+                        isFindPending: loading,
+                        items: datastreams,
+                        pagination
+                      }"
                       :fetch-query="datastreamsFetchQuery"
                       :query="datastreamsQuery"
                       :watch="[
@@ -105,15 +108,7 @@
                       qid="browser"
                       service="datastreams"
                     >
-                      <v-layout
-                        slot-scope="{
-                          isFindPending: loading,
-                          items: datastreams,
-                          pagination
-                        }"
-                        row
-                        wrap
-                      >
+                      <v-layout row wrap>
                         <v-flex xs12>
                           <v-text-field
                             v-model.trim="datastreamsSearchDebounce"
@@ -187,12 +182,13 @@
 
                   <v-container fluid>
                     <feathers-vuex-find
+                      v-slot="{ items: datastreams }"
                       :query="selectedDatastreamsQuery"
                       watch="query"
                       local
                       service="datastreams"
                     >
-                      <v-layout slot-scope="{ items: datastreams }" row wrap>
+                      <v-layout row wrap>
                         <v-flex xs12>
                           <v-data-table
                             :headers="selectedDatastreamsHeaders"
