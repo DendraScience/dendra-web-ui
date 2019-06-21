@@ -49,19 +49,26 @@
             style="position: absolute; top: 0; z-index: 1;"
             width="400"
           >
-            <v-expansion-panel style="margin-top: 120px;">
+            <v-expansion-panel
+              v-model="stationsPanel"
+              :expand="stationsExpand"
+              style="margin-top: 120px;"
+            >
               <v-expansion-panel-content
                 v-for="station in stations"
+                v-show="shownStationIds.includes(station._id)"
                 :key="station._id"
                 hide-actions
               >
                 <template v-slot:header>
-                  <div>
+                  <div style="width: 100%;">
                     <v-icon class="mr-1" color="error" small>error</v-icon>
                     <a href="/" class="black--text station-link">{{
                       station.name
                     }}</a>
                   </div>
+
+                  <hc-sparkline />
                 </template>
 
                 <v-layout align-end row>
@@ -86,14 +93,15 @@
           </v-navigation-drawer>
 
           <google-map
+            :filter-keys="shownStationIds"
+            :locations="stations"
+            :map-options="{}"
             auto-fit
             auto-zoom
             location-key="_id"
             location-lat="geo.coordinates[1]"
             location-lng="geo.coordinates[0]"
             location-title="name"
-            :locations="stations"
-            :map-options="{}"
             style="width: 100%; height: 100%;"
           />
         </div>
@@ -104,16 +112,19 @@
 
 <script>
 import GoogleMap from '@/components/GoogleMap'
+import HcSparkline from '@/components/HcSparkline'
 
 import timer from '@/mixins/timer'
 import _debounce from 'lodash/debounce'
+import _union from 'lodash/union'
 
 // import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
   components: {
-    GoogleMap
+    GoogleMap,
+    HcSparkline
   },
 
   middleware: ['no-org', 'system-time-utc'],
@@ -124,10 +135,14 @@ export default {
     return {
       drawer: true,
 
+      stationsExpand: false,
+      stationsPanel: [],
+      stationsPanelOpen: [],
       stationsSearch: null,
       stationsSearchDebounce: null,
 
       queryStationIds: [],
+      shownStationIds: [],
 
       selectedOrgIds: null,
 
@@ -190,12 +205,33 @@ export default {
   },
 
   watch: {
+    queryStationIds(newValue) {
+      this.stationsPanelOpen = Array(newValue.length).fill(true)
+    },
+
     stationsPaginationBrowser(newValue) {
-      this.queryStationIds = newValue && newValue.ids
+      this.queryStationIds = _union(
+        this.queryStationIds,
+        newValue && newValue.ids
+      )
+      this.shownStationIds = (newValue && newValue.ids) || []
     },
 
     stationsSearchDebounce(newValue) {
       this.debouncedStationsSearch(newValue)
+    },
+
+    viewToggle(newValue) {
+      if (newValue === 0) {
+        this.stationsExpand = false
+        this.stationsPanel = []
+      } else if (newValue === 1) {
+        this.stationsExpand = true
+        this.$nextTick(() => {
+          // HACK: stationsExpand needs to be set first
+          this.stationsPanel = this.stationsPanelOpen.slice(0)
+        })
+      }
     }
   },
 

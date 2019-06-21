@@ -24,6 +24,7 @@ export default {
     autoFit: { default: false, type: Boolean },
     autoPan: { default: false, type: Boolean },
     autoZoom: { default: false, type: Boolean },
+    filterKeys: { default: null, type: Array },
     hideMarker: { default: false, type: Boolean },
     latLngLiteral: { default: null, type: Object },
     locationKey: { default: 'id', type: String },
@@ -207,6 +208,7 @@ export default {
       if (!locations.length) return
 
       const bounds = (this.bounds = new this.maps.LatLngBounds())
+      const { filterKeys } = this
 
       // Add new markers to map
       locations.forEach(location => {
@@ -214,6 +216,8 @@ export default {
         const lat = _get(location, this.locationLat)
         const lng = _get(location, this.locationLng)
         const title = _get(location, this.locationTitle)
+
+        if (filterKeys && !filterKeys.includes(key)) return
 
         // Markers are cached by location key
         let marker = this.markers[key]

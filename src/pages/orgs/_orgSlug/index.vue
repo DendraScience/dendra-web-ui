@@ -43,8 +43,8 @@
 
         <feathers-vuex-get
           v-if="selectedStationId"
-          v-slot="{ item: station }"
           :id="selectedStationId"
+          v-slot="{ item: station }"
           local
           service="stations"
         >
@@ -67,7 +67,6 @@
                     >
                       <v-responsive aspect-ratio="1">
                         <google-map
-                          auto-pan
                           :lat-lng-literal="{
                             lat: station.geo.coordinates[1],
                             lng: station.geo.coordinates[0]
@@ -78,6 +77,7 @@
                             rotateControl: false,
                             streetViewControl: false
                           }"
+                          auto-pan
                           style="width: 100%; height: 100%;"
                         />
                       </v-responsive>

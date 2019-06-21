@@ -736,7 +736,7 @@ export default {
     // },
 
     datastreamsPaginationBrowser(newValue) {
-      this.queryDatastreamIds = newValue && newValue.ids
+      this.queryDatastreamIds = (newValue && newValue.ids) || []
     },
 
     datastreamsSearchDebounce(newValue) {
