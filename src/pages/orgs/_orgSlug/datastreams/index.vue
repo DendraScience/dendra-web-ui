@@ -476,11 +476,10 @@ import HcTimeSeries from '@/components/HcTimeSeries'
 import Vue from 'vue'
 
 import moment from 'moment'
-import timer from '@/mixins/timer'
 import _debounce from 'lodash/debounce'
 import _forEach from 'lodash/forEach'
 
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   $_veeValidate: {
@@ -491,9 +490,7 @@ export default {
     HcTimeSeries
   },
 
-  middleware: ['check-org', 'dt-unit-vocabulary', 'system-time-utc'],
-
-  mixins: [timer],
+  middleware: ['check-org', 'dt-unit-vocabulary'],
 
   data: () => ({
     charts: [],
@@ -639,9 +636,7 @@ export default {
     selectedStationIds: null,
     selectedTermLabels: {},
 
-    seriesFetchWorker: null,
-
-    timerInterval: 60000
+    seriesFetchWorker: null
   }),
 
   computed: {
@@ -803,8 +798,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(['getSystemTimeUTC']),
-
     ...mapMutations({
       incrementQuantity: 'cart/incrementQuantity',
       resetCart: 'cart/reset',
@@ -821,17 +814,20 @@ export default {
           chartOptions: {
             plotOptions: {
               series: {
-                dataLabels: {
-                  enabled: true
-                }
+                dataLabels: { enabled: true }
               }
             }
           },
           fallbackToExportServer: false
         },
         navigation: {
-          buttonOptions: {
-            enabled: false
+          buttonOptions: { enabled: false }
+        },
+        plotOptions: {
+          series: {
+            states: {
+              inactive: { opacity: 0.9 }
+            }
           }
         },
         title: {
@@ -839,22 +835,16 @@ export default {
         },
         xAxis: {
           crosshair: true,
-          title: {
-            text: 'Time'
-          },
+          title: { text: 'Time' },
           type: 'datetime'
         },
         yAxis: [
           {
-            title: {
-              text: null
-            }
+            title: { text: null }
           },
           {
             opposite: true,
-            title: {
-              text: null
-            }
+            title: { text: null }
           }
         ]
       }
@@ -896,7 +886,8 @@ export default {
         fetchSpec
       })
 
-      this.resetCart()
+      // JSS: Disabled
+      // this.resetCart()
     },
 
     exportChart(chart, exportIndex) {
@@ -945,10 +936,6 @@ export default {
           type: 'error'
         }
       }
-    },
-
-    timerCallback() {
-      return this.getSystemTimeUTC()
     }
   }
 }

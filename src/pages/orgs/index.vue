@@ -19,15 +19,14 @@
               :key="organization._id"
               xs12
               md6
-              d-flex
             >
               <v-hover v-slot="{ hover }">
                 <v-card
                   :class="`elevation-${hover ? 8 : 2}`"
                   style="display: flex; flex-direction: column;"
                 >
-                  <v-card-text
-                    class="grow"
+                  <v-card-title
+                    primary-title
                     :style="organization.slug ? { cursor: 'pointer' } : {}"
                     @click="
                       $router.push({
@@ -36,65 +35,58 @@
                       })
                     "
                   >
-                    <h4 class="display-1 mb-2">{{ organization.name }}</h4>
-                    <p class="subheading">{{ organization.description }}</p>
-                  </v-card-text>
+                    <div class="text-truncate display-1 mb-2">
+                      {{ organization.name }}
+                    </div>
+                    <div class="text-truncate">
+                      {{ organization.description }}
+                    </div>
+                  </v-card-title>
 
-                  <v-card-actions>
-                    <v-btn
-                      v-if="organization.url"
-                      :href="organization.url"
-                      color="primary"
-                      flat
-                      target="_blank"
-                    >
-                      Visit Site</v-btn
-                    >
+                  <v-divider />
 
-                    <v-spacer />
-
-                    <v-btn
-                      v-if="organization.slug"
+                  <v-list>
+                    <v-list-tile
+                      :disabled="!organization.slug"
                       :to="{
-                        name: 'orgs-orgSlug',
+                        name: 'orgs-orgSlug-stations',
                         params: { orgSlug: organization.slug }
                       }"
-                      color="primary"
-                      flat
-                      icon
-                      nuxt
-                      ><v-icon>home</v-icon></v-btn
                     >
+                      <v-list-tile-action> </v-list-tile-action>
+                      <v-list-tile-content>
+                        <v-list-tile-title>Stations map</v-list-tile-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
 
-                    <v-menu v-if="organization.slug" left offset-y>
-                      <template v-slot:activator="{ on }">
-                        <v-btn color="primary" flat icon v-on="on">
-                          <v-icon>more_vert</v-icon>
-                        </v-btn>
-                      </template>
-
-                      <v-list>
-                        <!--
-                        <v-list-tile>
-                          <v-list-tile-title>Stations</v-list-tile-title>
-                        </v-list-tile>
- -->
-                        <v-list-tile
-                          :to="{
-                            name: 'orgs-orgSlug-datastreams',
-                            params: { orgSlug: organization.slug }
-                          }"
+                    <v-list-tile
+                      :disabled="!organization.slug"
+                      :to="{
+                        name: 'orgs-orgSlug-datastreams',
+                        params: { orgSlug: organization.slug }
+                      }"
+                    >
+                      <v-list-tile-action> </v-list-tile-action>
+                      <v-list-tile-content>
+                        <v-list-tile-title
+                          >Datastreams search</v-list-tile-title
                         >
-                          <v-list-tile-title>Datastreams</v-list-tile-title>
-                        </v-list-tile>
-                        <!--
-                        <v-list-tile>
-                          <v-list-tile-title>Equipment</v-list-tile-title>
-                        </v-list-tile>
- -->
-                      </v-list>
-                    </v-menu>
-                  </v-card-actions>
+                      </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile
+                      :disabled="!organization.url"
+                      :href="organization.url"
+                      target="_blank"
+                    >
+                      <v-list-tile-action
+                        ><v-icon>open_in_browser</v-icon></v-list-tile-action
+                      >
+                      <v-list-tile-content>
+                        <v-list-tile-title>Visit website</v-list-tile-title>
+                      </v-list-tile-content>
+                    </v-list-tile>
+                  </v-list>
                 </v-card>
               </v-hover>
             </v-flex>

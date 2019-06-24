@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="org"
     style="position: relative; height: calc(100vh - 64px); overflow: hidden;"
   >
     <div
@@ -54,41 +55,96 @@
               :expand="stationsExpand"
               style="margin-top: 120px;"
             >
-              <v-expansion-panel-content
+              <worker-fetch
                 v-for="station in stations"
-                v-show="shownStationIds.includes(station._id)"
+                :id="station._id"
                 :key="station._id"
-                hide-actions
+                :fetch-spec="{ startTime, stationId: station._id }"
+                :worker="Object.freeze(statFetchWorker)"
               >
-                <template v-slot:header>
-                  <div style="width: 100%;">
-                    <v-icon class="mr-1" color="error" small>error</v-icon>
-                    <a href="/" class="black--text station-link">{{
-                      station.name
-                    }}</a>
-                  </div>
+                <template v-slot="{ result }">
+                  <v-expansion-panel-content
+                    v-show="shownStationIds.includes(station._id)"
+                  >
+                    <template v-slot:actions>
+                      <hc-sparkline
+                        :id="station._id"
+                        :series-options="Object.freeze(seriesOptions)"
+                        :worker="Object.freeze(statFetchWorker)"
+                      />
+                    </template>
 
-                  <hc-sparkline />
+                    <template v-slot:header>
+                      <div>
+                        <station-status-icon
+                          :current-time="currentTime"
+                          :last-seen-time="result.lastSeenTime"
+                          :station="station"
+                          class="mr-1"
+                        />
+
+                        <a
+                          :href="
+                            'https://' +
+                              org.slug +
+                              '.dendra.science/#/stations/' +
+                              station.slug
+                          "
+                          class="black--text station-link"
+                          target="_blank"
+                          >{{ station.name }}</a
+                        >
+                      </div>
+                    </template>
+
+                    <v-layout align-end row>
+                      <v-flex grow pl-2>
+                        <v-card flat>
+                          <v-card-text>
+                            Last seen:
+                            {{
+                              result.lastSeenTime
+                                | moment('(no data)', ['format', 'lll'])
+                            }}
+                          </v-card-text>
+
+                          <v-card-actions>
+                            <v-btn
+                              :to="{
+                                name: 'orgs-orgSlug-datastreams',
+                                params: {
+                                  orgSlug: org.slug
+                                },
+                                query: {
+                                  stationId: station._id
+                                }
+                              }"
+                              color="primary"
+                              exact
+                              flat
+                              nuxt
+                              small
+                              >Datastreams</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+                      </v-flex>
+
+                      <v-flex
+                        v-if="station.media && station.media[0]"
+                        shrink
+                        pr-4
+                        pb-2
+                      >
+                        <v-img
+                          :src="station.media[0].sizes.small.url"
+                          width="90"
+                        />
+                      </v-flex>
+                    </v-layout>
+                  </v-expansion-panel-content>
                 </template>
-
-                <v-layout align-end row>
-                  <v-flex grow pl-2>
-                    <v-card flat>
-                      <v-card-text>
-                        Last seen:
-                      </v-card-text>
-
-                      <v-card-actions>
-                        <v-btn color="primary" flat small>Datastreams</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-flex>
-
-                  <v-flex v-if="station.media && station.media[0]" shrink pa-2>
-                    <v-img :src="station.media[0].sizes.small.url" width="80" />
-                  </v-flex>
-                </v-layout>
-              </v-expansion-panel-content>
+              </worker-fetch>
             </v-expansion-panel>
           </v-navigation-drawer>
 
@@ -113,21 +169,26 @@
 <script>
 import GoogleMap from '@/components/GoogleMap'
 import HcSparkline from '@/components/HcSparkline'
+import StationStatusIcon from '@/components/StationStatusIcon'
+import WorkerFetch from '@/components/WorkerFetch'
 
+import moment from 'moment'
 import timer from '@/mixins/timer'
 import _debounce from 'lodash/debounce'
 import _union from 'lodash/union'
 
-// import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
   components: {
     GoogleMap,
-    HcSparkline
+    HcSparkline,
+    StationStatusIcon,
+    WorkerFetch
   },
 
-  middleware: ['no-org', 'system-time-utc'],
+  middleware: ['check-org', 'system-time-utc'],
 
   mixins: [timer],
 
@@ -144,7 +205,14 @@ export default {
       queryStationIds: [],
       shownStationIds: [],
 
-      selectedOrgIds: null,
+      // TODO: Implement later
+      // selectedOrgIds: null,
+
+      seriesOptions: [
+        {
+          name: 'Battery Voltage'
+        }
+      ],
 
       timerInterval: 60000,
 
@@ -153,20 +221,43 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['org']),
+    ...mapGetters({
+      getTime: 'time/get'
+    }),
+    ...mapState(['auth']),
+
+    currentTime() {
+      return moment.utc(this.getTime('utc').now).valueOf()
+    },
+
+    startTime() {
+      return moment
+        .utc(this.getTime('utc').now)
+        .subtract(24, 'h')
+        .toISOString()
+    },
+
     stationsFetchQuery() {
-      const { stationsSearch, selectedOrgIds } = this
+      // TODO: Implement later
+      // const { stationsSearch, selectedOrgIds } = this
+      const { stationsSearch } = this
 
       const query = {
         is_hidden: false,
+        // TODO: Remove later
+        organization_id: this.org._id,
         station_type: 'weather',
         $limit: 2000, // TODO: Deal with this
         $select: [
           '_id',
+          'general_config',
           'geo',
           'is_hidden',
           'media',
           'name',
-          'organization_id'
+          'organization_id',
+          'slug'
         ],
         $sort: { name: 1 }
       }
@@ -186,8 +277,9 @@ export default {
         ]
       }
 
-      if (selectedOrgIds && selectedOrgIds.length)
-        query.organization_id = { $in: selectedOrgIds }
+      // TODO: Implement later
+      // if (selectedOrgIds && selectedOrgIds.length)
+      //   query.organization_id = { $in: selectedOrgIds }
 
       return query
     },
@@ -243,6 +335,12 @@ export default {
     this.debouncedStationsSearch = _debounce(value => {
       this.stationsSearch = value
     }, 400)
+
+    this.statFetchWorker = this.$workers.createStationStatFetchWorker()
+    this.statFetchWorker.postMessage({
+      accessToken: this.auth.accessToken,
+      api: this.$api
+    })
   },
 
   // mounted() {
@@ -251,9 +349,14 @@ export default {
   beforeDestroy() {
     this.debouncedStationsSearch.cancel()
     this.debouncedStationsSearch = null
+
+    this.statFetchWorker.terminate()
+    this.statFetchWorker = null
   },
 
   methods: {
+    ...mapActions(['getSystemTimeUTC']),
+
     timerCallback() {
       return this.getSystemTimeUTC()
     }

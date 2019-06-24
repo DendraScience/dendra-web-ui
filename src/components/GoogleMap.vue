@@ -15,7 +15,7 @@ const DEFAULT_MAP_OPTIONS = {
   scaleControl: true,
   scrollwheel: false,
   streetViewControl: true,
-  zoom: 10,
+  zoom: 8,
   zoomControl: true
 }
 
@@ -188,7 +188,7 @@ export default {
       if (!(this.map && this.needsRezoom)) return
 
       this.needsRezoom = false
-      if (this.map.getZoom() > 10) this.map.setZoom(10)
+      if (this.map.getZoom() > 8) this.map.setZoom(8)
       // TODO: Could try this to keep all markers inside map area
       // } else {
       //   this.map.setZoom(this.map.getZoom() - 1)

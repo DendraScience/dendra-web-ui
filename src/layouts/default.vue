@@ -17,6 +17,8 @@
       </v-toolbar>
 
       <div v-for="(list, l) in filteredLists" :key="l">
+        <v-subheader v-if="list.header">{{ list.header }}</v-subheader>
+
         <v-list>
           <v-list-tile
             v-for="(item, i) in list.items"
@@ -35,6 +37,7 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
+
         <v-divider />
       </div>
     </v-navigation-drawer>
@@ -135,23 +138,21 @@ export default {
         {
           items: [
             {
+              icon: 'home',
               title: 'Dendra home',
               to: '/'
-            }
-          ]
-        },
-        {
-          items: [
+            },
             {
               can: ['read', 'organizations'],
-              title: 'Organizations',
+              title: 'Organization list',
               to: '/orgs'
             },
-            {
-              can: ['read', 'stations'],
-              title: 'Stations',
-              to: '/stations'
-            },
+            // TODO: Implement later
+            // {
+            //   can: ['read', 'stations'],
+            //   title: 'Stations',
+            //   to: '/stations'
+            // },
             {
               disabled: true,
               title: 'Vocabulary',
@@ -160,10 +161,10 @@ export default {
           ]
         },
         {
+          header: 'ORG_NAME',
           items: [
             {
               org: true,
-              disabled: true,
               name: 'orgs-orgSlug-stations',
               title: 'Stations',
               to: '/stations'
@@ -173,6 +174,12 @@ export default {
               name: 'orgs-orgSlug-datastreams',
               title: 'Datastreams',
               to: '/datastreams'
+            },
+            {
+              org: true,
+              name: 'orgs-orgSlug',
+              title: 'Overview',
+              to: '/'
             },
             {
               org: true,
@@ -229,11 +236,12 @@ export default {
     filteredLists() {
       const auth = !!this.auth.payload
       const org = !!this.orgSlug
-      const { $can } = this
+      const { $can, orgName } = this
 
       return this.lists
         .map(list => {
           return {
+            header: list.header === 'ORG_NAME' ? orgName : list.header,
             items: list.items.filter(item => {
               return (
                 (item.auth === undefined || item.auth === auth) &&

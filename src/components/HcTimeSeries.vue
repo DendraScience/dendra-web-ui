@@ -4,10 +4,12 @@
 
 <script>
 import Highcharts from 'highcharts'
+import boost from 'highcharts/modules/boost'
 import exporting from 'highcharts/modules/exporting'
 import exportData from 'highcharts/modules/export-data'
 import offline from 'highcharts/modules/offline-exporting'
 
+boost(Highcharts)
 exporting(Highcharts)
 exportData(Highcharts)
 offline(Highcharts)
@@ -32,21 +34,16 @@ export default {
           height: 500,
           zoomType: 'x'
         },
-        title: {
-          text: 'Time Series Chart'
-        },
+        exporting: { enabled: false },
+        title: { text: 'Time Series Chart' },
         xAxis: {
           crosshair: true,
-          title: {
-            text: 'Time'
-          },
+          title: { text: 'Time' },
           type: 'datetime'
         },
         yAxis: [
           {
-            title: {
-              text: '(unit)'
-            }
+            title: { text: '(unit)' }
           }
         ]
       }),
@@ -81,8 +78,10 @@ export default {
   mounted() {
     this.chart = Highcharts.chart(this.$refs.chart, this.options)
 
-    this.bus.$on('download-csv', this.downloadCSV)
-    this.bus.$on('export', this.export)
+    if (this.bus) {
+      this.bus.$on('download-csv', this.downloadCSV)
+      this.bus.$on('export', this.export)
+    }
 
     this.worker.postMessage({
       id: this.id,
@@ -93,6 +92,11 @@ export default {
   beforeDestroy() {
     this.chart.destroy()
     this.chart = null
+
+    if (this.bus) {
+      this.bus.$off('download-csv', this.downloadCSV)
+      this.bus.$off('export', this.export)
+    }
 
     this.worker.postMessage({
       id: this.id,

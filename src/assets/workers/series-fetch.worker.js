@@ -6,10 +6,8 @@ const headers = new Headers()
 headers.append('Content-Type', 'application/json')
 headers.append('Dendra-Fetch-Action', 'graph')
 
-async function processFetchSpec(
-  id,
-  { baseQuery, queries, startTime, untilTime }
-) {
+async function processFetch({ id, fetchSpec }) {
+  const { baseQuery, queries, startTime, untilTime } = fetchSpec
   let total = 0
 
   for (let index = 0; index < queries.length; index++) {
@@ -91,20 +89,26 @@ self.addEventListener('message', event => {
     delete processIds[id]
   }
 
-  if (id !== undefined && data.fetchSpec) {
+  if (id !== undefined && data.fetchSpec && !processIds[id]) {
     self.postMessage({ id, isFetching: true })
 
     processIds[id] = true
-    processFetchSpec(id, data.fetchSpec)
-      .then(
-        () => {},
-        error => {
-          self.postMessage({ id, error })
-        }
-      )
-      .finally(() => {
+    processFetch(data).then(
+      () => {
         self.postMessage({ id, isFetching: false })
         delete processIds[id]
-      })
+      },
+      err => {
+        self.postMessage({
+          id,
+          error: {
+            message: err.message,
+            name: err.name
+          },
+          isFetching: false
+        })
+        delete processIds[id]
+      }
+    )
   }
 })

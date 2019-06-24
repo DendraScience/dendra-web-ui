@@ -11,7 +11,8 @@
             </p>
           </v-flex>
         </v-layout>
-
+        <!-- TODO: Deprecate this! -->
+        <!--
         <feathers-vuex-find
           v-slot="{ isFindPending: loading, items: stations }"
           :query="{
@@ -178,7 +179,7 @@
             </v-flex>
           </v-layout>
         </feathers-vuex-get>
-
+ -->
         <v-layout row wrap mt-4>
           <feathers-vuex-find
             v-slot="{ pagination }"
@@ -196,7 +197,19 @@
                     {{ pagination | get('total', 0) }} stations
                   </v-card-title>
                   <v-card-actions>
-                    <v-btn disabled flat dark>Map</v-btn>
+                    <v-btn
+                      :to="{
+                        name: 'orgs-orgSlug-stations',
+                        params: {
+                          orgSlug: org.slug
+                        }
+                      }"
+                      exact
+                      flat
+                      dark
+                      nuxt
+                      >Map</v-btn
+                    >
                   </v-card-actions>
                 </v-card>
               </v-hover>
@@ -244,17 +257,19 @@
 </template>
 
 <script>
-import GoogleMap from '@/components/GoogleMap'
-import MediaPhoto from '@/components/MediaPhoto'
+// TODO: Deprecate this!
+// import GoogleMap from '@/components/GoogleMap'
+// import MediaPhoto from '@/components/MediaPhoto'
 import timer from '@/mixins/timer'
 
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  components: {
-    GoogleMap,
-    MediaPhoto
-  },
+  // TODO: Deprecate this!
+  // components: {
+  //   GoogleMap,
+  //   MediaPhoto
+  // },
 
   middleware: ['check-org', 'dt-unit-vocabulary', 'system-time-utc'],
 
