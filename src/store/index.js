@@ -18,6 +18,19 @@ Vue.use(FeathersVuex)
 
 export const plugins = [
   service('ability'),
+  service('annotations', {
+    instanceDefaults(data, { commit, store, Model, Models }) {
+      return {
+        get quantitySelected() {
+          return store.state.cart.quantitiesById[data._id]
+        },
+
+        [TYPE_KEY]: 'annotations'
+      }
+    },
+
+    paginate: true
+  }),
   service('datastreams', {
     instanceDefaults(data, { commit, store, Model, Models }) {
       return {

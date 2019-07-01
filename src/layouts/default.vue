@@ -183,7 +183,6 @@ export default {
             },
             {
               org: true,
-              disabled: true,
               name: 'orgs-orgSlug-annotations',
               title: 'Annotations',
               to: '/annotation'

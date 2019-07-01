@@ -183,7 +183,11 @@
         <v-layout row wrap mt-4>
           <feathers-vuex-find
             v-slot="{ pagination }"
-            :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
+            :query="{
+              is_hidden: false,
+              organization_id: org._id,
+              $limit: 0
+            }"
             service="stations"
           >
             <v-flex v-if="pagination" xs12 sm4>
@@ -194,7 +198,9 @@
                   class="white--text"
                 >
                   <v-card-title primary-title class="headline">
-                    {{ pagination | get('total', 0) }} stations
+                    <span class="text-truncate"
+                      >{{ pagination | get('total', 0) }} stations</span
+                    >
                   </v-card-title>
                   <v-card-actions>
                     <v-btn
@@ -218,7 +224,11 @@
 
           <feathers-vuex-find
             v-slot="{ pagination }"
-            :query="{ is_hidden: false, organization_id: org._id, $limit: 0 }"
+            :query="{
+              is_hidden: false,
+              organization_id: org._id,
+              $limit: 0
+            }"
             service="datastreams"
           >
             <v-flex v-if="pagination" xs12 sm4>
@@ -229,12 +239,53 @@
                   class="white--text"
                 >
                   <v-card-title primary-title class="headline">
-                    {{ pagination | get('total', 0) }} datastreams
+                    <span class="text-truncate">
+                      {{ pagination | get('total', 0) }} datastreams</span
+                    >
                   </v-card-title>
                   <v-card-actions>
                     <v-btn
                       :to="{
                         name: 'orgs-orgSlug-datastreams',
+                        params: {
+                          orgSlug: org.slug
+                        }
+                      }"
+                      exact
+                      flat
+                      dark
+                      nuxt
+                      >Search</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-hover>
+            </v-flex>
+          </feathers-vuex-find>
+        </v-layout>
+
+        <v-layout row wrap>
+          <feathers-vuex-find
+            v-slot="{ pagination }"
+            :query="{ organization_id: org._id, $limit: 0 }"
+            service="annotations"
+          >
+            <v-flex v-if="pagination" xs12 sm4>
+              <v-hover v-slot="{ hover }">
+                <v-card
+                  :class="`elevation-${hover ? 8 : 2}`"
+                  color="blue-grey "
+                  class="white--text"
+                >
+                  <v-card-title primary-title class="headline">
+                    <span class="text-truncate"
+                      >{{ pagination | get('total', 0) }} annotations</span
+                    >
+                  </v-card-title>
+                  <v-card-actions>
+                    <v-btn
+                      :to="{
+                        name: 'orgs-orgSlug-annotations',
                         params: {
                           orgSlug: org.slug
                         }

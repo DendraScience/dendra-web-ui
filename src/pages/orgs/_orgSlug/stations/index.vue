@@ -37,8 +37,8 @@
     <feathers-vuex-find
       :fetch-query="stationsFetchQuery"
       :query="stationsQuery"
-      :watch="['fetchQuery.$or', 'fetchQuery.organization_id']"
-      qid="browser"
+      :watch="['fetchQuery.$and']"
+      qid="search"
       service="stations"
     >
       <template v-slot="{ items: stations }">
@@ -259,39 +259,45 @@ export default {
           'organization_id',
           'slug'
         ],
-        $sort: { name: 1 }
-      }
-
-      if (stationsSearch && stationsSearch.length) {
-        // TODO: Implement n-grams for partial full-text search! https://en.wikipedia.org/wiki/N-gram
-        query.$or = [
-          {
-            name: {
-              $regex: `^${escapeRegExp(stationsSearch)}`,
-              $options: 'i'
-            }
-          },
-          {
-            $text: { $search: `${this.stationsSearch}` }
-          }
-        ]
+        $sort: { name: 1, _id: 1 }
       }
 
       // TODO: Implement later
       // if (selectedOrgIds && selectedOrgIds.length)
       //   query.organization_id = { $in: selectedOrgIds }
 
+      const ands = []
+
+      if (stationsSearch && stationsSearch.length) {
+        // TODO: Implement n-grams for partial full-text search! https://en.wikipedia.org/wiki/N-gram
+        ands.push({
+          $or: [
+            {
+              name: {
+                $regex: `^${escapeRegExp(stationsSearch)}`,
+                $options: 'i'
+              }
+            },
+            {
+              $text: { $search: `${stationsSearch}` }
+            }
+          ]
+        })
+      }
+
+      if (ands.length) query.$and = ands
+
       return query
     },
 
-    stationsPaginationBrowser() {
-      return this.$store.state.stations.pagination.browser
+    stationsPaginationSearch() {
+      return this.$store.state.stations.pagination.search
     },
 
     stationsQuery() {
       return {
         _id: { $in: this.queryStationIds },
-        $sort: { name: 1 }
+        $sort: { name: 1, _id: 1 }
       }
     }
   },
@@ -301,7 +307,7 @@ export default {
       this.stationsPanelOpen = Array(newValue.length).fill(true)
     },
 
-    stationsPaginationBrowser(newValue) {
+    stationsPaginationSearch(newValue) {
       this.queryStationIds = _union(
         this.queryStationIds,
         newValue && newValue.ids

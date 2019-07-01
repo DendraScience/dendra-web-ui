@@ -21,9 +21,6 @@ async function getBatteryVoltageDatastreamId(stationId) {
   }
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 
-  /* eslint-disable-next-line no-console */
-  console.log('url', url)
-
   const response = await fetch(url, {
     mode: 'cors',
     cache: 'no-cache',

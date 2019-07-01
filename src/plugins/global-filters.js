@@ -2,9 +2,14 @@ import Vue from 'vue'
 import math from '@/lib/math'
 import moment from 'moment'
 import _get from 'lodash/get'
+import _truncate from 'lodash/truncate'
 
 Vue.filter('get', (...args) => {
   return _get(...args)
+})
+
+Vue.filter('truncate', (...args) => {
+  return _truncate(...args)
 })
 
 Vue.filter('math', (value, defaultValue = '', ...calls) => {
