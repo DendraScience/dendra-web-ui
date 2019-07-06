@@ -7,7 +7,7 @@
       class="pa-2"
       style="position: absolute; top: 0; width: 400px; z-index: 2;"
     >
-      <v-card elevation="2">
+      <v-card raised>
         <v-text-field
           v-model.trim="stationsSearchDebounce"
           append-icon="search"
@@ -45,7 +45,7 @@
         <div style="width: 100%; height: 100%;">
           <v-navigation-drawer
             :value="viewToggle !== 2"
-            class="elevation-8"
+            class="elevation-2"
             stateless
             style="position: absolute; top: 0; z-index: 1;"
             width="400"
@@ -214,7 +214,7 @@ export default {
         }
       ],
 
-      timerInterval: 60000,
+      timerInterval: 150000,
 
       viewToggle: 0
     }
@@ -234,7 +234,7 @@ export default {
     startTime() {
       return moment
         .utc(this.getTime('utc').now)
-        .subtract(24, 'h')
+        .subtract(48, 'h')
         .toISOString()
     },
 
@@ -244,6 +244,7 @@ export default {
       const { stationsSearch } = this
 
       const query = {
+        is_enabled: true,
         is_hidden: false,
         // TODO: Remove later
         organization_id: this.org._id,
@@ -327,7 +328,7 @@ export default {
         this.stationsExpand = true
         this.$nextTick(() => {
           // HACK: stationsExpand needs to be set first
-          this.stationsPanel = this.stationsPanelOpen.slice(0)
+          this.stationsPanel = this.stationsPanelOpen.slice()
         })
       }
     }

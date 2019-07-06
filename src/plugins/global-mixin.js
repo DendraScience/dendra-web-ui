@@ -1,5 +1,6 @@
 import Vue from 'vue'
 
+// TODO: Use inject instead?
 Vue.mixin({
   computed: {
     $can() {

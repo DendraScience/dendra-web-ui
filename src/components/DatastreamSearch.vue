@@ -3,6 +3,7 @@
     <feathers-vuex-find
       v-slot="{ isFindPending: loading, items: stations }"
       :query="{
+        is_enabled: true,
         is_hidden: false,
         organization_id: org._id,
         station_type: 'weather',
@@ -109,13 +110,13 @@
                 <slot name="select" :item="item" />
               </td>
 
-              <td>{{ item.station.name }}</td>
+              <td>{{ item.station && item.station.name }}</td>
               <td>{{ item.name }}</td>
               <td>{{ item.description }}</td>
 
               <td
                 v-if="$scopedSlots.actions"
-                class="text-xs-center text-no-wrap px-0"
+                class="text-xs-right text-no-wrap px-0"
               >
                 <slot name="actions" :item="item" />
               </td>
@@ -167,9 +168,7 @@ export default {
         value: 'description'
       },
       {
-        align: 'center',
         sortable: false,
-        text: 'Actions',
         value: '_id'
       }
     ],
@@ -202,6 +201,7 @@ export default {
       const { page, rowsPerPage } = tablePagination
 
       const query = {
+        is_enabled: true,
         is_hidden: false,
         organization_id: this.org._id,
         $limit: rowsPerPage,

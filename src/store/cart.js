@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+export const strict = process.env.NODE_ENV !== 'production'
+
 export const state = () => ({
   quantitiesById: {}
 })

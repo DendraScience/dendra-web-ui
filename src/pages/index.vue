@@ -19,7 +19,7 @@
       </v-container>
     </v-flex>
 
-    <v-flex green darken-1 shrink>
+    <v-flex secondary shrink>
       <v-container grid-list-sm>
         <v-layout column>
           <v-flex subheading white--text>

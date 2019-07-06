@@ -1,9 +1,11 @@
 <template>
   <v-card>
     <form @submit.prevent="submit">
-      <v-card-text>
-        <h5 class="headline mb-3">Change password</h5>
+      <v-card-title primary-title class="headline">
+        Change password
+      </v-card-title>
 
+      <v-card-text>
         <v-text-field
           v-model="current_password"
           v-validate="'required|min:6|max:100'"

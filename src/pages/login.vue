@@ -1,21 +1,12 @@
 <template>
   <v-layout column>
-    <v-flex px-1>
-      <v-alert
-        :value="auth.errorOnAuthenticate"
-        type="error"
-        dismissible
-        transition="slide-y-transition"
-      >
-        {{ auth.errorOnAuthenticate && auth.errorOnAuthenticate.message }}
-      </v-alert>
-    </v-flex>
+    <status-bar v-model="status" />
 
     <v-flex>
       <v-container grid-list-lg>
         <v-layout row>
           <v-flex xs12>
-            <h3 class="display-2 mb-2">Log in to Dendra</h3>
+            <h3 class="display-2 font-weight-light mb-2">Log in to Dendra</h3>
             <span class="body-2"
               >Don’t have an account?
               <nuxt-link to="/contact">Contact us</nuxt-link></span
@@ -61,11 +52,17 @@
 </template>
 
 <script>
+import StatusBar from '@/components/StatusBar'
+
 import { mapActions, mapState } from 'vuex'
 
 export default {
   $_veeValidate: {
     validator: 'new'
+  },
+
+  components: {
+    StatusBar
   },
 
   middleware: ['no-org', 'auth-redirect-orgs'],
@@ -74,11 +71,26 @@ export default {
     isPasswordShown: false,
 
     email: '',
-    password: ''
+    password: '',
+    status: null
   }),
 
   computed: {
     ...mapState(['auth'])
+  },
+
+  watch: {
+    auth: {
+      handler(newValue) {
+        if (newValue.errorOnAuthenticate) {
+          this.status = {
+            message: newValue.errorOnAuthenticate.message,
+            type: 'error'
+          }
+        }
+      },
+      deep: true
+    }
   },
 
   methods: {

@@ -19,10 +19,10 @@ Vue.use(FeathersVuex)
 export const plugins = [
   service('ability'),
   service('annotations', {
-    instanceDefaults(data, { commit, store, Model, Models }) {
+    instanceDefaults(data, { store, Models }) {
       return {
         get quantitySelected() {
-          return store.state.cart.quantitiesById[data._id]
+          return store.state.cart.quantitiesById[this._id]
         },
 
         [TYPE_KEY]: 'annotations'
@@ -32,15 +32,14 @@ export const plugins = [
     paginate: true
   }),
   service('datastreams', {
-    instanceDefaults(data, { commit, store, Model, Models }) {
+    instanceDefaults(data, { store }) {
       return {
         get quantitySelected() {
-          return store.state.cart.quantitiesById[data._id]
+          return store.state.cart.quantitiesById[this._id]
         },
 
-        // HACK: Do this right, see: https://feathers-vuex.feathers-plus.com/common-patterns.html#relationships-for-populated-data
         get station() {
-          return store.getters['stations/get'](data.station_id)
+          return store.getters['stations/get'](this.station_id)
         },
 
         [TYPE_KEY]: 'datastreams'
@@ -55,12 +54,12 @@ export const plugins = [
   service('schemes'),
   service('soms'),
   service('stations', {
-    instanceDefaults(data, { store, Model, Models }) {
+    instanceDefaults(data, { store }) {
       return {
         get time() {
           try {
             const utc = store.getters['time/get']('utc')
-            return moment(utc.now).valueOf() + (data.utc_offset | 0) * 1000
+            return moment(utc.now).valueOf() + (this.utc_offset | 0) * 1000
           } catch (err) {
             return null
           }
@@ -68,7 +67,7 @@ export const plugins = [
 
         get utcOffsetHours() {
           return math.round(
-            math.unit(data.utc_offset | 0, 's').toNumber('h'),
+            math.unit(this.utc_offset | 0, 's').toNumber('h'),
             2
           )
         }
@@ -96,7 +95,8 @@ export const state = () => ({
 
   orgId: null,
   stationId: null,
-  datastreamId: null
+  datastreamId: null,
+  annotationId: null
 })
 
 export const actions = {
@@ -144,6 +144,13 @@ export const getters = {
   },
   datastreamId(state) {
     return state.datastreamId
+  },
+
+  annotation(state, { 'annotations/get': get }) {
+    return state.annotationId && get(state.annotationId)
+  },
+  annotationId(state) {
+    return state.annotationId
   }
 }
 
@@ -156,6 +163,9 @@ export const mutations = {
   },
   clearDatastream(state) {
     state.datastreamId = null
+  },
+  clearAnnotation(state) {
+    state.annotationId = null
   },
 
   setAbilityUpdateTime(state, value) {
@@ -170,5 +180,8 @@ export const mutations = {
   },
   setDatastream(state, value) {
     state.datastreamId = value && value._id
+  },
+  setAnnotation(state, value) {
+    state.annotationId = value && value._id
   }
 }

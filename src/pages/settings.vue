@@ -1,27 +1,18 @@
 <template>
   <v-layout column>
-    <v-flex px-1>
-      <v-alert
-        :value="status"
-        :type="status && status.type"
-        dismissible
-        transition="slide-y-transition"
-      >
-        {{ status && status.message }}
-      </v-alert>
-    </v-flex>
+    <status-bar v-model="status" />
 
     <v-flex>
       <v-container grid-list-xl>
         <v-layout row>
           <v-flex xs12>
-            <h3 class="display-2 mb-2">User settings</h3>
+            <h3 class="display-2 font-weight-light mb-2">User settings</h3>
           </v-flex>
         </v-layout>
 
         <v-layout row wrap>
           <v-flex xs12 md8>
-            <user-account-card
+            <user-account-edit
               :user="getUser(auth.user._id)"
               @status="status = $event"
             />
@@ -30,7 +21,7 @@
 
         <v-layout row wrap>
           <v-flex xs12 md8>
-            <user-password-card
+            <user-password-edit
               :user="getUser(auth.user._id)"
               @status="status = $event"
             />
@@ -42,19 +33,17 @@
 </template>
 
 <script>
-import UserAccountCard from '@/components/UserAccountCard'
-import UserPasswordCard from '@/components/UserPasswordCard'
+import StatusBar from '@/components/StatusBar'
+import UserAccountEdit from '@/components/UserAccountEdit'
+import UserPasswordEdit from '@/components/UserPasswordEdit'
 
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
-    UserAccountCard,
-    UserPasswordCard
+    StatusBar,
+    UserAccountEdit,
+    UserPasswordEdit
   },
 
   middleware: ['no-org', 'no-auth-redirect-login'],

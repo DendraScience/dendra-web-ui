@@ -48,12 +48,23 @@
               </td>
 
               <td>{{ item.state }}</td>
-              <td>{{ item.title }}</td>
+              <td>
+                <nuxt-link
+                  :to="{
+                    name: 'orgs-orgSlug-annotations-annotationId',
+                    params: {
+                      orgSlug: org.slug,
+                      annotationId: item._id
+                    }
+                  }"
+                  >{{ item.title }}</nuxt-link
+                >
+              </td>
               <td>{{ item.description | truncate({ length: 200 }) }}</td>
 
               <td
                 v-if="$scopedSlots.actions"
-                class="text-xs-center text-no-wrap px-0"
+                class="text-xs-right text-no-wrap px-0"
               >
                 <slot name="actions" :item="item" />
               </td>
@@ -79,8 +90,7 @@ export default {
   },
 
   props: {
-    org: { default: null, type: Object },
-    stationId: { default: '', type: String }
+    org: { default: null, type: Object }
   },
 
   data: () => ({
@@ -121,9 +131,7 @@ export default {
         value: 'description'
       },
       {
-        align: 'center',
         sortable: false,
-        text: 'Actions',
         value: '_id'
       }
     ],
@@ -132,9 +140,6 @@ export default {
 
     search: null,
     searchDebounce: null,
-
-    selectedStationIds: null,
-    selectedTermLabels: {},
 
     tablePagination: {
       descending: false,
@@ -151,6 +156,7 @@ export default {
       const { page, rowsPerPage } = tablePagination
 
       const query = {
+        is_enabled: true,
         organization_id: this.org._id,
         $limit: rowsPerPage,
         $skip: (page - 1) * rowsPerPage,
@@ -195,34 +201,34 @@ export default {
         }
       ]
 
-      const startTime = moment(this.dateRange.from)
-      const untilTime = moment(this.dateRange.to)
+      const frTime = moment(this.dateRange.from)
+      const toTime = moment(this.dateRange.to)
         .startOf('d')
         .add(1, 'd')
 
-      if (startTime.isValid()) {
+      if (frTime.isValid()) {
         intervals.push({
           $and: [
             { 'intervals.begins_at': { $exists: false } },
-            { 'intervals.ends_before': { $gt: startTime.toISOString() } }
+            { 'intervals.ends_before': { $gt: frTime.toISOString() } }
           ]
         })
       }
 
-      if (untilTime.isValid()) {
+      if (toTime.isValid()) {
         intervals.push({
           $and: [
-            { 'intervals.begins_at': { $lt: untilTime.toISOString() } },
+            { 'intervals.begins_at': { $lt: toTime.toISOString() } },
             { 'intervals.ends_before': { $exists: false } }
           ]
         })
       }
 
-      if (startTime.isValid() && untilTime.isValid()) {
+      if (frTime.isValid() && toTime.isValid()) {
         intervals.push({
           $and: [
-            { 'intervals.begins_at': { $lt: untilTime.toISOString() } },
-            { 'intervals.ends_before': { $gt: startTime.toISOString() } }
+            { 'intervals.begins_at': { $lt: toTime.toISOString() } },
+            { 'intervals.ends_before': { $gt: frTime.toISOString() } }
           ]
         })
       }

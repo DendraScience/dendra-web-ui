@@ -28,24 +28,21 @@
                       this.$route.query && this.$route.query.stationId
                     "
                   >
-                    <template v-slot:select="props">
-                      <v-btn
+                    <template v-slot:select="{ item }">
+                      <v-icon
                         color="primary"
-                        flat
-                        icon
-                        small
                         @click="
                           incrementQuantity({
-                            id: props.item._id,
+                            id: item._id,
                             max: 1
                           })
                         "
+                        >{{
+                          item.quantitySelected
+                            ? 'check_box'
+                            : 'check_box_outline_blank'
+                        }}</v-icon
                       >
-                        <v-icon v-if="props.item.quantitySelected"
-                          >check_box</v-icon
-                        >
-                        <v-icon v-else>check_box_outline_blank</v-icon>
-                      </v-btn>
                     </template>
                   </datastream-search>
 
@@ -83,15 +80,15 @@
                             disable-initial-sort
                             item-key="_id"
                           >
-                            <template v-slot:items="props">
+                            <template v-slot:items="{ item }">
                               <td class="text-xs-center text-no-wrap px-0">
                                 <v-btn-toggle
-                                  :value="props.item.quantitySelected"
+                                  :value="item.quantitySelected"
                                   class="elevation-0"
                                   mandatory
                                   @change="
                                     setQuantity({
-                                      id: props.item._id,
+                                      id: item._id,
                                       value: $event
                                     })
                                   "
@@ -101,15 +98,15 @@
                                 </v-btn-toggle>
                               </td>
 
-                              <td>{{ props.item.name }}</td>
-                              <td>{{ props.item.description }}</td>
+                              <td>{{ item.name }}</td>
+                              <td>{{ item.description }}</td>
 
-                              <td class="text-xs-center text-no-wrap px-0">
+                              <td class="text-xs-right text-no-wrap px-0">
                                 <v-icon
-                                  color="grey lighten1"
+                                  color="tertiary"
                                   @click="
                                     setQuantity({
-                                      id: props.item._id,
+                                      id: item._id,
                                       value: 0
                                     })
                                   "
@@ -414,7 +411,6 @@ export default {
         value: 'description'
       },
       {
-        align: 'center',
         sortable: false,
         value: '_id'
       }

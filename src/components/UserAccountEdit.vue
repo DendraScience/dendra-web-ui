@@ -1,9 +1,11 @@
 <template>
   <v-card>
     <form @submit.prevent="submit">
-      <v-card-text>
-        <h5 class="headline mb-3">Account</h5>
+      <v-card-title primary-title class="headline">
+        Account
+      </v-card-title>
 
+      <v-card-text>
         <v-text-field
           v-model="name"
           v-validate="'required|max:100'"

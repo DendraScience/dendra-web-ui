@@ -4,7 +4,7 @@
       <v-container grid-list-xl>
         <v-layout row>
           <v-flex xs12>
-            <h3 class="display-2 mb-2">Organizations</h3>
+            <h3 class="display-2 font-weight-light mb-2">Organizations</h3>
           </v-flex>
         </v-layout>
 
@@ -35,7 +35,7 @@
                       })
                     "
                   >
-                    <div class="text-truncate display-1 mb-2">
+                    <div class="text-truncate headline mb-2">
                       {{ organization.name }}
                     </div>
                     <div class="text-truncate">
@@ -70,6 +70,21 @@
                       <v-list-tile-content>
                         <v-list-tile-title
                           >Datastreams search</v-list-tile-title
+                        >
+                      </v-list-tile-content>
+                    </v-list-tile>
+
+                    <v-list-tile
+                      :disabled="!organization.slug"
+                      :to="{
+                        name: 'orgs-orgSlug-annotations',
+                        params: { orgSlug: organization.slug }
+                      }"
+                    >
+                      <v-list-tile-action> </v-list-tile-action>
+                      <v-list-tile-content>
+                        <v-list-tile-title
+                          >Annotations search</v-list-tile-title
                         >
                       </v-list-tile-content>
                     </v-list-tile>

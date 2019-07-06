@@ -1,5 +1,9 @@
 <template>
   <v-layout v-if="org" column>
+    <v-btn color="secondary" dark fixed bottom left fab>
+      <v-icon>add</v-icon>
+    </v-btn>
+
     <v-flex>
       <v-container grid-list-xl>
         <v-layout column>
@@ -16,18 +20,13 @@
                     Annotations
                   </v-card-title>
 
-                  <annotation-search
-                    :org="org"
-                    :station-id="
-                      this.$route.query && this.$route.query.stationId
-                    "
-                  />
-
-                  <v-card-actions>
-                    <v-btn :disabled="!cartCount" @click="resetCart"
-                      >Reset</v-btn
-                    >
-                  </v-card-actions>
+                  <annotation-search :org="org">
+                    <template v-slot:actions="{ item }">
+                      <v-icon color="tertiary" @click="open(item._id)"
+                        >open_in_new</v-icon
+                      >
+                    </template>
+                  </annotation-search>
                 </v-card>
               </v-tab-item>
             </v-tabs>
@@ -72,7 +71,20 @@ export default {
     ...mapMutations({
       resetCart: 'cart/reset',
       setQuantity: 'cart/setQuantity'
-    })
+    }),
+
+    open(annotationId) {
+      window.open(
+        this.$router.resolve({
+          name: 'orgs-orgSlug-annotations-annotationId',
+          params: {
+            orgSlug: this.org.slug,
+            annotationId
+          }
+        }).href,
+        '_blank'
+      )
+    }
   }
 }
 </script>

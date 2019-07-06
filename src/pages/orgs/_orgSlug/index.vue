@@ -11,179 +11,12 @@
             </p>
           </v-flex>
         </v-layout>
-        <!-- TODO: Deprecate this! -->
-        <!--
-        <feathers-vuex-find
-          v-slot="{ isFindPending: loading, items: stations }"
-          :query="{
-            is_hidden: false,
-            organization_id: org._id,
-            station_type: 'weather',
-            $sort: { name: 1 }
-          }"
-          service="stations"
-        >
-          <v-layout row wrap>
-            <v-flex xs12 md8>
-              <v-autocomplete
-                v-model="selectedStationId"
-                :items="stations"
-                :label="loading ? 'Loading...' : 'Search for a station'"
-                :loading="loading"
-                flat
-                hide-details
-                hide-no-data
-                item-text="name"
-                item-value="_id"
-                outline
-                solo
-              ></v-autocomplete>
-            </v-flex>
-          </v-layout>
-        </feathers-vuex-find>
 
-        <feathers-vuex-get
-          v-if="selectedStationId"
-          :id="selectedStationId"
-          v-slot="{ item: station }"
-          local
-          service="stations"
-        >
-          <v-layout>
-            <v-flex>
-              <v-card>
-                <v-card-title primary-title class="headline">
-                  {{ station.name }}
-                </v-card-title>
-
-                <v-card-text>
-                  <v-layout row wrap>
-                    <media-photo class="xs12 sm6 md4" :media="station.media" />
-
-                    <v-flex
-                      v-if="station.geo && station.geo.coordinates.length > 1"
-                      xs12
-                      sm6
-                      md4
-                    >
-                      <v-responsive aspect-ratio="1">
-                        <google-map
-                          :lat-lng-literal="{
-                            lat: station.geo.coordinates[1],
-                            lng: station.geo.coordinates[0]
-                          }"
-                          :map-options="{
-                            draggable: false,
-                            mapTypeControl: false,
-                            rotateControl: false,
-                            streetViewControl: false
-                          }"
-                          auto-pan
-                          style="width: 100%; height: 100%;"
-                        />
-                      </v-responsive>
-                    </v-flex>
-
-                    <v-flex xs12 md4>
-                      <v-card flat>
-                        <v-list two-line>
-                          <v-list-tile>
-                            <v-list-tile-content>
-                              <v-list-tile-title
-                                >{{
-                                  station.time
-                                    | moment('', ['utc'], ['format', 'h:mm A'])
-                                }}
-                                {{ station.time_zone }}
-                                <em
-                                  >(UTC {{ station.utcOffsetHours }} hours)</em
-                                ></v-list-tile-title
-                              >
-                            </v-list-tile-content>
-                          </v-list-tile>
-
-                          <v-divider></v-divider>
-
-                          <v-list-tile
-                            v-if="
-                              station.geo && station.geo.coordinates.length > 1
-                            "
-                          >
-                            <v-list-tile-content>
-                              <v-list-tile-title
-                                >{{ station.geo.coordinates[1] }}°,
-                                {{
-                                  station.geo.coordinates[0]
-                                }}°</v-list-tile-title
-                              >
-                              <v-list-tile-sub-title
-                                >Coordinates</v-list-tile-sub-title
-                              >
-                            </v-list-tile-content>
-                          </v-list-tile>
-
-                          <v-list-tile
-                            v-if="
-                              station.geo && station.geo.coordinates.length > 2
-                            "
-                          >
-                            <v-list-tile-content>
-                              <v-list-tile-title
-                                >{{
-                                  station.geo.coordinates[0]
-                                    | math('', ['round', 1])
-                                }}
-                                {{ getUnitAbbr('Meter') }}</v-list-tile-title
-                              >
-                              <v-list-tile-sub-title
-                                >Elevation</v-list-tile-sub-title
-                              >
-                            </v-list-tile-content>
-                          </v-list-tile>
-                        </v-list>
-                      </v-card>
-                    </v-flex>
-                  </v-layout>
-                </v-card-text>
-
-                <v-card-actions>
-                  <v-btn
-                    :to="{
-                      name: 'orgs-orgSlug-datastreams',
-                      params: {
-                        orgSlug: org.slug
-                      },
-                      query: {
-                        stationId: selectedStationId
-                      }
-                    }"
-                    color="primary"
-                    exact
-                    flat
-                    nuxt
-                    >Datastreams</v-btn
-                  >
-
-                  <v-btn
-                    v-for="(link, i) in station.external_links || []"
-                    :key="i"
-                    :href="link.url"
-                    color="primary"
-                    flat
-                    target="_blank"
-                  >
-                    {{ link.title }}</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </feathers-vuex-get>
- -->
         <v-layout row wrap mt-4>
           <feathers-vuex-find
             v-slot="{ pagination }"
             :query="{
+              is_enabled: true,
               is_hidden: false,
               organization_id: org._id,
               $limit: 0
@@ -194,7 +27,7 @@
               <v-hover v-slot="{ hover }">
                 <v-card
                   :class="`elevation-${hover ? 8 : 2}`"
-                  color="blue-grey darken-2"
+                  color="accent"
                   class="white--text"
                 >
                   <v-card-title primary-title class="headline">
@@ -225,6 +58,7 @@
           <feathers-vuex-find
             v-slot="{ pagination }"
             :query="{
+              is_enabled: true,
               is_hidden: false,
               organization_id: org._id,
               $limit: 0
@@ -235,7 +69,7 @@
               <v-hover v-slot="{ hover }">
                 <v-card
                   :class="`elevation-${hover ? 8 : 2}`"
-                  color="blue-grey darken-2"
+                  color="accent"
                   class="white--text"
                 >
                   <v-card-title primary-title class="headline">
@@ -267,14 +101,18 @@
         <v-layout row wrap>
           <feathers-vuex-find
             v-slot="{ pagination }"
-            :query="{ organization_id: org._id, $limit: 0 }"
+            :query="{
+              is_enabled: true,
+              organization_id: org._id,
+              $limit: 0
+            }"
             service="annotations"
           >
             <v-flex v-if="pagination" xs12 sm4>
               <v-hover v-slot="{ hover }">
                 <v-card
                   :class="`elevation-${hover ? 8 : 2}`"
-                  color="blue-grey "
+                  color="accent"
                   class="white--text"
                 >
                   <v-card-title primary-title class="headline">
@@ -308,40 +146,13 @@
 </template>
 
 <script>
-// TODO: Deprecate this!
-// import GoogleMap from '@/components/GoogleMap'
-// import MediaPhoto from '@/components/MediaPhoto'
-import timer from '@/mixins/timer'
-
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
-  // TODO: Deprecate this!
-  // components: {
-  //   GoogleMap,
-  //   MediaPhoto
-  // },
-
-  middleware: ['check-org', 'dt-unit-vocabulary', 'system-time-utc'],
-
-  mixins: [timer],
-
-  data: () => ({
-    selectedStationId: null,
-
-    timerInterval: 60000
-  }),
+  middleware: ['check-org'],
 
   computed: {
-    ...mapGetters(['getUnitAbbr', 'org'])
-  },
-
-  methods: {
-    ...mapActions(['getSystemTimeUTC']),
-
-    timerCallback() {
-      return this.getSystemTimeUTC()
-    }
+    ...mapGetters(['org'])
   }
 }
 </script>
