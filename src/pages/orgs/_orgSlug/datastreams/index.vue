@@ -101,7 +101,7 @@
                               <td>{{ item.name }}</td>
                               <td>{{ item.description }}</td>
 
-                              <td class="text-xs-right text-no-wrap px-0">
+                              <td class="text-xs-right text-no-wrap">
                                 <v-icon
                                   color="tertiary"
                                   @click="

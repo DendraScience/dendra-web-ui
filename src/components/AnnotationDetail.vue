@@ -48,43 +48,11 @@
         </v-flex>
 
         <v-flex>
-          <v-card>
-            <v-card-title primary-title class="headline">
-              Actions
-            </v-card-title>
-
-            <v-card-text> </v-card-text>
-
-            <v-card-actions v-if="editing">
-              <v-btn color="primary">
-                <v-icon left dark>add</v-icon>Exclude
-              </v-btn>
-
-              <v-btn color="primary">
-                <v-icon left dark>add</v-icon>Evaluate
-              </v-btn>
-
-              <v-btn color="primary">
-                <v-icon left dark>add</v-icon>Flag
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <annotation-detail-actions v-model="actions" :editing="editing" />
         </v-flex>
 
         <v-flex>
-          <v-card>
-            <v-card-title primary-title class="headline">
-              External references
-            </v-card-title>
-
-            <v-card-text> </v-card-text>
-
-            <v-card-actions v-if="editing">
-              <v-btn color="primary">
-                <v-icon left dark>add</v-icon>Reference
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <detail-external-refs v-model="externalRefs" :editing="editing" />
         </v-flex>
       </v-layout>
     </v-container>
@@ -92,8 +60,10 @@
 </template>
 
 <script>
+import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
+import DetailExternalRefs from '@/components/DetailExternalRefs'
 
 // import _pick from 'lodash/pick'
 
@@ -105,8 +75,10 @@ export default {
   },
 
   components: {
+    AnnotationDetailActions,
     AnnotationDetailApplies,
-    AnnotationDetailIntervals
+    AnnotationDetailIntervals,
+    DetailExternalRefs
   },
 
   props: {
@@ -125,12 +97,20 @@ export default {
         state: annotation.state,
         stateItems,
         description: annotation.description,
+        actions: {
+          items: annotation.actions ? annotation.actions.slice() : []
+        },
         applies: {
           stationIds: annotation.station_ids
             ? annotation.station_ids.slice()
             : [],
           datastreamIds: annotation.datastream_ids
             ? annotation.datastream_ids.slice()
+            : []
+        },
+        externalRefs: {
+          items: annotation.external_refs
+            ? annotation.external_refs.slice()
             : []
         },
         intervals: {
@@ -144,9 +124,15 @@ export default {
       state: 'pending',
       stateItems,
       description: null,
+      actions: {
+        items: []
+      },
       applies: {
         stationIds: [],
         datastreamIds: []
+      },
+      externalRefs: {
+        items: []
       },
       intervals: {
         items: []

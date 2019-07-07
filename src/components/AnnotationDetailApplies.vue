@@ -22,8 +22,10 @@
               <td>{{ item.station }}</td>
               <td>{{ item.datastream }}</td>
 
-              <td class="text-xs-right text-no-wrap px-0">
-                <v-icon v-if="editing" color="tertiary">remove_circle</v-icon>
+              <td class="text-xs-right text-no-wrap">
+                <v-icon v-if="editing" color="tertiary" @click="remove(item)"
+                  >remove_circle</v-icon
+                >
               </td>
             </template>
           </v-data-table>
@@ -34,8 +36,8 @@
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn color="tertiary" dark v-on="on">
-            <v-icon dark>add</v-icon>
+          <v-btn color="primary" v-on="on">
+            <v-icon>add</v-icon>
           </v-btn>
         </template>
 
@@ -124,7 +126,7 @@ export default {
         .map(id => {
           const station = this.getStation(id)
           return {
-            key: `stationIds:${id}`,
+            key: `station-${id}`,
             icon: 'nature',
             station: station ? station.name : id,
             datastream: 'All datastreams'
@@ -135,7 +137,7 @@ export default {
             const datastream = this.getDatastream(id)
             const station = datastream && datastream.station
             return {
-              key: `datastreamIds:${id}`,
+              key: `datastream-${id}`,
               icon: 'timeline',
               station: station ? station.name : id,
               datastream: datastream ? datastream.name : id
@@ -156,6 +158,8 @@ export default {
     }),
 
     add(item) {},
+
+    remove(item) {},
 
     async fetch() {
       const datastreamIds = this.value.datastreamIds

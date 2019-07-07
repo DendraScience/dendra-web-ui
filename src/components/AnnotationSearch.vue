@@ -64,7 +64,7 @@
 
               <td
                 v-if="$scopedSlots.actions"
-                class="text-xs-right text-no-wrap px-0"
+                class="text-xs-right text-no-wrap"
               >
                 <slot name="actions" :item="item" />
               </td>

@@ -1,0 +1,39 @@
+<template>
+  <v-chip
+    v-if="value"
+    :color="color"
+    :outline="outline"
+    @dblclick="index = ++index % 3"
+  >
+    {{ text }}
+  </v-chip>
+</template>
+
+<script>
+export default {
+  props: {
+    color: { default: '', type: String },
+    outline: { default: true, type: Boolean },
+    value: { type: Object, required: true }
+  },
+
+  data: () => ({
+    index: 0
+  }),
+
+  computed: {
+    text() {
+      const { index, value } = this
+
+      switch (index) {
+        case 1:
+          return value.toISOString()
+        case 2:
+          return value.valueOf()
+        default:
+          return value.format('lll')
+      }
+    }
+  }
+}
+</script>
