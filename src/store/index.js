@@ -56,6 +56,10 @@ export const plugins = [
   service('stations', {
     instanceDefaults(data, { store }) {
       return {
+        get quantitySelected() {
+          return store.state.cart.quantitiesById[this._id]
+        },
+
         get time() {
           try {
             const utc = store.getters['time/get']('utc')

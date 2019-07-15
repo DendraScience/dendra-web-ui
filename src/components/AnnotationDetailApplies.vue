@@ -77,11 +77,13 @@ export default {
     addItems: [
       {
         icon: 'nature',
+        target: 'station',
         title: 'Station',
         subtitle: 'Apply to ALL datastreams for a station.'
       },
       {
         icon: 'timeline',
+        target: 'datastream',
         title: 'Datastream',
         subtitle: 'Apply to a specific datastream only.'
       }
@@ -121,24 +123,36 @@ export default {
       getStation: 'stations/get'
     }),
 
+    datastreamIds() {
+      return this.value.datastream_ids || []
+    },
+
+    stationIds() {
+      return this.value.station_ids || []
+    },
+
     items() {
-      return this.value.stationIds
+      return this.stationIds
         .map(id => {
           const station = this.getStation(id)
           return {
-            key: `station-${id}`,
+            id,
             icon: 'nature',
+            target: 'station',
+            key: `station-${id}`,
             station: station ? station.name : id,
             datastream: 'All datastreams'
           }
         })
         .concat(
-          this.value.datastreamIds.map(id => {
+          this.datastreamIds.map(id => {
             const datastream = this.getDatastream(id)
             const station = datastream && datastream.station
             return {
-              key: `datastream-${id}`,
+              id,
               icon: 'timeline',
+              target: 'datastream',
+              key: `datastream-${id}`,
               station: station ? station.name : id,
               datastream: datastream ? datastream.name : id
             }
@@ -157,13 +171,17 @@ export default {
       fetchStations: 'stations/find'
     }),
 
-    add(item) {},
+    add(item) {
+      this.$emit('add', item)
+    },
 
-    remove(item) {},
+    remove(item) {
+      this.$emit('remove', item)
+    },
 
     async fetch() {
-      const datastreamIds = this.value.datastreamIds
-      const stationIds = this.value.stationIds.slice()
+      const datastreamIds = this.datastreamIds
+      const stationIds = this.stationIds.slice()
 
       // Fetch referenced datastreams
       if (datastreamIds.length) {

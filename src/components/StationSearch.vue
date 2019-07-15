@@ -1,85 +1,16 @@
 <template>
   <v-container fluid grid-list-xl>
     <feathers-vuex-find
-      v-slot="{ isFindPending: loading, items: stations }"
-      :query="{
-        is_enabled: true,
-        is_hidden: false,
-        organization_id: org._id,
-        station_type: 'weather',
-        $sort: { name: 1 }
-      }"
-      service="stations"
-    >
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-autocomplete
-            v-model="selectedStationIds"
-            :items="stations"
-            :label="loading ? 'Loading...' : 'Station'"
-            :loading="loading"
-            box
-            chips
-            clearable
-            deletable-chips
-            flat
-            hide-details
-            hide-no-data
-            item-text="name"
-            item-value="_id"
-            multiple
-          ></v-autocomplete>
-        </v-flex>
-      </v-layout>
-    </feathers-vuex-find>
-
-    <feathers-vuex-find
-      v-slot="{ items: vocabularies }"
-      :query="{
-        is_hidden: false,
-        scheme_id: 'ds',
-        vocabulary_type: 'class',
-        $sort: { name: 1 }
-      }"
-      service="vocabularies"
-    >
-      <v-layout row wrap>
-        <v-flex
-          v-for="vocabulary in vocabularies"
-          :key="vocabulary._id"
-          xs12
-          md6
-        >
-          <v-autocomplete
-            v-model="selectedTermLabels[vocabulary.label]"
-            :items="vocabulary.terms"
-            :label="vocabulary.label"
-            :item-text="term => term.name || term.label"
-            box
-            chips
-            clearable
-            deletable-chips
-            flat
-            hide-details
-            hide-no-data
-            item-value="label"
-            multiple
-          ></v-autocomplete>
-        </v-flex>
-      </v-layout>
-    </feathers-vuex-find>
-
-    <feathers-vuex-find
       v-slot="{
         isFindPending: loading,
-        items: datastreams,
+        items: stations,
         pagination
       }"
-      :fetch-query="datastreamsFetchQuery"
-      :query="datastreamsQuery"
+      :fetch-query="stationsFetchQuery"
+      :query="stationsQuery"
       :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"
       qid="search"
-      service="datastreams"
+      service="stations"
     >
       <v-layout row wrap>
         <v-flex xs12>
@@ -87,14 +18,14 @@
             v-model.trim="searchDebounce"
             append-icon="search"
             clearable
-            label="Filter datastreams"
+            label="Filter stations"
           ></v-text-field>
         </v-flex>
 
         <v-flex xs12>
           <v-data-table
             :headers="headers"
-            :items="datastreams"
+            :items="stations"
             :loading="loading"
             :pagination.sync="tablePagination"
             :rows-per-page-items="[5, 10, 25, 50]"
@@ -110,9 +41,9 @@
                 <slot name="select" :item="item" />
               </td>
 
-              <td>{{ item.station && item.station.name }}</td>
+              <td>{{ item.state }}</td>
               <td>{{ item.name }}</td>
-              <td>{{ item.description }}</td>
+              <td>{{ item.full_name }}</td>
 
               <td
                 v-if="$scopedSlots.actions"
@@ -135,8 +66,7 @@ import { escapeRegExp } from '@/lib/utils'
 
 export default {
   props: {
-    org: { default: null, type: Object },
-    stationId: { default: '', type: String }
+    org: { default: null, type: Object }
   },
 
   data: () => ({
@@ -150,22 +80,22 @@ export default {
       {
         align: 'left',
         sortable: false,
-        text: 'Station',
-        value: 'station.name',
-        width: '20%'
+        text: 'State',
+        value: 'state',
+        width: '10%'
       },
       {
         align: 'left',
         sortable: false,
-        text: 'Datastream',
-        value: 'name',
+        text: 'Name',
+        value: 'Name',
         width: '40%'
       },
       {
         align: 'left',
         sortable: false,
-        text: 'Description',
-        value: 'description'
+        text: 'Full name',
+        value: 'full_name'
       },
       {
         sortable: false,
@@ -173,13 +103,10 @@ export default {
       }
     ],
 
-    queryDatastreamIds: [],
+    queryStationIds: [],
 
     search: null,
     searchDebounce: null,
-
-    selectedStationIds: null,
-    selectedTermLabels: {},
 
     tablePagination: {
       descending: false,
@@ -191,18 +118,12 @@ export default {
   }),
 
   computed: {
-    datastreamsFetchQuery() {
-      const {
-        search,
-        selectedStationIds,
-        selectedTermLabels,
-        tablePagination
-      } = this
+    stationsFetchQuery() {
+      const { search, tablePagination } = this
       const { page, rowsPerPage } = tablePagination
 
       const query = {
         is_enabled: true,
-        is_hidden: false,
         organization_id: this.org._id,
         $limit: rowsPerPage,
         $skip: (page - 1) * rowsPerPage,
@@ -210,10 +131,10 @@ export default {
           '_id',
           'is_hidden',
           'name',
-          'description',
+          'full_name',
           'access_levels_resolved',
           'organization_id',
-          'station_id'
+          'state'
         ],
         $sort: { name: 1, _id: 1 }
       }
@@ -237,29 +158,18 @@ export default {
         })
       }
 
-      if (selectedStationIds && selectedStationIds.length) {
-        ands.push({ station_id: { $in: selectedStationIds } })
-      }
-
-      Object.keys(selectedTermLabels).forEach(vLabel => {
-        const tags = selectedTermLabels[vLabel].map(
-          tLabel => `ds_${vLabel}_${tLabel}`
-        )
-        if (tags.length) ands.push({ 'terms_info.class_tags': { $in: tags } })
-      })
-
       if (ands.length) query.$and = ands
 
       return query
     },
 
     paginationSearch() {
-      return this.$store.state.datastreams.pagination.search
+      return this.$store.state.stations.pagination.search
     },
 
-    datastreamsQuery() {
+    stationsQuery() {
       return {
-        _id: { $in: this.queryDatastreamIds },
+        _id: { $in: this.queryStationIds },
         $sort: { name: 1, _id: 1 }
       }
     }
@@ -267,28 +177,15 @@ export default {
 
   watch: {
     paginationSearch(newValue) {
-      this.queryDatastreamIds = (newValue && newValue.ids) || []
+      this.queryStationIds = (newValue && newValue.ids) || []
     },
 
     searchDebounce(newValue) {
       this.debouncedSearch(newValue)
-    },
-
-    selectedStationIds() {
-      this.tablePagination.page = 1
-    },
-
-    selectedTermLabels: {
-      handler() {
-        this.tablePagination.page = 1
-      },
-      deep: true
     }
   },
 
   created() {
-    if (this.stationId) this.selectedStationIds = [this.stationId]
-
     this.debouncedSearch = _debounce(value => {
       this.search = value
     }, 400)

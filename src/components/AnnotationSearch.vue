@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid grid-list-xl>
     <v-layout row wrap>
       <v-flex xs12>
         <date-range-fields v-model="dateRange" />
@@ -201,16 +201,16 @@ export default {
         }
       ]
 
-      const frTime = moment(this.dateRange.from)
+      const fromTime = moment(this.dateRange.from)
       const toTime = moment(this.dateRange.to)
         .startOf('d')
         .add(1, 'd')
 
-      if (frTime.isValid()) {
+      if (fromTime.isValid()) {
         intervals.push({
           $and: [
             { 'intervals.begins_at': { $exists: false } },
-            { 'intervals.ends_before': { $gt: frTime.toISOString() } }
+            { 'intervals.ends_before': { $gt: fromTime.toISOString() } }
           ]
         })
       }
@@ -224,11 +224,11 @@ export default {
         })
       }
 
-      if (frTime.isValid() && toTime.isValid()) {
+      if (fromTime.isValid() && toTime.isValid()) {
         intervals.push({
           $and: [
             { 'intervals.begins_at': { $lt: toTime.toISOString() } },
-            { 'intervals.ends_before': { $gt: frTime.toISOString() } }
+            { 'intervals.ends_before': { $gt: fromTime.toISOString() } }
           ]
         })
       }

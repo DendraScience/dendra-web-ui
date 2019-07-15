@@ -251,7 +251,7 @@
       </v-container>
     </v-flex>
 
-    <v-dialog ref="exportDialog" v-model="exportDialog" lazy max-width="340">
+    <v-dialog v-model="exportDialog" lazy max-width="340">
       <v-card>
         <v-card-title class="headline">Export as</v-card-title>
 
@@ -318,7 +318,7 @@ export default {
   data: () => ({
     charts: [],
 
-    chartTitle: 'My Awesome Data',
+    chartTitle: 'Chart Title',
 
     tabIndex: 0,
 

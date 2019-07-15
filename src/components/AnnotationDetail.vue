@@ -4,58 +4,148 @@
       <v-layout column>
         <v-flex>
           <v-card>
-            <v-card-text>
-              <v-text-field
-                v-model="title"
-                v-validate="'required|max:100'"
-                :error-messages="errors.collect('title')"
-                :readonly="!editing"
-                data-vv-name="title"
-                label="Title"
-                required
-              ></v-text-field>
+            <v-container fluid pt-0 px-3>
+              <v-layout column>
+                <v-flex>
+                  <v-text-field
+                    v-model.trim="value.title"
+                    v-validate="'required|min:5|max:100'"
+                    :error-messages="errors.collect('title')"
+                    :readonly="!editing"
+                    data-vv-name="title"
+                    label="Title"
+                    required
+                  ></v-text-field>
 
-              <v-select
-                v-model="state"
-                :items="stateItems"
-                :readonly="!editing"
-                label="State"
-              ></v-select>
+                  <v-select
+                    v-model="value.state"
+                    :items="stateItems"
+                    :readonly="!editing"
+                    label="State"
+                  ></v-select>
 
-              <v-textarea
-                v-model="description"
-                v-validate="'required|max:5000'"
-                :error-messages="errors.collect('description')"
-                :readonly="!editing"
-                auto-grow
-                data-vv-name="description"
-                label="Description"
-              ></v-textarea>
-            </v-card-text>
+                  <v-textarea
+                    v-model.trim="value.description"
+                    v-validate="'required|min:5|max:5000'"
+                    :error-messages="errors.collect('description')"
+                    :readonly="!editing"
+                    auto-grow
+                    data-vv-name="description"
+                    label="Description"
+                  ></v-textarea>
+                </v-flex>
+              </v-layout>
+            </v-container>
+
+            <audit-text v-if="!editing" v-model="value" />
 
             <v-card-actions>
-              <v-chip v-if="id" label>id: {{ id }}</v-chip>
+              <v-chip v-if="value._id" label>id: {{ value._id }}</v-chip>
+              <v-chip v-if="value.version_id" class="ml-2" label
+                >version: {{ value.version_id }}</v-chip
+              >
             </v-card-actions>
           </v-card>
         </v-flex>
 
         <v-flex>
-          <annotation-detail-applies v-model="applies" :editing="editing" />
+          <annotation-detail-applies
+            :editing="editing"
+            :value="value"
+            @add="appliesAdd"
+            @remove="appliesRemove"
+          />
         </v-flex>
 
         <v-flex>
-          <annotation-detail-intervals v-model="intervals" :editing="editing" />
+          <annotation-detail-intervals :editing="editing" :value="value" />
         </v-flex>
 
         <v-flex>
-          <annotation-detail-actions v-model="actions" :editing="editing" />
+          <annotation-detail-actions :editing="editing" :value="value" />
         </v-flex>
 
         <v-flex>
-          <detail-external-refs v-model="externalRefs" :editing="editing" />
+          <detail-external-refs :editing="editing" :value="value" />
         </v-flex>
       </v-layout>
     </v-container>
+
+    <v-dialog
+      v-model="datastreamDialog"
+      fullscreen
+      hide-overlay
+      lazy
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary" fixed prominent>
+          <v-btn icon dark @click="datastreamDialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Select datastreams</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark flat @click="appliesAddDatastream">OK</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <datastream-search :org="org" style="margin-top: 64px;">
+          <template v-slot:select="{ item }">
+            <v-icon
+              color="primary"
+              @click="
+                incrementQuantity({
+                  id: item._id,
+                  max: 1
+                })
+              "
+              >{{
+                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+              }}</v-icon
+            >
+          </template>
+        </datastream-search>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="stationDialog"
+      fullscreen
+      hide-overlay
+      lazy
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary" fixed prominent>
+          <v-btn icon dark @click="stationDialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Select stations</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark flat @click="appliesAddStation">OK</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <station-search :org="org" style="margin-top: 64px;">
+          <template v-slot:select="{ item }">
+            <v-icon
+              color="primary"
+              @click="
+                incrementQuantity({
+                  id: item._id,
+                  max: 1
+                })
+              "
+              >{{
+                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+              }}</v-icon
+            >
+          </template>
+        </station-search>
+      </v-card>
+    </v-dialog>
   </form>
 </template>
 
@@ -63,102 +153,83 @@
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
+import AuditText from '@/components/AuditText'
+import DatastreamSearch from '@/components/DatastreamSearch'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import StationSearch from '@/components/StationSearch'
 
-// import _pick from 'lodash/pick'
+import _union from 'lodash/union'
 
-// import { mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     AnnotationDetailActions,
     AnnotationDetailApplies,
     AnnotationDetailIntervals,
-    DetailExternalRefs
+    AuditText,
+    DatastreamSearch,
+    DetailExternalRefs,
+    StationSearch
   },
+
+  inject: ['$validator'],
 
   props: {
-    annotation: { default: null, type: Object },
-    editing: { default: false, type: Boolean }
+    editing: { default: false, type: Boolean },
+    org: { default: null, type: Object },
+    value: { type: Object, required: true }
   },
 
-  data() {
-    const { annotation } = this
-    const stateItems = ['pending', 'approved', 'rejected']
+  data: () => ({
+    datastreamDialog: false,
+    stationDialog: false,
+    stateItems: ['pending', 'approved', 'rejected']
+  }),
 
-    if (annotation) {
-      return {
-        id: annotation._id,
-        title: annotation.title,
-        state: annotation.state,
-        stateItems,
-        description: annotation.description,
-        actions: {
-          items: annotation.actions ? annotation.actions.slice() : []
-        },
-        applies: {
-          stationIds: annotation.station_ids
-            ? annotation.station_ids.slice()
-            : [],
-          datastreamIds: annotation.datastream_ids
-            ? annotation.datastream_ids.slice()
-            : []
-        },
-        externalRefs: {
-          items: annotation.external_refs
-            ? annotation.external_refs.slice()
-            : []
-        },
-        intervals: {
-          items: annotation.intervals ? annotation.intervals.slice() : []
-        }
-      }
-    }
-
-    return {
-      title: null,
-      state: 'pending',
-      stateItems,
-      description: null,
-      actions: {
-        items: []
-      },
-      applies: {
-        stationIds: [],
-        datastreamIds: []
-      },
-      externalRefs: {
-        items: []
-      },
-      intervals: {
-        items: []
-      }
-    }
+  computed: {
+    ...mapGetters({
+      cartCount: 'cart/count',
+      cartIds: 'cart/ids'
+    })
   },
-
-  computed: {},
-
-  mounted() {},
 
   methods: {
-    //   async submit() {
-    //     if (!(await this.$validator.validateAll())) return
-    //     const $set = _pick(this, ['email', 'name'])
-    //     return this.patch([this.id, { $set }, {}])
-    //       .then(() =>
-    //         this.$emit('status', {
-    //           type: 'success',
-    //           message: 'Account updated.' // TODO: Localize
-    //         })
-    //       )
-    //       .catch(({ message }) =>
-    //         this.$emit('status', { type: 'error', message })
-    //       )
-    //   }
+    ...mapMutations({
+      incrementQuantity: 'cart/incrementQuantity',
+      resetCart: 'cart/reset'
+    }),
+
+    appliesAdd(item) {
+      this.resetCart()
+
+      this[`${item.target}Dialog`] = true
+    },
+
+    appliesAddDatastream() {
+      this.$set(
+        this.value,
+        'datastream_ids',
+        _union(this.value.datastream_ids, this.cartIds)
+      )
+      this.datastreamDialog = false
+    },
+
+    appliesAddStation() {
+      this.$set(
+        this.value,
+        'station_ids',
+        _union(this.value.station_ids, this.cartIds)
+      )
+      this.stationDialog = false
+    },
+
+    appliesRemove(item) {
+      const key = `${item.target}_ids`
+      const ids = this.value[key] || []
+
+      this.$set(this.value, key, ids.filter(id => id !== item.id))
+    }
   }
 }
 </script>

@@ -1,26 +1,7 @@
 <template>
   <v-layout v-if="instance" column pt-3>
-    <v-btn
-      v-if="!editing"
-      color="primary"
-      dark
-      fab
-      fixed
-      bottom
-      left
-      @click="edit"
-    >
-      <v-icon>edit</v-icon>
-    </v-btn>
-
     <v-flex>
       <v-container grid-list-xl>
-        <v-layout v-if="!editing" row wrap>
-          <v-flex>
-            <h4 class="display-1 font-weight-light mb-2">Annotation details</h4>
-          </v-flex>
-        </v-layout>
-
         <v-layout column>
           <v-flex>
             <annotation-detail
@@ -38,7 +19,6 @@
 <script>
 import AnnotationDetail from '@/components/AnnotationDetail'
 
-import _merge from 'lodash/merge'
 import _pick from 'lodash/pick'
 
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
@@ -76,17 +56,26 @@ export default {
   },
 
   mounted() {
-    this.$bus.$on('editor-cancel', this.onCancel)
-    this.$bus.$on('editor-save', this.onSave)
+    this.$bus.$on('editor-cancel', this.cancel)
+    this.$bus.$on('editor-save', this.save)
 
-    this.setEditorColor('primary')
+    this.setEditorColor('secondary')
     this.setEditorDirty(-1)
-    this.instance = _merge({}, this.annotation)
+    this.setEditorTitle('New annotation')
+    this.setEditing(true)
+    this.instance = {
+      datastream_ids: [],
+      description: '',
+      organization_id: this.org._id,
+      state: 'pending',
+      station_ids: [],
+      title: ''
+    }
   },
 
   beforeDestroy() {
-    this.$bus.$off('editor-cancel', this.onCancel)
-    this.$bus.$off('editor-save', this.onSave)
+    this.$bus.$off('editor-cancel', this.cancel)
+    this.$bus.$off('editor-save', this.save)
   },
 
   beforeRouteLeave(to, from, next) {
@@ -95,7 +84,7 @@ export default {
 
   methods: {
     ...mapActions({
-      patch: 'annotations/patch'
+      create: 'annotations/create'
     }),
 
     ...mapMutations({
@@ -106,34 +95,54 @@ export default {
       setEditorTitle: 'ux/setEditorTitle'
     }),
 
+    cancel() {
+      this.setEditing(false)
+      this.setEditorDirty(-1)
+      this.$router.push({
+        name: 'orgs-orgSlug-annotations',
+        params: { orgSlug: this.org.slug }
+      })
+    },
+
     edit() {
       this.setEditorDirty(0)
       this.setEditorTitle('Edit annotation')
       this.setEditing(true)
     },
 
-    onCancel() {
-      this.setEditing(false)
-      this.setEditorDirty(-1)
-      this.instance = _merge({}, this.annotation)
-    },
-
-    async onSave() {
+    async save() {
       if (!(await this.$validator.validateAll())) return
 
       const { instance } = this
-      const $set = _pick(instance, ['description', 'title'])
+      const data = _pick(instance, [
+        'datastream_ids',
+        'description',
+        'organization_id',
+        'state',
+        'station_ids',
+        'title'
+      ])
+
+      if (data.datastream_ids.length === 0) delete data.datastream_ids
+      if (data.station_ids.length === 0) delete data.station_ids
 
       try {
-        await this.patch([instance._id, { $set }, {}])
+        const res = await this.create([data, {}])
 
         this.setEditing(false)
         this.setEditorDirty(-1)
-        this.instance = _merge({}, this.annotation)
-        this.$bus.$emit('edit-status', {
-          type: 'success',
-          message: 'Annotation saved.' // TODO: Localize
-        })
+        this.$router.push(
+          {
+            name: 'orgs-orgSlug-annotations-annotationId',
+            params: { orgSlug: this.org.slug, annotationId: res._id }
+          },
+          () => {
+            this.$bus.$emit('edit-status', {
+              type: 'success',
+              message: 'Annotation created.' // TODO: Localize
+            })
+          }
+        )
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
       }

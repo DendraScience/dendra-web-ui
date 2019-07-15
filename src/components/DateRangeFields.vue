@@ -1,6 +1,6 @@
 <template>
   <v-container fluid pa-0>
-    <v-dialog ref="dialog" v-model="dialog" lazy max-width="680">
+    <v-dialog v-model="dialog" lazy max-width="680">
       <v-card>
         <v-card-title class="headline">Date range</v-card-title>
 

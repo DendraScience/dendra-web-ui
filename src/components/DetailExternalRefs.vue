@@ -10,14 +10,17 @@
           <v-data-table
             :headers="headers"
             :items="items"
-            disable-initial-sort
             hide-actions
             item-key="key"
           >
             <template v-slot:items="{ item }">
               <td>{{ item.type }}</td>
               <td>{{ item.identifier }}</td>
-              <td>{{ item.url }}</td>
+              <td>
+                <a v-if="item.url" :href="item.url" target="_blank">{{
+                  item.url
+                }}</a>
+              </td>
 
               <td class="text-xs-right text-no-wrap">
                 <span v-if="editing">
@@ -54,7 +57,7 @@ export default {
     headers: [
       {
         align: 'left',
-        sortable: false,
+        sortable: true,
         text: 'Type',
         value: 'type',
         width: '20%'
@@ -81,13 +84,19 @@ export default {
   }),
 
   computed: {
+    externalRefs() {
+      return this.value.external_refs || []
+    },
+
     items() {
-      return []
+      return this.externalRefs
     }
   },
 
   methods: {
     add() {},
+
+    edit(item) {},
 
     remove(item) {}
   }

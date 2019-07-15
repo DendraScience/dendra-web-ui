@@ -19,10 +19,19 @@
                 <v-icon>{{ item.icon }}</v-icon>
               </td>
 
-              <td class="py-3"></td>
+              <td class="py-3">
+                <span v-if="item.label">{{ item.label }}</span>
+                <v-chip v-for="val in item.values" :key="val" label>{{
+                  val
+                }}</v-chip>
+                <pre v-if="item.custom"><code>{{ item.custom }}</code></pre>
+              </td>
 
               <td class="text-xs-right text-no-wrap">
-                <v-icon v-if="editing" color="tertiary" @click="remove(item)"
+                <v-icon
+                  v-if="editing && !item.custom"
+                  color="tertiary"
+                  @click="remove(item)"
                   >remove_circle</v-icon
                 >
               </td>
@@ -103,8 +112,32 @@ export default {
   }),
 
   computed: {
+    actions() {
+      return this.value.actions || []
+    },
+
     items() {
-      return []
+      return this.actions.map(item => {
+        if (item.exclude !== undefined) {
+          return {
+            label: 'Exclude datapoints',
+            icon: 'block'
+          }
+        }
+
+        if (item.flag !== undefined) {
+          return {
+            label: 'Flag datapoints',
+            values: item.flag,
+            icon: 'flag'
+          }
+        }
+
+        return {
+          custom: JSON.stringify(item),
+          icon: 'code'
+        }
+      })
     }
   },
 

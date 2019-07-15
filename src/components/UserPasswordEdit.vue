@@ -97,13 +97,13 @@ export default {
 
       return this.patch([this.id, { $set }, {}])
         .then(() =>
-          this.$emit('status', {
+          this.$bus.$emit('status', {
             type: 'success',
             message: 'Password changed.' // TODO: Localize
           })
         )
         .catch(({ message }) =>
-          this.$emit('status', { type: 'error', message })
+          this.$bus.$emit('status', { type: 'error', message })
         )
     }
   }

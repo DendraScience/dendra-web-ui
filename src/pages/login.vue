@@ -1,7 +1,5 @@
 <template>
   <v-layout column>
-    <status-bar v-model="status" />
-
     <v-flex>
       <v-container grid-list-lg>
         <v-layout row>
@@ -52,17 +50,11 @@
 </template>
 
 <script>
-import StatusBar from '@/components/StatusBar'
-
 import { mapActions, mapState } from 'vuex'
 
 export default {
   $_veeValidate: {
     validator: 'new'
-  },
-
-  components: {
-    StatusBar
   },
 
   middleware: ['no-org', 'auth-redirect-orgs'],
@@ -71,8 +63,7 @@ export default {
     isPasswordShown: false,
 
     email: '',
-    password: '',
-    status: null
+    password: ''
   }),
 
   computed: {
@@ -83,10 +74,10 @@ export default {
     auth: {
       handler(newValue) {
         if (newValue.errorOnAuthenticate) {
-          this.status = {
+          this.$bus.$emit('status', {
             message: newValue.errorOnAuthenticate.message,
             type: 'error'
-          }
+          })
         }
       },
       deep: true

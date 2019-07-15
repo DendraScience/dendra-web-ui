@@ -1,7 +1,5 @@
 <template>
   <v-layout column>
-    <status-bar v-model="status" />
-
     <v-flex>
       <v-container grid-list-xl>
         <v-layout row>
@@ -12,19 +10,13 @@
 
         <v-layout row wrap>
           <v-flex xs12 md8>
-            <user-account-edit
-              :user="getUser(auth.user._id)"
-              @status="status = $event"
-            />
+            <user-account-edit :user="getUser(auth.user._id)" />
           </v-flex>
         </v-layout>
 
         <v-layout row wrap>
           <v-flex xs12 md8>
-            <user-password-edit
-              :user="getUser(auth.user._id)"
-              @status="status = $event"
-            />
+            <user-password-edit :user="getUser(auth.user._id)" />
           </v-flex>
         </v-layout>
       </v-container>
@@ -33,7 +25,6 @@
 </template>
 
 <script>
-import StatusBar from '@/components/StatusBar'
 import UserAccountEdit from '@/components/UserAccountEdit'
 import UserPasswordEdit from '@/components/UserPasswordEdit'
 
@@ -41,16 +32,11 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    StatusBar,
     UserAccountEdit,
     UserPasswordEdit
   },
 
   middleware: ['no-org', 'no-auth-redirect-login'],
-
-  data: () => ({
-    status: null
-  }),
 
   computed: {
     ...mapGetters({

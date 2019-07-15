@@ -1,6 +1,21 @@
 <template>
   <v-layout v-if="org" column>
-    <v-btn color="secondary" dark fixed bottom left fab>
+    <v-btn
+      :to="{
+        name: 'orgs-orgSlug-annotations-create',
+        params: {
+          orgSlug: org.slug
+        }
+      }"
+      color="secondary"
+      dark
+      exact
+      fab
+      fixed
+      bottom
+      left
+      nuxt
+    >
       <v-icon>add</v-icon>
     </v-btn>
 

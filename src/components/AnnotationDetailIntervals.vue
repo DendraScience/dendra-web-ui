@@ -127,8 +127,12 @@ export default {
   }),
 
   computed: {
+    intervals() {
+      return this.value.intervals || []
+    },
+
     items() {
-      return this.value.items.map(item => {
+      return this.intervals.map(item => {
         const beginsAt = item.begins_at && moment(item.begins_at)
         const endsBefore = item.ends_before && moment(item.ends_before)
 
