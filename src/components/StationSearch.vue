@@ -45,6 +45,8 @@
               <td>{{ item.name }}</td>
               <td>{{ item.full_name }}</td>
 
+              <indicator-cell :value="item" />
+
               <td
                 v-if="$scopedSlots.actions"
                 class="text-xs-right text-no-wrap"
@@ -60,13 +62,20 @@
 </template>
 
 <script>
+import IndicatorCell from '@/components/IndicatorCell'
+
 import _debounce from 'lodash/debounce'
 
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
+  components: {
+    IndicatorCell
+  },
+
   props: {
-    org: { default: null, type: Object }
+    org: { default: null, type: Object },
+    showDisabled: { default: false, type: Boolean }
   },
 
   data: () => ({
@@ -98,6 +107,10 @@ export default {
         value: 'full_name'
       },
       {
+        align: 'left',
+        sortable: false
+      },
+      {
         sortable: false,
         value: '_id'
       }
@@ -123,21 +136,24 @@ export default {
       const { page, rowsPerPage } = tablePagination
 
       const query = {
-        is_enabled: true,
+        is_hidden: false,
         organization_id: this.org._id,
         $limit: rowsPerPage,
         $skip: (page - 1) * rowsPerPage,
         $select: [
           '_id',
+          'access_levels_resolved',
+          'full_name',
+          'is_enabled',
           'is_hidden',
           'name',
-          'full_name',
-          'access_levels_resolved',
           'organization_id',
           'state'
         ],
         $sort: { name: 1, _id: 1 }
       }
+
+      if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
 

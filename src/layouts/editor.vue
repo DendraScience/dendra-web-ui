@@ -37,7 +37,7 @@
 
     <v-dialog v-model="cancelDialog" dark max-width="500px" persistent>
       <v-card>
-        <v-card-title class="headline" primary-title>
+        <v-card-title primary-title class="headline">
           Unsaved changes
         </v-card-title>
 
@@ -56,7 +56,7 @@
 
     <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
       <v-card>
-        <v-card-title class="headline" primary-title>
+        <v-card-title primary-title class="headline">
           Unsaved changes
         </v-card-title>
 

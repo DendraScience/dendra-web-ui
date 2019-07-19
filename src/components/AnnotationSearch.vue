@@ -62,6 +62,8 @@
               </td>
               <td>{{ item.description | truncate({ length: 200 }) }}</td>
 
+              <indicator-cell :value="item" />
+
               <td
                 v-if="$scopedSlots.actions"
                 class="text-xs-right text-no-wrap"
@@ -78,6 +80,7 @@
 
 <script>
 import DateRangeFields from '@/components/DateRangeFields'
+import IndicatorCell from '@/components/IndicatorCell'
 
 import moment from 'moment'
 import _debounce from 'lodash/debounce'
@@ -85,12 +88,18 @@ import _debounce from 'lodash/debounce'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
+  $_veeValidate: {
+    validator: 'new'
+  },
+
   components: {
-    DateRangeFields
+    DateRangeFields,
+    IndicatorCell
   },
 
   props: {
-    org: { default: null, type: Object }
+    org: { default: null, type: Object },
+    showDisabled: { default: false, type: Boolean }
   },
 
   data: () => ({
@@ -131,6 +140,10 @@ export default {
         value: 'description'
       },
       {
+        align: 'left',
+        sortable: false
+      },
+      {
         sortable: false,
         value: '_id'
       }
@@ -156,15 +169,15 @@ export default {
       const { page, rowsPerPage } = tablePagination
 
       const query = {
-        is_enabled: true,
         organization_id: this.org._id,
         $limit: rowsPerPage,
         $skip: (page - 1) * rowsPerPage,
         $select: [
           '_id',
-          'description',
           'access_levels_resolved',
+          'description',
           'intervals',
+          'is_enabled',
           'organization_id',
           'state',
           'title'
@@ -175,6 +188,8 @@ export default {
           _id: 1
         }
       }
+
+      if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
 
@@ -201,8 +216,8 @@ export default {
         }
       ]
 
-      const fromTime = moment(this.dateRange.from)
-      const toTime = moment(this.dateRange.to)
+      const fromTime = moment(this.dateRange.from, this.$dateFormats.y4md, true)
+      const toTime = moment(this.dateRange.to, this.$dateFormats.y4md, true)
         .startOf('d')
         .add(1, 'd')
 
@@ -213,6 +228,8 @@ export default {
             { 'intervals.ends_before': { $gt: fromTime.toISOString() } }
           ]
         })
+      } else {
+        ands.push({ _id: '' })
       }
 
       if (toTime.isValid()) {
@@ -222,15 +239,19 @@ export default {
             { 'intervals.ends_before': { $exists: false } }
           ]
         })
+      } else {
+        ands.push({ _id: '' })
       }
 
-      if (fromTime.isValid() && toTime.isValid()) {
+      if (fromTime.isBefore(toTime)) {
         intervals.push({
           $and: [
             { 'intervals.begins_at': { $lt: toTime.toISOString() } },
             { 'intervals.ends_before': { $gt: fromTime.toISOString() } }
           ]
         })
+      } else {
+        ands.push({ _id: '' })
       }
 
       ands.push({ $or: intervals })

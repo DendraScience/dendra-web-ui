@@ -2,19 +2,19 @@
   <v-layout column>
     <v-flex>
       <v-container grid-list-xl>
-        <v-layout row>
-          <v-flex xs12>
+        <v-layout>
+          <v-flex>
             <h3 class="display-2 font-weight-light mb-2">User settings</h3>
           </v-flex>
         </v-layout>
 
-        <v-layout row wrap>
+        <v-layout row>
           <v-flex xs12 md8>
             <user-account-edit :user="getUser(auth.user._id)" />
           </v-flex>
         </v-layout>
 
-        <v-layout row wrap>
+        <v-layout row>
           <v-flex xs12 md8>
             <user-password-edit :user="getUser(auth.user._id)" />
           </v-flex>

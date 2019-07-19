@@ -1,6 +1,47 @@
 <template>
   <v-layout v-if="org" column>
+    <v-flex>
+      <v-container grid-list-xl>
+        <v-layout column>
+          <v-flex>
+            <!-- TODO: Remove elevation? -->
+            <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
+              <v-tab>
+                Search
+              </v-tab>
+
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-title primary-title class="headline">
+                    Annotations
+                  </v-card-title>
+
+                  <annotation-search
+                    :org="org"
+                    :show-disabled="$can('create', 'annotations')"
+                  >
+                    <template v-slot:actions="{ item }">
+                      <v-icon color="tertiary" @click="open(item._id)"
+                        >open_in_new</v-icon
+                      >
+                    </template>
+                  </annotation-search>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-flex>
+
     <v-btn
+      v-if="
+        $can('create', {
+          organization_id: org._id,
+          state: 'pending',
+          [$abilityTypeKey]: 'annotations'
+        })
+      "
       :to="{
         name: 'orgs-orgSlug-annotations-create',
         params: {
@@ -18,37 +59,6 @@
     >
       <v-icon>add</v-icon>
     </v-btn>
-
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <!-- TODO: Remove elevation? -->
-            <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
-              <v-tab>
-                Search
-              </v-tab>
-
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-title primary-title class="headline">
-                    Annotations
-                  </v-card-title>
-
-                  <annotation-search :org="org">
-                    <template v-slot:actions="{ item }">
-                      <v-icon color="tertiary" @click="open(item._id)"
-                        >open_in_new</v-icon
-                      >
-                    </template>
-                  </annotation-search>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
   </v-layout>
 </template>
 
@@ -58,6 +68,10 @@ import AnnotationSearch from '@/components/AnnotationSearch'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
+  $_veeValidate: {
+    validator: 'new'
+  },
+
   components: {
     AnnotationSearch
   },

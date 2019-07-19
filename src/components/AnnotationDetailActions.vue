@@ -4,7 +4,7 @@
       <slot>Actions</slot>
     </v-card-title>
 
-    <v-container fluid pt-0 px-3>
+    <v-container fluid pt-0>
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
@@ -117,7 +117,7 @@ export default {
     },
 
     items() {
-      return this.actions.map(item => {
+      return this.actions.map((item, key) => {
         if (item.exclude !== undefined) {
           return {
             label: 'Exclude datapoints',
@@ -135,7 +135,8 @@ export default {
 
         return {
           custom: JSON.stringify(item),
-          icon: 'code'
+          icon: 'code',
+          key
         }
       })
     }

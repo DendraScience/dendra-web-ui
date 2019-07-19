@@ -1,14 +1,13 @@
 <template>
-  <v-card-text class="grey--text pt-0">
-    <span v-if="value.created_at"
-      >Created {{ value.created_at | moment('', ['fromNow']) }} by
-      {{ creator }}</span
-    ><br />
-    <span v-if="value.updated_at"
-      >Updated {{ value.updated_at | moment('', ['fromNow']) }} by
-      {{ updator }}</span
-    ><br />
-  </v-card-text>
+  <v-layout column class="grey--text">
+    <v-flex v-if="value.created_at" py-2>
+      Created {{ value.created_at | moment('', ['fromNow']) }} by {{ creator }}
+    </v-flex>
+
+    <v-flex v-if="value.updated_at" py-2>
+      Updated {{ value.updated_at | moment('', ['fromNow']) }} by {{ updator }}
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>

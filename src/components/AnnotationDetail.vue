@@ -1,75 +1,75 @@
 <template>
-  <form @submit.prevent="submit">
-    <v-container fluid pa-0>
-      <v-layout column>
-        <v-flex>
-          <v-card>
-            <v-container fluid pt-0 px-3>
-              <v-layout column>
-                <v-flex>
-                  <v-text-field
-                    v-model.trim="value.title"
-                    v-validate="'required|min:5|max:100'"
-                    :error-messages="errors.collect('title')"
-                    :readonly="!editing"
-                    data-vv-name="title"
-                    label="Title"
-                    required
-                  ></v-text-field>
+  <v-container fluid pa-0>
+    <v-layout column>
+      <v-flex>
+        <v-card>
+          <v-container fluid>
+            <v-layout column>
+              <v-flex pb-0>
+                <v-text-field
+                  v-model.trim="value.title"
+                  v-validate="'required|min:5|max:100'"
+                  :error-messages="errors.collect('title')"
+                  :readonly="!editing"
+                  data-vv-name="title"
+                  label="Title"
+                  required
+                ></v-text-field>
 
-                  <v-select
-                    v-model="value.state"
-                    :items="stateItems"
-                    :readonly="!editing"
-                    label="State"
-                  ></v-select>
+                <v-select
+                  v-if="typeof value.state === 'string'"
+                  v-model="value.state"
+                  :items="stateItems"
+                  :readonly="!editing || $cannot('assign', value, '$set.state')"
+                  label="State"
+                ></v-select>
 
-                  <v-textarea
-                    v-model.trim="value.description"
-                    v-validate="'required|min:5|max:5000'"
-                    :error-messages="errors.collect('description')"
-                    :readonly="!editing"
-                    auto-grow
-                    data-vv-name="description"
-                    label="Description"
-                  ></v-textarea>
-                </v-flex>
-              </v-layout>
-            </v-container>
+                <v-textarea
+                  v-model.trim="value.description"
+                  v-validate="'required|min:5|max:5000'"
+                  :error-messages="errors.collect('description')"
+                  :readonly="!editing"
+                  auto-grow
+                  data-vv-name="description"
+                  label="Description"
+                ></v-textarea>
+              </v-flex>
+            </v-layout>
 
-            <audit-text v-if="!editing" v-model="value" />
+            <standard-options :editing="editing" :value="value" />
+            <standard-audit v-if="!editing" :value="value" />
+            <standard-identifier :value="value" />
+          </v-container>
+        </v-card>
+      </v-flex>
 
-            <v-card-actions>
-              <v-chip v-if="value._id" label>id: {{ value._id }}</v-chip>
-              <v-chip v-if="value.version_id" class="ml-2" label
-                >version: {{ value.version_id }}</v-chip
-              >
-            </v-card-actions>
-          </v-card>
-        </v-flex>
+      <v-flex>
+        <annotation-detail-applies
+          :editing="editing"
+          :value="value"
+          @add="appliesAdd"
+          @remove="appliesRemove"
+        />
+      </v-flex>
 
-        <v-flex>
-          <annotation-detail-applies
-            :editing="editing"
-            :value="value"
-            @add="appliesAdd"
-            @remove="appliesRemove"
-          />
-        </v-flex>
+      <v-flex>
+        <annotation-detail-intervals
+          :editing="editing"
+          :value="value"
+          @add="intervalsAdd"
+          @edit="intervalsEdit"
+          @remove="intervalsRemove"
+        />
+      </v-flex>
 
-        <v-flex>
-          <annotation-detail-intervals :editing="editing" :value="value" />
-        </v-flex>
+      <v-flex>
+        <annotation-detail-actions :editing="editing" :value="value" />
+      </v-flex>
 
-        <v-flex>
-          <annotation-detail-actions :editing="editing" :value="value" />
-        </v-flex>
-
-        <v-flex>
-          <detail-external-refs :editing="editing" :value="value" />
-        </v-flex>
-      </v-layout>
-    </v-container>
+      <v-flex>
+        <detail-external-refs :editing="editing" :value="value" />
+      </v-flex>
+    </v-layout>
 
     <v-dialog
       v-model="datastreamDialog"
@@ -90,7 +90,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <datastream-search :org="org" style="margin-top: 64px;">
+        <datastream-search :org="org" show-disabled style="margin-top: 64px;">
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -106,6 +106,19 @@
             >
           </template>
         </datastream-search>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="rangeDialog" lazy max-width="680">
+      <v-card>
+        <v-card-title primary-title class="headline">Date range</v-card-title>
+
+        <date-range-picker v-model="dateRange" />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn flat color="primary" @click="intervalsAddRange">OK</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -128,7 +141,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <station-search :org="org" style="margin-top: 64px;">
+        <station-search :org="org" show-disabled style="margin-top: 64px;">
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -146,16 +159,19 @@
         </station-search>
       </v-card>
     </v-dialog>
-  </form>
+  </v-container>
 </template>
 
 <script>
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
-import AuditText from '@/components/AuditText'
 import DatastreamSearch from '@/components/DatastreamSearch'
+import DateRangePicker from '@/components/DateRangePicker'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import StandardAudit from '@/components/StandardAudit'
+import StandardIdentifier from '@/components/StandardIdentifier'
+import StandardOptions from '@/components/StandardOptions'
 import StationSearch from '@/components/StationSearch'
 
 import _union from 'lodash/union'
@@ -167,9 +183,12 @@ export default {
     AnnotationDetailActions,
     AnnotationDetailApplies,
     AnnotationDetailIntervals,
-    AuditText,
     DatastreamSearch,
+    DateRangePicker,
     DetailExternalRefs,
+    StandardAudit,
+    StandardIdentifier,
+    StandardOptions,
     StationSearch
   },
 
@@ -183,7 +202,11 @@ export default {
 
   data: () => ({
     datastreamDialog: false,
+    momentDialog: false,
+    rangeDialog: false,
     stationDialog: false,
+
+    dateRange: { from: null, to: null },
     stateItems: ['pending', 'approved', 'rejected']
   }),
 
@@ -229,6 +252,20 @@ export default {
       const ids = this.value[key] || []
 
       this.$set(this.value, key, ids.filter(id => id !== item.id))
+    },
+
+    intervalsAdd(item) {
+      this[`${item.target}Dialog`] = true
+    },
+
+    intervalsAddRange() {},
+
+    intervalsEdit(item) {},
+
+    intervalsRemove(item) {
+      this.value.intervals = (this.value.intervals || []).filter(
+        (interval, index) => index !== item.key
+      )
     }
   }
 }

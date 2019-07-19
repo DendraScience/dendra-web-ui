@@ -24,6 +24,7 @@
 
                   <datastream-search
                     :org="org"
+                    :show-disabled="$can('create', 'datastreams')"
                     :station-id="
                       this.$route.query && this.$route.query.stationId
                     "
@@ -145,7 +146,7 @@
 
                   <v-card-actions>
                     <v-btn
-                      :disabled="!cartCount"
+                      :disabled="!cartCount || errors.any()"
                       block
                       color="primary"
                       large
@@ -253,7 +254,7 @@
 
     <v-dialog v-model="exportDialog" lazy max-width="340">
       <v-card>
-        <v-card-title class="headline">Export as</v-card-title>
+        <v-card-title primary-title class="headline">Export as</v-card-title>
 
         <v-container grid-list-lg>
           <v-layout align-center justify-center column>
@@ -318,7 +319,7 @@ export default {
   data: () => ({
     charts: [],
 
-    chartTitle: 'Chart Title',
+    chartTitle: 'Enter Chart Title Here',
 
     tabIndex: 0,
 

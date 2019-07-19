@@ -36,6 +36,7 @@
     <feathers-vuex-find
       v-slot="{ items: vocabularies }"
       :query="{
+        is_enabled: true,
         is_hidden: false,
         scheme_id: 'ds',
         vocabulary_type: 'class',
@@ -114,6 +115,8 @@
               <td>{{ item.name }}</td>
               <td>{{ item.description }}</td>
 
+              <indicator-cell :value="item" />
+
               <td
                 v-if="$scopedSlots.actions"
                 class="text-xs-right text-no-wrap"
@@ -129,13 +132,20 @@
 </template>
 
 <script>
+import IndicatorCell from '@/components/IndicatorCell'
+
 import _debounce from 'lodash/debounce'
 
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
+  components: {
+    IndicatorCell
+  },
+
   props: {
     org: { default: null, type: Object },
+    showDisabled: { default: false, type: Boolean },
     stationId: { default: '', type: String }
   },
 
@@ -159,13 +169,17 @@ export default {
         sortable: false,
         text: 'Datastream',
         value: 'name',
-        width: '40%'
+        width: '30%'
       },
       {
         align: 'left',
         sortable: false,
         text: 'Description',
         value: 'description'
+      },
+      {
+        align: 'left',
+        sortable: false
       },
       {
         sortable: false,
@@ -201,22 +215,24 @@ export default {
       const { page, rowsPerPage } = tablePagination
 
       const query = {
-        is_enabled: true,
         is_hidden: false,
         organization_id: this.org._id,
         $limit: rowsPerPage,
         $skip: (page - 1) * rowsPerPage,
         $select: [
           '_id',
+          'access_levels_resolved',
+          'description',
+          'is_enabled',
           'is_hidden',
           'name',
-          'description',
-          'access_levels_resolved',
           'organization_id',
           'station_id'
         ],
         $sort: { name: 1, _id: 1 }
       }
+
+      if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
 

@@ -176,6 +176,7 @@ module.exports = {
     { src: '~/plugins/ability', ssr: false },
     { src: '~/plugins/api', ssr: false },
     { src: '~/plugins/bus', ssr: false },
+    { src: '~/plugins/date', ssr: false },
     { src: '~/plugins/maps', ssr: false },
     { src: '~/plugins/global-filters', ssr: false },
     { src: '~/plugins/global-mixin', ssr: false },

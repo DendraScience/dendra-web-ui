@@ -1,32 +1,9 @@
 <template>
   <v-container fluid pa-0>
-    <v-dialog v-model="dialog" lazy max-width="680">
-      <v-card>
-        <v-card-title class="headline">Date range</v-card-title>
-
-        <v-container grid-list-lg>
-          <v-layout align-center justify-center row wrap>
-            <v-flex shrink>
-              <v-date-picker v-model="value.from" no-title></v-date-picker>
-            </v-flex>
-
-            <v-flex shrink>
-              <v-date-picker v-model="value.to" no-title></v-date-picker>
-            </v-flex>
-          </v-layout>
-        </v-container>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn flat color="primary" @click="dialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-layout row wrap>
       <v-flex xs12 sm6>
         <v-text-field
-          v-model="value.from"
+          v-model="fromDate"
           v-validate="'required|date_format:yyyy-MM-dd'"
           :error-messages="errors.collect('fromDate')"
           append-icon="event"
@@ -40,7 +17,7 @@
 
       <v-flex xs12 sm6>
         <v-text-field
-          v-model="value.to"
+          v-model="toDate"
           v-validate="'required|date_format:yyyy-MM-dd'"
           :error-messages="errors.collect('toDate')"
           append-icon="event"
@@ -52,26 +29,67 @@
         ></v-text-field>
       </v-flex>
     </v-layout>
+
+    <v-dialog v-model="dialog" lazy max-width="680">
+      <v-card>
+        <v-card-title class="headline">Date range</v-card-title>
+
+        <date-range-picker :value="value" @input="setFields($event)" />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn flat color="primary" @click="dialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import DateRangePicker from '@/components/DateRangePicker'
+
 export default {
-  $_veeValidate: {
-    validator: 'new'
+  components: {
+    DateRangePicker
   },
+
+  inject: ['$validator'],
 
   props: {
     value: { type: Object, required: true }
   },
 
   data: () => ({
-    dialog: false
+    dialog: false,
+
+    fromDate: null,
+    toDate: null
   }),
 
   watch: {
-    value() {
-      this.$emit('input', this.value)
+    fromDate(newValue) {
+      this.$emit('input', {
+        from: newValue,
+        to: this.toDate
+      })
+    },
+
+    toDate(newValue) {
+      this.$emit('input', {
+        from: this.fromDate,
+        to: newValue
+      })
+    }
+  },
+
+  mounted() {
+    this.setFields(this.value)
+  },
+
+  methods: {
+    setFields(value) {
+      this.fromDate = value.from
+      this.toDate = value.to
     }
   }
 }

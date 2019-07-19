@@ -10,7 +10,7 @@
 
         <feathers-vuex-find
           v-slot="{ items: organizations }"
-          :query="{ $sort: { sort_value: 1, name: 1 } }"
+          :query="{ is_enabled: true, $sort: { sort_value: 1, name: 1 } }"
           service="organizations"
         >
           <v-layout row wrap>

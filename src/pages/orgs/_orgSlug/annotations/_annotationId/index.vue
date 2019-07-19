@@ -1,21 +1,8 @@
 <template>
   <v-layout v-if="instance" column pt-3>
-    <v-btn
-      v-if="!editing"
-      color="primary"
-      dark
-      fab
-      fixed
-      bottom
-      left
-      @click="edit"
-    >
-      <v-icon>edit</v-icon>
-    </v-btn>
-
     <v-flex>
       <v-container grid-list-xl>
-        <v-layout v-if="!editing" row wrap>
+        <v-layout v-if="!editing">
           <v-flex>
             <h4 class="display-1 font-weight-light mb-2">Annotation details</h4>
           </v-flex>
@@ -32,6 +19,19 @@
         </v-layout>
       </v-container>
     </v-flex>
+
+    <v-btn
+      v-if="!editing && $can('patch', instance)"
+      color="primary"
+      dark
+      fab
+      fixed
+      bottom
+      left
+      @click="edit"
+    >
+      <v-icon>edit</v-icon>
+    </v-btn>
   </v-layout>
 </template>
 
@@ -122,7 +122,14 @@ export default {
       if (!(await this.$validator.validateAll())) return
 
       const { instance } = this
-      const $set = _pick(instance, ['description', 'title'])
+      const $set = _pick(instance, [
+        'datastream_ids',
+        'description',
+        'is_enabled',
+        'state',
+        'station_ids',
+        'title'
+      ])
 
       try {
         await this.patch([instance._id, { $set }, {}])

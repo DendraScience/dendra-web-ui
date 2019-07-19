@@ -67,9 +67,9 @@ export default {
       datastream_ids: [],
       description: '',
       organization_id: this.org._id,
-      state: 'pending',
       station_ids: [],
-      title: ''
+      title: '',
+      [this.$abilityTypeKey]: 'annotations'
     }
   },
 
@@ -118,7 +118,6 @@ export default {
         'datastream_ids',
         'description',
         'organization_id',
-        'state',
         'station_ids',
         'title'
       ])

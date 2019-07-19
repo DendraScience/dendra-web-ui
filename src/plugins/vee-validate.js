@@ -12,12 +12,15 @@ const dictionary = {
 
       chartTitle: 'chart title',
       fromDate: 'from date',
-      toDate: 'to date'
+      fromTime: 'from time',
+      toDate: 'to date',
+      toTime: 'to time'
     }
   }
 }
 
 Vue.use(VeeValidate, {
-  locale: 'en',
-  dictionary
+  dictionary,
+  inject: false,
+  locale: 'en'
 })

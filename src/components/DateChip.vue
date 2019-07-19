@@ -14,7 +14,7 @@ export default {
   props: {
     color: { default: '', type: String },
     outline: { default: true, type: Boolean },
-    value: { type: Object, required: true }
+    value: { default: null, type: Object }
   },
 
   data: () => ({

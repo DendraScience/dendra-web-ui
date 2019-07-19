@@ -4,7 +4,7 @@
       <slot>Applies to</slot>
     </v-card-title>
 
-    <v-container fluid pt-0 px-3>
+    <v-container fluid pt-0>
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table

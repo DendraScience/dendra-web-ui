@@ -20,4 +20,5 @@ export default ({ store }, inject) => {
   })
 
   inject('ability', ability)
+  inject('abilityTypeKey', TYPE_KEY)
 }

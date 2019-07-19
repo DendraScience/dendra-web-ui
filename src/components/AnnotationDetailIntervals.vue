@@ -4,7 +4,7 @@
       <slot>Timeframe</slot>
     </v-card-title>
 
-    <v-container fluid pt-0 px-3>
+    <v-container fluid pt-0>
       <v-layout row wrap>
         <v-flex xs12>
           <v-data-table
@@ -96,11 +96,13 @@ export default {
     addItems: [
       {
         icon: 'date_range',
+        target: 'range',
         title: 'Range',
         subtitle: 'Specify a begin and end time.'
       },
       {
         icon: 'watch',
+        target: 'moment',
         title: 'Moment',
         subtitle: 'Specify a single point in time.'
       }
@@ -132,7 +134,7 @@ export default {
     },
 
     items() {
-      return this.intervals.map(item => {
+      return this.intervals.map((item, key) => {
         const beginsAt = item.begins_at && moment(item.begins_at)
         const endsBefore = item.ends_before && moment(item.ends_before)
 
@@ -141,7 +143,8 @@ export default {
             return {
               beginsLabel: 'Occurred at',
               beginsAt,
-              icon: 'watch'
+              icon: 'watch',
+              key
             }
           }
 
@@ -150,7 +153,8 @@ export default {
             beginsAt,
             endsLabel: 'and ends before',
             endsBefore,
-            icon: 'date_range'
+            icon: 'date_range',
+            key
           }
         }
 
@@ -158,7 +162,8 @@ export default {
           return {
             beginsLabel: 'Begins with first datapoint and ends before',
             endsBefore,
-            icon: 'date_range'
+            icon: 'date_range',
+            key
           }
         }
 
@@ -167,24 +172,32 @@ export default {
             beginsLabel: 'Begins at',
             beginsAt,
             endsLabel: 'and affects all datapoints thereafter',
-            icon: 'date_range'
+            icon: 'date_range',
+            key
           }
         }
 
         return {
           beginsLabel: 'Invalid interval!',
-          icon: 'error'
+          icon: 'error',
+          key
         }
       })
     }
   },
 
   methods: {
-    add(item) {},
+    add(item) {
+      this.$emit('add', item)
+    },
 
-    edit(item) {},
+    edit(item) {
+      this.$emit('edit', item)
+    },
 
-    remove(item) {}
+    remove(item) {
+      this.$emit('remove', item)
+    }
   }
 }
 </script>

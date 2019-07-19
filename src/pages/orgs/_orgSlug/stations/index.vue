@@ -254,7 +254,6 @@ export default {
           '_id',
           'general_config',
           'geo',
-          'is_hidden',
           'media',
           'name',
           'organization_id',
