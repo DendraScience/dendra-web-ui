@@ -1,100 +1,103 @@
 <template>
-  <v-container fluid grid-list-lg pt-0>
-    <v-layout>
-      <v-flex>
-        <h3>
-          Begins at Jun 5, 2008 12:00 AM and affects all datapoints thereafter
-        </h3>
+  <v-container fluid grid-list-lg pt-1>
+    <v-layout align-center justify-center row wrap>
+      <v-flex shrink>
+        <v-checkbox
+          v-if="nullable"
+          v-model="value.fromEnabled"
+          :disabled="toDisabled"
+          label="From date"
+        ></v-checkbox>
+
+        <v-date-picker
+          v-model="value.from"
+          :disabled="fromDisabled"
+          :color="fromDisabled ? 'grey lighten-4' : 'primary'"
+          no-title
+        ></v-date-picker>
+
+        <v-text-field
+          v-if="showTime"
+          v-model="value.fromTime"
+          v-validate="{
+            moment_format: $dateFormats.hm12,
+            required: value.fromEnabled
+          }"
+          :disabled="fromDisabled"
+          :error-messages="errors.collect('fromTime')"
+          class="mt-2"
+          data-vv-name="fromTime"
+          label="From time"
+          placeholder="h:mm a"
+          prepend-inner-icon="access_time"
+          solo
+        ></v-text-field>
+      </v-flex>
+
+      <v-flex v-if="!hideTo" shrink>
+        <v-checkbox
+          v-if="nullable"
+          v-model="value.toEnabled"
+          :disabled="fromDisabled"
+          label="To date"
+        ></v-checkbox>
+
+        <v-date-picker
+          v-model="value.to"
+          :disabled="toDisabled"
+          :color="toDisabled ? 'grey lighten-4' : 'primary'"
+          no-title
+        ></v-date-picker>
+
+        <v-text-field
+          v-if="showTime"
+          v-model="value.toTime"
+          v-validate="{
+            moment_format: $dateFormats.hm12,
+            required: value.toEnabled
+          }"
+          :disabled="toDisabled"
+          :error-messages="errors.collect('toTime')"
+          class="mt-2"
+          data-vv-name="toTime"
+          label="To time"
+          placeholder="h:mm a"
+          prepend-inner-icon="access_time"
+          solo
+        ></v-text-field>
       </v-flex>
     </v-layout>
 
-    <v-layout align-center justify-center row wrap>
-      <v-flex shrink>
-        <v-checkbox v-model="fromEnabled" label="From date"></v-checkbox>
-
-        <v-date-picker
-          :disabled="!fromEnabled"
-          :value="from"
-          no-title
-          @input="$emit('input', { from: $event, to: value.to })"
-        ></v-date-picker>
-
-        <v-text-field
-          v-model="fromTime"
-          v-validate="{ regex: $dateFormats.timeRegex }"
-          :disabled="!fromEnabled"
-          :error-messages="errors.collect('fromTime')"
-          class="mt-2"
-          clearable
-          data-vv-name="fromTime"
-          label="From time"
-          placeholder="h:mm aa"
-          prepend-inner-icon="access_time"
-          solo
-        ></v-text-field>
-      </v-flex>
-
-      <v-flex shrink>
-        <v-checkbox v-model="toEnabled" label="To date"></v-checkbox>
-
-        <v-date-picker
-          :disabled="!toEnabled"
-          :value="to"
-          no-title
-          @input="$emit('input', { from: value.from, to: $event })"
-        ></v-date-picker>
-
-        <v-text-field
-          v-model="toTime"
-          v-validate="{ regex: $dateFormats.timeRegex }"
-          :disabled="!toEnabled"
-          :error-messages="errors.collect('toTime')"
-          class="mt-2"
-          clearable
-          data-vv-name="toTime"
-          label="To time"
-          placeholder="h:mm aa"
-          prepend-inner-icon="access_time"
-          solo
-        ></v-text-field>
+    <v-layout v-if="$scopedSlots.footer">
+      <v-flex>
+        <slot name="footer" :value="value" />
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   $_veeValidate: {
     validator: 'new'
   },
 
   props: {
+    hideTo: { default: false, type: Boolean },
+    nullable: { default: false, type: Boolean },
+    showTime: { default: false, type: Boolean },
     value: { type: Object, required: true }
   },
 
-  data: () => ({
-    fromEnabled: true,
-    fromTime: null,
-
-    toEnabled: true,
-    toTime: null
-  }),
+  data: () => ({}),
 
   computed: {
-    from() {
-      // Ensure that Vuetify's Date Picker has a valid date
-      const fmt = this.$dateFormats.y4md
-      const m = moment(this.value.from, fmt, true)
-      return this.fromEnabled && m.isValid() ? m.format(fmt) : null
+    fromDisabled() {
+      return this.nullable && !this.value.fromEnabled
     },
 
-    to() {
-      // Ensure that Vuetify's Date Picker has a valid date
-      const fmt = this.$dateFormats.y4md
-      const m = moment(this.value.to, fmt, true)
-      return this.toEnabled && m.isValid() ? m.format(fmt) : null
+    toDisabled() {
+      return this.nullable && !this.value.toEnabled
     }
   }
 }

@@ -130,7 +130,7 @@ export default {
 
   computed: {
     intervals() {
-      return this.value.intervals || []
+      return this.value.intervals
     },
 
     items() {
@@ -144,6 +144,7 @@ export default {
               beginsLabel: 'Occurred at',
               beginsAt,
               icon: 'watch',
+              target: 'moment',
               key
             }
           }
@@ -154,6 +155,7 @@ export default {
             endsLabel: 'and ends before',
             endsBefore,
             icon: 'date_range',
+            target: 'range',
             key
           }
         }
@@ -163,6 +165,7 @@ export default {
             beginsLabel: 'Begins with first datapoint and ends before',
             endsBefore,
             icon: 'date_range',
+            target: 'range',
             key
           }
         }
@@ -173,6 +176,7 @@ export default {
             beginsAt,
             endsLabel: 'and affects all datapoints thereafter',
             icon: 'date_range',
+            target: 'range',
             key
           }
         }

@@ -19,7 +19,7 @@
 <script>
 import AnnotationDetail from '@/components/AnnotationDetail'
 
-import _pick from 'lodash/pick'
+import _pickBy from 'lodash/pickBy'
 
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 
@@ -34,7 +34,7 @@ export default {
 
   layout: 'editor',
 
-  middleware: ['check-org', 'check-annotation', 'reset-editing'],
+  middleware: ['check-org', 'reset-editing'],
 
   data: () => ({
     instance: null
@@ -63,14 +63,7 @@ export default {
     this.setEditorDirty(-1)
     this.setEditorTitle('New annotation')
     this.setEditing(true)
-    this.instance = {
-      datastream_ids: [],
-      description: '',
-      organization_id: this.org._id,
-      station_ids: [],
-      title: '',
-      [this.$abilityTypeKey]: 'annotations'
-    }
+    this.initInstance()
   },
 
   beforeDestroy() {
@@ -110,20 +103,33 @@ export default {
       this.setEditing(true)
     },
 
+    initInstance() {
+      this.instance = {
+        actions: [],
+        datastream_ids: [],
+        description: '',
+        intervals: [],
+        organization_id: this.org._id,
+        station_ids: [],
+        title: '',
+        [this.$abilityTypeKey]: 'annotations'
+      }
+    },
+
     async save() {
       if (!(await this.$validator.validateAll())) return
 
       const { instance } = this
-      const data = _pick(instance, [
-        'datastream_ids',
-        'description',
-        'organization_id',
-        'station_ids',
-        'title'
-      ])
 
-      if (data.datastream_ids.length === 0) delete data.datastream_ids
-      if (data.station_ids.length === 0) delete data.station_ids
+      const arrays = ['actions', 'datastream_ids', 'intervals', 'station_ids']
+      const fields = ['description', 'organization_id', 'title']
+
+      const data = _pickBy(instance, (value, key) => {
+        return (
+          (arrays.includes(key) && value && value.length) ||
+          fields.includes(key)
+        )
+      })
 
       try {
         const res = await this.create([data, {}])

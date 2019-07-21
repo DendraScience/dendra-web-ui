@@ -39,7 +39,8 @@
 import AnnotationDetail from '@/components/AnnotationDetail'
 
 import _merge from 'lodash/merge'
-import _pick from 'lodash/pick'
+import _pickBy from 'lodash/pickBy'
+import _reduce from 'lodash/reduce'
 
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 
@@ -81,7 +82,7 @@ export default {
 
     this.setEditorColor('primary')
     this.setEditorDirty(-1)
-    this.instance = _merge({}, this.annotation)
+    this.initInstance()
   },
 
   beforeDestroy() {
@@ -112,31 +113,57 @@ export default {
       this.setEditing(true)
     },
 
+    initInstance() {
+      this.instance = _merge(
+        {
+          actions: [],
+          datastream_ids: [],
+          intervals: [],
+          station_ids: []
+        },
+        this.annotation
+      )
+    },
+
     onCancel() {
       this.setEditing(false)
       this.setEditorDirty(-1)
-      this.instance = _merge({}, this.annotation)
+      this.initInstance()
     },
 
     async onSave() {
       if (!(await this.$validator.validateAll())) return
 
       const { instance } = this
-      const $set = _pick(instance, [
-        'datastream_ids',
-        'description',
-        'is_enabled',
-        'state',
-        'station_ids',
-        'title'
-      ])
+
+      const arrays = ['actions', 'datastream_ids', 'intervals', 'station_ids']
+      const fields = ['description', 'is_enabled', 'state', 'title']
+
+      const $set = _pickBy(instance, (value, key) => {
+        return (
+          (arrays.includes(key) && value && value.length) ||
+          fields.includes(key)
+        )
+      })
+      const $unset = _reduce(
+        instance,
+        (result, value, key) => {
+          if (arrays.includes(key) && value && value.length === 0)
+            result[key] = ''
+          return result
+        },
+        {}
+      )
 
       try {
-        await this.patch([instance._id, { $set }, {}])
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('annotations/removeItem', instance._id)
+
+        await this.patch([instance._id, { $set, $unset }, {}])
 
         this.setEditing(false)
         this.setEditorDirty(-1)
-        this.instance = _merge({}, this.annotation)
+        this.initInstance()
         this.$bus.$emit('edit-status', {
           type: 'success',
           message: 'Annotation saved.' // TODO: Localize

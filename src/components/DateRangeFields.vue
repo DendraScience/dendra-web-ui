@@ -3,38 +3,42 @@
     <v-layout row wrap>
       <v-flex xs12 sm6>
         <v-text-field
-          v-model="fromDate"
-          v-validate="'required|date_format:yyyy-MM-dd'"
+          v-model="value.from"
+          v-validate="{ moment_format: $dateFormats.y4md, required: true }"
           :error-messages="errors.collect('fromDate')"
           append-icon="event"
           box
           data-vv-name="fromDate"
           label="From date"
           required
-          @click:append="dialog = true"
+          @click:append="showDialog"
         ></v-text-field>
       </v-flex>
 
       <v-flex xs12 sm6>
         <v-text-field
-          v-model="toDate"
-          v-validate="'required|date_format:yyyy-MM-dd'"
+          v-model="value.to"
+          v-validate="{ moment_format: $dateFormats.y4md, required: true }"
           :error-messages="errors.collect('toDate')"
           append-icon="event"
           box
           data-vv-name="toDate"
           label="To date"
           required
-          @click:append="dialog = true"
+          @click:append="showDialog"
         ></v-text-field>
       </v-flex>
     </v-layout>
 
     <v-dialog v-model="dialog" lazy max-width="680">
       <v-card>
-        <v-card-title class="headline">Date range</v-card-title>
+        <v-card-title primary-title class="headline grey lighten-4 mb-3"
+          >Date range</v-card-title
+        >
 
-        <date-range-picker :value="value" @input="setFields($event)" />
+        <date-range-picker v-model="dateRange" />
+
+        <v-divider />
 
         <v-card-actions>
           <v-spacer />
@@ -47,6 +51,8 @@
 
 <script>
 import DateRangePicker from '@/components/DateRangePicker'
+
+import moment from 'moment'
 
 export default {
   components: {
@@ -62,34 +68,38 @@ export default {
   data: () => ({
     dialog: false,
 
-    fromDate: null,
-    toDate: null
+    dateRange: {
+      from: null,
+      to: null
+    }
   }),
 
-  watch: {
-    fromDate(newValue) {
-      this.$emit('input', {
-        from: newValue,
-        to: this.toDate
-      })
-    },
+  computed: {},
 
-    toDate(newValue) {
-      this.$emit('input', {
-        from: this.fromDate,
-        to: newValue
-      })
+  watch: {
+    dateRange: {
+      handler(newValue) {
+        this.$emit('input', {
+          from: newValue.from,
+          to: newValue.to
+        })
+      },
+      deep: true
     }
   },
 
-  mounted() {
-    this.setFields(this.value)
-  },
-
   methods: {
-    setFields(value) {
-      this.fromDate = value.from
-      this.toDate = value.to
+    showDialog() {
+      const { dateRange, value } = this
+      const from = value.from && moment(value.from)
+      const to = value.to && moment(value.to)
+
+      dateRange.from =
+        from && from.isValid() ? from.format(this.$dateFormats.y4md) : null
+      dateRange.to =
+        to && to.isValid() ? to.format(this.$dateFormats.y4md) : null
+
+      this.dialog = true
     }
   }
 }

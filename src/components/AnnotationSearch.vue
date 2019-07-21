@@ -104,12 +104,8 @@ export default {
 
   data: () => ({
     dateRange: {
-      from: moment()
-        .startOf('d')
-        .format('YYYY-MM-DD'),
-      to: moment()
-        .endOf('d')
-        .format('YYYY-MM-DD')
+      from: null,
+      to: null
     },
 
     headers: [
@@ -294,7 +290,15 @@ export default {
   },
 
   mounted() {
+    const { dateRange } = this
     let { headers } = this
+
+    dateRange.from = moment()
+      .startOf('d')
+      .format(this.$dateFormats.y4md)
+    dateRange.to = moment()
+      .endOf('d')
+      .format(this.$dateFormats.y4md)
 
     if (!this.$scopedSlots.select) headers = headers.slice(1)
     if (!this.$scopedSlots.actions) headers = headers.slice(0, -1)

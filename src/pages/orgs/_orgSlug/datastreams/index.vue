@@ -252,9 +252,11 @@
       </v-container>
     </v-flex>
 
-    <v-dialog v-model="exportDialog" lazy max-width="340">
+    <v-dialog v-model="exportDialog" lazy max-width="380">
       <v-card>
-        <v-card-title primary-title class="headline">Export as</v-card-title>
+        <v-card-title primary-title class="headline grey lighten-4"
+          >Export as</v-card-title
+        >
 
         <v-container grid-list-lg>
           <v-layout align-center justify-center column>
@@ -273,6 +275,8 @@
             </v-flex>
           </v-layout>
         </v-container>
+
+        <v-divider />
 
         <v-card-actions>
           <v-spacer />
@@ -324,13 +328,8 @@ export default {
     tabIndex: 0,
 
     dateRange: {
-      from: moment()
-        .startOf('d')
-        .subtract(14, 'd')
-        .format('YYYY-MM-DD'),
-      to: moment()
-        .endOf('d')
-        .format('YYYY-MM-DD')
+      from: null,
+      to: null
     },
 
     exportChartOptions: {
@@ -474,6 +473,18 @@ export default {
     this.seriesFetchWorker = null
   },
 
+  mounted() {
+    const { dateRange } = this
+
+    dateRange.from = moment()
+      .startOf('d')
+      .subtract(14, 'd')
+      .format(this.$dateFormats.y4md)
+    dateRange.to = moment()
+      .endOf('d')
+      .format(this.$dateFormats.y4md)
+  },
+
   methods: {
     ...mapMutations({
       incrementQuantity: 'cart/incrementQuantity',
@@ -530,9 +541,12 @@ export default {
 
       const fetchSpec = {
         queries: [],
-        startTime: moment.utc(this.dateRange.from).toISOString(),
-        untilTime: moment
-          .utc(this.dateRange.to)
+        startTime: moment(
+          this.dateRange.from,
+          this.$dateFormats.y4md,
+          true
+        ).toISOString(),
+        untilTime: moment(this.dateRange.to, this.$dateFormats.y4md, true)
           .startOf('d')
           .add(1, 'd')
           .toISOString()

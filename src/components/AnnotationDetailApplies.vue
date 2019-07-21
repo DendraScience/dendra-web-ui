@@ -124,11 +124,11 @@ export default {
     }),
 
     datastreamIds() {
-      return this.value.datastream_ids || []
+      return this.value.datastream_ids
     },
 
     stationIds() {
-      return this.value.station_ids || []
+      return this.value.station_ids
     },
 
     items() {

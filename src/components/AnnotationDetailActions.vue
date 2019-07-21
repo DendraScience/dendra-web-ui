@@ -81,11 +81,13 @@ export default {
     addItems: [
       {
         icon: 'block',
+        target: 'exclude',
         title: 'Exclude',
         subtitle: 'Datapoints will be excluded from downloads and graphs.'
       },
       {
         icon: 'flag',
+        target: 'flag',
         title: 'Flag',
         subtitle: 'Datapoints will marked with a textual flag.'
       }
@@ -113,7 +115,7 @@ export default {
 
   computed: {
     actions() {
-      return this.value.actions || []
+      return this.value.actions
     },
 
     items() {
@@ -121,7 +123,8 @@ export default {
         if (item.exclude !== undefined) {
           return {
             label: 'Exclude datapoints',
-            icon: 'block'
+            icon: 'block',
+            key
           }
         }
 
@@ -129,7 +132,8 @@ export default {
           return {
             label: 'Flag datapoints',
             values: item.flag,
-            icon: 'flag'
+            icon: 'flag',
+            key
           }
         }
 
@@ -143,9 +147,13 @@ export default {
   },
 
   methods: {
-    add(item) {},
+    add(item) {
+      this.$emit('add', item)
+    },
 
-    remove(item) {}
+    remove(item) {
+      this.$emit('remove', item)
+    }
   }
 }
 </script>
