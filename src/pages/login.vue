@@ -2,7 +2,7 @@
   <v-layout column>
     <v-flex>
       <v-container grid-list-lg>
-        <v-layout row>
+        <v-layout>
           <v-flex xs12>
             <h3 class="display-2 font-weight-light mb-2">Log in to Dendra</h3>
             <span class="body-2"
@@ -12,16 +12,16 @@
           </v-flex>
         </v-layout>
 
-        <v-layout row wrap>
+        <v-layout wrap>
           <v-flex xs12 sm6>
             <form @submit.prevent="submit">
               <v-text-field
                 v-model="email"
                 v-validate="'required|email'"
                 :error-messages="errors.collect('email')"
-                box
                 browser-autocomplete="username"
                 data-vv-name="email"
+                filled
                 label="Email"
                 required
               ></v-text-field>
@@ -32,9 +32,9 @@
                 :append-icon="isPasswordShown ? 'visibility_off' : 'visibility'"
                 :error-messages="errors.collect('password')"
                 :type="isPasswordShown ? 'text' : 'password'"
-                box
                 browser-autocomplete="current-password"
                 data-vv-name="password"
+                filled
                 label="Password"
                 required
                 @click:append="isPasswordShown = !isPasswordShown"

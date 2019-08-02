@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title primary-title class="headline">
+    <v-card-title class="headline">
       <slot>Applies to</slot>
     </v-card-title>
 
@@ -10,23 +10,21 @@
           <v-data-table
             :headers="headers"
             :items="items"
-            disable-initial-sort
-            hide-actions
+            :mobile-breakpoint="0"
+            hide-default-footer
             item-key="key"
           >
-            <template v-slot:items="{ item }">
-              <td class="text-xs-center text-no-wrap px-0">
-                <v-icon>{{ item.icon }}</v-icon>
-              </td>
+            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+              <v-icon>{{ item.icon }}</v-icon>
+            </template>
 
-              <td>{{ item.station }}</td>
-              <td>{{ item.datastream }}</td>
-
-              <td class="text-xs-right text-no-wrap">
-                <v-icon v-if="editing" color="tertiary" @click="remove(item)"
-                  >remove_circle</v-icon
-                >
-              </td>
+            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+              <v-icon
+                v-if="editing && !item.custom"
+                color="tertiary"
+                @click="remove(item)"
+                >remove_circle</v-icon
+              >
             </template>
           </v-data-table>
         </v-flex>
@@ -42,20 +40,20 @@
         </template>
 
         <v-list two-line subheader>
-          <v-list-tile
+          <v-list-item
             v-for="(item, index) in addItems"
             :key="index"
             @click="add(item)"
           >
-            <v-list-tile-avatar>
+            <v-list-item-avatar>
               <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-avatar>
+            </v-list-item-avatar>
 
-            <v-list-tile-content>
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-card-actions>
@@ -93,7 +91,7 @@ export default {
       {
         align: 'center',
         sortable: false,
-        value: 'key',
+        value: 'type',
         width: '10%'
       },
       {
@@ -111,8 +109,9 @@ export default {
         width: '40%'
       },
       {
+        align: 'right',
         sortable: false,
-        value: 'key'
+        value: 'icons'
       }
     ]
   }),

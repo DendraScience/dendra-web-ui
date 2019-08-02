@@ -20,14 +20,14 @@
 
         <v-card-actions>
           <v-btn-toggle v-model="viewToggle" mandatory>
-            <v-btn flat>
-              <v-icon>view_list</v-icon>
+            <v-btn small text>
+              <v-icon small>view_list</v-icon>
             </v-btn>
-            <v-btn flat>
-              <v-icon>view_agenda</v-icon>
+            <v-btn small text>
+              <v-icon small>view_agenda</v-icon>
             </v-btn>
-            <v-btn flat>
-              <v-icon>zoom_out_map</v-icon>
+            <v-btn small text>
+              <v-icon small>zoom_out_map</v-icon>
             </v-btn>
           </v-btn-toggle>
         </v-card-actions>
@@ -50,9 +50,10 @@
             style="position: absolute; top: 0; z-index: 1;"
             width="400"
           >
-            <v-expansion-panel
+            <v-expansion-panels
               v-model="stationsPanel"
-              :expand="stationsExpand"
+              :multiple="stationsMultiple"
+              accordion
               style="margin-top: 120px;"
             >
               <worker-fetch
@@ -63,18 +64,18 @@
                 :worker="Object.freeze(statFetchWorker)"
               >
                 <template v-slot="{ result }">
-                  <v-expansion-panel-content
+                  <v-expansion-panel
                     v-show="shownStationIds.includes(station._id)"
                   >
-                    <template v-slot:actions>
-                      <hc-sparkline
-                        :id="station._id"
-                        :series-options="Object.freeze(seriesOptions)"
-                        :worker="Object.freeze(statFetchWorker)"
-                      />
-                    </template>
+                    <v-expansion-panel-header>
+                      <template v-slot:actions>
+                        <hc-sparkline
+                          :id="station._id"
+                          :series-options="Object.freeze(seriesOptions)"
+                          :worker="Object.freeze(statFetchWorker)"
+                        />
+                      </template>
 
-                    <template v-slot:header>
                       <div>
                         <station-status-icon
                           :current-time="currentTime"
@@ -95,57 +96,58 @@
                           >{{ station.name }}</a
                         >
                       </div>
-                    </template>
+                    </v-expansion-panel-header>
 
-                    <v-layout align-end row>
-                      <v-flex grow pl-2>
-                        <v-card flat>
-                          <v-card-text>
-                            Last seen:
-                            {{
-                              result.lastSeenTime
-                                | moment('(no data)', ['format', 'lll'])
-                            }}
-                          </v-card-text>
+                    <v-expansion-panel-content>
+                      <v-layout>
+                        <v-flex grow>
+                          <v-card flat>
+                            <v-card-text>
+                              Last seen:
+                              {{
+                                result.lastSeenTime
+                                  | moment('(no data)', ['format', 'lll'])
+                              }}
+                            </v-card-text>
 
-                          <v-card-actions>
-                            <v-btn
-                              :to="{
-                                name: 'orgs-orgSlug-datastreams',
-                                params: {
-                                  orgSlug: org.slug
-                                },
-                                query: {
-                                  stationId: station._id
-                                }
-                              }"
-                              color="primary"
-                              exact
-                              flat
-                              nuxt
-                              small
-                              >Datastreams</v-btn
-                            >
-                          </v-card-actions>
-                        </v-card>
-                      </v-flex>
+                            <v-card-actions>
+                              <v-btn
+                                :to="{
+                                  name: 'orgs-orgSlug-datastreams',
+                                  params: {
+                                    orgSlug: org.slug
+                                  },
+                                  query: {
+                                    stationId: station._id
+                                  }
+                                }"
+                                color="primary"
+                                exact
+                                nuxt
+                                small
+                                text
+                                >Datastreams</v-btn
+                              >
+                            </v-card-actions>
+                          </v-card>
+                        </v-flex>
 
-                      <v-flex
-                        v-if="station.media && station.media[0]"
-                        shrink
-                        pr-4
-                        pb-2
-                      >
-                        <v-img
-                          :src="station.media[0].sizes.small.url"
-                          width="90"
-                        />
-                      </v-flex>
-                    </v-layout>
-                  </v-expansion-panel-content>
+                        <v-flex
+                          v-if="station.media && station.media[0]"
+                          shrink
+                          pb-2
+                        >
+                          <v-img
+                            :src="station.media[0].sizes.small.url"
+                            width="90"
+                          />
+                        </v-flex>
+                      </v-layout>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
                 </template>
               </worker-fetch>
-            </v-expansion-panel>
+            </v-expansion-panels>
           </v-navigation-drawer>
 
           <google-map
@@ -167,17 +169,15 @@
 </template>
 
 <script>
+import { mapActions, mapGetters, mapState } from 'vuex'
+import moment from 'moment'
+import _debounce from 'lodash/debounce'
+import _union from 'lodash/union'
+import timer from '@/mixins/timer'
 import GoogleMap from '@/components/GoogleMap'
 import HcSparkline from '@/components/HcSparkline'
 import StationStatusIcon from '@/components/StationStatusIcon'
 import WorkerFetch from '@/components/WorkerFetch'
-
-import moment from 'moment'
-import timer from '@/mixins/timer'
-import _debounce from 'lodash/debounce'
-import _union from 'lodash/union'
-
-import { mapActions, mapGetters, mapState } from 'vuex'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
@@ -196,7 +196,7 @@ export default {
     return {
       drawer: true,
 
-      stationsExpand: false,
+      stationsMultiple: false,
       stationsPanel: [],
       stationsPanelOpen: [],
       stationsSearch: null,
@@ -304,7 +304,10 @@ export default {
 
   watch: {
     queryStationIds(newValue) {
-      this.stationsPanelOpen = Array(newValue.length).fill(true)
+      this.stationsPanelOpen = Array.from(
+        { length: newValue.length },
+        (v, k) => k
+      )
     },
 
     stationsPaginationSearch(newValue) {
@@ -321,10 +324,10 @@ export default {
 
     viewToggle(newValue) {
       if (newValue === 0) {
-        this.stationsExpand = false
+        this.stationsMultiple = false
         this.stationsPanel = []
       } else if (newValue === 1) {
-        this.stationsExpand = true
+        this.stationsMultiple = true
         this.$nextTick(() => {
           // HACK: stationsExpand needs to be set first
           this.stationsPanel = this.stationsPanelOpen.slice()
@@ -370,9 +373,11 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-.station-link
-  text-decoration: none
-  &:hover
-    text-decoration: underline
+<style scoped>
+.station-link {
+  text-decoration: none;
+}
+.station-link:hover {
+  text-decoration: underline;
+}
 </style>

@@ -18,7 +18,7 @@
 
               <v-tab-item>
                 <v-card flat>
-                  <v-card-title primary-title class="headline">
+                  <v-card-title class="headline">
                     Datastreams
                   </v-card-title>
 
@@ -60,8 +60,8 @@
               </v-tab-item>
 
               <v-tab-item>
-                <v-card v-if="cartCount || !charts.length" flat>
-                  <v-card-title primary-title class="headline">
+                <v-card v-if="cartCount || !charts.length" flat text>
+                  <v-card-title class="headline">
                     Selected datastreams
                   </v-card-title>
 
@@ -73,47 +73,46 @@
                       local
                       service="datastreams"
                     >
-                      <v-layout row wrap>
+                      <v-layout wrap>
                         <v-flex xs12>
                           <v-data-table
                             :headers="selectedHeaders"
                             :items="datastreams"
-                            disable-initial-sort
                             item-key="_id"
                           >
-                            <template v-slot:items="{ item }">
-                              <td class="text-xs-center text-no-wrap px-0">
-                                <v-btn-toggle
-                                  :value="item.quantitySelected"
-                                  class="elevation-0"
-                                  mandatory
-                                  @change="
-                                    setQuantity({
-                                      id: item._id,
-                                      value: $event
-                                    })
-                                  "
-                                >
-                                  <v-btn :value="1" flat small>Y1</v-btn>
-                                  <v-btn :value="2" flat small>Y2</v-btn>
-                                </v-btn-toggle>
-                              </td>
+                            <template
+                              v-slot:item.yAxis="{ item }"
+                              class="text-no-wrap px-0"
+                            >
+                              <v-btn-toggle
+                                :value="item.quantitySelected"
+                                mandatory
+                                @change="
+                                  setQuantity({
+                                    id: item._id,
+                                    value: $event
+                                  })
+                                "
+                              >
+                                <v-btn :value="1" text small>Y1</v-btn>
+                                <v-btn :value="2" text small>Y2</v-btn>
+                              </v-btn-toggle>
+                            </template>
 
-                              <td>{{ item.name }}</td>
-                              <td>{{ item.description }}</td>
-
-                              <td class="text-xs-right text-no-wrap">
-                                <v-icon
-                                  color="tertiary"
-                                  @click="
-                                    setQuantity({
-                                      id: item._id,
-                                      value: 0
-                                    })
-                                  "
-                                  >remove_circle</v-icon
-                                >
-                              </td>
+                            <template
+                              v-slot:item.icons="{ item }"
+                              class="text-no-wrap"
+                            >
+                              <v-icon
+                                color="tertiary"
+                                @click="
+                                  setQuantity({
+                                    id: item._id,
+                                    value: 0
+                                  })
+                                "
+                                >remove_circle</v-icon
+                              >
                             </template>
                           </v-data-table>
                         </v-flex>
@@ -124,7 +123,7 @@
 
                 <v-card flat>
                   <v-container fluid>
-                    <v-layout row wrap>
+                    <v-layout wrap>
                       <v-flex xs12>
                         <date-range-fields v-model="dateRange" />
                       </v-flex>
@@ -134,9 +133,9 @@
                           v-model="chartTitle"
                           v-validate="'max:100'"
                           :error-messages="errors.collect('chartTitle')"
-                          box
                           clearable
                           data-vv-name="chartTitle"
+                          filled
                           label="Chart title"
                           required
                         ></v-text-field>
@@ -181,7 +180,7 @@
                 <v-alert
                   v-model="chart.alert.isShown"
                   :type="chart.alert.type"
-                  outline
+                  outlined
                 >
                   {{ chart.alert.message }}
                 </v-alert>
@@ -203,11 +202,11 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       absolute
-                      flat
                       icon
                       right
                       small
                       style="margin-top: 30px;"
+                      text
                       top
                       v-on="on"
                     >
@@ -216,18 +215,18 @@
                   </template>
 
                   <v-list>
-                    <v-list-tile @click="charts.splice(i, 1)">
-                      <v-list-tile-title>Remove</v-list-tile-title>
-                    </v-list-tile>
+                    <v-list-item @click="charts.splice(i, 1)">
+                      <v-list-item-title>Remove</v-list-item-title>
+                    </v-list-item>
 
-                    <v-list-tile
+                    <v-list-item
                       :disabled="!chart.isReady"
                       @click="showExportDialog(chart)"
                     >
-                      <v-list-tile-title>Export as...</v-list-tile-title>
-                    </v-list-tile>
+                      <v-list-item-title>Export as...</v-list-item-title>
+                    </v-list-item>
 
-                    <v-list-tile
+                    <v-list-item
                       v-if="previousExportIndex > -1"
                       :disabled="
                         !chart.isReady ||
@@ -236,13 +235,13 @@
                       "
                       @click="exportChart(chart, previousExportIndex)"
                     >
-                      <v-list-tile-title
+                      <v-list-item-title
                         >Export as
                         {{
                           exportItems[previousExportIndex].title
-                        }}</v-list-tile-title
+                        }}</v-list-item-title
                       >
-                    </v-list-tile>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </div>
@@ -252,11 +251,9 @@
       </v-container>
     </v-flex>
 
-    <v-dialog v-model="exportDialog" lazy max-width="380">
+    <v-dialog v-model="exportDialog" max-width="380">
       <v-card>
-        <v-card-title primary-title class="headline grey lighten-4"
-          >Export as</v-card-title
-        >
+        <v-card-title class="headline grey lighten-4">Export as</v-card-title>
 
         <v-container grid-list-lg>
           <v-layout align-center justify-center column>
@@ -281,12 +278,12 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            flat
             color="primary"
+            text
             @click="exportChart(selectedChart, selectedExportIndex)"
             >Export</v-btn
           >
-          <v-btn flat color="primary" @click="exportDialog = false"
+          <v-btn text color="primary" @click="exportDialog = false"
             >Cancel</v-btn
           >
         </v-card-actions>
@@ -297,15 +294,13 @@
 
 <script>
 // TODO: Refactor and break out!!!
+import Vue from 'vue'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+import moment from 'moment'
+import _forEach from 'lodash/forEach'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
 import HcTimeSeries from '@/components/HcTimeSeries'
-import Vue from 'vue'
-
-import moment from 'moment'
-import _forEach from 'lodash/forEach'
-
-import { mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   $_veeValidate: {
@@ -395,7 +390,7 @@ export default {
         align: 'center',
         sortable: false,
         text: 'Y-Axis',
-        value: '_id'
+        value: 'yAxis'
       },
       {
         align: 'left',
@@ -411,8 +406,9 @@ export default {
         value: 'description'
       },
       {
+        align: 'right',
         sortable: false,
-        value: '_id'
+        value: 'icons'
       }
     ],
 

@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import math from '@/lib/math'
 import moment from 'moment'
 import _get from 'lodash/get'
 import _truncate from 'lodash/truncate'
+import math from '@/lib/math'
 
 Vue.filter('get', (...args) => {
   return _get(...args)

@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import feathersClient from '@/lib/feathers-client'
+import moment from 'moment'
 import feathersVuex from 'feathers-vuex'
+import feathersClient from '@/lib/feathers-client'
 import helpersVuex from '@/lib/helpers-vuex'
 import math from '@/lib/math'
-import moment from 'moment'
 
 import { TYPE_KEY } from '@/lib/ability'
 

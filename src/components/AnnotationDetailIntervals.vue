@@ -1,47 +1,49 @@
 <template>
   <v-card>
-    <v-card-title primary-title class="headline">
+    <v-card-title class="headline">
       <slot>Timeframe</slot>
     </v-card-title>
 
     <v-container fluid pt-0>
-      <v-layout row wrap>
+      <v-layout wrap>
         <v-flex xs12>
           <v-data-table
             :headers="headers"
             :items="items"
-            disable-initial-sort
-            hide-actions
+            :mobile-breakpoint="0"
+            hide-default-footer
             item-key="key"
           >
-            <template v-slot:items="{ item }">
-              <td class="text-xs-center text-no-wrap px-0">
-                <v-icon>{{ item.icon }}</v-icon>
-              </td>
+            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+              <v-icon>{{ item.icon }}</v-icon>
+            </template>
 
-              <td class="py-3">
-                <span v-if="item.beginsLabel">{{ item.beginsLabel }}</span>
-                <date-chip
-                  :value="Object.freeze(item.beginsAt)"
-                  color="success"
-                />
-                <span v-if="item.endsLabel">{{ item.endsLabel }}</span>
-                <date-chip
-                  :value="Object.freeze(item.endsBefore)"
-                  color="error"
-                />
-              </td>
+            <template v-slot:item.description="{ item }" class="py-4">
+              <span v-if="item.beginsLabel">{{ item.beginsLabel }}</span>
+              <date-chip
+                :value="Object.freeze(item.beginsAt)"
+                class="ml-1"
+                color="success"
+              />
+              <span v-if="item.endsLabel" class="ml-1">{{
+                item.endsLabel
+              }}</span>
+              <date-chip
+                :value="Object.freeze(item.endsBefore)"
+                class="ml-1"
+                color="error"
+              />
+            </template>
 
-              <td class="text-xs-right text-no-wrap">
-                <span v-if="editing">
-                  <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                    >edit</v-icon
-                  >
-                  <v-icon color="tertiary" @click="remove(item)"
-                    >remove_circle</v-icon
-                  >
-                </span>
-              </td>
+            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+              <span v-if="editing">
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
+                  >edit</v-icon
+                >
+                <v-icon color="tertiary" @click="remove(item)"
+                  >remove_circle</v-icon
+                >
+              </span>
             </template>
           </v-data-table>
         </v-flex>
@@ -57,20 +59,20 @@
         </template>
 
         <v-list two-line subheader>
-          <v-list-tile
+          <v-list-item
             v-for="(item, index) in addItems"
             :key="index"
             @click="add(item)"
           >
-            <v-list-tile-avatar>
+            <v-list-item-avatar>
               <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-avatar>
+            </v-list-item-avatar>
 
-            <v-list-tile-content>
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ item.subtitle }}</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-card-actions>
@@ -78,9 +80,8 @@
 </template>
 
 <script>
-import DateChip from '@/components/DateChip'
-
 import moment from 'moment'
+import DateChip from '@/components/DateChip'
 
 export default {
   components: {
@@ -112,18 +113,20 @@ export default {
       {
         align: 'center',
         sortable: false,
-        value: 'key',
+        value: 'type',
         width: '10%'
       },
       {
         align: 'left',
         sortable: false,
         text: 'Description',
+        value: 'description',
         width: '60%'
       },
       {
+        align: 'right',
         sortable: false,
-        value: 'key'
+        value: 'icons'
       }
     ]
   }),

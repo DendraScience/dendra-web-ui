@@ -2,7 +2,7 @@
   <v-layout v-if="org" column>
     <v-flex>
       <v-container grid-list-xl>
-        <v-layout row>
+        <v-layout>
           <v-flex xs12>
             <h2 class="display-3 font-weight-light mb-2">{{ org.name }}</h2>
 
@@ -12,7 +12,7 @@
           </v-flex>
         </v-layout>
 
-        <v-layout row wrap mt-4>
+        <v-layout wrap mt-6>
           <feathers-vuex-find
             v-slot="{ pagination }"
             :query="{
@@ -30,7 +30,7 @@
                   color="accent"
                   class="white--text"
                 >
-                  <v-card-title primary-title class="headline">
+                  <v-card-title class="headline">
                     <span class="text-truncate"
                       >{{ pagination | get('total', 0) }} stations</span
                     >
@@ -44,9 +44,9 @@
                         }
                       }"
                       exact
-                      flat
                       dark
                       nuxt
+                      text
                       >Map</v-btn
                     >
                   </v-card-actions>
@@ -72,7 +72,7 @@
                   color="accent"
                   class="white--text"
                 >
-                  <v-card-title primary-title class="headline">
+                  <v-card-title class="headline">
                     <span class="text-truncate">
                       {{ pagination | get('total', 0) }} datastreams</span
                     >
@@ -86,9 +86,9 @@
                         }
                       }"
                       exact
-                      flat
                       dark
                       nuxt
+                      text
                       >Search</v-btn
                     >
                   </v-card-actions>
@@ -98,7 +98,7 @@
           </feathers-vuex-find>
         </v-layout>
 
-        <v-layout row wrap>
+        <v-layout wrap>
           <feathers-vuex-find
             v-slot="{ pagination }"
             :query="{
@@ -115,7 +115,7 @@
                   color="accent"
                   class="white--text"
                 >
-                  <v-card-title primary-title class="headline">
+                  <v-card-title class="headline">
                     <span class="text-truncate"
                       >{{ pagination | get('total', 0) }} annotations</span
                     >
@@ -129,9 +129,9 @@
                         }
                       }"
                       exact
-                      flat
                       dark
                       nuxt
+                      text
                       >Search</v-btn
                     >
                   </v-card-actions>

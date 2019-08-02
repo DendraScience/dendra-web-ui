@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <form @submit.prevent="submit">
-      <v-card-title primary-title class="headline">
+      <v-card-title class="headline">
         Account
       </v-card-title>
 

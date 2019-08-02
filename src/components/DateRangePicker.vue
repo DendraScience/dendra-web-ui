@@ -1,6 +1,6 @@
 <template>
   <v-container fluid grid-list-lg pt-1>
-    <v-layout align-center justify-center row wrap>
+    <v-layout align-center justify-center wrap>
       <v-flex shrink>
         <v-checkbox
           v-if="nullable"
@@ -12,7 +12,7 @@
         <v-date-picker
           v-model="value.from"
           :disabled="fromDisabled"
-          :color="fromDisabled ? 'grey lighten-4' : 'primary'"
+          :color="fromDisabled ? 'grey lighten-4' : 'success'"
           no-title
         ></v-date-picker>
 
@@ -45,7 +45,7 @@
         <v-date-picker
           v-model="value.to"
           :disabled="toDisabled"
-          :color="toDisabled ? 'grey lighten-4' : 'primary'"
+          :color="toDisabled ? 'grey lighten-4' : 'error'"
           no-title
         ></v-date-picker>
 

@@ -2,39 +2,43 @@
   <v-layout column>
     <v-flex>
       <v-container grid-list-xl>
-        <v-layout row>
+        <v-layout>
           <v-flex xs12>
             <h3 class="display-2 mb-2">Theme</h3>
           </v-flex>
         </v-layout>
 
-        <v-layout row wrap>
+        <v-layout wrap>
           <v-flex xs6>
-            <v-btn block color="primary">Primary</v-btn>
-            <v-btn block color="secondary">Secondary</v-btn>
-            <v-btn block color="tertiary" dark>Tertiary</v-btn>
-            <v-btn block color="accent">Accent</v-btn>
+            <v-btn block class="mb-2" color="primary">Primary</v-btn>
+            <v-btn block class="mb-2" color="secondary">Secondary</v-btn>
+            <v-btn block class="mb-2" color="tertiary" dark>Tertiary</v-btn>
+            <v-btn block class="mb-2" color="accent">Accent</v-btn>
           </v-flex>
 
           <v-flex xs6>
-            <v-btn block outline color="primary">Primary</v-btn>
-            <v-btn block outline color="secondary">Secondary</v-btn>
-            <v-btn block outline color="tertiary" dark>Tertiary</v-btn>
-            <v-btn block outline color="accent">Accent</v-btn>
+            <v-btn block outlined class="mb-2" color="primary">Primary</v-btn>
+            <v-btn block outlined class="mb-2" color="secondary"
+              >Secondary</v-btn
+            >
+            <v-btn block outlined class="mb-2" color="tertiary" dark
+              >Tertiary</v-btn
+            >
+            <v-btn block outlined class="mb-2" color="accent">Accent</v-btn>
           </v-flex>
 
           <v-flex xs6>
-            <v-btn block color="info">Info</v-btn>
-            <v-btn block color="warning">Warning</v-btn>
-            <v-btn block color="error">Error</v-btn>
-            <v-btn block color="success">Success</v-btn>
+            <v-btn block class="mb-2" color="info">Info</v-btn>
+            <v-btn block class="mb-2" color="warning">Warning</v-btn>
+            <v-btn block class="mb-2" color="error">Error</v-btn>
+            <v-btn block class="mb-2" color="success">Success</v-btn>
           </v-flex>
 
           <v-flex xs6>
-            <v-btn block outline color="info">Info</v-btn>
-            <v-btn block outline color="warning">Warning</v-btn>
-            <v-btn block outline color="error">Error</v-btn>
-            <v-btn block outline color="success">Success</v-btn>
+            <v-btn block outlined class="mb-2" color="info">Info</v-btn>
+            <v-btn block outlined class="mb-2" color="warning">Warning</v-btn>
+            <v-btn block outlined class="mb-2" color="error">Error</v-btn>
+            <v-btn block outlined class="mb-2" color="success">Success</v-btn>
           </v-flex>
 
           <v-flex xs12>
@@ -56,19 +60,19 @@
           </v-flex>
 
           <v-flex xs12>
-            <v-alert :value="true" outline type="info">
+            <v-alert :value="true" outlined type="info">
               This is a info alert. {{ lorem }}
             </v-alert>
 
-            <v-alert :value="true" outline type="warning">
+            <v-alert :value="true" outlined type="warning">
               This is a warning alert. {{ lorem }}
             </v-alert>
 
-            <v-alert :value="true" outline type="error">
+            <v-alert :value="true" outlined type="error">
               This is a error alert. {{ lorem }}
             </v-alert>
 
-            <v-alert :value="true" outline type="success">
+            <v-alert :value="true" outlined type="success">
               This is a success alert. {{ lorem }}
             </v-alert>
           </v-flex>

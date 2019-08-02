@@ -10,7 +10,7 @@
 
         <v-layout row wrap>
           <v-flex xs12>
-            <v-btn flat :href="`mailto:${email}`"
+            <v-btn text :href="`mailto:${email}`"
               ><v-icon left>email</v-icon>{{ email }}</v-btn
             >
           </v-flex>

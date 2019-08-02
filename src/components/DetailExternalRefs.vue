@@ -1,37 +1,33 @@
 <template>
   <v-card>
-    <v-card-title primary-title class="headline">
+    <v-card-title class="headline">
       <slot>External references</slot>
     </v-card-title>
 
-    <v-container fluid pt-0 px-3>
-      <v-layout row wrap>
+    <v-container fluid pt-0 px-4>
+      <v-layout wrap>
         <v-flex xs12>
           <v-data-table
             :headers="headers"
             :items="items"
-            hide-actions
+            hide-default-footer
             item-key="key"
           >
-            <template v-slot:items="{ item }">
-              <td>{{ item.type }}</td>
-              <td>{{ item.identifier }}</td>
-              <td>
-                <a v-if="item.url" :href="item.url" target="_blank">{{
-                  item.url
-                }}</a>
-              </td>
+            <template v-slot:item.url="{ item }">
+              <a v-if="item.url" :href="item.url" target="_blank">{{
+                item.url
+              }}</a>
+            </template>
 
-              <td class="text-xs-right text-no-wrap">
-                <span v-if="editing">
-                  <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                    >edit</v-icon
-                  >
-                  <v-icon color="tertiary" @click="remove(item)"
-                    >remove_circle</v-icon
-                  >
-                </span>
-              </td>
+            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+              <span v-if="editing">
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
+                  >edit</v-icon
+                >
+                <v-icon color="tertiary" @click="remove(item)"
+                  >remove_circle</v-icon
+                >
+              </span>
             </template>
           </v-data-table>
         </v-flex>
@@ -77,8 +73,9 @@ export default {
         width: '40%'
       },
       {
+        align: 'right',
         sortable: false,
-        value: 'key'
+        value: 'icons'
       }
     ]
   }),

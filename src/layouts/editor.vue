@@ -3,10 +3,10 @@
     <main-navigation-drawer />
     <main-toolbar />
 
-    <v-toolbar
+    <v-app-bar
       v-show="editing"
       :color="editorColor"
-      app
+      :app="editing"
       dark
       dense
       fixed
@@ -19,15 +19,15 @@
       <v-toolbar-items>
         <v-btn
           :disabled="editorDirty < 1"
-          flat
+          text
           @click="$bus.$emit('editor-save')"
           >Save</v-btn
         >
-        <v-btn flat @click="cancel">Cancel</v-btn>
+        <v-btn text @click="cancel">Cancel</v-btn>
       </v-toolbar-items>
-    </v-toolbar>
+    </v-app-bar>
 
-    <v-content :style="editing ? { marginTop: '48px' } : {}">
+    <v-content>
       <status-bar v-model="status" />
 
       <v-container fluid pa-0>
@@ -37,7 +37,7 @@
 
     <v-dialog v-model="cancelDialog" dark max-width="500px" persistent>
       <v-card>
-        <v-card-title primary-title class="headline">
+        <v-card-title class="headline">
           Unsaved changes
         </v-card-title>
 
@@ -56,7 +56,7 @@
 
     <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
       <v-card>
-        <v-card-title primary-title class="headline">
+        <v-card-title class="headline">
           Unsaved changes
         </v-card-title>
 
@@ -76,11 +76,10 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
 import StatusBar from '@/components/StatusBar'
-
-import { mapState } from 'vuex'
 
 export default {
   components: {

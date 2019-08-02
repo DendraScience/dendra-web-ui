@@ -12,7 +12,7 @@
 
               <v-tab-item>
                 <v-card flat>
-                  <v-card-title primary-title class="headline">
+                  <v-card-title class="headline">
                     Annotations
                   </v-card-title>
 
@@ -53,9 +53,10 @@
       exact
       fab
       fixed
-      bottom
-      left
       nuxt
+      right
+      style="top: 80px;"
+      top
     >
       <v-icon>add</v-icon>
     </v-btn>
@@ -63,9 +64,8 @@
 </template>
 
 <script>
-import AnnotationSearch from '@/components/AnnotationSearch'
-
 import { mapGetters, mapMutations, mapState } from 'vuex'
+import AnnotationSearch from '@/components/AnnotationSearch'
 
 export default {
   $_veeValidate: {

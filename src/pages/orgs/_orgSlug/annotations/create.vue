@@ -1,5 +1,5 @@
 <template>
-  <v-layout v-if="instance" column pt-3>
+  <v-layout v-if="instance" column>
     <v-flex>
       <v-container grid-list-xl>
         <v-layout column>
@@ -17,11 +17,9 @@
 </template>
 
 <script>
-import AnnotationDetail from '@/components/AnnotationDetail'
-
-import _pickBy from 'lodash/pickBy'
-
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
+import _pickBy from 'lodash/pickBy'
+import AnnotationDetail from '@/components/AnnotationDetail'
 
 export default {
   $_veeValidate: {

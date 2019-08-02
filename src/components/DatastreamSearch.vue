@@ -11,17 +11,17 @@
       }"
       service="stations"
     >
-      <v-layout row wrap>
+      <v-layout wrap>
         <v-flex xs12>
           <v-autocomplete
             v-model="selectedStationIds"
             :items="stations"
             :label="loading ? 'Loading...' : 'Station'"
             :loading="loading"
-            box
             chips
             clearable
             deletable-chips
+            filled
             flat
             hide-details
             hide-no-data
@@ -44,7 +44,7 @@
       }"
       service="vocabularies"
     >
-      <v-layout row wrap>
+      <v-layout wrap>
         <v-flex
           v-for="vocabulary in vocabularies"
           :key="vocabulary._id"
@@ -56,10 +56,10 @@
             :items="vocabulary.terms"
             :label="vocabulary.label"
             :item-text="term => term.name || term.label"
-            box
             chips
             clearable
             deletable-chips
+            filled
             flat
             hide-details
             hide-no-data
@@ -82,7 +82,7 @@
       qid="search"
       service="datastreams"
     >
-      <v-layout row wrap>
+      <v-layout wrap>
         <v-flex xs12>
           <v-text-field
             v-model.trim="searchDebounce"
@@ -94,35 +94,29 @@
 
         <v-flex xs12>
           <v-data-table
+            :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
             :headers="headers"
             :items="datastreams"
             :loading="loading"
-            :pagination.sync="tablePagination"
-            :rows-per-page-items="[5, 10, 25, 50]"
-            :total-items="pagination ? pagination.total : 0"
-            disable-initial-sort
+            :mobile-breakpoint="0"
+            :options.sync="tableOptions"
+            :server-items-length="pagination ? pagination.total : 0"
             item-key="_id"
           >
-            <template v-slot:items="{ item }">
-              <td
-                v-if="$scopedSlots.select"
-                class="text-xs-center text-no-wrap px-0"
-              >
-                <slot name="select" :item="item" />
-              </td>
+            <template
+              v-if="$scopedSlots.select"
+              v-slot:item.select="{ item }"
+              class="text-no-wrap px-0"
+            >
+              <slot name="select" :item="item" />
+            </template>
 
-              <td>{{ item.station && item.station.name }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.description }}</td>
-
+            <template v-slot:item.icons="{ item }">
               <indicator-cell :value="item" />
 
-              <td
-                v-if="$scopedSlots.actions"
-                class="text-xs-right text-no-wrap"
-              >
+              <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
-              </td>
+              </span>
             </template>
           </v-data-table>
         </v-flex>
@@ -132,10 +126,8 @@
 </template>
 
 <script>
-import IndicatorCell from '@/components/IndicatorCell'
-
 import _debounce from 'lodash/debounce'
-
+import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
@@ -155,7 +147,7 @@ export default {
         align: 'center',
         sortable: false,
         text: 'Select',
-        value: '_id'
+        value: 'select'
       },
       {
         align: 'left',
@@ -182,8 +174,9 @@ export default {
         sortable: false
       },
       {
+        align: 'right',
         sortable: false,
-        value: '_id'
+        value: 'icons'
       }
     ],
 
@@ -195,11 +188,11 @@ export default {
     selectedStationIds: null,
     selectedTermLabels: {},
 
-    tablePagination: {
+    tableOptions: {
       descending: false,
       page: 1,
-      rowsPerPage: 10,
-      sortBy: null,
+      itemsPerPage: 10,
+      sortBy: [],
       totalItems: null
     }
   }),
@@ -210,15 +203,15 @@ export default {
         search,
         selectedStationIds,
         selectedTermLabels,
-        tablePagination
+        tableOptions
       } = this
-      const { page, rowsPerPage } = tablePagination
+      const { page, itemsPerPage } = tableOptions
 
       const query = {
         is_hidden: false,
         organization_id: this.org._id,
-        $limit: rowsPerPage,
-        $skip: (page - 1) * rowsPerPage,
+        $limit: itemsPerPage,
+        $skip: (page - 1) * itemsPerPage,
         $select: [
           '_id',
           'access_levels_resolved',
@@ -291,12 +284,12 @@ export default {
     },
 
     selectedStationIds() {
-      this.tablePagination.page = 1
+      this.tableOptions.page = 1
     },
 
     selectedTermLabels: {
       handler() {
-        this.tablePagination.page = 1
+        this.tableOptions.page = 1
       },
       deep: true
     }

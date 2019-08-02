@@ -1,18 +1,10 @@
-const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
+import colors from 'vuetify/lib/util/colors'
 
 module.exports = {
   /**
    * Build configuration
    */
   build: {
-    transpile: ['vuetify/lib'],
-    plugins: [new VuetifyLoaderPlugin()],
-    loaders: {
-      stylus: {
-        import: ['~assets/style/variables.styl']
-      }
-    },
-
     /**
      * You can extend webpack config here
      */
@@ -46,8 +38,6 @@ module.exports = {
   /**
    * Global CSS
    */
-  css: ['~/assets/style/app.styl'],
-
   env: {
     apiPath: process.env.API_PATH,
     apiUri: process.env.API_URI,
@@ -165,13 +155,13 @@ module.exports = {
    * Nuxt.js modules
    */
   modules: [],
+  devModules: ['@nuxtjs/vuetify'],
 
   /**
    * Plugins to load before mounting the App
    */
   plugins: [
     { src: '~/plugins/logger', ssr: false },
-    { src: '~/plugins/vuetify', ssr: false },
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },
     { src: '~/plugins/api', ssr: false },
@@ -187,5 +177,33 @@ module.exports = {
     middleware: ['auth', 'ability']
   },
 
-  srcDir: 'src'
+  srcDir: 'src',
+
+  vuetify: {
+    theme: {
+      themes: {
+        dark: {
+          primary: colors.blue,
+          secondary: colors.green,
+          tertiary: colors.blue.lighten2,
+          accent: colors.blueGrey.darken2,
+          info: colors.blue.darken2,
+          warning: colors.amber.darken3,
+          error: colors.deepOrange.darken3,
+          success: colors.green.darken1
+        },
+
+        light: {
+          primary: colors.blue,
+          secondary: colors.green,
+          tertiary: colors.blue.lighten2,
+          accent: colors.blueGrey.darken2,
+          info: colors.blue.darken2,
+          warning: colors.amber.darken3,
+          error: colors.deepOrange.darken3,
+          success: colors.green.darken1
+        }
+      }
+    }
+  }
 }

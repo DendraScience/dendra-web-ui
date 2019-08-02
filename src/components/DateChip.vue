@@ -2,7 +2,7 @@
   <v-chip
     v-if="value"
     :color="color"
-    :outline="outline"
+    :outlined="outlined"
     @dblclick="index = ++index % 3"
   >
     {{ text }}
@@ -13,7 +13,7 @@
 export default {
   props: {
     color: { default: '', type: String },
-    outline: { default: true, type: Boolean },
+    outlined: { default: true, type: Boolean },
     value: { default: null, type: Object }
   },
 

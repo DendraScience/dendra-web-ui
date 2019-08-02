@@ -3,14 +3,14 @@
     <v-flex class="bg-image">
       <v-container>
         <v-layout column>
-          <v-flex mt-4 mb-2>
+          <v-flex mt-6 mb-2>
             <img
               style="max-width: 460px; width: 100%;"
               src="@/assets/dendra-logo.svg"
             />
           </v-flex>
 
-          <v-flex mb-4>
+          <v-flex mb-6>
             <h4 class="display-1 white--text">
               Sensor Observatory Curation
             </h4>
@@ -20,8 +20,8 @@
     </v-flex>
 
     <v-flex secondary shrink>
-      <v-container grid-list-sm>
-        <v-layout column>
+      <v-container>
+        <v-layout column py-2>
           <v-flex subheading white--text>
             Dendra is a cyberinfrastructure project for real-time sensor data
             storage, retrieval, management, and curation. It is a cloud-based,
@@ -44,7 +44,7 @@
 
     <v-flex shrink>
       <v-container grid-list-xl>
-        <v-layout row wrap>
+        <v-layout wrap py-2>
           <v-flex xs12 md4>
             <h4 class="display-1 mb-2">Community</h4>
 
@@ -96,10 +96,12 @@
 
     <v-flex grey lighten-2 shrink>
       <v-container>
-        <v-layout row wrap>
-          <v-flex xs12 text-xs-center>
-            <v-btn flat round to="/orgs">Organizations</v-btn>
-            <v-btn flat round to="/contact">Contact</v-btn>
+        <v-layout align-center justify-center py-4>
+          <v-flex shrink>
+            <v-btn rounded text to="/orgs">Organizations</v-btn>
+          </v-flex>
+          <v-flex shrink>
+            <v-btn rounded text to="/contact">Contact</v-btn>
           </v-flex>
         </v-layout>
       </v-container>
@@ -113,10 +115,11 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
-.bg-image
-  background-repeat: no-repeat
-  background-size: cover
-  background-image: url('~assets/angelo-reserve.jpg')
-  background-position: top center
+<style scoped>
+.bg-image {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('~assets/angelo-reserve.jpg');
+  background-position: top center;
+}
 </style>

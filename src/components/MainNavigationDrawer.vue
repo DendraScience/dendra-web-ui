@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer v-model="drawer" app dark fixed>
-    <v-toolbar flat prominent color="transparent">
+    <v-toolbar flat color="transparent">
       <!-- TODO: Remove this -->
       <!--
         <v-text-field
@@ -19,7 +19,7 @@
       <v-subheader v-if="list.header">{{ list.header }}</v-subheader>
 
       <v-list>
-        <v-list-tile
+        <v-list-item
           v-for="(item, i) in list.items"
           :key="i"
           :disabled="item.disabled"
@@ -27,14 +27,14 @@
           exact
           nuxt
         >
-          <v-list-tile-action>
+          <v-list-item-action>
             <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
-          </v-list-tile-action>
+          </v-list-item-action>
 
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title" />
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title" />
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <v-divider />

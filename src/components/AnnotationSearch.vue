@@ -1,6 +1,6 @@
 <template>
   <v-container fluid grid-list-xl>
-    <v-layout row wrap>
+    <v-layout wrap>
       <v-flex xs12>
         <date-range-fields v-model="dateRange" />
       </v-flex>
@@ -18,7 +18,7 @@
       qid="search"
       service="annotations"
     >
-      <v-layout row wrap>
+      <v-layout wrap>
         <v-flex xs12>
           <v-text-field
             v-model.trim="searchDebounce"
@@ -30,46 +30,46 @@
 
         <v-flex xs12>
           <v-data-table
+            :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
             :headers="headers"
             :items="annotations"
             :loading="loading"
-            :pagination.sync="tablePagination"
-            :rows-per-page-items="[5, 10, 25, 50]"
-            :total-items="pagination ? pagination.total : 0"
-            disable-initial-sort
+            :mobile-breakpoint="0"
+            :options.sync="tableOptions"
+            :server-items-length="pagination ? pagination.total : 0"
             item-key="_id"
           >
-            <template v-slot:items="{ item }">
-              <td
-                v-if="$scopedSlots.select"
-                class="text-xs-center text-no-wrap px-0"
+            <template
+              v-if="$scopedSlots.select"
+              v-slot:item.select="{ item }"
+              class="text-no-wrap px-0"
+            >
+              <slot name="select" :item="item" />
+            </template>
+
+            <template v-slot:item.title="{ item }">
+              <nuxt-link
+                :to="{
+                  name: 'orgs-orgSlug-annotations-annotationId',
+                  params: {
+                    orgSlug: org.slug,
+                    annotationId: item._id
+                  }
+                }"
+                >{{ item.title }}</nuxt-link
               >
-                <slot name="select" :item="item" />
-              </td>
+            </template>
 
-              <td>{{ item.state }}</td>
-              <td>
-                <nuxt-link
-                  :to="{
-                    name: 'orgs-orgSlug-annotations-annotationId',
-                    params: {
-                      orgSlug: org.slug,
-                      annotationId: item._id
-                    }
-                  }"
-                  >{{ item.title }}</nuxt-link
-                >
-              </td>
-              <td>{{ item.description | truncate({ length: 200 }) }}</td>
+            <template v-slot:item.description="{ item }">
+              {{ item.description | truncate({ length: 200 }) }}
+            </template>
 
+            <template v-slot:item.icons="{ item }">
               <indicator-cell :value="item" />
 
-              <td
-                v-if="$scopedSlots.actions"
-                class="text-xs-right text-no-wrap"
-              >
+              <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
-              </td>
+              </span>
             </template>
           </v-data-table>
         </v-flex>
@@ -79,12 +79,10 @@
 </template>
 
 <script>
-import DateRangeFields from '@/components/DateRangeFields'
-import IndicatorCell from '@/components/IndicatorCell'
-
 import moment from 'moment'
 import _debounce from 'lodash/debounce'
-
+import DateRangeFields from '@/components/DateRangeFields'
+import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
@@ -113,7 +111,7 @@ export default {
         align: 'center',
         sortable: false,
         text: 'Select',
-        value: '_id'
+        value: 'select'
       },
       {
         align: 'left',
@@ -140,8 +138,9 @@ export default {
         sortable: false
       },
       {
+        align: 'right',
         sortable: false,
-        value: '_id'
+        value: 'icons'
       }
     ],
 
@@ -150,24 +149,24 @@ export default {
     search: null,
     searchDebounce: null,
 
-    tablePagination: {
+    tableOptions: {
       descending: false,
       page: 1,
-      rowsPerPage: 10,
-      sortBy: null,
+      itemsPerPage: 10,
+      sortBy: [],
       totalItems: null
     }
   }),
 
   computed: {
     annotationsFetchQuery() {
-      const { search, tablePagination } = this
-      const { page, rowsPerPage } = tablePagination
+      const { search, tableOptions } = this
+      const { page, itemsPerPage } = tableOptions
 
       const query = {
         organization_id: this.org._id,
-        $limit: rowsPerPage,
-        $skip: (page - 1) * rowsPerPage,
+        $limit: itemsPerPage,
+        $skip: (page - 1) * itemsPerPage,
         $select: [
           '_id',
           'access_levels_resolved',

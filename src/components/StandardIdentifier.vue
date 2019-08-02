@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout>
     <v-flex>
       <v-chip v-if="value._id" class="mr-2" label>id: {{ value._id }}</v-chip>
       <v-chip v-if="value.version_id" label

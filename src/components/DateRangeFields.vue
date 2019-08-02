@@ -1,14 +1,14 @@
 <template>
   <v-container fluid pa-0>
-    <v-layout row wrap>
+    <v-layout wrap>
       <v-flex xs12 sm6>
         <v-text-field
           v-model="value.from"
           v-validate="{ moment_format: $dateFormats.y4md, required: true }"
           :error-messages="errors.collect('fromDate')"
           append-icon="event"
-          box
           data-vv-name="fromDate"
+          filled
           label="From date"
           required
           @click:append="showDialog"
@@ -21,8 +21,8 @@
           v-validate="{ moment_format: $dateFormats.y4md, required: true }"
           :error-messages="errors.collect('toDate')"
           append-icon="event"
-          box
           data-vv-name="toDate"
+          filled
           label="To date"
           required
           @click:append="showDialog"
@@ -30,9 +30,9 @@
       </v-flex>
     </v-layout>
 
-    <v-dialog v-model="dialog" lazy max-width="680">
+    <v-dialog v-model="dialog" max-width="680">
       <v-card>
-        <v-card-title primary-title class="headline grey lighten-4 mb-3"
+        <v-card-title class="headline grey lighten-4 mb-4"
           >Date range</v-card-title
         >
 
@@ -42,7 +42,7 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn flat color="primary" @click="dialog = false">Close</v-btn>
+          <v-btn text color="primary" @click="dialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -50,9 +50,8 @@
 </template>
 
 <script>
-import DateRangePicker from '@/components/DateRangePicker'
-
 import moment from 'moment'
+import DateRangePicker from '@/components/DateRangePicker'
 
 export default {
   components: {

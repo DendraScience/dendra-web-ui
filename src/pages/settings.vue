@@ -8,13 +8,13 @@
           </v-flex>
         </v-layout>
 
-        <v-layout row>
+        <v-layout>
           <v-flex xs12 md8>
             <user-account-edit :user="getUser(auth.user._id)" />
           </v-flex>
         </v-layout>
 
-        <v-layout row>
+        <v-layout>
           <v-flex xs12 md8>
             <user-password-edit :user="getUser(auth.user._id)" />
           </v-flex>
@@ -25,10 +25,9 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from 'vuex'
 import UserAccountEdit from '@/components/UserAccountEdit'
 import UserPasswordEdit from '@/components/UserPasswordEdit'
-
-import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {

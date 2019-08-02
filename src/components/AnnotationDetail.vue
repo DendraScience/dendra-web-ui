@@ -81,22 +81,21 @@
       v-model="datastreamDialog"
       fullscreen
       hide-overlay
-      lazy
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-toolbar dark color="primary" fixed prominent>
+        <v-toolbar dark color="primary">
           <v-btn icon dark @click="datastreamDialog = false">
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title>Select datastreams</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn dark flat @click="datastreamDialogCommit">OK</v-btn>
+            <v-btn dark text @click="datastreamDialogCommit">OK</v-btn>
           </v-toolbar-items>
         </v-toolbar>
 
-        <datastream-search :org="org" show-disabled style="margin-top: 64px;">
+        <datastream-search :org="org" show-disabled>
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -115,7 +114,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="flagDialog" lazy max-width="380">
+    <v-dialog v-model="flagDialog" max-width="380">
       <validation-provider
         ref="flagProvider"
         v-slot="{ errors, valid }"
@@ -124,7 +123,7 @@
         slim
       >
         <v-card>
-          <v-card-title primary-title class="headline grey lighten-4 mb-3"
+          <v-card-title class="headline grey lighten-4 mb-4"
             >Specify flag</v-card-title
           >
 
@@ -152,11 +151,11 @@
             <v-btn
               :disabled="!valid"
               color="primary"
-              flat
+              text
               @click="flagDialogCommit"
               >OK</v-btn
             >
-            <v-btn color="primary" flat @click="flagDialog = false"
+            <v-btn color="primary" text @click="flagDialog = false"
               >Cancel</v-btn
             >
           </v-card-actions>
@@ -164,9 +163,9 @@
       </validation-provider>
     </v-dialog>
 
-    <v-dialog v-model="momentDialog" lazy max-width="380">
+    <v-dialog v-model="momentDialog" max-width="380">
       <v-card>
-        <v-card-title primary-title class="headline grey lighten-4 mb-3"
+        <v-card-title class="headline grey lighten-4 mb-4"
           >Specify moment</v-card-title
         >
 
@@ -193,20 +192,20 @@
           <v-btn
             :disabled="!momentDialogValid"
             color="primary"
-            flat
+            text
             @click="momentDialogCommit"
             >OK</v-btn
           >
-          <v-btn color="primary" flat @click="momentDialog = false"
+          <v-btn color="primary" text @click="momentDialog = false"
             >Cancel</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="rangeDialog" lazy max-width="680">
+    <v-dialog v-model="rangeDialog" max-width="680">
       <v-card>
-        <v-card-title primary-title class="headline grey lighten-4"
+        <v-card-title class="headline grey lighten-4"
           >Specify range</v-card-title
         >
 
@@ -242,11 +241,11 @@
           <v-btn
             :disabled="!rangeDialogValid"
             color="primary"
-            flat
+            text
             @click="rangeDialogCommit"
             >OK</v-btn
           >
-          <v-btn color="primary" flat @click="rangeDialog = false"
+          <v-btn color="primary" text @click="rangeDialog = false"
             >Cancel</v-btn
           >
         </v-card-actions>
@@ -257,22 +256,21 @@
       v-model="stationDialog"
       fullscreen
       hide-overlay
-      lazy
       transition="dialog-bottom-transition"
     >
       <v-card>
-        <v-toolbar dark color="primary" fixed prominent>
+        <v-toolbar dark color="primary">
           <v-btn icon dark @click="stationDialog = false">
             <v-icon>close</v-icon>
           </v-btn>
           <v-toolbar-title>Select stations</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn dark flat @click="stationDialogCommit">OK</v-btn>
+            <v-btn dark text @click="stationDialogCommit">OK</v-btn>
           </v-toolbar-items>
         </v-toolbar>
 
-        <station-search :org="org" show-disabled style="margin-top: 64px;">
+        <station-search :org="org" show-disabled>
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -294,6 +292,10 @@
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate'
+import moment from 'moment'
+import _union from 'lodash/union'
+import { mapGetters, mapMutations } from 'vuex'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
@@ -304,12 +306,6 @@ import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 import StationSearch from '@/components/StationSearch'
-import { ValidationProvider } from 'vee-validate'
-
-import moment from 'moment'
-import _union from 'lodash/union'
-
-import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   components: {

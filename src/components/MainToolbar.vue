@@ -1,12 +1,12 @@
 <template>
-  <v-toolbar
-    :color="$route.name === 'index' ? 'secondary' : ''"
+  <v-app-bar
+    :color="$route.name === 'index' ? 'secondary' : 'grey darken-4'"
     app
     dark
     fixed
-    prominent
+    height="64"
   >
-    <v-toolbar-side-icon @click="toggleDrawer" />
+    <v-app-bar-nav-icon @click="toggleDrawer" />
     <v-toolbar-title>{{ orgName }}</v-toolbar-title>
     <v-spacer />
     <!-- TODO: Deprecate -->
@@ -24,13 +24,13 @@
 
       <v-card>
         <v-list v-if="auth.user" dark three-line>
-          <v-list-tile>
-            <v-list-tile-content>
-              <v-list-tile-title>{{ auth.user.name }}</v-list-tile-title>
-              <v-list-tile-sub-title>
-                {{ auth.user.email }}</v-list-tile-sub-title
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{ auth.user.name }}</v-list-item-title>
+              <v-list-item-subtitle>
+                {{ auth.user.email }}</v-list-item-subtitle
               >
-              <v-list-tile-sub-title>
+              <v-list-item-subtitle class="mt-2">
                 <v-chip
                   v-for="role in auth.user.roles"
                   :key="role"
@@ -38,26 +38,26 @@
                   label
                   small
                   >{{ role }}</v-chip
-                ></v-list-tile-sub-title
+                ></v-list-item-subtitle
               >
-            </v-list-tile-content>
-          </v-list-tile>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
 
         <v-list>
-          <v-list-tile to="/settings">
-            <v-list-tile-title>User settings</v-list-tile-title>
-          </v-list-tile>
+          <v-list-item to="/settings">
+            <v-list-item-title>User settings</v-list-item-title>
+          </v-list-item>
 
-          <v-list-tile @click="logoutRedirect">
-            <v-list-tile-title>Log out</v-list-tile-title>
-          </v-list-tile>
+          <v-list-item @click="logoutRedirect">
+            <v-list-item-title>Log out</v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-card>
     </v-menu>
 
-    <v-btn v-else color="white" outline round to="/login">Log in</v-btn>
-  </v-toolbar>
+    <v-btn v-else color="white" outlined rounded to="/login">Log in</v-btn>
+  </v-app-bar>
 </template>
 
 <script>

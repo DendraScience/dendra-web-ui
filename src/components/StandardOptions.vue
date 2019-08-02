@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap>
+  <v-layout wrap>
     <v-flex v-if="typeof value.is_enabled === 'boolean'" shrink pt-0>
       <v-checkbox
         v-model="value.is_enabled"
