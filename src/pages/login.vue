@@ -19,7 +19,6 @@
                 v-model="email"
                 v-validate="'required|email'"
                 :error-messages="errors.collect('email')"
-                browser-autocomplete="username"
                 data-vv-name="email"
                 filled
                 label="Email"
@@ -32,7 +31,6 @@
                 :append-icon="isPasswordShown ? 'visibility_off' : 'visibility'"
                 :error-messages="errors.collect('password')"
                 :type="isPasswordShown ? 'text' : 'password'"
-                browser-autocomplete="current-password"
                 data-vv-name="password"
                 filled
                 label="Password"

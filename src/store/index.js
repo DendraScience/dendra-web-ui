@@ -48,6 +48,7 @@ export const plugins = [
 
     paginate: true
   }),
+  service('memberships'),
   service('organizations'),
   service('persons'),
   service('places'),

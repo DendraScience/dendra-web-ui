@@ -41,9 +41,11 @@
               <slot name="select" :item="item" />
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template v-slot:item.indicators="{ item }">
               <indicator-cell :value="item" />
+            </template>
 
+            <template v-slot:item.icons="{ item }">
               <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
               </span>
@@ -99,8 +101,9 @@ export default {
         value: 'full_name'
       },
       {
-        align: 'left',
-        sortable: false
+        align: 'right',
+        sortable: false,
+        value: 'indicators'
       },
       {
         align: 'right',

@@ -19,11 +19,11 @@
             </template>
 
             <template v-slot:item.description="{ item }" class="py-4">
-              <span v-if="item.label">{{ item.label }}</span>
+              <span v-if="item.label" class="mr-1">{{ item.label }}</span>
               <v-chip
                 v-for="val in item.values"
                 :key="val"
-                class="ml-1"
+                class="mr-1 my-1"
                 label
                 >{{ val }}</v-chip
               >

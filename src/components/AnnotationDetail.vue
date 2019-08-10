@@ -71,6 +71,16 @@
         />
       </v-flex>
 
+      <v-flex>
+        <annotation-detail-members
+          :editing="editing"
+          :value="value"
+          @add="addMember"
+          @edit="editMember"
+          @remove="removeMember"
+        />
+      </v-flex>
+
       <!-- TODO: Implement editing later! -->
       <v-flex v-if="!editing">
         <detail-external-refs :editing="editing" :value="value" />
@@ -127,22 +137,24 @@
             >Specify flag</v-card-title
           >
 
-          <v-container fluid grid-list-lg>
-            <v-layout align-center justify-center column>
-              <v-flex>
-                <v-text-field
-                  v-if="flagDialog"
-                  v-model="flag"
-                  :error-messages="errors"
-                  autofocus
-                  data-vv-name="flag"
-                  label="Flag"
-                  prepend-inner-icon="flag"
-                  solo
-                ></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
+          <v-card-text>
+            <v-container fluid>
+              <v-layout column>
+                <v-flex>
+                  <v-text-field
+                    v-if="flagDialog"
+                    v-model="flag"
+                    :error-messages="errors"
+                    autofocus
+                    data-vv-name="flag"
+                    label="Flag"
+                    prepend-inner-icon="flag"
+                    solo
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
 
           <v-divider />
 
@@ -161,6 +173,54 @@
           </v-card-actions>
         </v-card>
       </validation-provider>
+    </v-dialog>
+
+    <v-dialog v-model="memberDialog" max-width="380">
+      <v-card>
+        <v-card-title class="headline grey lighten-4 mb-4"
+          >Specify member</v-card-title
+        >
+
+        <v-card-text>
+          <v-container fluid>
+            <v-layout column>
+              <v-flex>
+                <member-select
+                  v-model="member"
+                  :disabled="memberDisabled"
+                  :org="org"
+                />
+              </v-flex>
+
+              <v-flex mx-2>
+                <v-checkbox
+                  v-for="role in memberRoles"
+                  :key="role.text"
+                  v-model="role.value"
+                  :label="role.text"
+                  class="my-0"
+                ></v-checkbox>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            :disabled="!member.personId"
+            color="primary"
+            text
+            @click="memberDialogCommit"
+            >OK</v-btn
+          >
+          <v-btn color="primary" text @click="memberDialog = false"
+            >Cancel</v-btn
+          >
+        </v-card-actions>
+      </v-card>
     </v-dialog>
 
     <v-dialog v-model="momentDialog" max-width="380">
@@ -299,9 +359,11 @@ import { mapGetters, mapMutations } from 'vuex'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
+import AnnotationDetailMembers from '@/components/AnnotationDetailMembers'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangePicker from '@/components/DateRangePicker'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import MemberSelect from '@/components/MemberSelect'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
@@ -312,9 +374,11 @@ export default {
     AnnotationDetailActions,
     AnnotationDetailApplies,
     AnnotationDetailIntervals,
+    AnnotationDetailMembers,
     DatastreamSearch,
     DateRangePicker,
     DetailExternalRefs,
+    MemberSelect,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,
@@ -333,6 +397,7 @@ export default {
   data: () => ({
     datastreamDialog: false,
     flagDialog: false,
+    memberDialog: false,
     momentDialog: false,
     rangeDialog: false,
     stationDialog: false,
@@ -349,6 +414,22 @@ export default {
       toEnabled: true,
       toTime: null
     },
+
+    member: {
+      personId: null
+    },
+    memberDisabled: false,
+    memberRoles: [
+      {
+        text: 'contact',
+        value: null
+      },
+      {
+        text: 'reporter',
+        value: null
+      }
+    ],
+
     stateItems: ['pending', 'approved', 'rejected']
   }),
 
@@ -466,6 +547,13 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
+    addMember(item) {
+      this.member.personId = null
+      this.memberRoles.forEach(role => (role.value = null))
+      this.memberDisabled = false
+      this.memberDialog = true
+    },
+
     editInterval(item) {
       if (!item.target) return
 
@@ -490,6 +578,17 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
+    editMember(item) {
+      const roles = this.value.involved_parties
+        .filter(party => party.person_id === item.id)
+        .reduce((accum, party) => accum.concat(party.roles), [])
+
+      this.member.personId = item.id
+      this.memberRoles.forEach(role => (role.value = roles.includes(role.text)))
+      this.memberDisabled = true
+      this.memberDialog = true
+    },
+
     removeAction(item) {
       this.value.actions = this.value.actions.filter(
         (action, index) => index !== item.key
@@ -508,6 +607,12 @@ export default {
     removeInterval(item) {
       this.value.intervals = this.value.intervals.filter(
         (interval, index) => index !== item.key
+      )
+    },
+
+    removeMember(item) {
+      this.value.involved_parties = this.value.involved_parties.filter(
+        (action, index) => index !== item.key
       )
     },
 
@@ -533,6 +638,26 @@ export default {
       }
 
       this.flagDialog = false
+    },
+
+    memberDialogCommit() {
+      const { member, memberRoles, value } = this
+
+      const involvedParties = value.involved_parties.filter(
+        party => party.person_id !== member.personId
+      )
+      const roles = memberRoles
+        .filter(role => role.value)
+        .map(role => role.text)
+      if (roles.length)
+        involvedParties.push({
+          person_id: member.personId,
+          roles
+        })
+
+      value.involved_parties = involvedParties
+
+      this.memberDialog = false
     },
 
     momentDialogCommit() {

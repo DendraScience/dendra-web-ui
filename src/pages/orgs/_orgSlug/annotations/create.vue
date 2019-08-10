@@ -1,5 +1,5 @@
 <template>
-  <v-layout v-if="instance" column>
+  <v-layout v-if="instance && org" column>
     <v-flex>
       <v-container grid-list-xl>
         <v-layout column>
@@ -41,6 +41,7 @@ export default {
   computed: {
     ...mapGetters(['org', 'annotation']),
 
+    ...mapState(['auth']),
     ...mapState('ux', ['editing'])
   },
 
@@ -107,6 +108,12 @@ export default {
         datastream_ids: [],
         description: '',
         intervals: [],
+        involved_parties: [
+          {
+            person_id: this.auth.user.person_id,
+            roles: ['contact', 'reporter']
+          }
+        ],
         organization_id: this.org._id,
         station_ids: [],
         title: '',
@@ -119,7 +126,13 @@ export default {
 
       const { instance } = this
 
-      const arrays = ['actions', 'datastream_ids', 'intervals', 'station_ids']
+      const arrays = [
+        'actions',
+        'datastream_ids',
+        'intervals',
+        'involved_parties',
+        'station_ids'
+      ]
       const fields = ['description', 'organization_id', 'title']
 
       const data = _pickBy(instance, (value, key) => {

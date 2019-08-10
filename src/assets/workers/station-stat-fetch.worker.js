@@ -10,14 +10,14 @@ async function getBatteryVoltageDatastreamId(stationId) {
   const params = {
     is_enabled: true,
     station_id: stationId,
-    'terms_info.class_keys[$in][0]':
-      'ds__Aggregate_Average__Medium_Battery__Variable_Voltage',
-    'terms_info.class_keys[$in][1]': 'ds__Medium_Battery__Variable_Voltage',
+    '$and[0][terms_info.class_tags]': 'ds_Medium_Battery',
+    '$and[1][terms_info.class_tags]': 'ds_Variable_Voltage',
     // HACK: Not pretty - the metadata should never require this!
     // FIX: Find another way
     'datapoints_config.params.query.db[$exists]': true,
     $limit: 1,
-    '$select[]': '_id'
+    '$select[]': '_id',
+    '$sort[terms_info.class_keys]': 1
   }
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 

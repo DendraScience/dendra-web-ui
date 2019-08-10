@@ -19,18 +19,20 @@
             </template>
 
             <template v-slot:item.description="{ item }" class="py-4">
-              <span v-if="item.beginsLabel">{{ item.beginsLabel }}</span>
+              <span v-if="item.beginsLabel" class="mr-1">{{
+                item.beginsLabel
+              }}</span>
               <date-chip
                 :value="Object.freeze(item.beginsAt)"
-                class="ml-1"
+                class="mr-1 my-1"
                 color="success"
               />
-              <span v-if="item.endsLabel" class="ml-1">{{
+              <span v-if="item.endsLabel" class="mr-1">{{
                 item.endsLabel
               }}</span>
               <date-chip
                 :value="Object.freeze(item.endsBefore)"
-                class="ml-1"
+                class="mr-1 my-1"
                 color="error"
               />
             </template>

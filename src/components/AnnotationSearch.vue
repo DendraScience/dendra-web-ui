@@ -64,9 +64,11 @@
               {{ item.description | truncate({ length: 200 }) }}
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template v-slot:item.indicators="{ item }">
               <indicator-cell :value="item" />
+            </template>
 
+            <template v-slot:item.icons="{ item }">
               <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
               </span>
@@ -134,8 +136,9 @@ export default {
         value: 'description'
       },
       {
-        align: 'left',
-        sortable: false
+        align: 'right',
+        sortable: false,
+        value: 'indicators'
       },
       {
         align: 'right',

@@ -77,13 +77,13 @@ export default {
         icon: 'nature',
         target: 'station',
         title: 'Station',
-        subtitle: 'Apply to ALL datastreams for a station.'
+        subtitle: 'Apply to ALL datastreams for selected stations.'
       },
       {
         icon: 'timeline',
         target: 'datastream',
         title: 'Datastream',
-        subtitle: 'Apply to a specific datastream only.'
+        subtitle: 'Apply to selected datastreams.'
       }
     ],
 

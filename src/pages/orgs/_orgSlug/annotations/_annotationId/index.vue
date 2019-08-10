@@ -1,5 +1,5 @@
 <template>
-  <v-layout v-if="instance" column>
+  <v-layout v-if="instance && org" column>
     <v-flex>
       <v-container grid-list-xl>
         <v-layout v-if="!editing">
@@ -118,6 +118,7 @@ export default {
           actions: [],
           datastream_ids: [],
           intervals: [],
+          involved_parties: [],
           station_ids: []
         },
         this.annotation
@@ -135,7 +136,13 @@ export default {
 
       const { instance } = this
 
-      const arrays = ['actions', 'datastream_ids', 'intervals', 'station_ids']
+      const arrays = [
+        'actions',
+        'datastream_ids',
+        'intervals',
+        'involved_parties',
+        'station_ids'
+      ]
       const fields = ['description', 'is_enabled', 'state', 'title']
 
       const $set = _pickBy(instance, (value, key) => {
