@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="headline">
-      <slot>External references</slot>
+      <slot>External links</slot>
     </v-card-title>
 
     <v-container fluid pt-0 px-4>
@@ -58,17 +58,10 @@ export default {
     headers: [
       {
         align: 'left',
-        sortable: true,
-        text: 'Type',
-        value: 'type',
-        width: '20%'
-      },
-      {
-        align: 'left',
         sortable: false,
-        text: 'Identifier',
-        value: 'identifier',
-        width: '20%'
+        text: 'Title',
+        value: 'title',
+        width: '40%'
       },
       {
         align: 'left',
@@ -86,12 +79,14 @@ export default {
   }),
 
   computed: {
-    externalRefs() {
-      return this.value.external_refs || []
+    externalLinks() {
+      return this.value.external_links || []
     },
 
     items() {
-      return this.externalRefs
+      return this.externalLinks.map((item, key) => {
+        return Object.assign({ key }, item)
+      })
     }
   },
 

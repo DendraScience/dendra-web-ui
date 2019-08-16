@@ -5,8 +5,8 @@
     </v-card-title>
 
     <v-container fluid pt-0>
-      <v-layout wrap>
-        <v-flex xs12>
+      <v-layout>
+        <v-flex>
           <v-data-table
             :headers="headers"
             :items="items"
@@ -35,7 +35,7 @@
                 v-if="editing && !item.custom"
                 color="tertiary"
                 @click="remove(item)"
-                >remove_circle</v-icon
+                >mdi-minus-circle</v-icon
               >
             </template>
           </v-data-table>

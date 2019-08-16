@@ -24,6 +24,8 @@
             v-model.trim="searchDebounce"
             append-icon="search"
             clearable
+            filled
+            flat
             label="Filter annotations"
           ></v-text-field>
         </v-flex>
@@ -49,6 +51,7 @@
 
             <template v-slot:item.title="{ item }">
               <nuxt-link
+                v-if="showLink"
                 :to="{
                   name: 'orgs-orgSlug-annotations-annotationId',
                   params: {
@@ -57,7 +60,7 @@
                   }
                 }"
                 >{{ item.title }}</nuxt-link
-              >
+              ><span v-else>{{ item.title }}</span>
             </template>
 
             <template v-slot:item.description="{ item }">
@@ -99,7 +102,8 @@ export default {
 
   props: {
     org: { default: null, type: Object },
-    showDisabled: { default: false, type: Boolean }
+    showDisabled: { default: false, type: Boolean },
+    showLink: { default: false, type: Boolean }
   },
 
   data: () => ({
@@ -112,7 +116,6 @@ export default {
       {
         align: 'center',
         sortable: false,
-        text: 'Select',
         value: 'select'
       },
       {
@@ -296,7 +299,8 @@ export default {
     let { headers } = this
 
     dateRange.from = moment()
-      .startOf('d')
+      .startOf('y')
+      .subtract(20, 'y')
       .format(this.$dateFormats.y4md)
     dateRange.to = moment()
       .endOf('d')

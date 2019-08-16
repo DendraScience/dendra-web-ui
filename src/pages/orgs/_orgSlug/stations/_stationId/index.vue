@@ -4,17 +4,13 @@
       <v-container grid-list-xl>
         <v-layout v-if="!editing">
           <v-flex>
-            <h4 class="display-1 font-weight-light mb-2">Annotation details</h4>
+            <h4 class="display-1 font-weight-light mb-2">Station details</h4>
           </v-flex>
         </v-layout>
 
         <v-layout column>
           <v-flex>
-            <annotation-detail
-              v-model="instance"
-              :editing="editing"
-              :org="org"
-            />
+            <station-detail v-model="instance" :editing="editing" :org="org" />
           </v-flex>
         </v-layout>
       </v-container>
@@ -41,7 +37,8 @@ import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import _merge from 'lodash/merge'
 import _pickBy from 'lodash/pickBy'
 import _reduce from 'lodash/reduce'
-import AnnotationDetail from '@/components/AnnotationDetail'
+import { timeZoneOffsets } from '@/lib/time-zone'
+import StationDetail from '@/components/StationDetail'
 
 export default {
   $_veeValidate: {
@@ -49,19 +46,19 @@ export default {
   },
 
   components: {
-    AnnotationDetail
+    StationDetail
   },
 
   layout: 'editor',
 
-  middleware: ['check-org', 'check-annotation', 'reset-editing'],
+  middleware: ['check-org', 'check-station', 'reset-editing'],
 
   data: () => ({
     instance: null
   }),
 
   computed: {
-    ...mapGetters(['org', 'annotation']),
+    ...mapGetters(['org', 'station']),
 
     ...mapState('ux', ['editing'])
   },
@@ -95,8 +92,8 @@ export default {
 
   methods: {
     ...mapActions({
-      fetchAnnotations: 'annotations/find',
-      patch: 'annotations/patch'
+      fetchStations: 'stations/find',
+      patch: 'stations/patch'
     }),
 
     ...mapMutations({
@@ -109,20 +106,32 @@ export default {
 
     edit() {
       this.setEditorDirty(0)
-      this.setEditorTitle('Edit annotation')
+      this.setEditorTitle('Edit station')
       this.setEditing(true)
     },
 
     initInstance() {
+      const coordinates = this.station.geo
+        ? this.station.geo.coordinates
+        : [0, 0, null]
+
       this.instance = _merge(
         {
-          actions: [],
-          datastream_ids: [],
-          intervals: [],
-          involved_parties: [],
-          station_ids: []
+          access_levels: {},
+          external_links: [],
+          // general_config: {},
+          geo: null,
+          geoCoordinates: {
+            ele: coordinates[2],
+            lat: coordinates[1],
+            lng: coordinates[0]
+          }
+          // involved_parties: [],
+          // media: [],
+          // thing_ids: [],
+          // thing_type_ids: []
         },
-        this.annotation
+        this.station
       )
     },
 
@@ -138,24 +147,50 @@ export default {
       const { instance } = this
 
       const arrays = [
-        'actions',
-        'datastream_ids',
-        'intervals',
+        'external_links',
         'involved_parties',
-        'station_ids'
+        'media',
+        'thing_ids',
+        'thing_type_ids'
       ]
-      const fields = ['description', 'is_enabled', 'state', 'title']
+      const fields = [
+        'description',
+        'full_name',
+        'is_active',
+        'is_enabled',
+        'is_hidden',
+        'is_geo_protected',
+        'is_stationary',
+        'name',
+        'slug',
+        'state',
+        'time_zone'
+      ]
+      const objects = ['access_levels', 'geo']
 
       const $set = _pickBy(instance, (value, key) => {
         return (
           (arrays.includes(key) && value && value.length) ||
+          (objects.includes(key) && value && Object.keys(value).length) ||
           fields.includes(key)
         )
       })
+      if ($set.geo) {
+        const { geoCoordinates } = instance
+        $set.geo.coordinates = [geoCoordinates.lng, geoCoordinates.lat]
+        if (typeof geoCoordinates.ele === 'number')
+          $set.geo.coordinates.push(geoCoordinates.ele)
+      }
+      $set.utc_offset = timeZoneOffsets[$set.time_zone]
+
       const $unset = _reduce(
         instance,
         (result, value, key) => {
-          if (arrays.includes(key) && (!value || value.length === 0))
+          if (
+            (arrays.includes(key) && (!value || value.length === 0)) ||
+            (objects.includes(key) &&
+              (!value || Object.keys(value).length === 0))
+          )
             result[key] = ''
           return result
         },
@@ -164,17 +199,17 @@ export default {
 
       try {
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('annotations/removeItem', instance._id)
+        this.$store.commit('stations/removeItem', instance._id)
 
         await this.patch([instance._id, { $set, $unset }, {}])
-        await this.fetchAnnotations({ query: { _id: instance._id } })
+        await this.fetchStations({ query: { _id: instance._id } })
 
         this.setEditing(false)
         this.setEditorDirty(-1)
         this.initInstance()
         this.$bus.$emit('edit-status', {
           type: 'success',
-          message: 'Annotation saved.' // TODO: Localize
+          message: 'Station saved.' // TODO: Localize
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })

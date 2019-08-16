@@ -1,10 +1,20 @@
 <template>
   <v-card>
     <v-card-title class="headline">
-      <slot>Timeframe</slot>
+      <slot v-if="editing">Access level overrides</slot>
+      <slot v-else>Access levels</slot>
     </v-card-title>
 
-    <v-container fluid pt-0>
+    <v-container fluid pt-0 px-4>
+      <v-layout v-if="!editing">
+        <v-flex>
+          <v-tabs v-model="tabIndex">
+            <v-tab>Resolved</v-tab>
+            <v-tab>Overrides</v-tab>
+          </v-tabs>
+        </v-flex>
+      </v-layout>
+
       <v-layout>
         <v-flex>
           <v-data-table
@@ -16,25 +26,6 @@
           >
             <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
               <v-icon>{{ item.icon }}</v-icon>
-            </template>
-
-            <template v-slot:item.description="{ item }" class="py-4">
-              <span v-if="item.beginsLabel" class="mr-1">{{
-                item.beginsLabel
-              }}</span>
-              <date-chip
-                :value="Object.freeze(item.beginsAt)"
-                class="mr-1 my-1"
-                color="success"
-              />
-              <span v-if="item.endsLabel" class="mr-1">{{
-                item.endsLabel
-              }}</span>
-              <date-chip
-                :value="Object.freeze(item.endsBefore)"
-                class="mr-1 my-1"
-                color="error"
-              />
             </template>
 
             <template v-slot:item.icons="{ item }">
@@ -82,14 +73,9 @@
 </template>
 
 <script>
-import moment from 'moment'
-import DateChip from '@/components/DateChip'
+import { accessLevelTexts } from '@/lib/access-level'
 
 export default {
-  components: {
-    DateChip
-  },
-
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
@@ -98,16 +84,18 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-calendar-range',
-        target: 'range',
-        title: 'Range',
-        subtitle: 'Specify a begin and end time.'
+        icon: 'mdi-account-multiple',
+        key: 'member_level',
+        target: 'member',
+        title: 'Member access level',
+        subtitle: 'Specify data visibility for organization members.'
       },
       {
-        icon: 'mdi-watch',
-        target: 'moment',
-        title: 'Moment',
-        subtitle: 'Specify a single point in time.'
+        icon: 'mdi-globe-model',
+        key: 'public_level',
+        target: 'public',
+        title: 'Public access level',
+        subtitle: 'Specify data visibility for the public.'
       }
     ],
 
@@ -130,68 +118,39 @@ export default {
         sortable: false,
         value: 'icons'
       }
-    ]
+    ],
+
+    tabIndex: 0
   }),
 
   computed: {
-    intervals() {
-      return this.value.intervals
+    accessLevels() {
+      return this.editing || this.tabIndex === 1
+        ? this.value.access_levels || {}
+        : this.value.access_levels_resolved || {}
     },
 
     items() {
-      return this.intervals.map((item, key) => {
-        const beginsAt = item.begins_at && moment(item.begins_at)
-        const endsBefore = item.ends_before && moment(item.ends_before)
+      const items = []
+      const { accessLevels } = this
 
-        if (beginsAt && endsBefore) {
-          if (endsBefore.diff(beginsAt) === 1) {
-            return {
-              beginsLabel: 'Occurred at',
-              beginsAt,
-              icon: 'mdi-watch',
-              target: 'moment',
-              key
-            }
-          }
+      if (accessLevels.member_level !== undefined)
+        items.push({
+          icon: 'mdi-account-multiple',
+          target: 'member',
+          key: 'member_level',
+          description: accessLevelTexts.member[accessLevels.member_level]
+        })
 
-          return {
-            beginsLabel: 'Begins at',
-            beginsAt,
-            endsLabel: 'and ends before',
-            endsBefore,
-            icon: 'mdi-calendar-range',
-            target: 'range',
-            key
-          }
-        }
+      if (accessLevels.public_level !== undefined)
+        items.push({
+          icon: 'mdi-globe-model',
+          target: 'public',
+          key: 'public_level',
+          description: accessLevelTexts.public[accessLevels.public_level]
+        })
 
-        if (!beginsAt && endsBefore) {
-          return {
-            beginsLabel: 'Begins with first datapoint and ends before',
-            endsBefore,
-            icon: 'mdi-calendar-range',
-            target: 'range',
-            key
-          }
-        }
-
-        if (beginsAt && !endsBefore) {
-          return {
-            beginsLabel: 'Begins at',
-            beginsAt,
-            endsLabel: 'and affects all datapoints thereafter',
-            icon: 'mdi-calendar-range',
-            target: 'range',
-            key
-          }
-        }
-
-        return {
-          beginsLabel: 'Invalid interval!',
-          icon: 'error',
-          key
-        }
-      })
+      return items
     }
   },
 

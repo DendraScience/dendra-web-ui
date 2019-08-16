@@ -5,8 +5,8 @@
     </v-card-title>
 
     <v-container fluid pt-0>
-      <v-layout wrap>
-        <v-flex xs12>
+      <v-layout>
+        <v-flex>
           <v-data-table
             :headers="headers"
             :items="items"
@@ -28,13 +28,13 @@
               >
             </template>
 
-            <template v-slot:item.icons="{ item }" class="text-no-wrap">
-              <span v-if="editing">
+            <template v-slot:item.icons="{ item }">
+              <span v-if="editing" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)"
                   >edit</v-icon
                 >
                 <v-icon color="tertiary" @click="remove(item)"
-                  >remove_circle</v-icon
+                  >mdi-minus-circle</v-icon
                 >
               </span>
             </template>
@@ -116,7 +116,7 @@ export default {
           const person = this.getPerson(id)
           return {
             id,
-            icon: 'account_box',
+            icon: 'mdi-account-box',
             target: 'person',
             key,
             name: person ? person.full_name || person.name : id,
@@ -138,8 +138,8 @@ export default {
       fetchPersons: 'persons/find'
     }),
 
-    add(item) {
-      this.$emit('add', item)
+    add() {
+      this.$emit('add')
     },
 
     edit(item) {

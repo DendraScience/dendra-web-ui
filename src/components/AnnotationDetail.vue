@@ -143,7 +143,7 @@
                 <v-flex>
                   <v-text-field
                     v-if="flagDialog"
-                    v-model="flag"
+                    v-model.trim="flag"
                     :error-messages="errors"
                     autofocus
                     data-vv-name="flag"
@@ -271,7 +271,7 @@
 
         <date-range-picker v-model="dateRange" nullable show-time>
           <template v-slot:footer>
-            <span class="font-weight-bold">
+            <span class="font-weight-medium">
               <span v-if="!rangeDialogValid">
                 Please specify a begin and end time.
               </span>
@@ -547,7 +547,7 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
-    addMember(item) {
+    addMember() {
       this.member.personId = null
       this.memberRoles.forEach(role => (role.value = null))
       this.memberDisabled = false

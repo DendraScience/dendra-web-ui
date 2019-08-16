@@ -88,6 +88,8 @@
             v-model.trim="searchDebounce"
             append-icon="search"
             clearable
+            filled
+            flat
             label="Filter datastreams"
           ></v-text-field>
         </v-flex>
@@ -148,7 +150,6 @@ export default {
       {
         align: 'center',
         sortable: false,
-        text: 'Select',
         value: 'select'
       },
       {

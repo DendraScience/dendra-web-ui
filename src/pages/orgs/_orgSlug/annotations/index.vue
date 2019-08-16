@@ -19,6 +19,7 @@
                   <annotation-search
                     :org="org"
                     :show-disabled="$can('create', 'annotations')"
+                    show-link
                   >
                     <template v-slot:actions="{ item }">
                       <v-icon color="tertiary" @click="open(item._id)"
@@ -83,6 +84,7 @@ export default {
   }),
 
   computed: {
+    // TODO: Remove cart helpers?
     ...mapGetters(['org']),
     ...mapGetters({
       cartCount: 'cart/count',

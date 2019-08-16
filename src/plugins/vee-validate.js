@@ -6,11 +6,19 @@ const dictionary = {
   en: {
     attributes: {
       current_password: 'current password',
+      description: 'description',
+      elevation: 'elevation',
       email: 'email',
       flag: 'flag',
+      full_name: 'full name',
+      latitude: 'latitude',
+      longitude: 'longitude',
+      name: 'name',
       new_password: 'new password',
       new_password_confirm: 'new password',
       password: 'password',
+      slug: 'slug',
+      url: 'url',
 
       chartTitle: 'chart title',
       fromDate: 'from date',

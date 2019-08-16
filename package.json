@@ -22,7 +22,7 @@
     "@feathersjs/authentication-client": "^1.0.11",
     "@feathersjs/feathers": "^3.3.1",
     "@feathersjs/socketio-client": "^1.2.1",
-    "@nuxtjs/vuetify": "^1.1.0",
+    "@nuxtjs/vuetify": "^1.2.1",
     "ajv": "^6.10.2",
     "chroma-js": "^2.0.4",
     "cross-env": "^5.2.0",
@@ -36,12 +36,12 @@
     "moment": "^2.24.0",
     "nuxt": "^2.8.1",
     "socket.io-client": "^2.2.0",
-    "vee-validate": "^2.2.13"
+    "vee-validate": "^2.2.15"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
-    "@nuxtjs/eslint-config": "^1.0.1",
+    "@nuxtjs/eslint-config": "^1.1.2",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@vue/test-utils": "^1.0.0-beta.29",
     "eslint": "^5.16.0",

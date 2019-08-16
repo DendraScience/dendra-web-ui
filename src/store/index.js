@@ -75,7 +75,9 @@ export const plugins = [
             math.unit(this.utc_offset | 0, 's').toNumber('h'),
             2
           )
-        }
+        },
+
+        [TYPE_KEY]: 'stations'
       }
     },
 

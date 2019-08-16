@@ -5,8 +5,8 @@
     </v-card-title>
 
     <v-container fluid pt-0>
-      <v-layout row wrap>
-        <v-flex xs12>
+      <v-layout>
+        <v-flex>
           <v-data-table
             :headers="headers"
             :items="items"
@@ -23,7 +23,7 @@
                 v-if="editing && !item.custom"
                 color="tertiary"
                 @click="remove(item)"
-                >remove_circle</v-icon
+                >mdi-minus-circle</v-icon
               >
             </template>
           </v-data-table>
@@ -74,13 +74,13 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'nature',
+        icon: 'mdi-nature',
         target: 'station',
         title: 'Station',
         subtitle: 'Apply to ALL datastreams for selected stations.'
       },
       {
-        icon: 'timeline',
+        icon: 'mdi-chart-timeline-variant',
         target: 'datastream',
         title: 'Datastream',
         subtitle: 'Apply to selected datastreams.'
@@ -136,7 +136,7 @@ export default {
           const station = this.getStation(id)
           return {
             id,
-            icon: 'nature',
+            icon: 'mdi-nature',
             target: 'station',
             key: `station-${id}`,
             station: station ? station.name : id,
@@ -149,7 +149,7 @@ export default {
             const station = datastream && datastream.station
             return {
               id,
-              icon: 'timeline',
+              icon: 'mdi-chart-timeline-variant',
               target: 'datastream',
               key: `datastream-${id}`,
               station: station ? station.name : id,

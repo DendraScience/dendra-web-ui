@@ -18,6 +18,8 @@
             v-model.trim="searchDebounce"
             append-icon="search"
             clearable
+            filled
+            flat
             label="Filter stations"
           ></v-text-field>
         </v-flex>
@@ -39,6 +41,24 @@
               class="text-no-wrap px-0"
             >
               <slot name="select" :item="item" />
+            </template>
+
+            <template v-slot:item.name="{ item }">
+              <nuxt-link
+                v-if="showLink"
+                :to="{
+                  name: 'orgs-orgSlug-stations-stationId',
+                  params: {
+                    orgSlug: org.slug,
+                    stationId: item._id
+                  }
+                }"
+                >{{ item.name }}</nuxt-link
+              ><span v-else>{{ item.name }}</span>
+            </template>
+
+            <template v-slot:item.description="{ item }">
+              {{ item.description | truncate({ length: 200 }) }}
             </template>
 
             <template v-slot:item.indicators="{ item }">
@@ -69,7 +89,8 @@ export default {
 
   props: {
     org: { default: null, type: Object },
-    showDisabled: { default: false, type: Boolean }
+    showDisabled: { default: false, type: Boolean },
+    showLink: { default: false, type: Boolean }
   },
 
   data: () => ({
@@ -77,7 +98,6 @@ export default {
       {
         align: 'center',
         sortable: false,
-        text: 'Select',
         value: 'select'
       },
       {
@@ -97,8 +117,8 @@ export default {
       {
         align: 'left',
         sortable: false,
-        text: 'Full name',
-        value: 'full_name'
+        text: 'Description',
+        value: 'description'
       },
       {
         align: 'right',
@@ -134,12 +154,13 @@ export default {
       const query = {
         is_hidden: false,
         organization_id: this.org._id,
+        station_type: 'weather',
         $limit: itemsPerPage,
         $skip: (page - 1) * itemsPerPage,
         $select: [
           '_id',
           'access_levels_resolved',
-          'full_name',
+          'description',
           'is_enabled',
           'is_hidden',
           'name',

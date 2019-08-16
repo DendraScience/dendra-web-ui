@@ -73,8 +73,6 @@ export default {
     }
   }),
 
-  computed: {},
-
   watch: {
     dateRange: {
       handler(newValue) {

@@ -20,89 +20,86 @@
               xs12
               md6
             >
-              <v-hover v-slot="{ hover }">
-                <v-card
-                  :class="`elevation-${hover ? 8 : 2}`"
-                  style="display: flex; flex-direction: column;"
-                >
-                  <v-card-title
-                    :style="organization.slug ? { cursor: 'pointer' } : {}"
-                    @click="
-                      $router.push({
-                        name: 'orgs-orgSlug',
-                        params: { orgSlug: organization.slug }
-                      })
-                    "
+              <v-card hover>
+                <v-list two-line>
+                  <v-list-item
+                    :to="{
+                      name: 'orgs-orgSlug',
+                      params: { orgSlug: organization.slug }
+                    }"
+                    nuxt
                   >
-                    <div class="text-truncate mb-2">
-                      {{ organization.name }}
-                    </div>
-                    <div class="text-truncate body-2">
-                      {{ organization.description }}
-                    </div>
-                  </v-card-title>
+                    <v-list-item-content>
+                      <v-list-item-title class="headline">{{
+                        organization.name
+                      }}</v-list-item-title>
 
-                  <v-divider />
+                      <v-list-item-subtitle>{{
+                        organization.description
+                      }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
 
-                  <v-list>
-                    <v-list-item
-                      :disabled="!organization.slug"
-                      :to="{
-                        name: 'orgs-orgSlug-stations',
-                        params: { orgSlug: organization.slug }
-                      }"
+                <v-divider />
+
+                <v-list>
+                  <v-list-item
+                    :disabled="!organization.slug"
+                    :to="{
+                      name: 'orgs-orgSlug-stationStatus',
+                      params: { orgSlug: organization.slug }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Station status</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-list-item
+                    :disabled="!organization.slug"
+                    :to="{
+                      name: 'orgs-orgSlug-datastreams',
+                      params: { orgSlug: organization.slug }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Datastreams search</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-list-item
+                    :disabled="!organization.slug"
+                    :to="{
+                      name: 'orgs-orgSlug-annotations',
+                      params: { orgSlug: organization.slug }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>Annotations search</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-list-item
+                    :disabled="!organization.url"
+                    :href="organization.url"
+                    target="_blank"
+                  >
+                    <v-list-item-action
+                      ><v-icon>open_in_browser</v-icon></v-list-item-action
                     >
-                      <v-list-item-action> </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title>Stations map</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-
-                    <v-list-item
-                      :disabled="!organization.slug"
-                      :to="{
-                        name: 'orgs-orgSlug-datastreams',
-                        params: { orgSlug: organization.slug }
-                      }"
-                    >
-                      <v-list-item-action> </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title
-                          >Datastreams search</v-list-item-title
-                        >
-                      </v-list-item-content>
-                    </v-list-item>
-
-                    <v-list-item
-                      :disabled="!organization.slug"
-                      :to="{
-                        name: 'orgs-orgSlug-annotations',
-                        params: { orgSlug: organization.slug }
-                      }"
-                    >
-                      <v-list-item-action> </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title
-                          >Annotations search</v-list-item-title
-                        >
-                      </v-list-item-content>
-                    </v-list-item>
-
-                    <v-list-item
-                      :disabled="!organization.url"
-                      :href="organization.url"
-                      target="_blank"
-                    >
-                      <v-list-item-action
-                        ><v-icon>open_in_browser</v-icon></v-list-item-action
-                      >
-                      <v-list-item-content>
-                        <v-list-item-title>Visit website</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-hover>
+                    <v-list-item-content>
+                      <v-list-item-title>Visit website</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card>
             </v-flex>
           </v-layout>
         </feathers-vuex-find>

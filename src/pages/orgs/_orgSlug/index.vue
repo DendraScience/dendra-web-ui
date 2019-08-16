@@ -6,7 +6,7 @@
           <v-flex xs12>
             <h2 class="display-3 font-weight-light mb-2">{{ org.name }}</h2>
 
-            <p class="subheading">
+            <p>
               {{ org.description }}
             </p>
           </v-flex>
@@ -24,34 +24,58 @@
             service="stations"
           >
             <v-flex v-if="pagination" xs12 sm4>
-              <v-hover v-slot="{ hover }">
+              <v-card color="green" dark hover>
                 <v-card
-                  :class="`elevation-${hover ? 8 : 2}`"
-                  color="accent"
-                  class="white--text"
+                  :to="{
+                    name: 'orgs-orgSlug-stations',
+                    params: {
+                      orgSlug: org.slug
+                    }
+                  }"
+                  color="transparent"
+                  flat
+                  nuxt
                 >
-                  <v-card-title class="headline">
-                    <span class="text-truncate"
-                      >{{ pagination | get('total', 0) }} stations</span
-                    >
+                  <v-card-title class="title">
+                    <v-icon class="mr-2" dark>mdi-nature</v-icon> stations
                   </v-card-title>
-                  <v-card-actions>
-                    <v-btn
-                      :to="{
-                        name: 'orgs-orgSlug-stations',
-                        params: {
-                          orgSlug: org.slug
-                        }
-                      }"
-                      exact
-                      dark
-                      nuxt
-                      text
-                      >Map</v-btn
-                    >
-                  </v-card-actions>
+
+                  <v-card-text class="display-2 text-truncate">
+                    {{ pagination | get('total', 0) }}
+                    <small class="font-weight-light">total</small>
+                  </v-card-text>
                 </v-card>
-              </v-hover>
+
+                <v-divider />
+
+                <v-card-actions>
+                  <v-btn
+                    :to="{
+                      name: 'orgs-orgSlug-stations',
+                      params: {
+                        orgSlug: org.slug
+                      }
+                    }"
+                    dark
+                    nuxt
+                    text
+                    >Search</v-btn
+                  >
+
+                  <v-btn
+                    :to="{
+                      name: 'orgs-orgSlug-stationStatus',
+                      params: {
+                        orgSlug: org.slug
+                      }
+                    }"
+                    dark
+                    nuxt
+                    text
+                    >Status</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
             </v-flex>
           </feathers-vuex-find>
 
@@ -66,34 +90,48 @@
             service="datastreams"
           >
             <v-flex v-if="pagination" xs12 sm4>
-              <v-hover v-slot="{ hover }">
+              <v-card color="blue" dark hover>
                 <v-card
-                  :class="`elevation-${hover ? 8 : 2}`"
-                  color="accent"
-                  class="white--text"
+                  :to="{
+                    name: 'orgs-orgSlug-datastreams',
+                    params: {
+                      orgSlug: org.slug
+                    }
+                  }"
+                  color="transparent"
+                  flat
+                  nuxt
                 >
-                  <v-card-title class="headline">
-                    <span class="text-truncate">
-                      {{ pagination | get('total', 0) }} datastreams</span
+                  <v-card-title class="title">
+                    <v-icon class="mr-2" dark
+                      >mdi-chart-timeline-variant</v-icon
                     >
+                    datastreams
                   </v-card-title>
-                  <v-card-actions>
-                    <v-btn
-                      :to="{
-                        name: 'orgs-orgSlug-datastreams',
-                        params: {
-                          orgSlug: org.slug
-                        }
-                      }"
-                      exact
-                      dark
-                      nuxt
-                      text
-                      >Search</v-btn
-                    >
-                  </v-card-actions>
+
+                  <v-card-text class="display-2 text-truncate">
+                    {{ pagination | get('total', 0) }}
+                    <small class="font-weight-light">total</small>
+                  </v-card-text>
                 </v-card>
-              </v-hover>
+
+                <v-divider />
+
+                <v-card-actions>
+                  <v-btn
+                    :to="{
+                      name: 'orgs-orgSlug-datastreams',
+                      params: {
+                        orgSlug: org.slug
+                      }
+                    }"
+                    dark
+                    nuxt
+                    text
+                    >Search</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
             </v-flex>
           </feathers-vuex-find>
         </v-layout>
@@ -109,34 +147,46 @@
             service="annotations"
           >
             <v-flex v-if="pagination" xs12 sm4>
-              <v-hover v-slot="{ hover }">
+              <v-card color="purple" dark hover>
                 <v-card
-                  :class="`elevation-${hover ? 8 : 2}`"
-                  color="accent"
-                  class="white--text"
+                  :to="{
+                    name: 'orgs-orgSlug-annotations',
+                    params: {
+                      orgSlug: org.slug
+                    }
+                  }"
+                  color="transparent"
+                  flat
+                  nuxt
                 >
-                  <v-card-title class="headline">
-                    <span class="text-truncate"
-                      >{{ pagination | get('total', 0) }} annotations</span
-                    >
+                  <v-card-title class="title">
+                    <v-icon class="mr-2" dark>mdi-note-outline</v-icon>
+                    annotations
                   </v-card-title>
-                  <v-card-actions>
-                    <v-btn
-                      :to="{
-                        name: 'orgs-orgSlug-annotations',
-                        params: {
-                          orgSlug: org.slug
-                        }
-                      }"
-                      exact
-                      dark
-                      nuxt
-                      text
-                      >Search</v-btn
-                    >
-                  </v-card-actions>
+
+                  <v-card-text class="display-2 text-truncate">
+                    {{ pagination | get('total', 0) }}
+                    <small class="font-weight-light">total</small>
+                  </v-card-text>
                 </v-card>
-              </v-hover>
+
+                <v-divider />
+
+                <v-card-actions>
+                  <v-btn
+                    :to="{
+                      name: 'orgs-orgSlug-annotations',
+                      params: {
+                        orgSlug: org.slug
+                      }
+                    }"
+                    dark
+                    nuxt
+                    text
+                    >Search</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
             </v-flex>
           </feathers-vuex-find>
         </v-layout>

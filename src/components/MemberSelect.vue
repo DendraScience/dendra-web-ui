@@ -5,7 +5,7 @@
     :items="items"
     autofocus
     label="Member"
-    prepend-inner-icon="account_box"
+    prepend-inner-icon="mdi-account-box"
     solo
   ></v-select>
 </template>

@@ -7,7 +7,20 @@
     height="64"
   >
     <v-app-bar-nav-icon @click="toggleDrawer" />
-    <v-toolbar-title>{{ orgName }}</v-toolbar-title>
+    <v-toolbar-title>
+      <nuxt-link
+        :to="{
+          name: 'orgs-orgSlug',
+          params: {
+            orgSlug
+          }
+        }"
+        class="title-link white--text"
+        exact
+      >
+        {{ orgName }}
+      </nuxt-link>
+    </v-toolbar-title>
     <v-spacer />
     <!-- TODO: Deprecate -->
     <!--
@@ -66,7 +79,8 @@ import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 export default {
   computed: {
     ...mapGetters({
-      orgName: 'orgName'
+      orgName: 'orgName',
+      orgSlug: 'orgSlug'
     }),
 
     ...mapState(['auth'])
@@ -86,3 +100,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.title-link {
+  text-decoration: none;
+}
+.title-link:hover {
+  text-decoration: underline;
+}
+</style>

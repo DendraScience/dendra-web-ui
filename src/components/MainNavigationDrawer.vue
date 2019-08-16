@@ -90,6 +90,12 @@ export default {
             },
             {
               org: true,
+              name: 'orgs-orgSlug-stationStatus',
+              title: 'Station status',
+              to: '/stationStatus'
+            },
+            {
+              org: true,
               name: 'orgs-orgSlug-stations',
               title: 'Stations',
               to: '/stations'
@@ -131,6 +137,10 @@ export default {
         },
         {
           items: [
+            {
+              title: 'Contact',
+              to: '/contact'
+            },
             {
               auth: false,
               title: 'Log in',

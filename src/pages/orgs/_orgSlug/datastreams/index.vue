@@ -111,7 +111,7 @@
                                     value: 0
                                   })
                                 "
-                                >remove_circle</v-icon
+                                >mdi-minus-circle</v-icon
                               >
                             </template>
                           </v-data-table>
@@ -136,6 +136,7 @@
                           clearable
                           data-vv-name="chartTitle"
                           filled
+                          flat
                           label="Chart title"
                           required
                         ></v-text-field>
@@ -439,7 +440,6 @@ export default {
   created() {
     this.seriesFetchWorker = this.$workers.createSeriesFetchWorker()
     this.seriesFetchWorker.postMessage({
-      accessToken: this.auth.accessToken,
       api: this.$api
     })
     // Handle HMR so we can debug
@@ -562,6 +562,9 @@ export default {
         fetchSpec.queries.push({ datastream_id: id })
       })
 
+      this.seriesFetchWorker.postMessage({
+        accessToken: this.auth.accessToken
+      })
       this.charts.unshift({
         alert: null,
         bus: new Vue(),

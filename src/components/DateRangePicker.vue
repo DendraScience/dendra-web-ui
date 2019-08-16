@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-lg pt-1>
+  <v-container fluid grid-list-lg pt-0>
     <v-layout align-center justify-center wrap>
       <v-flex shrink>
         <v-checkbox
@@ -88,8 +88,6 @@ export default {
     showTime: { default: false, type: Boolean },
     value: { type: Object, required: true }
   },
-
-  data: () => ({}),
 
   computed: {
     fromDisabled() {
