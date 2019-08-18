@@ -7,7 +7,7 @@
             <!-- TODO: Remove elevation? -->
             <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
               <v-tab>
-                Search
+                View
               </v-tab>
               <v-tab>
                 Chart
@@ -18,16 +18,19 @@
 
               <v-tab-item>
                 <v-card flat>
-                  <v-card-title class="headline">
+                  <v-card-title v-if="queryStationId" class="headline">
+                    {{ getStation(queryStationId).name }} datastreams
+                  </v-card-title>
+                  <v-card-title v-else class="headline">
                     Datastreams
                   </v-card-title>
 
                   <datastream-search
+                    :is-enabled="queryIsEnabled"
                     :org="org"
                     :show-disabled="$can('create', 'datastreams')"
-                    :station-id="
-                      this.$route.query && this.$route.query.stationId
-                    "
+                    :station-id="queryStationId"
+                    show-link
                   >
                     <template v-slot:select="{ item }">
                       <v-icon
@@ -77,7 +80,11 @@
                         <v-flex xs12>
                           <v-data-table
                             :headers="selectedHeaders"
+                            :hide-default-header="$vuetify.breakpoint.xsOnly"
                             :items="datastreams"
+                            disable-pagination
+                            disable-sort
+                            hide-default-footer
                             item-key="_id"
                           >
                             <template
@@ -201,16 +208,7 @@
 
                 <v-menu bottom left offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-btn
-                      absolute
-                      icon
-                      right
-                      small
-                      style="margin-top: 30px;"
-                      text
-                      top
-                      v-on="on"
-                    >
+                    <v-btn absolute icon right small text top v-on="on">
                       <v-icon>more_vert</v-icon>
                     </v-btn>
                   </template>
@@ -314,7 +312,7 @@ export default {
     HcTimeSeries
   },
 
-  middleware: ['check-org', 'dt-unit-vocabulary'],
+  middleware: ['check-org', 'dt-unit-vocabulary', 'fetch-station'],
 
   data: () => ({
     charts: [],
@@ -389,26 +387,22 @@ export default {
     selectedHeaders: [
       {
         align: 'center',
-        sortable: false,
         text: 'Y-Axis',
         value: 'yAxis'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Datastream',
         value: 'name',
         width: '40%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Description',
         value: 'description'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'icons'
       }
     ],
@@ -423,11 +417,20 @@ export default {
       cartIds: 'cart/ids'
     }),
     ...mapGetters({
-      getDatastream: 'datastreams/get'
+      getDatastream: 'datastreams/get',
+      getStation: 'stations/get'
     }),
 
     ...mapState(['auth']),
     ...mapState('cart', ['quantitiesById']),
+
+    queryIsEnabled() {
+      return this.$route.query && this.$route.query.isEnabled
+    },
+
+    queryStationId() {
+      return this.$route.query && this.$route.query.stationId
+    },
 
     selectedDatastreamsQuery() {
       return {

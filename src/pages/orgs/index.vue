@@ -52,7 +52,9 @@
                     }"
                     nuxt
                   >
-                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-action
+                      ><v-icon>check_circle</v-icon></v-list-item-action
+                    >
                     <v-list-item-content>
                       <v-list-item-title>Station status</v-list-item-title>
                     </v-list-item-content>
@@ -66,9 +68,15 @@
                     }"
                     nuxt
                   >
-                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-action
+                      ><v-icon
+                        >mdi-chart-timeline-variant</v-icon
+                      ></v-list-item-action
+                    >
                     <v-list-item-content>
-                      <v-list-item-title>Datastreams search</v-list-item-title>
+                      <v-list-item-title
+                        >View / chart datastreams</v-list-item-title
+                      >
                     </v-list-item-content>
                   </v-list-item>
 
@@ -80,9 +88,11 @@
                     }"
                     nuxt
                   >
-                    <v-list-item-action> </v-list-item-action>
+                    <v-list-item-action
+                      ><v-icon>mdi-note-outline</v-icon></v-list-item-action
+                    >
                     <v-list-item-content>
-                      <v-list-item-title>Annotations search</v-list-item-title>
+                      <v-list-item-title>View annotations</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
 

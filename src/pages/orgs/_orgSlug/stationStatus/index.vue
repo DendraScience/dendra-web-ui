@@ -5,7 +5,7 @@
   >
     <div
       class="pa-2"
-      style="position: absolute; top: 0; width: 400px; z-index: 2;"
+      style="position: absolute; top: 0; width: 380px; z-index: 2;"
     >
       <v-card raised>
         <v-text-field
@@ -21,13 +21,13 @@
         <v-card-actions>
           <v-btn-toggle v-model="viewToggle" mandatory>
             <v-btn small text>
-              <v-icon small>view_list</v-icon>
+              <v-icon small>mdi-view-list</v-icon>
             </v-btn>
             <v-btn small text>
-              <v-icon small>view_agenda</v-icon>
+              <v-icon small>mdi-view-agenda</v-icon>
             </v-btn>
             <v-btn small text>
-              <v-icon small>zoom_out_map</v-icon>
+              <v-icon small>mdi-arrow-expand-all</v-icon>
             </v-btn>
           </v-btn-toggle>
         </v-card-actions>
@@ -48,7 +48,7 @@
             class="elevation-2"
             stateless
             style="position: absolute; top: 0; z-index: 1;"
-            width="400"
+            width="380"
           >
             <v-expansion-panels
               v-model="stationsPanel"
@@ -113,6 +113,22 @@
                             <v-card-actions>
                               <v-btn
                                 :to="{
+                                  name: 'orgs-orgSlug-stations-stationId',
+                                  params: {
+                                    orgSlug: org.slug,
+                                    stationId: station._id
+                                  }
+                                }"
+                                color="primary"
+                                exact
+                                nuxt
+                                text
+                                x-small
+                                >Info</v-btn
+                              >
+
+                              <v-btn
+                                :to="{
                                   name: 'orgs-orgSlug-datastreams',
                                   params: {
                                     orgSlug: org.slug
@@ -124,8 +140,8 @@
                                 color="primary"
                                 exact
                                 nuxt
-                                small
                                 text
+                                x-small
                                 >Datastreams</v-btn
                               >
                             </v-card-actions>

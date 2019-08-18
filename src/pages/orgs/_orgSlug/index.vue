@@ -59,7 +59,7 @@
                     dark
                     nuxt
                     text
-                    >Search</v-btn
+                    >View</v-btn
                   >
 
                   <v-btn
@@ -128,7 +128,7 @@
                     dark
                     nuxt
                     text
-                    >Search</v-btn
+                    >View / Chart</v-btn
                   >
                 </v-card-actions>
               </v-card>
@@ -183,7 +183,7 @@
                     dark
                     nuxt
                     text
-                    >Search</v-btn
+                    >View</v-btn
                   >
                 </v-card-actions>
               </v-card>

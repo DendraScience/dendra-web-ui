@@ -1,14 +1,24 @@
 <template>
   <v-container fluid grid-list-xl>
     <feathers-vuex-find
+      v-if="!stationId"
       v-slot="{ isFindPending: loading, items: stations }"
-      :query="{
-        is_enabled: true,
-        is_hidden: false,
-        organization_id: org._id,
-        station_type: 'weather',
-        $sort: { name: 1 }
-      }"
+      :query="
+        showDisabled
+          ? {
+              is_hidden: false,
+              organization_id: org._id,
+              station_type: 'weather',
+              $sort: { name: 1 }
+            }
+          : {
+              is_enabled: true,
+              is_hidden: false,
+              organization_id: org._id,
+              station_type: 'weather',
+              $sort: { name: 1 }
+            }
+      "
       service="stations"
     >
       <v-layout wrap>
@@ -19,13 +29,12 @@
             :label="loading ? 'Loading...' : 'Station'"
             :loading="loading"
             chips
-            clearable
             deletable-chips
             filled
             flat
             hide-details
             hide-no-data
-            item-text="name"
+            item-text="longName"
             item-value="_id"
             multiple
           ></v-autocomplete>
@@ -57,7 +66,6 @@
             :label="vocabulary.label"
             :item-text="term => term.name || term.label"
             chips
-            clearable
             deletable-chips
             filled
             flat
@@ -87,7 +95,6 @@
           <v-text-field
             v-model.trim="searchDebounce"
             append-icon="search"
-            clearable
             filled
             flat
             label="Filter datastreams"
@@ -96,13 +103,14 @@
 
         <v-flex xs12>
           <v-data-table
-            :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
+            :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
             :headers="headers"
+            :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="datastreams"
             :loading="loading"
-            :mobile-breakpoint="0"
             :options.sync="tableOptions"
             :server-items-length="pagination ? pagination.total : 0"
+            disable-sort
             item-key="_id"
           >
             <template
@@ -111,6 +119,20 @@
               class="text-no-wrap px-0"
             >
               <slot name="select" :item="item" />
+            </template>
+
+            <template v-slot:item.station.name="{ item }">
+              <nuxt-link
+                v-if="showLink && item.station._id"
+                :to="{
+                  name: 'orgs-orgSlug-stations-stationId',
+                  params: {
+                    orgSlug: org.slug,
+                    stationId: item.station_id
+                  }
+                }"
+                >{{ item.station.name }}</nuxt-link
+              ><span v-else>{{ item.station.name }}</span>
             </template>
 
             <template v-slot:item.indicators="{ item }">
@@ -140,8 +162,10 @@ export default {
   },
 
   props: {
+    isEnabled: { default: '', type: String },
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
+    showLink: { default: false, type: Boolean },
     stationId: { default: '', type: String }
   },
 
@@ -149,37 +173,32 @@ export default {
     headers: [
       {
         align: 'center',
-        sortable: false,
-        value: 'select'
+        value: 'select',
+        width: '50px'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Station',
         value: 'station.name',
         width: '20%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Datastream',
         value: 'name',
         width: '30%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Description',
         value: 'description'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'indicators'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'icons'
       }
     ],
@@ -195,8 +214,7 @@ export default {
     tableOptions: {
       descending: false,
       page: 1,
-      itemsPerPage: 10,
-      sortBy: [],
+      itemsPerPage: 50,
       totalItems: null
     }
   }),
@@ -229,7 +247,8 @@ export default {
         $sort: { name: 1, _id: 1 }
       }
 
-      if (!this.showDisabled) query.is_enabled = true
+      if (this.isEnabled) query.is_enabled = this.isEnabled
+      else if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
 
@@ -250,7 +269,9 @@ export default {
         })
       }
 
-      if (selectedStationIds && selectedStationIds.length) {
+      if (this.stationId) {
+        ands.push({ station_id: this.stationId })
+      } else if (selectedStationIds && selectedStationIds.length) {
         ands.push({ station_id: { $in: selectedStationIds } })
       }
 
@@ -300,8 +321,6 @@ export default {
   },
 
   created() {
-    if (this.stationId) this.selectedStationIds = [this.stationId]
-
     this.debouncedSearch = _debounce(value => {
       this.search = value
     }, 400)

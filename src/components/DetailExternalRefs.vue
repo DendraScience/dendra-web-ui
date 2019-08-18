@@ -9,8 +9,10 @@
         <v-flex>
           <v-data-table
             :headers="headers"
+            :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="items"
-            :mobile-breakpoint="0"
+            disable-pagination
+            disable-sort
             hide-default-footer
             item-key="key"
           >
@@ -58,28 +60,23 @@ export default {
     headers: [
       {
         align: 'left',
-        sortable: true,
         text: 'Type',
         value: 'type',
-        width: '20%'
+        width: '30%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Identifier',
         value: 'identifier',
-        width: '20%'
+        width: '30%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'URL',
-        value: 'url',
-        width: '40%'
+        value: 'url'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'icons'
       }
     ]

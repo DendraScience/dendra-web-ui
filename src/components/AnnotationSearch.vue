@@ -32,13 +32,14 @@
 
         <v-flex xs12>
           <v-data-table
-            :footer-props="{ itemsPerPageOptions: [5, 10, 25, 50] }"
+            :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
             :headers="headers"
+            :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="annotations"
             :loading="loading"
-            :mobile-breakpoint="0"
             :options.sync="tableOptions"
             :server-items-length="pagination ? pagination.total : 0"
+            disable-sort
             item-key="_id"
           >
             <template
@@ -115,37 +116,32 @@ export default {
     headers: [
       {
         align: 'center',
-        sortable: false,
-        value: 'select'
+        value: 'select',
+        width: '50px'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'State',
         value: 'state',
         width: '10%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Title',
         value: 'title',
         width: '40%'
       },
       {
         align: 'left',
-        sortable: false,
         text: 'Description',
         value: 'description'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'indicators'
       },
       {
         align: 'right',
-        sortable: false,
         value: 'icons'
       }
     ],
@@ -158,8 +154,7 @@ export default {
     tableOptions: {
       descending: false,
       page: 1,
-      itemsPerPage: 10,
-      sortBy: [],
+      itemsPerPage: 50,
       totalItems: null
     }
   }),

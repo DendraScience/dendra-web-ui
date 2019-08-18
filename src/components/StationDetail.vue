@@ -85,6 +85,100 @@
         </v-card>
       </v-flex>
 
+      <v-flex v-if="!editing">
+        <v-layout wrap>
+          <feathers-vuex-find
+            v-slot="{ pagination }"
+            :query="{
+              is_enabled: true,
+              is_hidden: false,
+              organization_id: org._id,
+              station_id: value._id,
+              $limit: 0
+            }"
+            service="datastreams"
+          >
+            <v-flex v-if="pagination">
+              <v-card color="blue" dark hover>
+                <v-card
+                  :to="{
+                    name: 'orgs-orgSlug-datastreams',
+                    params: {
+                      orgSlug: org.slug
+                    },
+                    query: {
+                      isEnabled: 'true',
+                      stationId: value._id
+                    }
+                  }"
+                  color="transparent"
+                  flat
+                  nuxt
+                >
+                  <v-card-title class="title">
+                    <v-icon class="mr-2" dark
+                      >mdi-chart-timeline-variant</v-icon
+                    >
+                    datastreams
+                  </v-card-title>
+
+                  <v-card-text class="display-2 text-truncate">
+                    {{ pagination | get('total', 0) }}
+                    <small class="font-weight-light">enabled</small>
+                  </v-card-text>
+                </v-card>
+              </v-card>
+            </v-flex>
+          </feathers-vuex-find>
+
+          <feathers-vuex-find
+            v-if="$can('create', 'datastreams')"
+            v-slot="{ pagination }"
+            :query="{
+              is_enabled: false,
+              is_hidden: false,
+              organization_id: org._id,
+              station_id: value._id,
+              $limit: 0
+            }"
+            service="datastreams"
+          >
+            <v-flex v-if="pagination">
+              <v-card color="blue darken-1" dark hover>
+                <v-card
+                  :to="{
+                    name: 'orgs-orgSlug-datastreams',
+                    params: {
+                      orgSlug: org.slug
+                    },
+                    query: {
+                      isEnabled: 'false',
+
+                      stationId: value._id
+                    }
+                  }"
+                  color="transparent"
+                  flat
+                  nuxt
+                >
+                  <v-card-title class="title">
+                    <v-icon class="mr-2" dark
+                      >mdi-chart-timeline-variant</v-icon
+                    >
+                    datastreams
+                  </v-card-title>
+
+                  <v-card-text class="display-2 text-truncate">
+                    {{ pagination | get('total', 0) }}
+                    <small class="font-weight-light">disabled</small>
+                  </v-card-text>
+                </v-card>
+              </v-card>
+            </v-flex>
+          </feathers-vuex-find>
+        </v-layout>
+      </v-flex>
+
       <v-flex>
         <detail-geo-point
           :editing="editing"

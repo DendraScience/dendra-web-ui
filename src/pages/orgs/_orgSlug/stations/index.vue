@@ -7,7 +7,7 @@
             <!-- TODO: Remove elevation? -->
             <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
               <v-tab>
-                Search
+                View
               </v-tab>
 
               <v-tab-item>
@@ -22,6 +22,23 @@
                     show-link
                   >
                     <template v-slot:actions="{ item }">
+                      <v-icon
+                        color="tertiary"
+                        class="mr-2"
+                        @click="
+                          $router.push({
+                            name: 'orgs-orgSlug-datastreams',
+                            params: {
+                              orgSlug: org.slug
+                            },
+                            query: {
+                              stationId: item._id
+                            }
+                          })
+                        "
+                        >mdi-chart-timeline-variant</v-icon
+                      >
+
                       <v-icon color="tertiary" @click="open(item._id)"
                         >open_in_new</v-icon
                       >

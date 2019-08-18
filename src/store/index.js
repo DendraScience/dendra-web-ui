@@ -39,7 +39,7 @@ export const plugins = [
         },
 
         get station() {
-          return store.getters['stations/get'](this.station_id)
+          return store.getters['stations/get'](this.station_id) || {}
         },
 
         [TYPE_KEY]: 'datastreams'
@@ -57,6 +57,10 @@ export const plugins = [
   service('stations', {
     instanceDefaults(data, { store }) {
       return {
+        get longName() {
+          return this.is_enabled ? this.name : `${this.name} (disabled)`
+        },
+
         get quantitySelected() {
           return store.state.cart.quantitiesById[this._id]
         },

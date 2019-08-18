@@ -83,30 +83,35 @@ export default {
           header: 'ORG_NAME',
           items: [
             {
+              icon: 'mdi-view-grid',
               org: true,
               name: 'orgs-orgSlug',
               title: 'Overview',
               to: '/'
             },
             {
+              icon: 'check_circle',
               org: true,
               name: 'orgs-orgSlug-stationStatus',
               title: 'Station status',
               to: '/stationStatus'
             },
             {
+              icon: 'mdi-nature',
               org: true,
               name: 'orgs-orgSlug-stations',
               title: 'Stations',
               to: '/stations'
             },
             {
+              icon: 'mdi-chart-timeline-variant',
               org: true,
               name: 'orgs-orgSlug-datastreams',
               title: 'Datastreams',
               to: '/datastreams'
             },
             {
+              icon: 'mdi-note-outline',
               org: true,
               name: 'orgs-orgSlug-annotations',
               title: 'Annotations',

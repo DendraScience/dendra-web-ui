@@ -7,7 +7,7 @@
             <!-- TODO: Remove elevation? -->
             <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
               <v-tab>
-                Search
+                View
               </v-tab>
 
               <v-tab-item>

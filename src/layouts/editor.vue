@@ -98,6 +98,12 @@ export default {
     ...mapState('ux', ['editing', 'editorColor', 'editorDirty', 'editorTitle'])
   },
 
+  watch: {
+    editing(newValue) {
+      if (newValue) this.$vuetify.goTo(0)
+    }
+  },
+
   mounted() {
     this.$bus.$on('edit-leave', this.onLeave)
     this.$bus.$on('edit-status', this.onStatus)
