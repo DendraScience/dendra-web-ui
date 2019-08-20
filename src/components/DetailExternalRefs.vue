@@ -22,7 +22,7 @@
                 :href="item.url"
                 style="word-break: break-all;"
                 target="_blank"
-                >{{ item.url }}</a
+                >{{ item.url | truncate({ length: 50 }) }}</a
               >
             </template>
 

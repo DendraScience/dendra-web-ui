@@ -137,24 +137,22 @@
             >Specify flag</v-card-title
           >
 
-          <v-card-text>
-            <v-container fluid>
-              <v-layout column>
-                <v-flex>
-                  <v-text-field
-                    v-if="flagDialog"
-                    v-model.trim="flag"
-                    :error-messages="errors"
-                    autofocus
-                    data-vv-name="flag"
-                    label="Flag"
-                    prepend-inner-icon="flag"
-                    solo
-                  ></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
+          <v-container fluid>
+            <v-layout column>
+              <v-flex>
+                <v-text-field
+                  v-if="flagDialog"
+                  v-model.trim="flag"
+                  :error-messages="errors"
+                  autofocus
+                  data-vv-name="flag"
+                  label="Flag"
+                  prepend-inner-icon="flag"
+                  solo
+                ></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
 
           <v-divider />
 
@@ -181,29 +179,27 @@
           >Specify member</v-card-title
         >
 
-        <v-card-text>
-          <v-container fluid>
-            <v-layout column>
-              <v-flex>
-                <member-select
-                  v-model="member"
-                  :disabled="memberDisabled"
-                  :org="org"
-                />
-              </v-flex>
+        <v-container fluid>
+          <v-layout column>
+            <v-flex>
+              <member-select
+                v-model="member"
+                :disabled="memberDisabled"
+                :org="org"
+              />
+            </v-flex>
 
-              <v-flex mx-2>
-                <v-checkbox
-                  v-for="role in memberRoles"
-                  :key="role.text"
-                  v-model="role.value"
-                  :label="role.text"
-                  class="my-0"
-                ></v-checkbox>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
+            <v-flex mx-2>
+              <v-checkbox
+                v-for="role in memberRoles"
+                :key="role.text"
+                v-model="role.value"
+                :label="role.text"
+                class="my-0"
+              ></v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-container>
 
         <v-divider />
 

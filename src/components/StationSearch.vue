@@ -84,6 +84,10 @@ import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
+  $_veeValidate: {
+    validator: 'new'
+  },
+
   components: {
     IndicatorCell
   },

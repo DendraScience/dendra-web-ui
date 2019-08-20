@@ -18,19 +18,17 @@
           single-line
         ></v-text-field>
 
-        <v-card-actions>
-          <v-btn-toggle v-model="viewToggle" mandatory>
-            <v-btn small text>
-              <v-icon small>mdi-view-list</v-icon>
-            </v-btn>
-            <v-btn small text>
-              <v-icon small>mdi-view-agenda</v-icon>
-            </v-btn>
-            <v-btn small text>
-              <v-icon small>mdi-arrow-expand-all</v-icon>
-            </v-btn>
-          </v-btn-toggle>
-        </v-card-actions>
+        <v-btn-toggle v-model="viewToggle" class="pa-2" mandatory>
+          <v-btn small text>
+            <v-icon small>mdi-view-list</v-icon>
+          </v-btn>
+          <v-btn small text>
+            <v-icon small>mdi-view-agenda</v-icon>
+          </v-btn>
+          <v-btn small text>
+            <v-icon small>mdi-arrow-expand-all</v-icon>
+          </v-btn>
+        </v-btn-toggle>
       </v-card>
     </div>
 

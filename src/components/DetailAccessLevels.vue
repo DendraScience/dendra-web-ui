@@ -23,6 +23,7 @@
             :items="items"
             disable-pagination
             disable-sort
+            hide-default-footer
             item-key="key"
           >
             <template v-slot:item.type="{ item }" class="text-no-wrap px-0">

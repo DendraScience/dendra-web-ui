@@ -68,7 +68,6 @@ export default {
             //   to: '/stations'
             // },
             {
-              disabled: true,
               title: 'Vocabulary',
               to: '/vocabulary'
             },

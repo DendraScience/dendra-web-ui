@@ -9,6 +9,7 @@
     <v-app-bar-nav-icon @click="toggleDrawer" />
     <v-toolbar-title>
       <nuxt-link
+        v-if="orgSlug"
         :to="{
           name: 'orgs-orgSlug',
           params: {

@@ -5,7 +5,7 @@
         <v-layout column>
           <v-flex>
             <!-- TODO: Remove elevation? -->
-            <v-tabs v-model="tabIndex" class="qq-elevation-2" fixed-tabs>
+            <v-tabs v-model="tabIndex" fixed-tabs>
               <v-tab>
                 View
               </v-tab>
