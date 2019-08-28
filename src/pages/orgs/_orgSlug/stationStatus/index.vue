@@ -120,8 +120,8 @@
                                 color="primary"
                                 exact
                                 nuxt
+                                small
                                 text
-                                x-small
                                 >Info</v-btn
                               >
 
@@ -138,8 +138,8 @@
                                 color="primary"
                                 exact
                                 nuxt
+                                small
                                 text
-                                x-small
                                 >Datastreams</v-btn
                               >
                             </v-card-actions>

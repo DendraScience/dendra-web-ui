@@ -22,7 +22,7 @@
       service="stations"
     >
       <v-layout wrap>
-        <v-flex xs12>
+        <v-flex xs12 md6>
           <v-autocomplete
             v-model="selectedStationIds"
             :items="stations"
@@ -47,7 +47,7 @@
       :query="{
         is_enabled: true,
         is_hidden: false,
-        scheme_id: 'ds',
+        scheme_id: schemeId,
         vocabulary_type: 'class',
         $sort: { name: 1 }
       }"
@@ -166,11 +166,12 @@ export default {
   },
 
   props: {
-    isEnabled: { default: '', type: String },
+    isEnabled: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
+    schemeId: { default: 'ds', type: String },
     showDisabled: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean },
-    stationId: { default: '', type: String }
+    stationId: { default: null, type: String }
   },
 
   data: () => ({
@@ -199,11 +200,13 @@ export default {
       },
       {
         align: 'right',
-        value: 'indicators'
+        value: 'indicators',
+        width: '5%'
       },
       {
         align: 'right',
-        value: 'icons'
+        value: 'icons',
+        width: '5%'
       }
     ],
 
@@ -226,6 +229,7 @@ export default {
   computed: {
     datastreamsFetchQuery() {
       const {
+        schemeId,
         search,
         selectedStationIds,
         selectedTermLabels,
@@ -251,7 +255,7 @@ export default {
         $sort: { name: 1, _id: 1 }
       }
 
-      if (this.isEnabled) query.is_enabled = this.isEnabled
+      if (this.isEnabled !== null) query.is_enabled = this.isEnabled
       else if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
@@ -281,7 +285,7 @@ export default {
 
       Object.keys(selectedTermLabels).forEach(vLabel => {
         const tags = selectedTermLabels[vLabel].map(
-          tLabel => `ds_${vLabel}_${tLabel}`
+          tLabel => `${schemeId}_${vLabel}_${tLabel}`
         )
         if (tags.length) ands.push({ 'terms_info.class_tags': { $in: tags } })
       })

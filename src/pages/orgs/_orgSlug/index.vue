@@ -13,182 +13,28 @@
         </v-layout>
 
         <v-layout wrap mt-6>
-          <feathers-vuex-find
-            v-slot="{ pagination }"
-            :query="{
-              is_enabled: true,
-              is_hidden: false,
-              organization_id: org._id,
-              $limit: 0
-            }"
-            service="stations"
-          >
-            <v-flex v-if="pagination" xs12 sm4>
-              <v-card color="green" dark hover>
-                <v-card
-                  :to="{
-                    name: 'orgs-orgSlug-stations',
-                    params: {
-                      orgSlug: org.slug
-                    }
-                  }"
-                  color="transparent"
-                  flat
-                  nuxt
-                >
-                  <v-card-title class="title">
-                    <v-icon class="mr-2" dark>mdi-nature</v-icon> stations
-                  </v-card-title>
+          <v-flex xs12 md4>
+            <station-total
+              :show-disabled="$can('create', 'stations')"
+              :org="org"
+            />
+          </v-flex>
 
-                  <v-card-text class="display-2 text-truncate">
-                    {{ pagination | get('total', 0) }}
-                    <small class="font-weight-light">total</small>
-                  </v-card-text>
-                </v-card>
-
-                <v-divider />
-
-                <v-card-actions>
-                  <v-btn
-                    :to="{
-                      name: 'orgs-orgSlug-stations',
-                      params: {
-                        orgSlug: org.slug
-                      }
-                    }"
-                    dark
-                    nuxt
-                    text
-                    >View</v-btn
-                  >
-
-                  <v-btn
-                    :to="{
-                      name: 'orgs-orgSlug-stationStatus',
-                      params: {
-                        orgSlug: org.slug
-                      }
-                    }"
-                    dark
-                    nuxt
-                    text
-                    >Status</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </feathers-vuex-find>
-
-          <feathers-vuex-find
-            v-slot="{ pagination }"
-            :query="{
-              is_enabled: true,
-              is_hidden: false,
-              organization_id: org._id,
-              $limit: 0
-            }"
-            service="datastreams"
-          >
-            <v-flex v-if="pagination" xs12 sm4>
-              <v-card color="blue" dark hover>
-                <v-card
-                  :to="{
-                    name: 'orgs-orgSlug-datastreams',
-                    params: {
-                      orgSlug: org.slug
-                    }
-                  }"
-                  color="transparent"
-                  flat
-                  nuxt
-                >
-                  <v-card-title class="title">
-                    <v-icon class="mr-2" dark
-                      >mdi-chart-timeline-variant</v-icon
-                    >
-                    datastreams
-                  </v-card-title>
-
-                  <v-card-text class="display-2 text-truncate">
-                    {{ pagination | get('total', 0) }}
-                    <small class="font-weight-light">total</small>
-                  </v-card-text>
-                </v-card>
-
-                <v-divider />
-
-                <v-card-actions>
-                  <v-btn
-                    :to="{
-                      name: 'orgs-orgSlug-datastreams',
-                      params: {
-                        orgSlug: org.slug
-                      }
-                    }"
-                    dark
-                    nuxt
-                    text
-                    >View / Chart</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </feathers-vuex-find>
+          <v-flex xs12 md4>
+            <datastream-total
+              :show-disabled="$can('create', 'datastreams')"
+              :org="org"
+            />
+          </v-flex>
         </v-layout>
 
         <v-layout wrap>
-          <feathers-vuex-find
-            v-slot="{ pagination }"
-            :query="{
-              is_enabled: true,
-              organization_id: org._id,
-              $limit: 0
-            }"
-            service="annotations"
-          >
-            <v-flex v-if="pagination" xs12 sm4>
-              <v-card color="purple" dark hover>
-                <v-card
-                  :to="{
-                    name: 'orgs-orgSlug-annotations',
-                    params: {
-                      orgSlug: org.slug
-                    }
-                  }"
-                  color="transparent"
-                  flat
-                  nuxt
-                >
-                  <v-card-title class="title">
-                    <v-icon class="mr-2" dark>mdi-note-outline</v-icon>
-                    annotations
-                  </v-card-title>
-
-                  <v-card-text class="display-2 text-truncate">
-                    {{ pagination | get('total', 0) }}
-                    <small class="font-weight-light">total</small>
-                  </v-card-text>
-                </v-card>
-
-                <v-divider />
-
-                <v-card-actions>
-                  <v-btn
-                    :to="{
-                      name: 'orgs-orgSlug-annotations',
-                      params: {
-                        orgSlug: org.slug
-                      }
-                    }"
-                    dark
-                    nuxt
-                    text
-                    >View</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </feathers-vuex-find>
+          <v-flex xs12 md4>
+            <annotation-total
+              :show-disabled="$can('create', 'annotations')"
+              :org="org"
+            />
+          </v-flex>
         </v-layout>
       </v-container>
     </v-flex>
@@ -197,8 +43,17 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import AnnotationTotal from '@/components/AnnotationTotal'
+import DatastreamTotal from '@/components/DatastreamTotal'
+import StationTotal from '@/components/StationTotal'
 
 export default {
+  components: {
+    AnnotationTotal,
+    DatastreamTotal,
+    StationTotal
+  },
+
   middleware: ['check-org'],
 
   computed: {

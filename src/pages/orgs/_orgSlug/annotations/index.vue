@@ -17,6 +17,7 @@
                   </v-card-title>
 
                   <annotation-search
+                    :is-enabled="queryIsEnabled"
                     :org="org"
                     :show-disabled="$can('create', 'annotations')"
                     show-link
@@ -91,7 +92,11 @@ export default {
       cartIds: 'cart/ids'
     }),
 
-    ...mapState('cart', ['quantitiesById'])
+    ...mapState('cart', ['quantitiesById']),
+
+    queryIsEnabled() {
+      return this.$route.query.isEnabled
+    }
   },
 
   created() {

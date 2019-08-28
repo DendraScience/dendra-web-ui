@@ -25,9 +25,30 @@
                     Datastreams
                   </v-card-title>
 
-                  <datastream-search
+                  <datastream-facet-search
+                    v-if="queryFaceted"
                     :is-enabled="queryIsEnabled"
                     :org="org"
+                    :scheme-id="queryScheme"
+                    :show-disabled="$can('create', 'datastreams')"
+                    :station-id="queryStationId"
+                    show-link
+                  >
+                    <template v-slot:select="{ item }">
+                      <v-icon color="primary" @click="selectDatastream(item)">{{
+                        getDatastream(item._id) &&
+                        getDatastream(item._id).quantitySelected
+                          ? 'check_box'
+                          : 'check_box_outline_blank'
+                      }}</v-icon>
+                    </template>
+                  </datastream-facet-search>
+
+                  <datastream-search
+                    v-else
+                    :is-enabled="queryIsEnabled"
+                    :org="org"
+                    :scheme-id="queryScheme"
                     :show-disabled="$can('create', 'datastreams')"
                     :station-id="queryStationId"
                     show-link
@@ -68,64 +89,7 @@
                     Selected datastreams
                   </v-card-title>
 
-                  <v-container fluid>
-                    <feathers-vuex-find
-                      v-slot="{ items: datastreams }"
-                      :query="selectedDatastreamsQuery"
-                      watch="query"
-                      local
-                      service="datastreams"
-                    >
-                      <v-layout wrap>
-                        <v-flex xs12>
-                          <v-data-table
-                            :headers="selectedHeaders"
-                            :hide-default-header="$vuetify.breakpoint.xsOnly"
-                            :items="datastreams"
-                            disable-pagination
-                            disable-sort
-                            hide-default-footer
-                            item-key="_id"
-                          >
-                            <template
-                              v-slot:item.yAxis="{ item }"
-                              class="text-no-wrap px-0"
-                            >
-                              <v-btn-toggle
-                                :value="item.quantitySelected"
-                                mandatory
-                                @change="
-                                  setQuantity({
-                                    id: item._id,
-                                    value: $event
-                                  })
-                                "
-                              >
-                                <v-btn :value="1" text small>Y1</v-btn>
-                                <v-btn :value="2" text small>Y2</v-btn>
-                              </v-btn-toggle>
-                            </template>
-
-                            <template
-                              v-slot:item.icons="{ item }"
-                              class="text-no-wrap"
-                            >
-                              <v-icon
-                                color="tertiary"
-                                @click="
-                                  setQuantity({
-                                    id: item._id,
-                                    value: 0
-                                  })
-                                "
-                                >mdi-minus-circle</v-icon
-                              >
-                            </template>
-                          </v-data-table>
-                        </v-flex>
-                      </v-layout>
-                    </feathers-vuex-find>
-                  </v-container>
+                  <chart-datastream-cart />
                 </v-card>
 
                 <v-card flat>
@@ -182,69 +146,43 @@
     <v-flex v-if="charts.length" v-show="tabIndex === 1">
       <v-container fluid grid-list-xl>
         <v-layout column>
-          <v-flex v-for="(chart, i) in charts" :key="chart.id"
-            ><v-card>
-              <v-card-text v-if="chart.alert">
-                <v-alert
-                  v-model="chart.alert.isShown"
-                  :type="chart.alert.type"
-                  outlined
-                >
-                  {{ chart.alert.message }}
-                </v-alert>
-              </v-card-text>
+          <v-flex v-for="(chart, i) in charts" :key="chart.id">
+            <datastream-chart
+              :value="chart"
+              :worker="Object.freeze(seriesFetchWorker)"
+            >
+              <template v-slot:menu>
+                <v-list>
+                  <v-list-item @click="charts.splice(i, 1)">
+                    <v-list-item-title>Remove</v-list-item-title>
+                  </v-list-item>
 
-              <div class="pt-1" style="position: relative;">
-                <hc-time-series
-                  v-if="seriesFetchWorker"
-                  :id="chart.id"
-                  :bus="chart.bus"
-                  :export-chart-options="exportChartOptions"
-                  :options="Object.freeze(chart.options)"
-                  :series-options="Object.freeze(chart.seriesOptions)"
-                  :fetch-spec="Object.freeze(chart.fetchSpec)"
-                  :worker="Object.freeze(seriesFetchWorker)"
-                />
+                  <v-list-item
+                    :disabled="!chart.isReady"
+                    @click="showExportDialog(chart)"
+                  >
+                    <v-list-item-title>Export as...</v-list-item-title>
+                  </v-list-item>
 
-                <v-menu bottom left offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-btn absolute icon right small text top v-on="on">
-                      <v-icon>more_vert</v-icon>
-                    </v-btn>
-                  </template>
-
-                  <v-list>
-                    <v-list-item @click="charts.splice(i, 1)">
-                      <v-list-item-title>Remove</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item
-                      :disabled="!chart.isReady"
-                      @click="showExportDialog(chart)"
+                  <v-list-item
+                    v-if="previousExportIndex > -1"
+                    :disabled="
+                      !chart.isReady ||
+                        (exportItems[previousExportIndex].download &&
+                          !chart.canDownload)
+                    "
+                    @click="exportChart(chart, previousExportIndex)"
+                  >
+                    <v-list-item-title
+                      >Export as
+                      {{
+                        exportItems[previousExportIndex].title
+                      }}</v-list-item-title
                     >
-                      <v-list-item-title>Export as...</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item
-                      v-if="previousExportIndex > -1"
-                      :disabled="
-                        !chart.isReady ||
-                          (exportItems[previousExportIndex].download &&
-                            !chart.canDownload)
-                      "
-                      @click="exportChart(chart, previousExportIndex)"
-                    >
-                      <v-list-item-title
-                        >Export as
-                        {{
-                          exportItems[previousExportIndex].title
-                        }}</v-list-item-title
-                      >
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </div>
-            </v-card>
+                  </v-list-item>
+                </v-list>
+              </template>
+            </datastream-chart>
           </v-flex>
         </v-layout>
       </v-container>
@@ -297,9 +235,12 @@ import Vue from 'vue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import _forEach from 'lodash/forEach'
+import { exportItems } from '@/lib/chart-export'
+import ChartDatastreamCart from '@/components/ChartDatastreamCart'
+import DatastreamChart from '@/components/DatastreamChart'
+import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
-import HcTimeSeries from '@/components/HcTimeSeries'
 
 export default {
   $_veeValidate: {
@@ -307,16 +248,17 @@ export default {
   },
 
   components: {
+    ChartDatastreamCart,
+    DatastreamChart,
+    DatastreamFacetSearch,
     DatastreamSearch,
-    DateRangeFields,
-    HcTimeSeries
+    DateRangeFields
   },
 
   middleware: ['check-org', 'dt-unit-vocabulary', 'fetch-station'],
 
   data: () => ({
     charts: [],
-
     chartTitle: 'Enter Chart Title Here',
 
     tabIndex: 0,
@@ -336,76 +278,12 @@ export default {
       }
     },
     exportDialog: false,
-    exportItems: [
-      {
-        event: 'export',
-        options: {
-          sourceHeight: 450,
-          sourceWidth: 800,
-          type: 'image/jpeg'
-        },
-        title: 'JPEG image'
-      },
-      {
-        event: 'export',
-        options: {
-          sourceHeight: 450,
-          sourceWidth: 800
-        },
-        title: 'PNG image'
-      },
-      {
-        event: 'export',
-        options: {
-          sourceHeight: 450,
-          sourceWidth: 800,
-          type: 'image/svg+xml'
-        },
-        title: 'SVG image'
-      },
-      {
-        event: 'export',
-        options: {
-          sourceHeight: 450,
-          sourceWidth: 800,
-          type: 'application/pdf'
-        },
-        title: 'PDF document'
-      },
-      {
-        download: true,
-        event: 'download-csv',
-        title: 'CSV file'
-      }
-    ],
+    exportItems,
 
     previousExportIndex: -1,
     selectedExportIndex: 0,
 
     selectedChart: null,
-
-    selectedHeaders: [
-      {
-        align: 'center',
-        text: 'Y-Axis',
-        value: 'yAxis'
-      },
-      {
-        align: 'left',
-        text: 'Datastream',
-        value: 'name',
-        width: '40%'
-      },
-      {
-        align: 'left',
-        text: 'Description',
-        value: 'description'
-      },
-      {
-        align: 'right',
-        value: 'icons'
-      }
-    ],
 
     seriesFetchWorker: null
   }),
@@ -424,19 +302,20 @@ export default {
     ...mapState(['auth']),
     ...mapState('cart', ['quantitiesById']),
 
+    queryFaceted() {
+      return this.$route.query.faceted
+    },
+
     queryIsEnabled() {
-      return this.$route.query && this.$route.query.isEnabled
+      return this.$route.query.isEnabled
+    },
+
+    queryScheme() {
+      return this.$route.query.scheme
     },
 
     queryStationId() {
-      return this.$route.query && this.$route.query.stationId
-    },
-
-    selectedDatastreamsQuery() {
-      return {
-        _id: { $in: this.cartIds },
-        $sort: { name: 1 }
-      }
+      return this.$route.query.stationId
     }
   },
 
@@ -486,9 +365,9 @@ export default {
 
   methods: {
     ...mapMutations({
+      addDatastream: 'datastreams/addItem',
       incrementQuantity: 'cart/incrementQuantity',
-      resetCart: 'cart/reset',
-      setQuantity: 'cart/setQuantity'
+      resetCart: 'cart/reset'
     }),
 
     addChart() {
@@ -592,6 +471,18 @@ export default {
     goToChartTab() {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
+      })
+    },
+
+    selectDatastream(item) {
+      /* eslint-disable-next-line no-console */
+      console.log('item', item)
+
+      this.addDatastream(item)
+
+      this.incrementQuantity({
+        id: item._id,
+        max: 1
       })
     },
 

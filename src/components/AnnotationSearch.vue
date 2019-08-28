@@ -102,6 +102,7 @@ export default {
   },
 
   props: {
+    isEnabled: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean }
@@ -138,11 +139,13 @@ export default {
       },
       {
         align: 'right',
-        value: 'indicators'
+        value: 'indicators',
+        width: '5%'
       },
       {
         align: 'right',
-        value: 'icons'
+        value: 'icons',
+        width: '5%'
       }
     ],
 
@@ -185,7 +188,8 @@ export default {
         }
       }
 
-      if (!this.showDisabled) query.is_enabled = true
+      if (this.isEnabled !== null) query.is_enabled = this.isEnabled
+      else if (!this.showDisabled) query.is_enabled = true
 
       const ands = []
 
