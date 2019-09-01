@@ -7,7 +7,7 @@
     <v-card v-if="pagination" color="green" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
-          <v-icon class="mr-2" dark>mdi-nature</v-icon> stations
+          <v-icon class="mr-2" dark>mdi-nature</v-icon> Stations
         </v-card-title>
 
         <v-card-text class="display-2 text-truncate">

@@ -258,6 +258,7 @@ export default {
       const { stationsSearch } = this
 
       const query = {
+        is_active: true,
         is_enabled: true,
         is_hidden: false,
         // TODO: Remove later

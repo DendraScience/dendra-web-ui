@@ -8,7 +8,7 @@
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
           <v-icon class="mr-2" dark>mdi-chart-timeline-variant</v-icon>
-          datastreams
+          Datastreams
         </v-card-title>
 
         <v-card-text class="display-2 text-truncate">
@@ -21,7 +21,8 @@
         <v-divider />
 
         <v-card-actions>
-          <v-btn :to="viewTo" dark nuxt text>View / Chart</v-btn>
+          <v-btn :to="viewTo" dark nuxt text>View</v-btn>
+          <v-btn :to="queryTo" dark nuxt text>Query</v-btn>
         </v-card-actions>
       </slot>
     </v-card>
@@ -62,6 +63,25 @@ export default {
           orgSlug: this.org.slug
         },
         query: {}
+      }
+
+      if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
+
+      if (this.stationId) to.query.stationId = this.stationId
+
+      return to
+    },
+
+    queryTo() {
+      const to = {
+        name: 'orgs-orgSlug-datastreams',
+        params: {
+          orgSlug: this.org.slug
+        },
+        query: {
+          faceted: true,
+          scheme: 'dq'
+        }
       }
 
       if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled

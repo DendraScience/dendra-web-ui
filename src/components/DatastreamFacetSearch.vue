@@ -1,172 +1,191 @@
 <template>
   <v-container fluid grid-list-xl>
-    <v-layout wrap>
-      <v-flex xs12 md4>
-        <v-list dense>
-          <v-subheader>Stations</v-subheader>
-          <v-list-item-group
-            v-model="selectedStations"
-            color="primary"
-            multiple
-          >
-            <v-list-item
-              v-for="(item, index) in findStations({ query: stationsQuery })
-                .data"
-              :key="index"
-              :disabled="
-                !(
-                  indexerResult &&
-                  indexerResult.counts.Station &&
-                  indexerResult.counts.Station[item._id] > 0
-                )
-              "
-            >
-              <template v-slot:default="{ active, toggle }">
-                <v-list-item-action>
-                  <v-checkbox
-                    v-model="active"
-                    color="primary"
-                    @click="toggle"
-                  ></v-checkbox>
-                </v-list-item-action>
+    <v-layout>
+      <v-flex>
+        <v-expansion-panels v-model="panel" focusable multiple>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              1. Narrow the list of datastreams
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-container fluid>
+                <v-layout wrap>
+                  <v-flex v-if="!stationId && stations">
+                    <v-list dense>
+                      <v-subheader>Stations</v-subheader>
+                      <v-list-item-group
+                        v-model="selectedStations"
+                        color="primary"
+                        multiple
+                      >
+                        <v-list-item
+                          v-for="(item, index) in stations"
+                          :key="index"
+                          :disabled="
+                            !selectedStations.includes(index) &&
+                              !(
+                                facetCounts &&
+                                facetCounts.Station &&
+                                facetCounts.Station[item._id] > 0
+                              )
+                          "
+                        >
+                          <template v-slot:default="{ active, toggle }">
+                            <v-list-item-action>
+                              <v-checkbox
+                                v-model="active"
+                                color="primary"
+                                @click="toggle"
+                              ></v-checkbox>
+                            </v-list-item-action>
 
-                <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.name }}
-                    <span class="primary--text"
-                      >({{
-                        indexerResult | get(`counts.Station.${item._id}`, 0)
-                      }})</span
-                    ></v-list-item-title
+                            <v-list-item-content>
+                              <v-list-item-title
+                                >{{ item.name }}
+                                <span class="secondary--text"
+                                  >({{
+                                    facetCounts | get(`Station.${item._id}`, 0)
+                                  }})</span
+                                ></v-list-item-title
+                              >
+                            </v-list-item-content>
+                          </template>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
+                  </v-flex>
+
+                  <v-flex
+                    v-for="vocabulary in filteredVocabularies"
+                    :key="vocabulary._id"
                   >
-                </v-list-item-content>
-              </template>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-flex>
+                    <v-list dense>
+                      <v-subheader>{{ vocabulary.label }}</v-subheader>
+                      <v-list-item-group
+                        v-model="selectedTerms[vocabulary._id]"
+                        color="primary"
+                        multiple
+                      >
+                        <v-list-item
+                          v-for="(item, index) in vocabulary.terms"
+                          :key="item.label"
+                          :disabled="
+                            !(
+                              selectedTerms[vocabulary._id] &&
+                              selectedTerms[vocabulary._id].includes(index)
+                            ) &&
+                              !(
+                                facetCounts &&
+                                facetCounts[vocabulary.label] &&
+                                facetCounts[vocabulary.label][item.label] > 0
+                              )
+                          "
+                        >
+                          <template v-slot:default="{ active, toggle }">
+                            <v-list-item-action>
+                              <v-checkbox
+                                v-model="active"
+                                color="primary"
+                                @click="toggle"
+                              ></v-checkbox>
+                            </v-list-item-action>
 
-      <v-flex
-        v-for="vocabulary in findVocabularies({ query: vocabulariesQuery })
-          .data"
-        :key="vocabulary._id"
-        xs12
-        md4
-      >
-        <v-list dense>
-          <v-subheader>{{ vocabulary.label }}</v-subheader>
-          <v-list-item-group
-            v-model="selectedTerms[vocabulary._id]"
-            color="primary"
-            multiple
-          >
-            <v-list-item
-              v-for="item in vocabulary.terms"
-              :key="item.label"
-              :disabled="
-                !(
-                  indexerResult &&
-                  indexerResult.counts[vocabulary.label] &&
-                  indexerResult.counts[vocabulary.label][item.label] > 0
-                )
-              "
-            >
-              <template v-slot:default="{ active, toggle }">
-                <v-list-item-action>
-                  <v-checkbox
-                    v-model="active"
-                    color="primary"
-                    @click="toggle"
-                  ></v-checkbox>
-                </v-list-item-action>
+                            <v-list-item-content>
+                              <v-list-item-title
+                                >{{ item.name || item.label }}
+                                <span class="secondary--text"
+                                  >({{
+                                    facetCounts
+                                      | get(
+                                        `${vocabulary.label}.${item.label}`,
+                                        0
+                                      )
+                                  }})</span
+                                >
+                              </v-list-item-title>
+                            </v-list-item-content>
+                          </template>
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-list>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
 
-                <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.name || item.label }}
-                    <span class="primary--text"
-                      >({{
-                        indexerResult
-                          | get(`counts.${vocabulary.label}.${item.label}`, 0)
-                      }})</span
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              2. Select datastreams
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-container fluid>
+                <v-layout wrap>
+                  <v-flex xs12>
+                    <v-text-field
+                      v-model.trim="search"
+                      append-icon="search"
+                      flat
+                      label="Filter datastreams"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs12>
+                    <v-data-table
+                      :footer-props="{
+                        itemsPerPageOptions: [10, 50, 100, 500]
+                      }"
+                      :headers="headers"
+                      :hide-default-header="$vuetify.breakpoint.xsOnly"
+                      :items="foundDatastreams"
+                      :options.sync="tableOptions"
+                      :search="search"
+                      item-key="_id"
                     >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </template>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-flex>
-    </v-layout>
+                      <template
+                        v-if="$scopedSlots.select"
+                        v-slot:item.select="{ item }"
+                        class="text-no-wrap px-0"
+                      >
+                        <slot name="select" :item="item" />
+                      </template>
+                      <!--
+                      <template v-slot:item.station_lookup.name="{ item }">
+                        <nuxt-link
+                          v-if="showLink && item.station_id"
+                          :to="{
+                            name: 'orgs-orgSlug-stations-stationId',
+                            params: {
+                              orgSlug: org.slug,
+                              stationId: item.station_id
+                            }
+                          }"
+                          >{{ item.station_lookup.name }}</nuxt-link
+                        ><span v-else>{{ item.station_lookup.name }}</span>
+                      </template>
+ -->
+                      <template v-slot:item.indicators="{ item }">
+                        <indicator-cell :value="item" />
+                      </template>
 
-    <v-layout wrap>
-      <v-flex xs12>
-        <v-text-field
-          v-model.trim="search"
-          append-icon="search"
-          filled
-          flat
-          label="Filter datastreams"
-        ></v-text-field>
-      </v-flex>
-
-      <v-flex xs12>
-        <v-data-table
-          :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
-          :headers="headers"
-          :hide-default-header="$vuetify.breakpoint.xsOnly"
-          :items="datastreamsFound"
-          :options.sync="tableOptions"
-          :search="search"
-          item-key="_id"
-        >
-          <template
-            v-if="$scopedSlots.select"
-            v-slot:item.select="{ item }"
-            class="text-no-wrap px-0"
-          >
-            <slot name="select" :item="item" />
-          </template>
-
-          <!--
-          <template
-            v-if="$scopedSlots.select"
-            v-slot:item.select="{ item }"
-            class="text-no-wrap px-0"
-          >
-            <slot name="select" :item="item" />
-          </template>
-          <template v-slot:item.station.name="{ item }">
-            <nuxt-link
-              v-if="showLink && item.station._id"
-              :to="{
-                name: 'orgs-orgSlug-stations-stationId',
-                params: {
-                  orgSlug: org.slug,
-                  stationId: item.station_id
-                }
-              }"
-              >{{ item.station.name }}</nuxt-link
-            ><span v-else>{{ item.station.name }}</span>
-          </template>
-          -->
-
-          <template v-slot:item.indicators="{ item }">
-            <indicator-cell :value="item" />
-          </template>
-
-          <template v-slot:item.icons="{ item }">
-            <span v-if="$scopedSlots.actions" class="text-no-wrap">
-              <slot name="actions" :item="item" />
-            </span>
-          </template>
-        </v-data-table>
+                      <template v-slot:item.icons="{ item }">
+                        <span v-if="$scopedSlots.actions" class="text-no-wrap">
+                          <slot name="actions" :item="item" />
+                        </span>
+                      </template>
+                    </v-data-table>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
-// import _debounce from 'lodash/debounce'
 import _set from 'lodash/set'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { FacetIndexer } from '@/lib/facet-indexer'
@@ -211,6 +230,12 @@ export default {
       },
       {
         align: 'left',
+        text: 'Unit',
+        value: 'unitTerm.abbreviation',
+        width: '10%'
+      },
+      {
+        align: 'left',
         text: 'Description',
         value: 'description'
       },
@@ -226,18 +251,21 @@ export default {
       }
     ],
 
-    indexerResult: null,
-    indexerQuery: {},
+    datastreamFacetWorker: null,
 
+    indexer: null,
     datastreams: null,
+    stations: null,
 
+    facetCounts: null,
+    facetKeys: null,
+    facetQuery: {},
+
+    panel: [0, 1],
     search: null,
-    // searchDebounce: null,
 
     selectedStations: [],
     selectedTerms: {},
-
-    datastreamFacetWorker: null,
 
     tableOptions: {
       descending: false,
@@ -250,16 +278,30 @@ export default {
   computed: {
     ...mapGetters({
       findDatastreams: 'datastreams/find',
-      findStations: 'stations/find',
-      findVocabularies: 'vocabularies/find',
-      getStation: 'stations/get',
-      getVocabulary: 'vocabularies/get'
+      findVocabularies: 'vocabularies/find'
     }),
     ...mapState(['auth']),
 
-    datastreamsFound() {
-      return this.indexerResult
-        ? this.indexerResult.keys.map(key => this.datastreams[key])
+    filteredVocabularies() {
+      const { indexer, vocabulariesQuery } = this
+
+      return this.findVocabularies({ query: vocabulariesQuery }).data.map(
+        vocabulary => {
+          return Object.assign({}, vocabulary, {
+            terms: indexer
+              ? vocabulary.terms.filter(term => {
+                  const facet = indexer.facets[vocabulary.label]
+                  return facet && facet[term.label]
+                })
+              : []
+          })
+        }
+      )
+    },
+
+    foundDatastreams() {
+      return this.facetKeys
+        ? this.facetKeys.map(key => this.datastreams[key])
         : []
     },
 
@@ -284,32 +326,39 @@ export default {
       return {
         is_enabled: true,
         is_hidden: false,
-        scheme_id: this.schemeId,
-        vocabulary_type: 'class',
-        $sort: { name: 1 }
+        $or: [
+          {
+            scheme_id: this.schemeId,
+            vocabulary_type: 'class'
+          },
+          {
+            scheme_id: 'dt',
+            vocabulary_type: 'unit'
+          }
+        ],
+        $sort: { _id: 1 }
       }
     }
   },
 
   watch: {
-    indexerQuery: {
+    facetQuery: {
       handler(value) {
-        this.indexerResult = this.indexer.apply(value)
+        const result = this.indexer.query(value)
+
+        this.facetCounts = result.counts()
+        this.facetKeys = result.keys()
       },
       deep: true
     },
 
-    // searchDebounce(newValue) {
-    //   this.debouncedSearch(newValue)
-    // },
-
     selectedStations() {
-      this.buildIndexerQuery()
+      this.buildFacetQuery()
     },
 
     selectedTerms: {
       handler() {
-        this.buildIndexerQuery()
+        this.buildFacetQuery()
       },
       deep: true
     }
@@ -317,11 +366,7 @@ export default {
 
   created() {
     this.datastreams = []
-    this.indexer = null
-
-    // this.debouncedSearch = _debounce(value => {
-    //   this.search = value
-    // }, 400)
+    // this.indexer = null
 
     this.datastreamFacetWorker = this.$workers.createDatastreamFacetWorker()
     this.datastreamFacetWorker.postMessage({
@@ -344,10 +389,8 @@ export default {
 
   beforeDestroy() {
     this.datastreams = null
+    this.stations = null
     this.indexer = null
-
-    // this.debouncedSearch.cancel()
-    // this.debouncedSearch = null
 
     this.datastreamFacetWorker.removeEventListener(
       'message',
@@ -376,23 +419,34 @@ export default {
     }),
 
     apply() {
-      this.indexerResult = this.indexer.apply(this.indexerQuery)
-    },
+      const result = this.indexer.query(this.facetQuery)
 
-    buildIndexerQuery() {
-      const { selectedStations, selectedTerms } = this
-      const query = {}
-
-      // HACK: THIS IS HORRIBLE!!!
-      const stations = this.findStations({ query: this.stationsQuery })
-      selectedStations.forEach(index => {
-        _set(query, `Station.${stations.data[index]._id}`, true)
+      this.$nextTick(() => {
+        this.facetCounts = result.counts()
       })
 
-      Object.keys(selectedTerms).forEach(key => {
-        const vocabulary = this.getVocabulary(key)
+      this.$nextTick(() => {
+        this.facetKeys = result.keys()
+      })
+    },
 
-        selectedTerms[key].forEach(index => {
+    buildFacetQuery() {
+      const {
+        filteredVocabularies,
+        selectedStations,
+        selectedTerms,
+        stations
+      } = this
+      const query = {}
+
+      selectedStations.forEach(index => {
+        _set(query, `Station.${stations[index]._id}`, true)
+      })
+
+      Object.keys(selectedTerms).forEach(id => {
+        const vocabulary = filteredVocabularies.find(vocab => vocab._id === id)
+
+        selectedTerms[id].forEach(index => {
           _set(
             query,
             `${vocabulary.label}.${vocabulary.terms[index].label}`,
@@ -401,18 +455,27 @@ export default {
         })
       })
 
-      this.indexerQuery = query
+      this.facetQuery = query
     },
 
     fetch() {
-      this.fetchStations({ paginate: false, query: this.stationsQuery })
+      this.fetchStations({
+        paginate: false,
+        query: this.stationsQuery
+      }).then(res => (this.stations = res.data)) // Keep a stable-ordered local copy
+
       this.fetchVocabularies({ paginate: false, query: this.vocabulariesQuery })
 
       const fetchSpec = {
-        isEnabled: true,
         orgId: this.org._id,
         schemeId: this.schemeId
       }
+
+      if (this.isEnabled !== null) fetchSpec.isEnabled = this.isEnabled
+      else if (!this.showDisabled) fetchSpec.isEnabled = true
+
+      if (this.stationId) fetchSpec.stationId = this.stationId
+
       this.datastreamFacetWorker.postMessage({
         id: 0,
         fetchSpec

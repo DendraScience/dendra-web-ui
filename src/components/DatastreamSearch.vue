@@ -123,7 +123,7 @@
 
             <template v-slot:item.station.name="{ item }">
               <nuxt-link
-                v-if="showLink && item.station._id"
+                v-if="showLink && item.station_id"
                 :to="{
                   name: 'orgs-orgSlug-stations-stationId',
                   params: {

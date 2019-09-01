@@ -23,7 +23,15 @@
           v-for="(item, i) in list.items"
           :key="i"
           :disabled="item.disabled"
-          :to="item.org ? { name: item.name, params: { orgSlug } } : item.to"
+          :to="
+            item.org
+              ? {
+                  name: item.name,
+                  params: { orgSlug },
+                  query: item.query
+                }
+              : item.to
+          "
           exact
           nuxt
         >
@@ -85,57 +93,59 @@ export default {
               icon: 'mdi-view-grid',
               org: true,
               name: 'orgs-orgSlug',
-              title: 'Overview',
-              to: '/'
+              title: 'Overview'
             },
             {
               icon: 'check_circle',
               org: true,
               name: 'orgs-orgSlug-stationStatus',
-              title: 'Station status',
-              to: '/stationStatus'
+              title: 'Station status'
             },
             {
               icon: 'mdi-nature',
               org: true,
               name: 'orgs-orgSlug-stations',
-              title: 'Stations',
-              to: '/stations'
+              title: 'Stations'
             },
             {
               icon: 'mdi-chart-timeline-variant',
               org: true,
               name: 'orgs-orgSlug-datastreams',
-              title: 'Datastreams',
-              to: '/datastreams'
+              title: 'Datastreams'
+            },
+            {
+              icon: 'mdi-chart-timeline-variant',
+              org: true,
+              name: 'orgs-orgSlug-datastreams',
+              query: {
+                faceted: true,
+                scheme: 'dq'
+              },
+              title: 'Data query'
             },
             {
               icon: 'mdi-note-outline',
               org: true,
               name: 'orgs-orgSlug-annotations',
-              title: 'Annotations',
-              to: '/annotation'
+              title: 'Annotations'
             },
             {
               org: true,
               disabled: true,
               name: 'orgs-orgSlug-equipment',
-              title: 'Equipment',
-              to: '/equipment'
+              title: 'Equipment'
             },
             {
               org: true,
               disabled: true,
               name: 'orgs-orgSlug-people',
-              title: 'People',
-              to: '/people'
+              title: 'People'
             },
             {
               org: true,
               disabled: true,
               name: 'orgs-orgSlug-teams',
-              title: 'Teams',
-              to: '/teams'
+              title: 'Teams'
             }
           ]
         },
@@ -162,7 +172,6 @@ export default {
       orgName: 'orgName',
       orgSlug: 'orgSlug'
     }),
-
     ...mapState(['auth']),
 
     drawer: {

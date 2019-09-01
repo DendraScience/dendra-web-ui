@@ -6,8 +6,29 @@ const headers = new Headers()
 
 headers.append('Content-Type', 'application/json')
 
+async function getUnitVocabulary() {
+  const url = new URL(`${api.uri}${api.path}/vocabularies/dt-unit`)
+
+  const response = await fetch(url, {
+    mode: 'cors',
+    cache: 'no-cache',
+    headers
+  })
+
+  const json = await response.json()
+
+  if (!response.ok)
+    throw new Error(`Non-success status code ${response.status}`)
+
+  if (!json) throw new Error(`No unit type vocabulary`)
+
+  return json
+}
+
 async function processFetch({ id, fetchSpec }) {
   const { isEnabled, orgId, schemeId, stationId } = fetchSpec
+
+  const unitVocabulary = await getUnitVocabulary()
 
   const url = new URL(`${api.uri}${api.path}/datastreams`)
   const params = {
@@ -45,7 +66,9 @@ async function processFetch({ id, fetchSpec }) {
   const datastreams = json && json.data ? json.data : []
   const indexer = new FacetIndexer()
 
-  datastreams.forEach(({ _id, station_id: stationId, terms }, index) => {
+  datastreams.forEach((datastream, index) => {
+    const { station_id: stationId, terms } = datastream
+
     if (stationId) indexer.add('Station', stationId, index)
 
     if (terms[schemeId]) {
@@ -53,9 +76,13 @@ async function processFetch({ id, fetchSpec }) {
       keys.forEach(key => indexer.add(key, terms[schemeId][key], index))
     }
 
-    if (terms.dt) {
-      const keys = Object.keys(terms.dt)
-      keys.forEach(key => indexer.add(key, terms.dt[key], index))
+    if (terms.dt && terms.dt.Unit) {
+      indexer.add('Unit', terms.dt.Unit, index)
+
+      const term = unitVocabulary.terms.find(
+        term => term.label === terms.dt.Unit
+      )
+      if (term) datastream.unitTerm = term
     }
   })
 

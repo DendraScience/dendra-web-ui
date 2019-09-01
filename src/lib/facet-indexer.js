@@ -23,9 +23,8 @@ export class FacetIndexer {
     allKeys.add(key)
   }
 
-  apply(query) {
-    const { facets } = this
-    const counts = {}
+  query(query) {
+    const { allKeys, facets } = this
     const unions = {}
 
     // Evaluate the query to produce a union of keys for each facet
@@ -51,6 +50,19 @@ export class FacetIndexer {
 
     const unionNames = Object.keys(unions)
 
+    return new FacetResult({ allKeys, facets, names, unions, unionNames })
+  }
+}
+
+export class FacetResult {
+  constructor(options) {
+    Object.assign(this, options)
+  }
+
+  counts() {
+    const { facets, names, unions, unionNames } = this
+    const counts = {}
+
     // Compute a count for each facet value
     for (const name of names) {
       const facet = facets[name]
@@ -71,16 +83,22 @@ export class FacetIndexer {
       }
     }
 
+    return counts
+  }
+
+  keys() {
+    const { allKeys, unions, unionNames } = this
     let keys
+
     if (unionNames.length) {
       for (const unionName of unionNames) {
         const union = unions[unionName]
         keys = keys ? keys.filter(key => union.includes(key)) : union
       }
     } else {
-      keys = [...this.allKeys]
+      keys = [...allKeys]
     }
 
-    return { counts, keys, total: keys.length }
+    return keys
   }
 }

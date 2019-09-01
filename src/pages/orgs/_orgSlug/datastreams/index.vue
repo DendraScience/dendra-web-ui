@@ -255,7 +255,7 @@ export default {
     DateRangeFields
   },
 
-  middleware: ['check-org', 'dt-unit-vocabulary', 'fetch-station'],
+  middleware: ['check-org', 'fetch-station'],
 
   data: () => ({
     charts: [],
@@ -475,9 +475,7 @@ export default {
     },
 
     selectDatastream(item) {
-      /* eslint-disable-next-line no-console */
-      console.log('item', item)
-
+      // HACK: Ensure datastream is in store for cart lookup
       this.addDatastream(item)
 
       this.incrementQuantity({

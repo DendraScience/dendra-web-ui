@@ -8,7 +8,7 @@
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
           <v-icon class="mr-2" dark>mdi-note-outline</v-icon>
-          annotations
+          Annotations
         </v-card-title>
 
         <v-card-text class="display-2 text-truncate">
