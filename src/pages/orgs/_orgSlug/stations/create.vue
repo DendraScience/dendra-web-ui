@@ -29,7 +29,7 @@ export default {
 
   layout: 'editor',
 
-  middleware: ['check-org', 'reset-editing'],
+  middleware: ['no-auth-redirect-home', 'check-org', 'reset-editing'],
 
   data: () => ({
     instance: null

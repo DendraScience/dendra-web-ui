@@ -4,9 +4,10 @@ export default feathersClient => {
       return feathersClient.passport.getJWT()
     },
 
-    payloadIsValid(_, token) {
-      return feathersClient.passport.payloadIsValid(token)
-    },
+    // TODO: Deprecated?
+    // payloadIsValid(_, token) {
+    //   return feathersClient.passport.payloadIsValid(token)
+    // },
 
     verifyJWT(_, token) {
       return feathersClient.passport.verifyJWT(token)

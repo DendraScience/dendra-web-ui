@@ -16,7 +16,7 @@ export default feathersClient => {
     throw new Error('You must pass a Feathers Client instance to helpers-vuex')
   }
 
-  return function createPassportPlugin(options) {
+  return function createPlugin(options) {
     options = Object.assign({}, defaults, options)
 
     if (!feathersClient.authenticate) {

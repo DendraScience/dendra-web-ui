@@ -64,24 +64,6 @@
                     :disabled="!organization.slug"
                     :to="{
                       name: 'orgs-orgSlug-datastreams',
-                      params: { orgSlug: organization.slug }
-                    }"
-                    nuxt
-                  >
-                    <v-list-item-action
-                      ><v-icon
-                        >mdi-chart-timeline-variant</v-icon
-                      ></v-list-item-action
-                    >
-                    <v-list-item-content>
-                      <v-list-item-title>View datastreams</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-
-                  <v-list-item
-                    :disabled="!organization.slug"
-                    :to="{
-                      name: 'orgs-orgSlug-datastreams',
                       params: { orgSlug: organization.slug },
                       query: {
                         faceted: true,
@@ -97,6 +79,24 @@
                     >
                     <v-list-item-content>
                       <v-list-item-title>Data query</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-list-item
+                    :disabled="!organization.slug"
+                    :to="{
+                      name: 'orgs-orgSlug-datastreams',
+                      params: { orgSlug: organization.slug }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-action
+                      ><v-icon
+                        >mdi-chart-timeline-variant</v-icon
+                      ></v-list-item-action
+                    >
+                    <v-list-item-content>
+                      <v-list-item-title>View datastreams</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
 

@@ -102,6 +102,20 @@ export default {
               title: 'Station status'
             },
             {
+              icon: 'mdi-chart-timeline-variant',
+              org: true,
+              name: 'orgs-orgSlug-datastreams',
+              query: {
+                faceted: true,
+                scheme: 'dq'
+              },
+              title: 'Data query'
+            }
+          ]
+        },
+        {
+          items: [
+            {
               icon: 'mdi-nature',
               org: true,
               name: 'orgs-orgSlug-stations',
@@ -112,16 +126,6 @@ export default {
               org: true,
               name: 'orgs-orgSlug-datastreams',
               title: 'Datastreams'
-            },
-            {
-              icon: 'mdi-chart-timeline-variant',
-              org: true,
-              name: 'orgs-orgSlug-datastreams',
-              query: {
-                faceted: true,
-                scheme: 'dq'
-              },
-              title: 'Data query'
             },
             {
               icon: 'mdi-note-outline',
@@ -140,13 +144,13 @@ export default {
               disabled: true,
               name: 'orgs-orgSlug-people',
               title: 'People'
-            },
-            {
-              org: true,
-              disabled: true,
-              name: 'orgs-orgSlug-teams',
-              title: 'Teams'
             }
+            // {
+            //   org: true,
+            //   disabled: true,
+            //   name: 'orgs-orgSlug-teams',
+            //   title: 'Teams'
+            // }
           ]
         },
         {

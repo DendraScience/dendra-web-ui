@@ -72,6 +72,8 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <session-expired-dialog @status="status = $event" />
   </v-app>
 </template>
 
@@ -79,12 +81,14 @@
 import { mapState } from 'vuex'
 import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
+import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
 import StatusBar from '@/components/StatusBar'
 
 export default {
   components: {
     MainNavigationDrawer,
     MainToolbar,
+    SessionExpiredDialog,
     StatusBar
   },
 

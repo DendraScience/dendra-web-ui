@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import UserAccountEdit from '@/components/UserAccountEdit'
 import UserPasswordEdit from '@/components/UserPasswordEdit'
 
@@ -49,6 +49,10 @@ export default {
     const { auth } = store.state
 
     await store.dispatch('users/get', auth.user._id)
+  },
+
+  methods: {
+    ...mapActions('auth', ['authenticate'])
   }
 }
 </script>

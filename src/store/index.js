@@ -12,7 +12,7 @@ const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   replaceItems: true,
   whitelist: ['$in', '$and']
 })
-const { passport } = helpersVuex(feathersClient)
+const { passport, session } = helpersVuex(feathersClient)
 
 Vue.use(FeathersVuex)
 
@@ -49,7 +49,13 @@ export const plugins = [
     paginate: true
   }),
   service('memberships'),
-  service('organizations'),
+  service('organizations', {
+    instanceDefaults(data, { store }) {
+      return {
+        [TYPE_KEY]: 'organizations'
+      }
+    }
+  }),
   service('persons'),
   service('places'),
   service('schemes'),
@@ -96,7 +102,8 @@ export const plugins = [
 
   auth({ userService: 'users' }),
 
-  passport()
+  passport(),
+  session()
 ]
 
 export const strict = process.env.NODE_ENV !== 'production'

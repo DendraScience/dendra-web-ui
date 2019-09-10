@@ -38,7 +38,7 @@
                 @click:append="isPasswordShown = !isPasswordShown"
               ></v-text-field>
 
-              <v-btn color="primary" type="submit">Log in</v-btn>
+              <v-btn color="primary" type="submit">Log In</v-btn>
             </form>
           </v-flex>
         </v-layout>

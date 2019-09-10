@@ -46,7 +46,7 @@
           :loading="isPatchPending"
           color="primary"
           type="submit"
-          >Change password</v-btn
+          >Change Password</v-btn
         >
       </v-card-actions>
     </form>

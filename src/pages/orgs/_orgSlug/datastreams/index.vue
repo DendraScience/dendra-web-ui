@@ -4,6 +4,11 @@
       <v-container grid-list-xl>
         <v-layout column>
           <v-flex>
+            <v-alert :value="this.$cannot('graph', org)" type="warning">
+              Note that your current access level may prevent you from graphing
+              or downloading data.
+            </v-alert>
+
             <!-- TODO: Remove elevation? -->
             <v-tabs v-model="tabIndex" fixed-tabs>
               <v-tab>
