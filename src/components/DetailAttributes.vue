@@ -1,20 +1,10 @@
 <template>
   <v-card>
     <v-card-title class="headline">
-      <slot v-if="editing">Access level overrides</slot>
-      <slot v-else>Access levels</slot>
+      <slot>Attributes</slot>
     </v-card-title>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout v-if="!editing">
-        <v-flex>
-          <v-tabs v-model="tabIndex">
-            <v-tab>Resolved</v-tab>
-            <v-tab>Overrides</v-tab>
-          </v-tabs>
-        </v-flex>
-      </v-layout>
-
+    <v-container fluid pt-0>
       <v-layout>
         <v-flex>
           <v-data-table
@@ -30,7 +20,11 @@
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template v-slot:item.value="{ item }" class="py-4">
+              <pre>{{ item.value }}</pre>
+            </template>
+
+            <template v-slot:item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)"
                   >edit</v-icon
@@ -75,7 +69,6 @@
 </template>
 
 <script>
-import { accessLevelTexts } from '@/lib/access-level'
 import itemEditing from '@/mixins/item-editing'
 
 export default {
@@ -89,18 +82,16 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-account-multiple',
-        key: 'member_level',
-        subtitle: 'Specify data visibility for organization members.',
-        target: 'member',
-        title: 'Member access level'
+        icon: 'mdi-dice-1',
+        subtitle: 'Specify a typed value without unit.',
+        target: 'value',
+        title: 'Single value'
       },
       {
-        icon: 'mdi-globe-model',
-        key: 'public_level',
-        subtitle: 'Specify data visibility for the public.',
-        target: 'public',
-        title: 'Public access level'
+        icon: 'mdi-dice-multiple',
+        subtitle: 'Specify a delta, range or value with unit.',
+        target: 'object',
+        title: 'Structured value'
       }
     ],
 
@@ -112,47 +103,50 @@ export default {
       },
       {
         align: 'left',
-        text: 'Description',
-        value: 'description',
-        width: '60%'
+        text: 'Key',
+        value: 'key',
+        width: '20%'
+      },
+      {
+        align: 'left',
+        text: 'Value',
+        value: 'value',
+        width: '40%'
       },
       {
         align: 'right',
         value: 'icons'
       }
-    ],
-
-    tabIndex: 0
+    ]
   }),
 
   computed: {
-    accessLevels() {
-      return this.editing || this.tabIndex === 1
-        ? this.value.access_levels || {}
-        : this.value.access_levels_resolved || {}
+    attributes() {
+      return this.value.attributes || {}
     },
 
     items() {
-      const items = []
-      const { accessLevels } = this
+      const { attributes } = this
 
-      if (accessLevels.member_level !== undefined)
-        items.push({
-          description: accessLevelTexts.member[accessLevels.member_level],
-          icon: 'mdi-account-multiple',
-          key: 'member_level',
-          target: 'member'
-        })
+      return Object.keys(attributes).map(key => {
+        const item = attributes[key]
 
-      if (accessLevels.public_level !== undefined)
-        items.push({
-          description: accessLevelTexts.public[accessLevels.public_level],
-          icon: 'mdi-globe-model',
-          key: 'public_level',
-          target: 'public'
-        })
+        if (typeof item === 'object') {
+          return {
+            icon: 'mdi-dice-multiple',
+            key,
+            target: 'object',
+            value: JSON.stringify(item, null, 2)
+          }
+        }
 
-      return items
+        return {
+          icon: 'mdi-dice-1',
+          key,
+          target: 'value',
+          value: JSON.stringify(item)
+        }
+      })
     }
   }
 }

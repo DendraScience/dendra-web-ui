@@ -1,36 +1,50 @@
 <template>
-  <v-container fluid grid-list-lg>
+  <v-container fluid>
     <v-layout column>
       <v-flex>
-        <v-text-field
-          v-model.trim="value.title"
-          v-validate="'required|min:5|max:100'"
-          :error-messages="errors.collect('title')"
-          autofocus
-          data-vv-name="title"
-          label="Title"
-          required
-          solo
-        ></v-text-field>
+        <ValidationProvider
+          v-slot="{ errors }"
+          name="title"
+          rules="required|min:5|max:100"
+        >
+          <v-text-field
+            v-model.trim="value.title"
+            :error-messages="errors"
+            autofocus
+            label="Title"
+            required
+            solo
+          ></v-text-field>
+        </ValidationProvider>
 
-        <v-text-field
-          v-model.trim="value.url"
-          v-validate="{ required: true, url: { require_protocol: true } }"
-          :error-messages="errors.collect('url')"
-          autofocus
-          data-vv-name="url"
-          label="URL"
-          required
-          solo
-        ></v-text-field>
+        <ValidationProvider
+          v-slot="{ errors }"
+          name="url"
+          :rules="{
+            regex: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
+            required: true
+          }"
+        >
+          <v-text-field
+            v-model.trim="value.url"
+            :error-messages="errors"
+            label="URL"
+            required
+            solo
+          ></v-text-field>
+        </ValidationProvider>
       </v-flex>
     </v-layout>
   </v-container>
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate'
+
 export default {
-  inject: ['$validator'],
+  components: {
+    ValidationProvider
+  },
 
   props: {
     value: { type: Object, required: true }

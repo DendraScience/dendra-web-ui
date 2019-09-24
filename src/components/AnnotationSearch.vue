@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-xl>
+  <v-container fluid grid-list-lg>
     <v-layout wrap>
       <v-flex xs12>
         <date-range-fields v-model="dateRange" />
@@ -32,7 +32,7 @@
 
         <v-flex xs12>
           <v-data-table
-            :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
+            :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="annotations"
@@ -92,10 +92,6 @@ import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     DateRangeFields,
     IndicatorCell

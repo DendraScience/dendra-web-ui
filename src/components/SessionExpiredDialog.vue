@@ -2,7 +2,7 @@
   <v-dialog v-model="isTokenExpired" max-width="500" persistent>
     <validation-provider
       ref="passwordProvider"
-      v-slot="{ errors, valid }"
+      v-slot="{ errors, invalid }"
       :rules="'required|min:6|max:100'"
       name="password"
       slim
@@ -19,7 +19,7 @@
             page.
           </v-card-text>
 
-          <v-container fluid grid-list-lg>
+          <v-container fluid>
             <v-layout column>
               <v-flex>
                 <v-text-field
@@ -47,7 +47,7 @@
 
           <v-card-actions>
             <v-spacer />
-            <v-btn :disabled="!valid" color="primary" text type="submit"
+            <v-btn :disabled="invalid" color="primary" text type="submit"
               >Verify</v-btn
             >
           </v-card-actions>

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-xl>
+  <v-container fluid grid-list-lg>
     <v-layout>
       <v-flex>
         <v-expansion-panels v-model="panel" focusable multiple>
@@ -10,7 +10,7 @@
             <v-expansion-panel-content>
               <v-container fluid>
                 <v-layout wrap>
-                  <v-flex v-if="!stationId && stations">
+                  <v-flex v-if="!stationId && stations" xs12 sm6 md3>
                     <v-list dense>
                       <v-subheader>Stations</v-subheader>
                       <v-list-item-group
@@ -58,6 +58,9 @@
                   <v-flex
                     v-for="vocabulary in filteredVocabularies"
                     :key="vocabulary._id"
+                    xs12
+                    sm6
+                    md3
                   >
                     <v-list dense>
                       <v-subheader>{{ vocabulary.label }}</v-subheader>
@@ -149,21 +152,7 @@
                       >
                         <slot name="select" :item="item" />
                       </template>
-                      <!--
-                      <template v-slot:item.station_lookup.name="{ item }">
-                        <nuxt-link
-                          v-if="showLink && item.station_id"
-                          :to="{
-                            name: 'orgs-orgSlug-stations-stationId',
-                            params: {
-                              orgSlug: org.slug,
-                              stationId: item.station_id
-                            }
-                          }"
-                          >{{ item.station_lookup.name }}</nuxt-link
-                        ><span v-else>{{ item.station_lookup.name }}</span>
-                      </template>
- -->
+
                       <template v-slot:item.indicators="{ item }">
                         <indicator-cell :value="item" />
                       </template>
@@ -192,10 +181,6 @@ import { FacetIndexer } from '@/lib/facet-indexer'
 import IndicatorCell from '@/components/IndicatorCell'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     IndicatorCell
   },
@@ -231,7 +216,7 @@ export default {
       {
         align: 'left',
         text: 'Unit',
-        value: 'unitTerm.abbreviation',
+        value: 'terms.dt.Unit',
         width: '10%'
       },
       {
@@ -285,8 +270,8 @@ export default {
     filteredVocabularies() {
       const { indexer, vocabulariesQuery } = this
 
-      return this.findVocabularies({ query: vocabulariesQuery }).data.map(
-        vocabulary => {
+      return this.findVocabularies({ query: vocabulariesQuery })
+        .data.map(vocabulary => {
           return Object.assign({}, vocabulary, {
             terms: indexer
               ? vocabulary.terms.filter(term => {
@@ -295,8 +280,8 @@ export default {
                 })
               : []
           })
-        }
-      )
+        })
+        .sort((a, b) => b.terms.length - a.terms.length)
     },
 
     foundDatastreams() {
@@ -335,8 +320,7 @@ export default {
             scheme_id: 'dt',
             vocabulary_type: 'unit'
           }
-        ],
-        $sort: { _id: 1 }
+        ]
       }
     }
   },

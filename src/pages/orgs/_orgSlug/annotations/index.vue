@@ -70,10 +70,6 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import AnnotationSearch from '@/components/AnnotationSearch'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     AnnotationSearch
   },

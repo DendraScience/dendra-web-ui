@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-xl>
+  <v-container fluid grid-list-lg>
     <feathers-vuex-find
       v-slot="{
         isFindPending: loading,
@@ -26,7 +26,7 @@
 
         <v-flex xs12>
           <v-data-table
-            :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
+            :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="stations"
@@ -84,10 +84,6 @@ import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     IndicatorCell
   },

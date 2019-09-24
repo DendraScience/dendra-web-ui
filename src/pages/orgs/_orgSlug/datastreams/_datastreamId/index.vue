@@ -4,14 +4,14 @@
       <v-container grid-list-xl>
         <v-layout v-if="!editing">
           <v-flex>
-            <h4 class="display-1 font-weight-light mb-2">Station details</h4>
+            <h4 class="display-1 font-weight-light mb-2">Datastream details</h4>
           </v-flex>
         </v-layout>
 
         <v-layout column>
           <v-flex>
             <ValidationObserver ref="observer">
-              <station-detail
+              <datastream-detail
                 v-model="instance"
                 :editing="editing"
                 :org="org"
@@ -43,25 +43,24 @@ import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
 import { patchData } from '@/lib/edit'
-import { timeZoneOffsets } from '@/lib/time-zone'
-import StationDetail from '@/components/StationDetail'
+import DatastreamDetail from '@/components/DatastreamDetail'
 
 export default {
   components: {
-    StationDetail,
+    DatastreamDetail,
     ValidationObserver
   },
 
   layout: 'editor',
 
-  middleware: ['check-org', 'check-station', 'reset-editing'],
+  middleware: ['check-org', 'check-datastream', 'reset-editing'],
 
   data: () => ({
     instance: null
   }),
 
   computed: {
-    ...mapGetters(['org', 'station']),
+    ...mapGetters(['org', 'datastream']),
 
     ...mapState('ux', ['editing'])
   },
@@ -95,8 +94,8 @@ export default {
 
   methods: {
     ...mapActions({
-      fetchStations: 'stations/find',
-      patch: 'stations/patch'
+      fetchDatastreams: 'datastreams/find',
+      patch: 'datastreams/patch'
     }),
 
     ...mapMutations({
@@ -109,19 +108,19 @@ export default {
 
     edit() {
       this.setEditorDirty(0)
-      this.setEditorTitle('Edit station')
+      this.setEditorTitle('Edit datastream')
       this.setEditing(true)
     },
 
     initInstance() {
-      const coordinates = this.station.geo
-        ? this.station.geo.coordinates
+      const coordinates = this.datastream.geo
+        ? this.datastream.geo.coordinates
         : [0, 0, null]
 
       this.instance = _merge(
         {
           access_levels: {},
-          external_links: [],
+          attributes: {},
           geo: null,
           geoCoordinates: {
             ele: coordinates[2],
@@ -130,7 +129,7 @@ export default {
           },
           involved_parties: []
         },
-        this.station
+        this.datastream
       )
     },
 
@@ -146,26 +145,21 @@ export default {
       const { instance } = this
       const data = patchData(instance)
 
-      data.$set.utc_offset = timeZoneOffsets[data.$set.time_zone]
-
       try {
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('stations/removeItem', instance._id)
+        this.$store.commit('datastreams/removeItem', instance._id)
 
         await this.patch([instance._id, data, {}])
-        await this.fetchStations({ query: { _id: instance._id } })
+        await this.fetchDatastreams({ query: { _id: instance._id } })
 
         this.setEditing(false)
         this.setEditorDirty(-1)
         this.initInstance()
         this.$bus.$emit('edit-status', {
           type: 'success',
-          message: 'Station saved.' // TODO: Localize
+          message: 'Datastream saved.' // TODO: Localize
         })
       } catch (err) {
-        /* eslint-disable-next-line no-console */
-        console.log(err)
-
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
       }
     }

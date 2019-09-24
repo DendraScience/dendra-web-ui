@@ -66,14 +66,21 @@ export default {
       },
       {
         align: 'left',
-        text: 'Datastream',
-        value: 'name',
-        width: '40%'
+        text: 'Station',
+        value: 'station_lookup.name',
+        width: '20%'
       },
       {
         align: 'left',
-        text: 'Description',
-        value: 'description'
+        text: 'Datastream',
+        value: 'name',
+        width: '30%'
+      },
+      {
+        align: 'left',
+        text: 'Unit',
+        value: 'terms.dt.Unit',
+        width: '10%'
       },
       {
         align: 'right',

@@ -1,21 +1,27 @@
 <template>
-  <v-select
-    v-model="value.personId"
-    :disabled="disabled"
-    :items="items"
-    autofocus
-    label="Member"
-    prepend-inner-icon="mdi-account-box"
-    solo
-  ></v-select>
+  <ValidationProvider v-slot="{ errors }" name="person" rules="required">
+    <v-select
+      v-model="value.personId"
+      :disabled="disabled"
+      :error-messages="errors"
+      :items="items"
+      label="Member"
+      prepend-inner-icon="mdi-account-box"
+      solo
+    ></v-select>
+  </ValidationProvider>
 </template>
 
 <script>
 import _sortBy from 'lodash/sortBy'
-import _uniq from 'lodash/uniq'
 import { mapActions, mapGetters } from 'vuex'
+import { ValidationProvider } from 'vee-validate'
 
 export default {
+  components: {
+    ValidationProvider
+  },
+
   props: {
     disabled: { default: false, type: Boolean },
     org: { default: null, type: Object },
@@ -61,7 +67,7 @@ export default {
         if (personIds.length) {
           await this.fetchPersons({
             query: {
-              _id: { $in: _uniq(personIds) },
+              _id: { $in: personIds },
               $limit: 2000,
               $select: ['_id', 'email', 'full_name', 'name']
             }

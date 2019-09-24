@@ -10,11 +10,13 @@
 
         <v-layout column>
           <v-flex>
-            <annotation-detail
-              v-model="instance"
-              :editing="editing"
-              :org="org"
-            />
+            <ValidationObserver ref="observer">
+              <annotation-detail
+                v-model="instance"
+                :editing="editing"
+                :org="org"
+              />
+            </ValidationObserver>
           </v-flex>
         </v-layout>
       </v-container>
@@ -38,18 +40,15 @@
 
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
+import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import _pickBy from 'lodash/pickBy'
-import _reduce from 'lodash/reduce'
+import { patchData } from '@/lib/edit'
 import AnnotationDetail from '@/components/AnnotationDetail'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
-    AnnotationDetail
+    AnnotationDetail,
+    ValidationObserver
   },
 
   layout: 'editor',
@@ -69,7 +68,7 @@ export default {
   watch: {
     instance: {
       handler() {
-        this.incEditorDirty()
+        if (this.editing) this.incEditorDirty()
       },
       deep: true
     }
@@ -133,40 +132,16 @@ export default {
     },
 
     async onSave() {
-      if (!(await this.$validator.validateAll())) return
+      if (!(await this.$refs.observer.validate())) return
 
       const { instance } = this
-
-      const arrays = [
-        'actions',
-        'datastream_ids',
-        'intervals',
-        'involved_parties',
-        'station_ids'
-      ]
-      const fields = ['description', 'is_enabled', 'state', 'title']
-
-      const $set = _pickBy(instance, (value, key) => {
-        return (
-          (arrays.includes(key) && value && value.length) ||
-          fields.includes(key)
-        )
-      })
-      const $unset = _reduce(
-        instance,
-        (result, value, key) => {
-          if (arrays.includes(key) && (!value || value.length === 0))
-            result[key] = ''
-          return result
-        },
-        {}
-      )
+      const data = patchData(instance)
 
       try {
         // HACK: Ensure that we have a fresh model afterwards
         this.$store.commit('annotations/removeItem', instance._id)
 
-        await this.patch([instance._id, { $set, $unset }, {}])
+        await this.patch([instance._id, data, {}])
         await this.fetchAnnotations({ query: { _id: instance._id } })
 
         this.setEditing(false)

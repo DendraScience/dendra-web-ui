@@ -4,7 +4,7 @@
       <v-container grid-list-xl>
         <v-layout column>
           <v-flex>
-            <v-alert :value="this.$cannot('graph', org)" type="warning">
+            <v-alert :value="$cannot('graph', org)" type="warning">
               Note that your current access level may prevent you from graphing
               or downloading data.
             </v-alert>
@@ -47,6 +47,12 @@
                           : 'check_box_outline_blank'
                       }}</v-icon>
                     </template>
+
+                    <template v-slot:actions="{ item }">
+                      <v-icon color="tertiary" @click="open(item._id)"
+                        >open_in_new</v-icon
+                      >
+                    </template>
                   </datastream-facet-search>
 
                   <datastream-search
@@ -74,6 +80,12 @@
                         }}</v-icon
                       >
                     </template>
+
+                    <template v-slot:actions="{ item }">
+                      <v-icon color="tertiary" @click="open(item._id)"
+                        >open_in_new</v-icon
+                      >
+                    </template>
                   </datastream-search>
 
                   <v-card-actions>
@@ -98,40 +110,46 @@
                 </v-card>
 
                 <v-card flat>
-                  <v-container fluid>
-                    <v-layout wrap>
-                      <v-flex xs12>
-                        <date-range-fields v-model="dateRange" />
-                      </v-flex>
+                  <ValidationObserver v-slot="{ valid }">
+                    <v-container fluid>
+                      <v-layout wrap>
+                        <v-flex xs12>
+                          <date-range-fields v-model="dateRange" />
+                        </v-flex>
 
-                      <v-flex v-if="cartCount || !charts.length" xs12>
-                        <v-text-field
-                          v-model="chartTitle"
-                          v-validate="'max:100'"
-                          :error-messages="errors.collect('chartTitle')"
-                          clearable
-                          data-vv-name="chartTitle"
-                          filled
-                          flat
-                          label="Chart title"
-                          required
-                        ></v-text-field>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
+                        <v-flex v-if="cartCount || !charts.length" xs12>
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="chart title"
+                            rules="required|max:100"
+                          >
+                            <v-text-field
+                              v-model="chartTitle"
+                              :error-messages="errors"
+                              clearable
+                              filled
+                              flat
+                              label="Chart title"
+                              required
+                            ></v-text-field>
+                          </ValidationProvider>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
 
-                  <v-card-actions>
-                    <v-btn
-                      :disabled="!cartCount || errors.any()"
-                      block
-                      color="primary"
-                      large
-                      @click="addChart"
-                      >Chart
-                      {{ cartCount }}
-                      {{ cartCount | pluralize('Datastream') }}
-                    </v-btn>
-                  </v-card-actions>
+                    <v-card-actions>
+                      <v-btn
+                        :disabled="!(cartCount && valid)"
+                        block
+                        color="primary"
+                        large
+                        @click="addChart"
+                        >Chart
+                        {{ cartCount }}
+                        {{ cartCount | pluralize('Datastream') }}
+                      </v-btn>
+                    </v-card-actions>
+                  </ValidationObserver>
                 </v-card>
               </v-tab-item>
 
@@ -193,6 +211,34 @@
       </v-container>
     </v-flex>
 
+    <v-btn
+      v-if="
+        !queryFaceted &&
+          $can('create', {
+            organization_id: org._id,
+            state: 'pending',
+            [$abilityTypeKey]: 'datastreams'
+          })
+      "
+      :to="{
+        name: 'orgs-orgSlug-datastreams-create',
+        params: {
+          orgSlug: org.slug
+        }
+      }"
+      color="secondary"
+      dark
+      exact
+      fab
+      fixed
+      nuxt
+      right
+      style="top: 80px;"
+      top
+    >
+      <v-icon>add</v-icon>
+    </v-btn>
+
     <v-dialog v-model="exportDialog" max-width="380">
       <v-card>
         <v-card-title class="headline grey lighten-4">Export as</v-card-title>
@@ -231,15 +277,37 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
+      <v-card>
+        <v-card-title class="headline">
+          Charts exist
+        </v-card-title>
+
+        <v-card-text>
+          You have one or more charts. Do you really want to leave this page?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn color="primary" @click="leaveDialogClick(false)"
+            >Stay on Page</v-btn
+          >
+          <v-btn @click="leaveDialogClick(true)">Leave Page</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
 <script>
 // TODO: Refactor and break out!!!
+import Highcharts from 'highcharts'
 import Vue from 'vue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import _forEach from 'lodash/forEach'
+import _get from 'lodash/get'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { exportItems } from '@/lib/chart-export'
 import ChartDatastreamCart from '@/components/ChartDatastreamCart'
 import DatastreamChart from '@/components/DatastreamChart'
@@ -248,19 +316,17 @@ import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     ChartDatastreamCart,
     DatastreamChart,
     DatastreamFacetSearch,
     DatastreamSearch,
-    DateRangeFields
+    DateRangeFields,
+    ValidationObserver,
+    ValidationProvider
   },
 
-  middleware: ['check-org', 'fetch-station'],
+  middleware: ['check-org', 'dt-unit-vocabulary', 'fetch-station'],
 
   data: () => ({
     charts: [],
@@ -285,6 +351,8 @@ export default {
     exportDialog: false,
     exportItems,
 
+    leaveDialog: false,
+
     previousExportIndex: -1,
     selectedExportIndex: 0,
 
@@ -301,7 +369,8 @@ export default {
     }),
     ...mapGetters({
       getDatastream: 'datastreams/get',
-      getStation: 'stations/get'
+      getStation: 'stations/get',
+      getVocabulary: 'vocabularies/get'
     }),
 
     ...mapState(['auth']),
@@ -356,6 +425,18 @@ export default {
     this.seriesFetchWorker = null
   },
 
+  beforeRouteLeave(to, from, next) {
+    if (this.leaveNext) {
+      this.leaveNext(false)
+      this.leaveNext = next
+    } else if (this.charts.length) {
+      this.leaveDialog = true
+      this.leaveNext = next
+    } else {
+      next()
+    }
+  },
+
   mounted() {
     const { dateRange } = this
 
@@ -376,6 +457,7 @@ export default {
     }),
 
     addChart() {
+      const colors = Highcharts.getOptions().colors
       const options = {
         chart: {
           height: 500,
@@ -404,24 +486,25 @@ export default {
         title: {
           text: this.chartTitle
         },
+        tooltip: {
+          shared: true
+        },
         xAxis: {
           crosshair: true,
           title: { text: 'Time' },
           type: 'datetime'
         },
         yAxis: [
-          {
-            title: { text: null }
-          },
-          {
-            opposite: true,
-            title: { text: null }
-          }
+          // {
+          //   title: { text: null }
+          // },
+          // {
+          //   opposite: true,
+          //   title: { text: null }
+          // }
         ]
       }
-
       const seriesOptions = []
-
       const fetchSpec = {
         queries: [],
         startTime: moment(
@@ -434,19 +517,43 @@ export default {
           .add(1, 'd')
           .toISOString()
       }
-
+      const unitVocabulary = this.getVocabulary('dt-unit')
+      const { yAxis } = options
       let canDownload = true
+      let index = 0
 
       _forEach(this.quantitiesById, (value, id) => {
         const datastream = this.getDatastream(id)
 
         if (this.$cannot('download', datastream)) canDownload = false
 
+        const unit = _get(datastream, 'terms.dt.Unit', '')
+        const term =
+          unitVocabulary && unitVocabulary.terms
+            ? unitVocabulary.terms.find(term => term.label === unit)
+            : null
+        const unitText = term && term.abbreviation ? term.abbreviation : unit
+        const stationName = datastream.station_lookup.name
+
+        yAxis.push({
+          labels: {
+            format: `{value} ${unitText}`,
+            style: {
+              color: colors[index]
+            }
+          },
+          opposite: value === 2,
+          title: {
+            text: null
+          }
+        })
         seriesOptions.push({
-          name: datastream.name,
-          yAxis: value - 1
+          name: `${stationName} ${datastream.name} ${unitText}`,
+          yAxis: index
         })
         fetchSpec.queries.push({ datastream_id: id })
+
+        index++
       })
 
       this.seriesFetchWorker.postMessage({
@@ -477,6 +584,25 @@ export default {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
       })
+    },
+
+    leaveDialogClick(proceed) {
+      this.leaveDialog = false
+      this.leaveNext(proceed)
+      this.leaveNext = null
+    },
+
+    open(datastreamId) {
+      window.open(
+        this.$router.resolve({
+          name: 'orgs-orgSlug-datastreams-datastreamId',
+          params: {
+            orgSlug: this.org.slug,
+            datastreamId
+          }
+        }).href,
+        '_blank'
+      )
     },
 
     selectDatastream(item) {

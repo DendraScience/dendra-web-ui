@@ -23,8 +23,6 @@
 import { accessLevelItems, accessLevelTexts } from '@/lib/access-level'
 
 export default {
-  inject: ['$validator'],
-
   props: {
     value: { type: Object, required: true }
   },

@@ -50,7 +50,11 @@
 </template>
 
 <script>
+import itemEditing from '@/mixins/item-editing'
+
 export default {
+  mixins: [itemEditing],
+
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
@@ -85,20 +89,6 @@ export default {
       return this.externalLinks.map((item, key) => {
         return Object.assign({ key }, item)
       })
-    }
-  },
-
-  methods: {
-    add() {
-      this.$emit('add')
-    },
-
-    edit(item) {
-      this.$emit('edit', item)
-    },
-
-    remove(item) {
-      this.$emit('remove', item)
     }
   }
 }

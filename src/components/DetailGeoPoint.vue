@@ -7,35 +7,46 @@
     <v-container fluid pt-0 px-4>
       <v-layout v-if="value.geo" wrap>
         <v-flex xs12 md6>
-          <v-text-field
-            v-model.number="value.geoCoordinates.lat"
-            v-validate="'required|decimal'"
-            :error-messages="errors.collect('latitude')"
-            :readonly="!editing"
-            data-vv-name="latitude"
-            label="Latitude"
-            required
-          ></v-text-field>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="latitude"
+            rules="required|between:-90,90"
+          >
+            <v-text-field
+              v-model.trim="value.geoCoordinates.lat"
+              :error-messages="errors"
+              :readonly="!editing"
+              label="Latitude"
+              required
+            ></v-text-field>
+          </ValidationProvider>
 
-          <v-text-field
-            v-model.number="value.geoCoordinates.lng"
-            v-validate="'required|decimal'"
-            :error-messages="errors.collect('longitude')"
-            :readonly="!editing"
-            data-vv-name="longitude"
-            label="Longitude"
-            required
-          ></v-text-field>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="longitude"
+            rules="required|between:-180,180"
+          >
+            <v-text-field
+              v-model.trim="value.geoCoordinates.lng"
+              :error-messages="errors"
+              :readonly="!editing"
+              label="Longitude"
+              required
+            ></v-text-field>
+          </ValidationProvider>
 
-          <v-text-field
-            v-model.number="value.geoCoordinates.ele"
-            v-validate="'decimal'"
-            :error-messages="errors.collect('elevation')"
-            :readonly="!editing"
-            data-vv-name="elevation"
-            label="Elevation"
-            required
-          ></v-text-field>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="elevation"
+            rules="between:-9000,9000"
+          >
+            <v-text-field
+              v-model.trim="value.geoCoordinates.ele"
+              :error-messages="errors"
+              :readonly="!editing"
+              label="Elevation"
+            ></v-text-field>
+          </ValidationProvider>
         </v-flex>
 
         <v-flex xs12 md6>
@@ -69,19 +80,22 @@
 
 <script>
 import _debounce from 'lodash/debounce'
+import { ValidationProvider } from 'vee-validate'
 import GoogleMap from '@/components/GoogleMap'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
   components: {
-    GoogleMap
+    GoogleMap,
+    ValidationProvider
   },
+
+  mixins: [itemEditing],
 
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
   },
-
-  inject: ['$validator'],
 
   data: () => ({
     latLngLiteral: {
@@ -118,16 +132,6 @@ export default {
   beforeDestroy() {
     this.debouncedSearch.cancel()
     this.debouncedSearch = null
-  },
-
-  methods: {
-    add() {
-      this.$emit('add')
-    },
-
-    remove() {
-      this.$emit('remove')
-    }
   }
 }
 </script>

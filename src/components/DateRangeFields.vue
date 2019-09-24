@@ -2,31 +2,39 @@
   <v-container fluid pa-0>
     <v-layout wrap>
       <v-flex xs12 sm6>
-        <v-text-field
-          v-model="value.from"
-          v-validate="{ moment_format: $dateFormats.y4md, required: true }"
-          :error-messages="errors.collect('fromDate')"
-          append-icon="event"
-          data-vv-name="fromDate"
-          filled
-          label="From date"
-          required
-          @click:append="showDialog"
-        ></v-text-field>
+        <ValidationProvider
+          v-slot="{ errors }"
+          name="from date"
+          :rules="{ moment_format: $dateFormats.y4md, required: true }"
+        >
+          <v-text-field
+            v-model="value.from"
+            :error-messages="errors"
+            append-icon="event"
+            filled
+            label="From date"
+            required
+            @click:append="showDialog"
+          ></v-text-field>
+        </ValidationProvider>
       </v-flex>
 
       <v-flex xs12 sm6>
-        <v-text-field
-          v-model="value.to"
-          v-validate="{ moment_format: $dateFormats.y4md, required: true }"
-          :error-messages="errors.collect('toDate')"
-          append-icon="event"
-          data-vv-name="toDate"
-          filled
-          label="To date"
-          required
-          @click:append="showDialog"
-        ></v-text-field>
+        <ValidationProvider
+          v-slot="{ errors }"
+          name="to date"
+          :rules="{ moment_format: $dateFormats.y4md, required: true }"
+        >
+          <v-text-field
+            v-model="value.to"
+            :error-messages="errors"
+            append-icon="event"
+            filled
+            label="To date"
+            required
+            @click:append="showDialog"
+          ></v-text-field>
+        </ValidationProvider>
       </v-flex>
     </v-layout>
 
@@ -51,14 +59,14 @@
 
 <script>
 import moment from 'moment'
+import { ValidationProvider } from 'vee-validate'
 import DateRangePicker from '@/components/DateRangePicker'
 
 export default {
   components: {
-    DateRangePicker
+    DateRangePicker,
+    ValidationProvider
   },
-
-  inject: ['$validator'],
 
   props: {
     value: { type: Object, required: true }

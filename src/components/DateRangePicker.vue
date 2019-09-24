@@ -16,22 +16,27 @@
           no-title
         ></v-date-picker>
 
-        <v-text-field
+        <ValidationProvider
           v-if="showTime"
-          v-model="value.fromTime"
-          v-validate="{
+          v-slot="{ errors }"
+          name="from time"
+          :rules="{
             moment_format: $dateFormats.hm12,
             required: value.fromEnabled
           }"
-          :disabled="fromDisabled"
-          :error-messages="errors.collect('fromTime')"
-          class="mt-2"
-          data-vv-name="fromTime"
-          label="From time"
-          placeholder="h:mm a"
-          prepend-inner-icon="access_time"
-          solo
-        ></v-text-field>
+        >
+          <v-text-field
+            v-model="value.fromTime"
+            :disabled="fromDisabled"
+            :error-messages="errors"
+            class="mt-2"
+            data-vv-name="fromTime"
+            label="From time"
+            placeholder="h:mm a"
+            prepend-inner-icon="access_time"
+            solo
+          ></v-text-field>
+        </ValidationProvider>
       </v-flex>
 
       <v-flex v-if="!hideTo" shrink>
@@ -49,22 +54,26 @@
           no-title
         ></v-date-picker>
 
-        <v-text-field
+        <ValidationProvider
           v-if="showTime"
-          v-model="value.toTime"
-          v-validate="{
+          v-slot="{ errors }"
+          name="to time"
+          :rules="{
             moment_format: $dateFormats.hm12,
             required: value.toEnabled
           }"
-          :disabled="toDisabled"
-          :error-messages="errors.collect('toTime')"
-          class="mt-2"
-          data-vv-name="toTime"
-          label="To time"
-          placeholder="h:mm a"
-          prepend-inner-icon="access_time"
-          solo
-        ></v-text-field>
+        >
+          <v-text-field
+            v-model="value.toTime"
+            :disabled="toDisabled"
+            :error-messages="errors"
+            class="mt-2"
+            label="To time"
+            placeholder="h:mm a"
+            prepend-inner-icon="access_time"
+            solo
+          ></v-text-field>
+        </ValidationProvider>
       </v-flex>
     </v-layout>
 
@@ -77,9 +86,11 @@
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate'
+
 export default {
-  $_veeValidate: {
-    validator: 'new'
+  components: {
+    ValidationProvider
   },
 
   props: {

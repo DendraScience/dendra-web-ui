@@ -87,10 +87,6 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import StationSearch from '@/components/StationSearch'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     StationSearch
   },

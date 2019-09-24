@@ -1,51 +1,62 @@
 <template>
   <v-card>
-    <form @submit.prevent="submit">
-      <v-card-title class="headline">
-        Account
-      </v-card-title>
+    <ValidationObserver ref="observer">
+      <form @submit.prevent="submit">
+        <v-card-title class="headline">
+          Account
+        </v-card-title>
 
-      <v-card-text>
-        <v-text-field
-          v-model="name"
-          v-validate="'required|max:100'"
-          :error-messages="errors.collect('name')"
-          data-vv-name="name"
-          label="Name"
-          required
-        ></v-text-field>
+        <v-card-text>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="name"
+            rules="required|max:100"
+          >
+            <v-text-field
+              v-model="name"
+              :error-messages="errors"
+              label="Name"
+              required
+            ></v-text-field>
+          </ValidationProvider>
 
-        <v-text-field
-          v-model="email"
-          v-validate="'required|email'"
-          :error-messages="errors.collect('email')"
-          data-vv-name="email"
-          label="Email"
-          required
-        ></v-text-field>
-      </v-card-text>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="email"
+            rules="required|email"
+          >
+            <v-text-field
+              v-model="email"
+              :error-messages="errors"
+              label="Email"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+        </v-card-text>
 
-      <v-card-actions>
-        <v-btn
-          :disabled="isPatchPending"
-          :loading="isPatchPending"
-          color="primary"
-          type="submit"
-          >Update account</v-btn
-        >
-      </v-card-actions>
-    </form>
+        <v-card-actions>
+          <v-btn
+            :disabled="isPatchPending"
+            :loading="isPatchPending"
+            color="primary"
+            type="submit"
+            >Update account</v-btn
+          >
+        </v-card-actions>
+      </form>
+    </ValidationObserver>
   </v-card>
 </template>
 
 <script>
 import _pick from 'lodash/pick'
-
 import { mapActions, mapState } from 'vuex'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
+  components: {
+    ValidationObserver,
+    ValidationProvider
   },
 
   props: {
@@ -72,7 +83,7 @@ export default {
     }),
 
     async submit() {
-      if (!(await this.$validator.validateAll())) return
+      if (!(await this.$refs.observer.validate())) return
 
       const $set = _pick(this, ['email', 'name'])
 

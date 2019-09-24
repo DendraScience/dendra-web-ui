@@ -6,15 +6,19 @@
           <v-container fluid>
             <v-layout column>
               <v-flex pb-0>
-                <v-text-field
-                  v-model.trim="value.title"
-                  v-validate="'required|min:5|max:100'"
-                  :error-messages="errors.collect('title')"
-                  :readonly="!editing"
-                  data-vv-name="title"
-                  label="Title"
-                  required
-                ></v-text-field>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="title"
+                  rules="required|min:5|max:100"
+                >
+                  <v-text-field
+                    v-model.trim="value.title"
+                    :error-messages="errors"
+                    :readonly="!editing"
+                    label="Title"
+                    required
+                  ></v-text-field>
+                </ValidationProvider>
 
                 <v-select
                   v-if="typeof value.state === 'string'"
@@ -24,15 +28,19 @@
                   label="State"
                 ></v-select>
 
-                <v-textarea
-                  v-model.trim="value.description"
-                  v-validate="'required|min:5|max:5000'"
-                  :error-messages="errors.collect('description')"
-                  :readonly="!editing"
-                  auto-grow
-                  data-vv-name="description"
-                  label="Description"
-                ></v-textarea>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="description"
+                  rules="required|min:5|max:5000"
+                >
+                  <v-textarea
+                    v-model.trim="value.description"
+                    :error-messages="errors"
+                    :readonly="!editing"
+                    auto-grow
+                    label="Description"
+                  ></v-textarea>
+                </ValidationProvider>
               </v-flex>
             </v-layout>
 
@@ -72,7 +80,7 @@
       </v-flex>
 
       <v-flex>
-        <annotation-detail-members
+        <detail-members
           :editing="editing"
           :value="value"
           @add="addMember"
@@ -125,14 +133,8 @@
     </v-dialog>
 
     <v-dialog v-model="flagDialog" max-width="380">
-      <validation-provider
-        ref="flagProvider"
-        v-slot="{ errors, valid }"
-        :rules="{ alpha_num: true, max: 2, required: true }"
-        name="flag"
-        slim
-      >
-        <v-card>
+      <v-card>
+        <ValidationObserver ref="flagObserver" v-slot="{ invalid }">
           <v-card-title class="headline grey lighten-4 mb-4"
             >Specify flag</v-card-title
           >
@@ -140,16 +142,21 @@
           <v-container fluid>
             <v-layout column>
               <v-flex>
-                <v-text-field
-                  v-if="flagDialog"
-                  v-model.trim="flag"
-                  :error-messages="errors"
-                  autofocus
-                  data-vv-name="flag"
-                  label="Flag"
-                  prepend-inner-icon="flag"
-                  solo
-                ></v-text-field>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  :rules="{ alpha_num: true, max: 20, required: true }"
+                  name="flag"
+                >
+                  <v-text-field
+                    v-if="flagDialog"
+                    v-model.trim="flag"
+                    :error-messages="errors"
+                    autofocus
+                    label="Flag"
+                    prepend-inner-icon="flag"
+                    solo
+                  ></v-text-field>
+                </ValidationProvider>
               </v-flex>
             </v-layout>
           </v-container>
@@ -159,7 +166,7 @@
           <v-card-actions>
             <v-spacer />
             <v-btn
-              :disabled="!valid"
+              :disabled="invalid"
               color="primary"
               text
               @click="flagDialogCommit"
@@ -169,55 +176,22 @@
               >Cancel</v-btn
             >
           </v-card-actions>
-        </v-card>
-      </validation-provider>
-    </v-dialog>
-
-    <v-dialog v-model="memberDialog" max-width="380">
-      <v-card>
-        <v-card-title class="headline grey lighten-4 mb-4"
-          >Specify member</v-card-title
-        >
-
-        <v-container fluid>
-          <v-layout column>
-            <v-flex>
-              <member-select
-                v-model="member"
-                :disabled="memberDisabled"
-                :org="org"
-              />
-            </v-flex>
-
-            <v-flex mx-2>
-              <v-checkbox
-                v-for="role in memberRoles"
-                :key="role.text"
-                v-model="role.value"
-                :label="role.text"
-                class="my-0"
-              ></v-checkbox>
-            </v-flex>
-          </v-layout>
-        </v-container>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            :disabled="!member.personId"
-            color="primary"
-            text
-            @click="memberDialogCommit"
-            >OK</v-btn
-          >
-          <v-btn color="primary" text @click="memberDialog = false"
-            >Cancel</v-btn
-          >
-        </v-card-actions>
+        </ValidationObserver>
       </v-card>
     </v-dialog>
+
+    <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
+      <template v-slot:title
+        >Specify member</template
+      >
+      <template>
+        <member-role-fields
+          v-model="member"
+          :org="org"
+          :select-disabled="member.selectDisabled"
+        />
+      </template>
+    </detail-dialog>
 
     <v-dialog v-model="momentDialog" max-width="380">
       <v-card>
@@ -348,18 +322,20 @@
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate'
 import moment from 'moment'
 import _union from 'lodash/union'
 import { mapGetters, mapMutations } from 'vuex'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import member from '@/mixins/member'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
-import AnnotationDetailMembers from '@/components/AnnotationDetailMembers'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangePicker from '@/components/DateRangePicker'
+import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
-import MemberSelect from '@/components/MemberSelect'
+import DetailMembers from '@/components/DetailMembers'
+import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
@@ -370,19 +346,21 @@ export default {
     AnnotationDetailActions,
     AnnotationDetailApplies,
     AnnotationDetailIntervals,
-    AnnotationDetailMembers,
     DatastreamSearch,
     DateRangePicker,
+    DetailDialog,
     DetailExternalRefs,
-    MemberSelect,
+    DetailMembers,
+    MemberRoleFields,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,
     StationSearch,
+    ValidationObserver,
     ValidationProvider
   },
 
-  inject: ['$validator'],
+  mixins: [member],
 
   props: {
     editing: { default: false, type: Boolean },
@@ -393,7 +371,6 @@ export default {
   data: () => ({
     datastreamDialog: false,
     flagDialog: false,
-    memberDialog: false,
     momentDialog: false,
     rangeDialog: false,
     stationDialog: false,
@@ -412,19 +389,15 @@ export default {
     },
 
     member: {
-      personId: null
+      roles: [
+        {
+          text: 'contact'
+        },
+        {
+          text: 'reporter'
+        }
+      ]
     },
-    memberDisabled: false,
-    memberRoles: [
-      {
-        text: 'contact',
-        value: null
-      },
-      {
-        text: 'reporter',
-        value: null
-      }
-    ],
 
     stateItems: ['pending', 'approved', 'rejected']
   }),
@@ -508,11 +481,12 @@ export default {
 
         if (!action) value.actions.push({ exclude: true })
       } else if (item.target === 'flag') {
-        const provider = this.$refs.flagProvider
-        if (provider) provider.reset()
-
-        this.flag = null
         this.flagDialog = true
+        this.flag = null
+
+        requestAnimationFrame(() => {
+          this.$refs.flagObserver.reset()
+        })
       }
     },
 
@@ -543,13 +517,6 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
-    addMember() {
-      this.member.personId = null
-      this.memberRoles.forEach(role => (role.value = null))
-      this.memberDisabled = false
-      this.memberDialog = true
-    },
-
     editInterval(item) {
       if (!item.target) return
 
@@ -574,17 +541,6 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
-    editMember(item) {
-      const roles = this.value.involved_parties
-        .filter(party => party.person_id === item.id)
-        .reduce((accum, party) => accum.concat(party.roles), [])
-
-      this.member.personId = item.id
-      this.memberRoles.forEach(role => (role.value = roles.includes(role.text)))
-      this.memberDisabled = true
-      this.memberDialog = true
-    },
-
     removeAction(item) {
       this.value.actions = this.value.actions.filter(
         (action, index) => index !== item.key
@@ -606,12 +562,6 @@ export default {
       )
     },
 
-    removeMember(item) {
-      this.value.involved_parties = this.value.involved_parties.filter(
-        (action, index) => index !== item.key
-      )
-    },
-
     datastreamDialogCommit() {
       this.$set(
         this.value,
@@ -625,7 +575,7 @@ export default {
     flagDialogCommit() {
       const { value } = this
       const action = value.actions.find(action => action.flag !== undefined)
-      const flag = [this.flag.toUpperCase()]
+      const flag = [this.flag]
 
       if (action) {
         action.flag = _union(action.flag, flag)
@@ -634,26 +584,6 @@ export default {
       }
 
       this.flagDialog = false
-    },
-
-    memberDialogCommit() {
-      const { member, memberRoles, value } = this
-
-      const involvedParties = value.involved_parties.filter(
-        party => party.person_id !== member.personId
-      )
-      const roles = memberRoles
-        .filter(role => role.value)
-        .map(role => role.text)
-      if (roles.length)
-        involvedParties.push({
-          person_id: member.personId,
-          roles
-        })
-
-      value.involved_parties = involvedParties
-
-      this.memberDialog = false
     },
 
     momentDialogCommit() {

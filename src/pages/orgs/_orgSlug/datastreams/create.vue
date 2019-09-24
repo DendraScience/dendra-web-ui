@@ -5,7 +5,7 @@
         <v-layout column>
           <v-flex>
             <ValidationObserver ref="observer">
-              <station-detail
+              <datastream-detail
                 v-model="instance"
                 :editing="editing"
                 :org="org"
@@ -22,12 +22,11 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import { createData } from '@/lib/edit'
-import { timeZoneOffsets } from '@/lib/time-zone'
-import StationDetail from '@/components/StationDetail'
+import DatastreamDetail from '@/components/DatastreamDetail'
 
 export default {
   components: {
-    StationDetail,
+    DatastreamDetail,
     ValidationObserver
   },
 
@@ -40,7 +39,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['org', 'station']),
+    ...mapGetters(['org', 'datastream']),
 
     ...mapState(['auth']),
     ...mapState('ux', ['editing'])
@@ -61,7 +60,7 @@ export default {
 
     this.setEditorColor('secondary')
     this.setEditorDirty(-1)
-    this.setEditorTitle('New station')
+    this.setEditorTitle('New datastream')
     this.setEditing(true)
     this.initInstance()
   },
@@ -77,7 +76,7 @@ export default {
 
   methods: {
     ...mapActions({
-      create: 'stations/create'
+      create: 'datastreams/create'
     }),
 
     ...mapMutations({
@@ -92,23 +91,22 @@ export default {
       this.setEditing(false)
       this.setEditorDirty(-1)
       this.$router.push({
-        name: 'orgs-orgSlug-stations',
+        name: 'orgs-orgSlug-datastreams',
         params: { orgSlug: this.org.slug }
       })
     },
 
     edit() {
       this.setEditorDirty(0)
-      this.setEditorTitle('Edit station')
+      this.setEditorTitle('Edit datastream')
       this.setEditing(true)
     },
 
     initInstance() {
       this.instance = {
         access_levels: {},
+        attributes: {},
         description: '',
-        external_links: [],
-        full_name: '',
         geo: null,
         geoCoordinates: {
           ele: null,
@@ -116,17 +114,15 @@ export default {
           lng: 0
         },
         involved_parties: [],
-        is_active: true,
         is_enabled: true,
         is_geo_protected: false,
         is_hidden: false,
-        is_stationary: true,
         name: '',
         organization_id: this.org._id,
-        slug: 'new-station',
+        source_type: 'sensor',
         state: 'ready',
-        time_zone: 'PST',
-        [this.$abilityTypeKey]: 'stations'
+        station_id: null,
+        [this.$abilityTypeKey]: 'datastreams'
       }
     },
 
@@ -137,7 +133,6 @@ export default {
       const data = createData(instance)
 
       data.organization_id = instance.organization_id
-      data.utc_offset = timeZoneOffsets[data.time_zone]
 
       try {
         const res = await this.create([data, {}])
@@ -146,13 +141,13 @@ export default {
         this.setEditorDirty(-1)
         this.$router.push(
           {
-            name: 'orgs-orgSlug-stations-stationId',
-            params: { orgSlug: this.org.slug, stationId: res._id }
+            name: 'orgs-orgSlug-datastreams-datastreamId',
+            params: { orgSlug: this.org.slug, datastreamId: res._id }
           },
           () => {
             this.$bus.$emit('edit-status', {
               type: 'success',
-              message: 'Station created.' // TODO: Localize
+              message: 'Datastream created.' // TODO: Localize
             })
           }
         )

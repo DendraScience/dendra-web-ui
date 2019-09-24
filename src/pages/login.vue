@@ -14,32 +14,44 @@
 
         <v-layout wrap>
           <v-flex xs12 sm6>
-            <form @submit.prevent="submit">
-              <v-text-field
-                v-model="email"
-                v-validate="'required|email'"
-                :error-messages="errors.collect('email')"
-                data-vv-name="email"
-                filled
-                label="Email"
-                required
-              ></v-text-field>
+            <ValidationObserver ref="observer" v-slot="{ valid }">
+              <form @submit.prevent="submit">
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="email"
+                  rules="required|email"
+                >
+                  <v-text-field
+                    v-model="email"
+                    :error-messages="errors"
+                    filled
+                    label="Email"
+                    required
+                  ></v-text-field>
+                </ValidationProvider>
 
-              <v-text-field
-                v-model="password"
-                v-validate="'required|min:6|max:100'"
-                :append-icon="isPasswordShown ? 'visibility_off' : 'visibility'"
-                :error-messages="errors.collect('password')"
-                :type="isPasswordShown ? 'text' : 'password'"
-                data-vv-name="password"
-                filled
-                label="Password"
-                required
-                @click:append="isPasswordShown = !isPasswordShown"
-              ></v-text-field>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  name="password"
+                  rules="required|min:6|max:100"
+                >
+                  <v-text-field
+                    v-model="password"
+                    :append-icon="
+                      isPasswordShown ? 'visibility_off' : 'visibility'
+                    "
+                    :error-messages="errors"
+                    :type="isPasswordShown ? 'text' : 'password'"
+                    filled
+                    label="Password"
+                    required
+                    @click:append="isPasswordShown = !isPasswordShown"
+                  ></v-text-field>
+                </ValidationProvider>
 
-              <v-btn color="primary" type="submit">Log In</v-btn>
-            </form>
+                <v-btn color="primary" type="submit">Log In</v-btn>
+              </form>
+            </ValidationObserver>
           </v-flex>
         </v-layout>
       </v-container>
@@ -49,10 +61,12 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
+  components: {
+    ValidationObserver,
+    ValidationProvider
   },
 
   middleware: ['no-org', 'auth-redirect-orgs'],
@@ -86,7 +100,7 @@ export default {
     ...mapActions('auth', ['authenticate']),
 
     async submit() {
-      if (!(await this.$validator.validateAll())) return
+      if (!(await this.$refs.observer.validate())) return
 
       return this.authenticate({
         strategy: 'local',

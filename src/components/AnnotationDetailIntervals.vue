@@ -86,11 +86,14 @@
 <script>
 import moment from 'moment'
 import DateChip from '@/components/DateChip'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
   components: {
     DateChip
   },
+
+  mixins: [itemEditing],
 
   props: {
     editing: { default: false, type: Boolean },
@@ -101,15 +104,15 @@ export default {
     addItems: [
       {
         icon: 'mdi-calendar-range',
+        subtitle: 'Specify a begin and end time.',
         target: 'range',
-        title: 'Range',
-        subtitle: 'Specify a begin and end time.'
+        title: 'Range'
       },
       {
         icon: 'mdi-watch',
+        subtitle: 'Specify a single point in time.',
         target: 'moment',
-        title: 'Moment',
-        subtitle: 'Specify a single point in time.'
+        title: 'Moment'
       }
     ],
 
@@ -145,22 +148,22 @@ export default {
         if (beginsAt && endsBefore) {
           if (endsBefore.diff(beginsAt) === 1) {
             return {
-              beginsLabel: 'Occurred at',
               beginsAt,
+              beginsLabel: 'Occurred at',
               icon: 'mdi-watch',
-              target: 'moment',
-              key
+              key,
+              target: 'moment'
             }
           }
 
           return {
-            beginsLabel: 'Begins at',
             beginsAt,
-            endsLabel: 'and ends before',
+            beginsLabel: 'Begins at',
             endsBefore,
+            endsLabel: 'and ends before',
             icon: 'mdi-calendar-range',
-            target: 'range',
-            key
+            key,
+            target: 'range'
           }
         }
 
@@ -169,19 +172,19 @@ export default {
             beginsLabel: 'Begins with first datapoint and ends before',
             endsBefore,
             icon: 'mdi-calendar-range',
-            target: 'range',
-            key
+            key,
+            target: 'range'
           }
         }
 
         if (beginsAt && !endsBefore) {
           return {
-            beginsLabel: 'Begins at',
             beginsAt,
+            beginsLabel: 'Begins at',
             endsLabel: 'and affects all datapoints thereafter',
             icon: 'mdi-calendar-range',
-            target: 'range',
-            key
+            key,
+            target: 'range'
           }
         }
 
@@ -191,20 +194,6 @@ export default {
           key
         }
       })
-    }
-  },
-
-  methods: {
-    add(item) {
-      this.$emit('add', item)
-    },
-
-    edit(item) {
-      this.$emit('edit', item)
-    },
-
-    remove(item) {
-      this.$emit('remove', item)
     }
   }
 }

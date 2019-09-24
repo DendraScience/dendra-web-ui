@@ -46,10 +46,10 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn color="primary" @click="cancelDialogClick(true)"
-            >Discard</v-btn
+          <v-btn color="primary" @click="cancelDialogClick(false)"
+            >Stay Here</v-btn
           >
-          <v-btn @click="cancelDialogClick(false)">Stay Here</v-btn>
+          <v-btn @click="cancelDialogClick(true)">Discard</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -65,10 +65,10 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-btn color="primary" @click="leaveDialogClick(true)"
-            >Leave Page</v-btn
+          <v-btn color="primary" @click="leaveDialogClick(false)"
+            >Stay on Page</v-btn
           >
-          <v-btn @click="leaveDialogClick(false)">Stay on Page</v-btn>
+          <v-btn @click="leaveDialogClick(true)">Leave Page</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

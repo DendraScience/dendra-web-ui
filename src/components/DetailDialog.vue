@@ -1,43 +1,39 @@
 <template>
   <v-dialog v-model="value.dialog" max-width="680">
     <v-card>
-      <v-card-title class="headline grey lighten-4 mb-4"
-        ><slot name="title"
-      /></v-card-title>
+      <ValidationObserver ref="observer" v-slot="{ invalid }">
+        <v-card-title class="headline grey lighten-4 mb-4"
+          ><slot name="title"
+        /></v-card-title>
 
-      <slot :value="value" />
+        <slot :value="value" />
 
-      <v-divider />
+        <v-divider />
 
-      <v-card-actions>
-        <v-spacer />
-        <v-btn :disabled="!valid" color="primary" text @click="commit"
-          >OK</v-btn
-        >
-        <v-btn color="primary" text @click="value.dialog = false">Cancel</v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn :disabled="invalid" color="primary" text @click="commit"
+            >OK</v-btn
+          >
+          <v-btn color="primary" text @click="value.dialog = false"
+            >Cancel</v-btn
+          >
+        </v-card-actions>
+      </ValidationObserver>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import { ValidationObserver } from 'vee-validate'
+
 export default {
-  $_veeValidate: {
-    validator: 'new'
+  components: {
+    ValidationObserver
   },
 
   props: {
     value: { type: Object, required: true }
-  },
-
-  computed: {
-    valid() {
-      return Object.keys(this.fields).every(
-        key =>
-          this.fields[key].valid ||
-          (this.fields[key].pristine && this.value.key !== undefined)
-      )
-    }
   },
 
   methods: {

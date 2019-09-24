@@ -64,10 +64,12 @@
 
 <script>
 import _uniq from 'lodash/uniq'
-
 import { mapActions, mapGetters } from 'vuex'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
+  mixins: [itemEditing],
+
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
@@ -77,15 +79,15 @@ export default {
     addItems: [
       {
         icon: 'mdi-nature',
+        subtitle: 'Apply to ALL datastreams for selected stations.',
         target: 'station',
-        title: 'Station',
-        subtitle: 'Apply to ALL datastreams for selected stations.'
+        title: 'Station'
       },
       {
         icon: 'mdi-chart-timeline-variant',
+        subtitle: 'Apply to selected datastreams.',
         target: 'datastream',
-        title: 'Datastream',
-        subtitle: 'Apply to selected datastreams.'
+        title: 'Datastream'
       }
     ],
 
@@ -132,26 +134,28 @@ export default {
       return this.stationIds
         .map(id => {
           const station = this.getStation(id)
+
           return {
-            id,
+            datastream: 'All datastreams',
             icon: 'mdi-nature',
-            target: 'station',
+            id,
             key: `station-${id}`,
             station: station ? station.name : id,
-            datastream: 'All datastreams'
+            target: 'station'
           }
         })
         .concat(
           this.datastreamIds.map(id => {
             const datastream = this.getDatastream(id)
             const station = datastream && datastream.station
+
             return {
-              id,
+              datastream: datastream ? datastream.name : id,
               icon: 'mdi-chart-timeline-variant',
-              target: 'datastream',
+              id,
               key: `datastream-${id}`,
               station: station ? station.name : id,
-              datastream: datastream ? datastream.name : id
+              target: 'datastream'
             }
           })
         )
@@ -167,14 +171,6 @@ export default {
       fetchDatastreams: 'datastreams/find',
       fetchStations: 'stations/find'
     }),
-
-    add(item) {
-      this.$emit('add', item)
-    },
-
-    remove(item) {
-      this.$emit('remove', item)
-    },
 
     async fetch() {
       const datastreamIds = this.datastreamIds

@@ -29,7 +29,7 @@
                 label
                 >{{ val }}</v-chip
               >
-              <pre v-if="item.custom"><code>{{ item.custom }}</code></pre>
+              <pre v-if="item.custom">{{ item.custom }}</pre>
             </template>
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
@@ -75,7 +75,11 @@
 </template>
 
 <script>
+import itemEditing from '@/mixins/item-editing'
+
 export default {
+  mixins: [itemEditing],
+
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
@@ -85,15 +89,15 @@ export default {
     addItems: [
       {
         icon: 'block',
+        subtitle: 'Datapoints will be excluded from downloads and graphs.',
         target: 'exclude',
-        title: 'Exclude',
-        subtitle: 'Datapoints will be excluded from downloads and graphs.'
+        title: 'Exclude'
       },
       {
         icon: 'flag',
+        subtitle: 'Datapoints will marked with a textual flag.',
         target: 'flag',
-        title: 'Flag',
-        subtitle: 'Datapoints will marked with a textual flag.'
+        title: 'Flag'
       }
     ],
 
@@ -125,18 +129,18 @@ export default {
       return this.actions.map((item, key) => {
         if (item.exclude !== undefined) {
           return {
-            label: 'Exclude datapoints',
             icon: 'block',
-            key
+            key,
+            label: 'Exclude datapoints'
           }
         }
 
         if (item.flag !== undefined) {
           return {
-            label: 'Flag datapoints',
-            values: item.flag,
             icon: 'flag',
-            key
+            key,
+            label: 'Flag datapoints',
+            values: item.flag
           }
         }
 
@@ -146,16 +150,6 @@ export default {
           key
         }
       })
-    }
-  },
-
-  methods: {
-    add(item) {
-      this.$emit('add', item)
-    },
-
-    remove(item) {
-      this.$emit('remove', item)
     }
   }
 }

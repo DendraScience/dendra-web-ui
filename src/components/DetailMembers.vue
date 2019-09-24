@@ -55,11 +55,12 @@
 
 <script>
 import _sortBy from 'lodash/sortBy'
-import _uniq from 'lodash/uniq'
-
 import { mapActions, mapGetters } from 'vuex'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
+  mixins: [itemEditing],
+
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
@@ -110,14 +111,15 @@ export default {
         this.involvedParties.map((item, key) => {
           const id = item.person_id
           const person = this.getPerson(id)
+
           return {
-            id,
+            email: person && person.email,
             icon: 'mdi-account-box',
-            target: 'person',
+            id,
             key,
             name: person ? person.full_name || person.name : id,
-            email: person && person.email,
-            roles: item.roles || []
+            roles: item.roles || [],
+            target: 'person'
           }
         }),
         ['name']
@@ -134,18 +136,6 @@ export default {
       fetchPersons: 'persons/find'
     }),
 
-    add() {
-      this.$emit('add')
-    },
-
-    edit(item) {
-      this.$emit('edit', item)
-    },
-
-    remove(item) {
-      this.$emit('remove', item)
-    },
-
     async fetch() {
       const personIds = this.involvedParties
         .filter(party => party.person_id)
@@ -155,7 +145,7 @@ export default {
       if (personIds.length) {
         await this.fetchPersons({
           query: {
-            _id: { $in: _uniq(personIds) },
+            _id: { $in: personIds },
             $limit: 2000,
             $select: ['_id', 'email', 'full_name', 'name']
           }

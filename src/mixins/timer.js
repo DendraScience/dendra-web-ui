@@ -1,4 +1,4 @@
-const mixin = {
+export default {
   data: () => ({
     isTimerEnabled: true,
     timerId: null,
@@ -42,5 +42,3 @@ const mixin = {
     timerCallback() {}
   }
 }
-
-export default mixin

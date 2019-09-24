@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-xl>
+  <v-container fluid grid-list-lg>
     <feathers-vuex-find
       v-if="!stationId"
       v-slot="{ isFindPending: loading, items: stations }"
@@ -103,7 +103,7 @@
 
         <v-flex xs12>
           <v-data-table
-            :footer-props="{ itemsPerPageOptions: [10, 50, 100, 500] }"
+            :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
             :items="datastreams"
@@ -121,7 +121,7 @@
               <slot name="select" :item="item" />
             </template>
 
-            <template v-slot:item.station.name="{ item }">
+            <template v-slot:item.station_lookup.name="{ item }">
               <nuxt-link
                 v-if="showLink && item.station_id"
                 :to="{
@@ -131,8 +131,22 @@
                     stationId: item.station_id
                   }
                 }"
-                >{{ item.station.name }}</nuxt-link
-              ><span v-else>{{ item.station.name }}</span>
+                >{{ item.station_lookup.name }}</nuxt-link
+              ><span v-else>{{ item.station_lookup.name }}</span>
+            </template>
+
+            <template v-slot:item.name="{ item }">
+              <nuxt-link
+                v-if="showLink"
+                :to="{
+                  name: 'orgs-orgSlug-datastreams-datastreamId',
+                  params: {
+                    orgSlug: org.slug,
+                    datastreamId: item._id
+                  }
+                }"
+                >{{ item.name }}</nuxt-link
+              ><span v-else>{{ item.name }}</span>
             </template>
 
             <template v-slot:item.indicators="{ item }">
@@ -157,10 +171,6 @@ import IndicatorCell from '@/components/IndicatorCell'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
     IndicatorCell
   },
@@ -184,7 +194,7 @@ export default {
       {
         align: 'left',
         text: 'Station',
-        value: 'station.name',
+        value: 'station_lookup.name',
         width: '20%'
       },
       {
@@ -192,6 +202,12 @@ export default {
         text: 'Datastream',
         value: 'name',
         width: '30%'
+      },
+      {
+        align: 'left',
+        text: 'Unit',
+        value: 'terms.dt.Unit',
+        width: '10%'
       },
       {
         align: 'left',
@@ -250,7 +266,9 @@ export default {
           'is_hidden',
           'name',
           'organization_id',
-          'station_id'
+          'station_id',
+          'station_lookup',
+          'terms'
         ],
         $sort: { name: 1, _id: 1 }
       }

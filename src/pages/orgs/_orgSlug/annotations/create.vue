@@ -4,11 +4,13 @@
       <v-container grid-list-xl>
         <v-layout column>
           <v-flex>
-            <annotation-detail
-              v-model="instance"
-              :editing="editing"
-              :org="org"
-            />
+            <ValidationObserver ref="observer">
+              <annotation-detail
+                v-model="instance"
+                :editing="editing"
+                :org="org"
+              />
+            </ValidationObserver>
           </v-flex>
         </v-layout>
       </v-container>
@@ -18,16 +20,14 @@
 
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
-import _pickBy from 'lodash/pickBy'
+import { ValidationObserver } from 'vee-validate'
+import { createData } from '@/lib/edit'
 import AnnotationDetail from '@/components/AnnotationDetail'
 
 export default {
-  $_veeValidate: {
-    validator: 'new'
-  },
-
   components: {
-    AnnotationDetail
+    AnnotationDetail,
+    ValidationObserver
   },
 
   layout: 'editor',
@@ -48,7 +48,7 @@ export default {
   watch: {
     instance: {
       handler() {
-        this.incEditorDirty()
+        if (this.editing) this.incEditorDirty()
       },
       deep: true
     }
@@ -122,25 +122,12 @@ export default {
     },
 
     async save() {
-      if (!(await this.$validator.validateAll())) return
+      if (!(await this.$refs.observer.validate())) return
 
       const { instance } = this
+      const data = createData(instance)
 
-      const arrays = [
-        'actions',
-        'datastream_ids',
-        'intervals',
-        'involved_parties',
-        'station_ids'
-      ]
-      const fields = ['description', 'organization_id', 'title']
-
-      const data = _pickBy(instance, (value, key) => {
-        return (
-          (arrays.includes(key) && value && value.length) ||
-          fields.includes(key)
-        )
-      })
+      data.organization_id = instance.organization_id
 
       try {
         const res = await this.create([data, {}])
