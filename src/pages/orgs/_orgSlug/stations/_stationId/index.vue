@@ -163,9 +163,6 @@ export default {
           message: 'Station saved.' // TODO: Localize
         })
       } catch (err) {
-        /* eslint-disable-next-line no-console */
-        console.log(err)
-
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
       }
     }

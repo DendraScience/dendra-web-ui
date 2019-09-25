@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="headline">
-      <slot>Timeframes</slot>
+      <slot>Datapoints configuration</slot>
     </v-card-title>
 
     <v-container fluid pt-0>
@@ -16,10 +16,6 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
-              <v-icon>{{ item.icon }}</v-icon>
-            </template>
-
             <template v-slot:item.begins="{ item }" class="py-4">
               <span v-if="item.beginsLabel" class="mr-1">{{
                 item.beginsLabel
@@ -28,6 +24,7 @@
                 :value="Object.freeze(item.beginsAt)"
                 class="mr-1 my-1"
                 color="success"
+                format="lll (UTC)"
               />
             </template>
 
@@ -39,10 +36,18 @@
                 :value="Object.freeze(item.endsBefore)"
                 class="mr-1 my-1"
                 color="error"
+                format="lll (UTC)"
               />
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template v-slot:item.params="{ item }" class="py-4">
+              <span v-if="$vuetify.breakpoint.xsOnly">{{
+                item.params | truncate({ length: 50 })
+              }}</span>
+              <pre v-else>{{ item.params }}</pre>
+            </template>
+
+            <template v-slot:item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)"
                   >edit</v-icon
@@ -58,30 +63,9 @@
     </v-container>
 
     <v-card-actions v-if="editing">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list two-line subheader>
-          <v-list-item
-            v-for="(item, index) in addItems"
-            :key="index"
-            @click="add(item)"
-          >
-            <v-list-item-avatar>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <v-btn color="primary" @click="add">
+        <v-icon>add</v-icon>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -106,35 +90,41 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-calendar-range',
-        subtitle: 'Specify a begin and end time.',
-        target: 'range',
-        title: 'Range'
+        icon: 'mdi-dice-1',
+        subtitle: 'Specify a typed value without unit.',
+        target: 'value',
+        title: 'Single value'
       },
       {
-        icon: 'mdi-watch',
-        subtitle: 'Specify a single point in time.',
-        target: 'moment',
-        title: 'Moment'
+        icon: 'mdi-dice-multiple',
+        subtitle: 'Specify a delta, range or value with unit.',
+        target: 'object',
+        title: 'Structured value'
       }
     ],
 
     headers: [
       {
-        align: 'center',
-        value: 'type',
-        width: '50px'
-      },
-      {
         align: 'left',
         text: 'Timeframe',
         value: 'begins',
-        width: '30%'
+        width: '20%'
       },
       {
         align: 'left',
         value: 'ends',
+        width: '20%'
+      },
+      {
+        align: 'left',
+        text: 'Params',
+        value: 'params',
         width: '30%'
+      },
+      {
+        align: 'left',
+        text: 'Path',
+        value: 'path'
       },
       {
         align: 'right',
@@ -144,26 +134,20 @@ export default {
   }),
 
   computed: {
-    intervals() {
-      return this.value.intervals
+    datapointsConfig() {
+      return this.value.datapoints_config || []
     },
 
     items() {
-      return this.intervals.map((item, key) => {
-        const beginsAt = item.begins_at && moment(item.begins_at)
-        const endsBefore = item.ends_before && moment(item.ends_before)
+      const { datapointsConfig } = this
+
+      return datapointsConfig.map((item, key) => {
+        const beginsAt = item.begins_at && moment.utc(item.begins_at)
+        const endsBefore = item.ends_before && moment.utc(item.ends_before)
+        const params = JSON.stringify(item.params, null, 2)
+        const { path } = item
 
         if (beginsAt && endsBefore) {
-          if (endsBefore.diff(beginsAt) === 1) {
-            return {
-              beginsAt,
-              beginsLabel: 'Occurred at',
-              icon: 'mdi-watch',
-              key,
-              target: 'moment'
-            }
-          }
-
           return {
             beginsAt,
             beginsLabel: 'Begins at',
@@ -171,17 +155,19 @@ export default {
             endsLabel: 'and ends before',
             icon: 'mdi-calendar-range',
             key,
-            target: 'range'
+            params,
+            path
           }
         }
 
         if (!beginsAt && endsBefore) {
           return {
-            beginsLabel: 'Begins with first datapoint and ends before',
+            beginsLabel: 'Begins with first row and ends before',
             endsBefore,
             icon: 'mdi-calendar-range',
             key,
-            target: 'range'
+            params,
+            path
           }
         }
 
@@ -189,17 +175,21 @@ export default {
           return {
             beginsAt,
             beginsLabel: 'Begins at',
-            endsLabel: 'and affects all datapoints thereafter',
+            endsLabel: 'and returns all rows thereafter',
             icon: 'mdi-calendar-range',
             key,
-            target: 'range'
+            params,
+            path
           }
         }
 
         return {
-          beginsLabel: 'Invalid interval!',
-          icon: 'error',
-          key
+          beginsLabel: 'Begins with first row',
+          endsLabel: 'and returns all rows thereafter',
+          icon: 'mdi-calendar-range',
+          key,
+          params,
+          path
         }
       })
     }

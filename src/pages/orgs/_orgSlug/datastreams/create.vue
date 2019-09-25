@@ -122,6 +122,7 @@ export default {
         source_type: 'sensor',
         state: 'ready',
         station_id: null,
+        terms: {},
         [this.$abilityTypeKey]: 'datastreams'
       }
     },

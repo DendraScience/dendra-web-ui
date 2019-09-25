@@ -3,7 +3,8 @@
     v-if="value"
     :color="color"
     :outlined="outlined"
-    @dblclick="index = ++index % 3"
+    small
+    @click="index = ++index % 3"
   >
     {{ text }}
   </v-chip>
@@ -13,6 +14,7 @@
 export default {
   props: {
     color: { default: '', type: String },
+    format: { default: 'lll', type: String },
     outlined: { default: true, type: Boolean },
     value: { default: null, type: Object }
   },
@@ -31,7 +33,7 @@ export default {
         case 2:
           return value.valueOf()
         default:
-          return value.format('lll')
+          return value.format(this.format)
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title class="headline">
-      <slot>Attributes</slot>
+      <slot>Vocabulary terms</slot>
     </v-card-title>
 
     <v-container fluid pt-0>
@@ -16,8 +16,10 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
-              <v-icon>{{ item.icon }}</v-icon>
+            <template v-slot:item.key="{ item }" class="text-no-wrap px-0">
+              <v-avatar color="grey darken-1" size="25">
+                <span class="white--text caption">{{ item.key }}</span>
+              </v-avatar>
             </template>
 
             <template v-slot:item.value="{ item }" class="py-4">
@@ -50,22 +52,34 @@
           </v-btn>
         </template>
 
-        <v-list two-line subheader>
-          <v-list-item
-            v-for="(item, index) in addItems"
-            :key="index"
-            @click="add(item)"
-          >
-            <v-list-item-avatar>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-avatar>
+        <feathers-vuex-find
+          v-slot="{ items: schemes }"
+          :query="{
+            is_enabled: true,
+            $sort: { name: 1 }
+          }"
+          service="schemes"
+        >
+          <v-list two-line subheader>
+            <v-list-item
+              v-for="scheme in schemes"
+              :key="scheme._id"
+              :disabled="terms[scheme._id] !== undefined"
+              @click="add({ key: scheme._id })"
+            >
+              <v-list-item-avatar color="grey darken-1" size="25">
+                <span class="white--text caption">{{ scheme._id }}</span>
+              </v-list-item-avatar>
 
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+              <v-list-item-content>
+                <v-list-item-title>{{ scheme.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  scheme.description
+                }}</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </feathers-vuex-find>
       </v-menu>
     </v-card-actions>
   </v-card>
@@ -84,38 +98,17 @@ export default {
   },
 
   data: () => ({
-    addItems: [
-      {
-        icon: 'mdi-dice-1',
-        subtitle: 'Specify a typed value without unit.',
-        target: 'value',
-        title: 'Single value'
-      },
-      {
-        icon: 'mdi-dice-multiple',
-        subtitle: 'Specify a delta, range or value with unit.',
-        target: 'object',
-        title: 'Structured value'
-      }
-    ],
-
     headers: [
       {
         align: 'center',
-        value: 'type',
+        value: 'key',
         width: '50px'
       },
       {
         align: 'left',
-        text: 'Key',
-        value: 'key',
-        width: '20%'
-      },
-      {
-        align: 'left',
-        text: 'Value',
+        text: 'Terms',
         value: 'value',
-        width: '40%'
+        width: '60%'
       },
       {
         align: 'right',
@@ -125,31 +118,20 @@ export default {
   }),
 
   computed: {
-    attributes() {
-      return this.value.attributes || {}
+    terms() {
+      return this.value.terms || {}
     },
 
     items() {
-      const { attributes } = this
+      const { terms } = this
 
       return _sortBy(
-        Object.keys(attributes).map(key => {
-          const item = attributes[key]
-
-          if (typeof item === 'object') {
-            return {
-              icon: 'mdi-dice-multiple',
-              key,
-              target: 'object',
-              value: JSON.stringify(item, null, 2)
-            }
-          }
-
+        Object.keys(terms).map(key => {
+          const item = terms[key]
           return {
-            icon: 'mdi-dice-1',
+            icon: 'mdi-book-open-variant',
             key,
-            target: 'value',
-            value: JSON.stringify(item)
+            value: JSON.stringify(item, null, 2)
           }
         }),
         ['key']

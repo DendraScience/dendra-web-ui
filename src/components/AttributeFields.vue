@@ -69,7 +69,7 @@
       <v-flex v-if="value.type === 'delta' || value.type === 'range'">
         <ValidationProvider
           v-slot="{ errors }"
-          name="value2"
+          name="value"
           :rules="{ between: [-100000000, 100000000], required: true }"
         >
           <v-text-field

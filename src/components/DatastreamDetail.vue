@@ -106,6 +106,24 @@
       </v-flex>
 
       <v-flex>
+        <detail-terms
+          :editing="editing"
+          :value="value"
+          @add="addTerms"
+          @edit="editTerms"
+          @remove="removeTerms"
+        />
+      </v-flex>
+
+      <v-flex>
+        <detail-datapoints-config
+          :editing="editing"
+          :value="value"
+          @add="addDatapointsConfig"
+        />
+      </v-flex>
+
+      <v-flex>
         <detail-access-levels
           :editing="editing"
           :value="value"
@@ -147,6 +165,24 @@
       </template>
     </detail-dialog>
 
+    <detail-dialog ref="termsDialog" v-model="terms" @commit="commitTerms">
+      <template v-slot:title
+        >Specify terms</template
+      >
+      <template>
+        <terms-fields v-model="terms" />
+      </template>
+    </detail-dialog>
+
+    <detail-dialog ref="datapointsConfigDialog" v-model="datapointsConfig">
+      <template v-slot:title
+        >Specify configuration</template
+      >
+      <template>
+        <datapoints-config-fields v-model="datapointsConfig" />
+      </template>
+    </detail-dialog>
+
     <detail-dialog
       ref="accessLevelDialog"
       v-model="accessLevel"
@@ -179,39 +215,49 @@
 import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import attribute from '@/mixins/attribute'
+import datapointsConfig from '@/mixins/datapoints-config'
 import geo from '@/mixins/geo'
 import member from '@/mixins/member'
+import terms from '@/mixins/terms'
 import AccessLevelFields from '@/components/AccessLevelFields'
 import AttributeFields from '@/components/AttributeFields'
+import DatapointsConfigFields from '@/components/DatapointsConfigFields'
 import DetailAccessLevels from '@/components/DetailAccessLevels'
 import DetailAttributes from '@/components/DetailAttributes'
+import DetailDatapointsConfig from '@/components/DetailDatapointsConfig'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailMembers from '@/components/DetailMembers'
+import DetailTerms from '@/components/DetailTerms'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
+import TermsFields from '@/components/TermsFields'
 
 export default {
   components: {
     AccessLevelFields,
     AttributeFields,
+    DatapointsConfigFields,
     DetailAccessLevels,
     DetailAttributes,
+    DetailDatapointsConfig,
     DetailDialog,
     DetailExternalRefs,
     DetailGeoPoint,
     DetailMembers,
+    DetailTerms,
     MemberRoleFields,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,
+    TermsFields,
     ValidationProvider
   },
 
-  mixins: [accessLevel, attribute, geo, member],
+  mixins: [accessLevel, attribute, datapointsConfig, geo, member, terms],
 
   props: {
     editing: { default: false, type: Boolean },

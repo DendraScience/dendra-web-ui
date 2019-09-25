@@ -9,13 +9,13 @@ export default {
   methods: {
     addAttribute({ target }) {
       this.attribute = {
+        booleanValue: false,
         dialog: true,
         key: null,
         keyDisabled: false,
-        booleanValue: false,
         target,
-        textValue: null,
         textValue2: null,
+        textValue: null,
         type: null,
         unitTag: null
       }
@@ -26,73 +26,59 @@ export default {
     },
 
     editAttribute({ key, target }) {
-      const attribute = this.value.attributes[key]
+      const data = this.value.attributes[key]
       const type = typeof attribute
 
-      // TODO: Clean up!!!
       if (target === 'object') {
-        if (Array.isArray(attribute.delta)) {
-          this.attribute = {
-            dialog: true,
-            key,
-            keyDisabled: true,
-            booleanValue: false,
-            target,
-            textValue: attribute.delta[0],
-            textValue2: attribute.delta[1],
-            type: 'delta',
-            unitTag: attribute.unit_tag
-          }
-        } else if (Array.isArray(attribute.range)) {
-          this.attribute = {
-            dialog: true,
-            key,
-            keyDisabled: true,
-            booleanValue: false,
-            target,
-            textValue: attribute.range[0],
-            textValue2: attribute.range[1],
-            type: 'range',
-            unitTag: attribute.unit_tag
-          }
+        const attribute = {
+          booleanValue: false,
+          dialog: true,
+          key,
+          keyDisabled: true,
+          target,
+          unitTag: data.unit_tag
+        }
+
+        if (Array.isArray(data.delta)) {
+          this.attribute = Object.assign(attribute, {
+            textValue2: data.delta[1],
+            textValue: data.delta[0],
+            type: 'delta'
+          })
+        } else if (Array.isArray(data.range)) {
+          this.attribute = Object.assign(attribute, {
+            textValue2: data.range[1],
+            textValue: data.range[0],
+            type: 'range'
+          })
         } else {
-          this.attribute = {
-            dialog: true,
-            key,
-            keyDisabled: true,
-            booleanValue: false,
-            target,
-            textValue: attribute.value,
+          this.attribute = Object.assign(attribute, {
             textValue2: null,
-            type: 'value',
-            unitTag: attribute.unit_tag
-          }
+            textValue: data.value,
+            type: 'value'
+          })
         }
       } else if (target === 'value') {
+        const attribute = {
+          dialog: true,
+          key,
+          keyDisabled: true,
+          target,
+          textValue2: null,
+          type,
+          unitTag: null
+        }
+
         if (type === 'boolean') {
-          this.attribute = {
-            dialog: true,
-            key,
-            keyDisabled: true,
-            booleanValue: attribute,
-            target,
-            textValue: null,
-            textValue2: null,
-            type,
-            unitTag: null
-          }
+          this.attribute = Object.assign(attribute, {
+            booleanValue: data,
+            textValue: null
+          })
         } else {
-          this.attribute = {
-            dialog: true,
-            key,
-            keyDisabled: true,
+          this.attribute = Object.assign(attribute, {
             booleanValue: false,
-            target,
-            textValue: `${attribute}`,
-            textValue2: null,
-            type,
-            unitTag: null
-          }
+            textValue: `${data}`
+          })
         }
       }
 
@@ -102,8 +88,8 @@ export default {
     },
 
     commitAttribute({
-      key,
       booleanValue,
+      key,
       target,
       textValue,
       textValue2,

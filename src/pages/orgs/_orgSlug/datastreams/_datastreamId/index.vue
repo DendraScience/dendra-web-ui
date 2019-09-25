@@ -127,7 +127,8 @@ export default {
             lat: coordinates[1],
             lng: coordinates[0]
           },
-          involved_parties: []
+          involved_parties: [],
+          terms: {}
         },
         this.datastream
       )

@@ -393,6 +393,12 @@ export default {
     }
   },
 
+  watch: {
+    queryFaceted() {
+      this.tabIndex = 0
+    }
+  },
+
   created() {
     this.seriesFetchWorker = this.$workers.createSeriesFetchWorker()
     this.seriesFetchWorker.postMessage({
@@ -494,15 +500,7 @@ export default {
           title: { text: 'Time' },
           type: 'datetime'
         },
-        yAxis: [
-          // {
-          //   title: { text: null }
-          // },
-          // {
-          //   opposite: true,
-          //   title: { text: null }
-          // }
-        ]
+        yAxis: []
       }
       const seriesOptions = []
       const fetchSpec = {
@@ -520,7 +518,6 @@ export default {
       const unitVocabulary = this.getVocabulary('dt-unit')
       const { yAxis } = options
       let canDownload = true
-      let index = 0
 
       _forEach(this.quantitiesById, (value, id) => {
         const datastream = this.getDatastream(id)
@@ -534,26 +531,35 @@ export default {
             : null
         const unitText = term && term.abbreviation ? term.abbreviation : unit
         const stationName = datastream.station_lookup.name
+        const yAxisLabelFormat = `{value} ${unitText}`
+        const yAxisOpposite = value === 2 // Based on cart quantity
 
-        yAxis.push({
-          labels: {
-            format: `{value} ${unitText}`,
-            style: {
-              color: colors[index]
+        let yAxisIndex = yAxis.findIndex(
+          axis =>
+            axis.labels.format === yAxisLabelFormat &&
+            axis.opposite === yAxisOpposite
+        )
+        if (yAxisIndex === -1) {
+          yAxisIndex = yAxis.length
+          yAxis.push({
+            labels: {
+              format: yAxisLabelFormat,
+              style: {
+                color: colors[yAxisIndex]
+              }
+            },
+            opposite: yAxisOpposite,
+            title: {
+              text: null
             }
-          },
-          opposite: value === 2,
-          title: {
-            text: null
-          }
-        })
+          })
+        }
+
         seriesOptions.push({
           name: `${stationName} ${datastream.name} ${unitText}`,
-          yAxis: index
+          yAxis: yAxisIndex
         })
         fetchSpec.queries.push({ datastream_id: id })
-
-        index++
       })
 
       this.seriesFetchWorker.postMessage({

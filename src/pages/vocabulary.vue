@@ -38,7 +38,7 @@
             is_enabled: true,
             is_hidden: false,
             scheme_id: selectedSchemeId,
-            $sort: { name: 1 }
+            $sort: { label: 1 }
           }"
           :watch="'query'"
           service="vocabularies"
