@@ -106,6 +106,8 @@ export default {
       this.instance = {
         access_levels: {},
         attributes: {},
+        datapoints_config: [],
+        derived_from_datastream_ids: [],
         description: '',
         geo: null,
         geoCoordinates: {

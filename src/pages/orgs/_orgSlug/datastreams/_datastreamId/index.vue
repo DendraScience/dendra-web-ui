@@ -121,6 +121,8 @@ export default {
         {
           access_levels: {},
           attributes: {},
+          datapoints_config: [],
+          derived_from_datastream_ids: [],
           geo: null,
           geoCoordinates: {
             ele: coordinates[2],

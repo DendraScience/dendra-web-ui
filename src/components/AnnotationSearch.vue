@@ -89,6 +89,7 @@ import moment from 'moment'
 import _debounce from 'lodash/debounce'
 import DateRangeFields from '@/components/DateRangeFields'
 import IndicatorCell from '@/components/IndicatorCell'
+import { dateFormats } from '@/lib/date'
 import { escapeRegExp } from '@/lib/utils'
 
 export default {
@@ -212,8 +213,8 @@ export default {
         }
       ]
 
-      const fromTime = moment(this.dateRange.from, this.$dateFormats.y4md, true)
-      const toTime = moment(this.dateRange.to, this.$dateFormats.y4md, true)
+      const fromTime = moment(this.dateRange.from, dateFormats.y4md, true)
+      const toTime = moment(this.dateRange.to, dateFormats.y4md, true)
         .startOf('d')
         .add(1, 'd')
 
@@ -296,10 +297,10 @@ export default {
     dateRange.from = moment()
       .startOf('y')
       .subtract(20, 'y')
-      .format(this.$dateFormats.y4md)
+      .format(dateFormats.y4md)
     dateRange.to = moment()
       .endOf('d')
-      .format(this.$dateFormats.y4md)
+      .format(dateFormats.y4md)
 
     if (!this.$scopedSlots.select) headers = headers.slice(1)
     if (!this.$scopedSlots.actions) headers = headers.slice(0, -1)

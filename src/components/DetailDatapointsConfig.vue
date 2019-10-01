@@ -16,6 +16,13 @@
             hide-default-footer
             item-key="key"
           >
+            <template v-slot:item.params="{ item }" class="py-4">
+              <span v-if="$vuetify.breakpoint.xsOnly">{{
+                item.params | truncate({ length: 50 })
+              }}</span>
+              <pre v-else>{{ item.params }}</pre>
+            </template>
+
             <template v-slot:item.begins="{ item }" class="py-4">
               <span v-if="item.beginsLabel" class="mr-1">{{
                 item.beginsLabel
@@ -40,15 +47,8 @@
               />
             </template>
 
-            <template v-slot:item.params="{ item }" class="py-4">
-              <span v-if="$vuetify.breakpoint.xsOnly">{{
-                item.params | truncate({ length: 50 })
-              }}</span>
-              <pre v-else>{{ item.params }}</pre>
-            </template>
-
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
-              <span v-if="editing" class="text-no-wrap">
+              <span v-if="editing && !item.connection" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)"
                   >edit</v-icon
                 >
@@ -106,6 +106,12 @@ export default {
     headers: [
       {
         align: 'left',
+        text: 'Parameters',
+        value: 'params',
+        width: '20%'
+      },
+      {
+        align: 'left',
         text: 'Timeframe',
         value: 'begins',
         width: '20%'
@@ -114,17 +120,6 @@ export default {
         align: 'left',
         value: 'ends',
         width: '20%'
-      },
-      {
-        align: 'left',
-        text: 'Params',
-        value: 'params',
-        width: '30%'
-      },
-      {
-        align: 'left',
-        text: 'Path',
-        value: 'path'
       },
       {
         align: 'right',
@@ -145,12 +140,13 @@ export default {
         const beginsAt = item.begins_at && moment.utc(item.begins_at)
         const endsBefore = item.ends_before && moment.utc(item.ends_before)
         const params = JSON.stringify(item.params, null, 2)
-        const { path } = item
+        const { connection, path } = item
 
         if (beginsAt && endsBefore) {
           return {
             beginsAt,
             beginsLabel: 'Begins at',
+            connection,
             endsBefore,
             endsLabel: 'and ends before',
             icon: 'mdi-calendar-range',
@@ -163,6 +159,7 @@ export default {
         if (!beginsAt && endsBefore) {
           return {
             beginsLabel: 'Begins with first row and ends before',
+            connection,
             endsBefore,
             icon: 'mdi-calendar-range',
             key,
@@ -175,6 +172,7 @@ export default {
           return {
             beginsAt,
             beginsLabel: 'Begins at',
+            connection,
             endsLabel: 'and returns all rows thereafter',
             icon: 'mdi-calendar-range',
             key,
@@ -185,6 +183,7 @@ export default {
 
         return {
           beginsLabel: 'Begins with first row',
+          connection,
           endsLabel: 'and returns all rows thereafter',
           icon: 'mdi-calendar-range',
           key,

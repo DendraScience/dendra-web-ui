@@ -12,9 +12,6 @@ async function getBatteryVoltageDatastreamId(stationId) {
     station_id: stationId,
     '$and[0][terms_info.class_tags]': 'ds_Medium_Battery',
     '$and[1][terms_info.class_tags]': 'ds_Variable_Voltage',
-    // HACK: Not pretty - the metadata should never require this!
-    // FIX: Find another way
-    'datapoints_config.params.query.db[$exists]': true,
     $limit: 1,
     '$select[]': '_id',
     '$sort[terms_info.class_keys]': 1

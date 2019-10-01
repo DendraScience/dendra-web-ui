@@ -9,19 +9,25 @@
           label="From date"
         ></v-checkbox>
 
-        <v-date-picker
-          v-model="value.from"
-          :disabled="fromDisabled"
-          :color="fromDisabled ? 'grey lighten-4' : 'success'"
-          no-title
-        ></v-date-picker>
+        <ValidationProvider
+          :rules="{
+            required: value.fromEnabled
+          }"
+        >
+          <v-date-picker
+            v-model="value.from"
+            :disabled="fromDisabled"
+            :color="fromDisabled ? 'grey lighten-4' : 'success'"
+            no-title
+          ></v-date-picker>
+        </ValidationProvider>
 
         <ValidationProvider
           v-if="showTime"
           v-slot="{ errors }"
           name="from time"
           :rules="{
-            moment_format: $dateFormats.hm12,
+            time_format: timeFormat,
             required: value.fromEnabled
           }"
         >
@@ -47,19 +53,25 @@
           label="To date"
         ></v-checkbox>
 
-        <v-date-picker
-          v-model="value.to"
-          :disabled="toDisabled"
-          :color="toDisabled ? 'grey lighten-4' : 'error'"
-          no-title
-        ></v-date-picker>
+        <ValidationProvider
+          :rules="{
+            required: value.toEnabled
+          }"
+        >
+          <v-date-picker
+            v-model="value.to"
+            :disabled="toDisabled"
+            :color="toDisabled ? 'grey lighten-4' : 'error'"
+            no-title
+          ></v-date-picker>
+        </ValidationProvider>
 
         <ValidationProvider
           v-if="showTime"
           v-slot="{ errors }"
           name="to time"
           :rules="{
-            moment_format: $dateFormats.hm12,
+            time_format: timeFormat,
             required: value.toEnabled
           }"
         >
@@ -97,6 +109,7 @@ export default {
     hideTo: { default: false, type: Boolean },
     nullable: { default: false, type: Boolean },
     showTime: { default: false, type: Boolean },
+    timeFormat: { default: 'hm12', type: String },
     value: { type: Object, required: true }
   },
 

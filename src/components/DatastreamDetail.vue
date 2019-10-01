@@ -72,7 +72,6 @@
                     :error-messages="errors"
                     :readonly="!editing"
                     auto-grow
-                    data-vv-name="description"
                     label="Description"
                   ></v-textarea>
                 </ValidationProvider>
@@ -120,6 +119,17 @@
           :editing="editing"
           :value="value"
           @add="addDatapointsConfig"
+          @edit="editDatapointsConfig"
+          @remove="removeDatapointsConfig"
+        />
+      </v-flex>
+
+      <v-flex>
+        <datastream-detail-derived
+          :editing="editing"
+          :value="value"
+          @add="addDerived"
+          @remove="removeDerived"
         />
       </v-flex>
 
@@ -165,6 +175,43 @@
       </template>
     </detail-dialog>
 
+    <v-dialog
+      v-model="datastreamDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="datastreamDialog = false">
+            <v-icon>close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Select derived datastreams</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="datastreamDialogCommit">OK</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <datastream-search :org="org" show-disabled>
+          <template v-slot:select="{ item }">
+            <v-icon
+              color="primary"
+              @click="
+                incrementQuantity({
+                  id: item._id,
+                  max: 1
+                })
+              "
+              >{{
+                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+              }}</v-icon
+            >
+          </template>
+        </datastream-search>
+      </v-card>
+    </v-dialog>
+
     <detail-dialog ref="termsDialog" v-model="terms" @commit="commitTerms">
       <template v-slot:title
         >Specify terms</template
@@ -174,12 +221,21 @@
       </template>
     </detail-dialog>
 
-    <detail-dialog ref="datapointsConfigDialog" v-model="datapointsConfig">
+    <detail-dialog
+      ref="datapointsConfigDialog"
+      v-model="datapointsConfig"
+      @commit="commitDatapointsConfig"
+    >
       <template v-slot:title
         >Specify configuration</template
       >
       <template>
-        <datapoints-config-fields v-model="datapointsConfig" />
+        <datapoints-config-fields
+          v-model="datapointsConfig"
+          :date-range-resolved="configDateRangeResolved"
+          :params-resolved="configParamsResolved"
+          :path-items="configPathItems"
+        />
       </template>
     </detail-dialog>
 
@@ -212,6 +268,8 @@
 </template>
 
 <script>
+import _union from 'lodash/union'
+import { mapGetters, mapMutations } from 'vuex'
 import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import attribute from '@/mixins/attribute'
@@ -222,6 +280,8 @@ import terms from '@/mixins/terms'
 import AccessLevelFields from '@/components/AccessLevelFields'
 import AttributeFields from '@/components/AttributeFields'
 import DatapointsConfigFields from '@/components/DatapointsConfigFields'
+import DatastreamDetailDerived from '@/components/DatastreamDetailDerived'
+import DatastreamSearch from '@/components/DatastreamSearch'
 import DetailAccessLevels from '@/components/DetailAccessLevels'
 import DetailAttributes from '@/components/DetailAttributes'
 import DetailDatapointsConfig from '@/components/DetailDatapointsConfig'
@@ -241,6 +301,8 @@ export default {
     AccessLevelFields,
     AttributeFields,
     DatapointsConfigFields,
+    DatastreamDetailDerived,
+    DatastreamSearch,
     DetailAccessLevels,
     DetailAttributes,
     DetailDatapointsConfig,
@@ -266,6 +328,8 @@ export default {
   },
 
   data: () => ({
+    datastreamDialog: false,
+
     member: {
       roles: [
         {
@@ -280,8 +344,97 @@ export default {
       ]
     },
 
+    configPathItems: [
+      {
+        spec: {
+          required: [
+            'query.api',
+            'query.db',
+            'query.fc',
+            'query.sc',
+            'query.coalesce',
+            'query.utc_offset'
+          ],
+          snippet: {
+            query: {
+              api: 'org',
+              db: 'station_name',
+              fc: 'source_tenmin',
+              sc: '"time", "Field_Name"',
+              utc_offset: -28800,
+              coalesce: false
+            }
+          }
+        },
+        text: 'Influx SELECT',
+        value: '/influx/select'
+      },
+      {
+        spec: {
+          required: ['query.datastream_id', 'query.time_adjust'],
+          snippet: {
+            query: {
+              datastream_id: 1234,
+              time_adjust: -28800
+            }
+          }
+        },
+        text: 'Legacy datavalues2',
+        value: '/legacy/datavalues2'
+      },
+      {
+        spec: {
+          required: ['query.datastream_id', 'query.time_adjust'],
+          snippet: {
+            query: {
+              datastream_id: 1234,
+              time_adjust: -28800
+            }
+          }
+        },
+        text: 'Legacy datavalues-ucnrs',
+        value: '/legacy/datavalues-ucnrs'
+      }
+    ],
     sourceTypeItems: ['sensor'],
     stateItems: ['pending', 'ready']
-  })
+  }),
+
+  computed: {
+    ...mapGetters({
+      cartCount: 'cart/count',
+      cartIds: 'cart/ids'
+    })
+  },
+
+  methods: {
+    ...mapMutations({
+      incrementQuantity: 'cart/incrementQuantity',
+      resetCart: 'cart/reset'
+    }),
+
+    addDerived(item) {
+      this.resetCart()
+
+      this.datastreamDialog = true
+    },
+
+    removeDerived(item) {
+      const key = 'derived_from_datastream_ids'
+      const ids = this.value[key]
+
+      this.$set(this.value, key, ids.filter(id => id !== item.id))
+    },
+
+    datastreamDialogCommit() {
+      this.$set(
+        this.value,
+        'derived_from_datastream_ids',
+        _union(this.value.derived_from_datastream_ids, this.cartIds)
+      )
+
+      this.datastreamDialog = false
+    }
+  }
 }
 </script>

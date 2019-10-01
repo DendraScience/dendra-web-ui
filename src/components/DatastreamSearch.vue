@@ -132,7 +132,9 @@
                   }
                 }"
                 >{{ item.station_lookup.name }}</nuxt-link
-              ><span v-else>{{ item.station_lookup.name }}</span>
+              ><span v-else-if="item.station_lookup">{{
+                item.station_lookup.name
+              }}</span>
             </template>
 
             <template v-slot:item.name="{ item }">

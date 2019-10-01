@@ -3,13 +3,16 @@ import _reduce from 'lodash/reduce'
 
 const arrays = [
   'actions',
+  'datapoints_config',
   'datastream_ids',
+  'derived_from_datastream_ids',
   'external_links',
   'intervals',
   'involved_parties',
   'station_ids'
 ]
 const fields = [
+  'derivation_description',
   'description',
   'full_name',
   'is_active',

@@ -1,14 +1,8 @@
 <template>
   <v-dialog v-model="isTokenExpired" max-width="500" persistent>
-    <validation-provider
-      ref="passwordProvider"
-      v-slot="{ errors, invalid }"
-      :rules="'required|min:6|max:100'"
-      name="password"
-      slim
-    >
-      <form @submit.prevent="submit">
-        <v-card>
+    <form @submit.prevent="submit">
+      <v-card>
+        <ValidationObserver ref="observer" v-slot="{ invalid }">
           <v-card-title class="headline grey lighten-4 mb-4"
             >Session expired</v-card-title
           >
@@ -29,16 +23,21 @@
                   solo
                 ></v-text-field>
 
-                <v-text-field
-                  v-model.trim="password"
-                  :error-messages="errors"
-                  autofocus
-                  data-vv-name="password"
-                  label="Password"
-                  required
-                  solo
-                  type="password"
-                ></v-text-field>
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  :rules="'required|min:6|max:100'"
+                  name="password"
+                >
+                  <v-text-field
+                    v-model.trim="password"
+                    :error-messages="errors"
+                    autofocus
+                    label="Password"
+                    required
+                    solo
+                    type="password"
+                  ></v-text-field>
+                </ValidationProvider>
               </v-flex>
             </v-layout>
           </v-container>
@@ -51,18 +50,19 @@
               >Verify</v-btn
             >
           </v-card-actions>
-        </v-card>
-      </form>
-    </validation-provider>
+        </ValidationObserver>
+      </v-card>
+    </form>
   </v-dialog>
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { mapActions, mapState } from 'vuex'
 
 export default {
   components: {
+    ValidationObserver,
     ValidationProvider
   },
 
@@ -92,8 +92,9 @@ export default {
       if (newValue) {
         this.password = null
 
-        const provider = this.$refs.passwordProvider
-        if (provider) provider.reset()
+        requestAnimationFrame(() => {
+          this.$refs.observer.reset()
+        })
       }
     }
   },

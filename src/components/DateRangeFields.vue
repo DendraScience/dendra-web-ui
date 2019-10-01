@@ -5,7 +5,7 @@
         <ValidationProvider
           v-slot="{ errors }"
           name="from date"
-          :rules="{ moment_format: $dateFormats.y4md, required: true }"
+          :rules="{ date_format: dateFormat, required: true }"
         >
           <v-text-field
             v-model="value.from"
@@ -23,7 +23,7 @@
         <ValidationProvider
           v-slot="{ errors }"
           name="to date"
-          :rules="{ moment_format: $dateFormats.y4md, required: true }"
+          :rules="{ date_format: dateFormat, required: true }"
         >
           <v-text-field
             v-model="value.to"
@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { ValidationProvider } from 'vee-validate'
 import DateRangePicker from '@/components/DateRangePicker'
+import { newDateRange, updateDateRange } from '@/lib/date'
 
 export default {
   components: {
@@ -69,16 +69,13 @@ export default {
   },
 
   props: {
+    dateFormat: { default: 'y4md', type: String },
     value: { type: Object, required: true }
   },
 
   data: () => ({
     dialog: false,
-
-    dateRange: {
-      from: null,
-      to: null
-    }
+    dateRange: newDateRange()
   }),
 
   watch: {
@@ -95,14 +92,7 @@ export default {
 
   methods: {
     showDialog() {
-      const { dateRange, value } = this
-      const from = value.from && moment(value.from)
-      const to = value.to && moment(value.to)
-
-      dateRange.from =
-        from && from.isValid() ? from.format(this.$dateFormats.y4md) : null
-      dateRange.to =
-        to && to.isValid() ? to.format(this.$dateFormats.y4md) : null
+      updateDateRange(this.dateRange, this.value)
 
       this.dialog = true
     }

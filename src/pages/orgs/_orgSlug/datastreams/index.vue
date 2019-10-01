@@ -309,6 +309,7 @@ import _forEach from 'lodash/forEach'
 import _get from 'lodash/get'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { exportItems } from '@/lib/chart-export'
+import { dateFormats } from '@/lib/date'
 import ChartDatastreamCart from '@/components/ChartDatastreamCart'
 import DatastreamChart from '@/components/DatastreamChart'
 import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
@@ -449,10 +450,10 @@ export default {
     dateRange.from = moment()
       .startOf('d')
       .subtract(14, 'd')
-      .format(this.$dateFormats.y4md)
+      .format(dateFormats.y4md)
     dateRange.to = moment()
       .endOf('d')
-      .format(this.$dateFormats.y4md)
+      .format(dateFormats.y4md)
   },
 
   methods: {
@@ -507,10 +508,10 @@ export default {
         queries: [],
         startTime: moment(
           this.dateRange.from,
-          this.$dateFormats.y4md,
+          dateFormats.y4md,
           true
         ).toISOString(),
-        untilTime: moment(this.dateRange.to, this.$dateFormats.y4md, true)
+        untilTime: moment(this.dateRange.to, dateFormats.y4md, true)
           .startOf('d')
           .add(1, 'd')
           .toISOString()

@@ -61,7 +61,7 @@
       </v-flex>
 
       <v-flex>
-        <annotation-detail-intervals
+        <detail-intervals
           :editing="editing"
           :value="value"
           @add="addInterval"
@@ -193,94 +193,109 @@
       </template>
     </detail-dialog>
 
-    <v-dialog v-model="momentDialog" max-width="380">
-      <v-card>
-        <v-card-title class="headline grey lighten-4 mb-4"
-          >Specify moment</v-card-title
+    <detail-dialog
+      ref="momentIntervalDialog"
+      v-model="momentInterval"
+      max-width="380"
+      @commit="commitMomentInterval"
+    >
+      <template v-slot:title
+        >Specify moment</template
+      >
+      <template>
+        <ValidationProvider
+          :rules="{
+            date_range_resolved: momentIntervalResolved
+          }"
         >
-
-        <date-range-picker v-model="dateRange" hide-to show-time>
-          <template v-slot:footer>
-            <span class="font-weight-bold">
-              <span v-if="!momentDialogValid">
-                Please specify a single point in time.
+          <date-range-picker
+            v-model="momentInterval.dateRange"
+            hide-to
+            show-time
+          >
+            <template v-slot:footer>
+              <span class="font-weight-bold">
+                <span v-if="!momentIntervalResolved.valid">
+                  Please specify a single point in time
+                </span>
+                <span v-else-if="momentIntervalResolved.from">
+                  Occurred at
+                  {{
+                    momentIntervalResolved.from | moment('', ['format', 'lll'])
+                  }}</span
+                >
               </span>
-              <span v-else-if="dateRangeResolved.from">
-                Occurred at
-                {{
-                  dateRangeResolved.from | moment('', ['format', 'lll'])
-                }}</span
-              >
-            </span>
-          </template>
-        </date-range-picker>
+            </template>
+          </date-range-picker>
+        </ValidationProvider>
+      </template>
+    </detail-dialog>
 
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            :disabled="!momentDialogValid"
-            color="primary"
-            text
-            @click="momentDialogCommit"
-            >OK</v-btn
-          >
-          <v-btn color="primary" text @click="momentDialog = false"
-            >Cancel</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="rangeDialog" max-width="680">
-      <v-card>
-        <v-card-title class="headline grey lighten-4"
-          >Specify range</v-card-title
+    <detail-dialog
+      ref="rangeIntervalDialog"
+      v-model="rangeInterval"
+      @commit="commitRangeInterval"
+    >
+      <template v-slot:title
+        >Specify range</template
+      >
+      <template>
+        <ValidationProvider
+          :rules="{
+            date_range_resolved: rangeIntervalResolved
+          }"
         >
-
-        <date-range-picker v-model="dateRange" nullable show-time>
-          <template v-slot:footer>
-            <span class="font-weight-medium">
-              <span v-if="!rangeDialogValid">
-                Please specify a begin and end time.
+          <date-range-picker
+            v-model="rangeInterval.dateRange"
+            nullable
+            show-time
+          >
+            <template v-slot:footer>
+              <span class="font-weight-medium">
+                <span v-if="!rangeIntervalResolved.valid">
+                  Please specify a begin and end time
+                </span>
+                <span
+                  v-else-if="
+                    rangeIntervalResolved.from && rangeIntervalResolved.to
+                  "
+                >
+                  Begins at
+                  {{
+                    rangeIntervalResolved.from | moment('', ['format', 'lll'])
+                  }}
+                  and ends before
+                  {{
+                    rangeIntervalResolved.to | moment('', ['format', 'lll'])
+                  }}</span
+                >
+                <span
+                  v-else-if="
+                    !rangeIntervalResolved.from && rangeIntervalResolved.to
+                  "
+                >
+                  Begins with first datapoint and ends before
+                  {{
+                    rangeIntervalResolved.to | moment('', ['format', 'lll'])
+                  }}</span
+                >
+                <span
+                  v-else-if="
+                    rangeIntervalResolved.from && !rangeIntervalResolved.to
+                  "
+                >
+                  Begins at
+                  {{
+                    rangeIntervalResolved.from | moment('', ['format', 'lll'])
+                  }}
+                  and affects all datapoints thereafter</span
+                >
               </span>
-              <span v-else-if="dateRangeResolved.from && dateRangeResolved.to">
-                Begins at
-                {{ dateRangeResolved.from | moment('', ['format', 'lll']) }} and
-                ends before
-                {{ dateRangeResolved.to | moment('', ['format', 'lll']) }}</span
-              >
-              <span v-else-if="!dateRangeResolved.from && dateRangeResolved.to">
-                Begins with first datapoint and ends before
-                {{ dateRangeResolved.to | moment('', ['format', 'lll']) }}</span
-              >
-              <span v-else-if="dateRangeResolved.from && !dateRangeResolved.to">
-                Begins at
-                {{ dateRangeResolved.from | moment('', ['format', 'lll']) }} and
-                affects all datapoints thereafter</span
-              >
-            </span>
-          </template>
-        </date-range-picker>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            :disabled="!rangeDialogValid"
-            color="primary"
-            text
-            @click="rangeDialogCommit"
-            >OK</v-btn
-          >
-          <v-btn color="primary" text @click="rangeDialog = false"
-            >Cancel</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+            </template>
+          </date-range-picker>
+        </ValidationProvider>
+      </template>
+    </detail-dialog>
 
     <v-dialog
       v-model="stationDialog"
@@ -322,18 +337,18 @@
 </template>
 
 <script>
-import moment from 'moment'
 import _union from 'lodash/union'
 import { mapGetters, mapMutations } from 'vuex'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import interval from '@/mixins/interval'
 import member from '@/mixins/member'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
-import AnnotationDetailIntervals from '@/components/AnnotationDetailIntervals'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangePicker from '@/components/DateRangePicker'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import DetailIntervals from '@/components/DetailIntervals'
 import DetailMembers from '@/components/DetailMembers'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
@@ -345,11 +360,11 @@ export default {
   components: {
     AnnotationDetailActions,
     AnnotationDetailApplies,
-    AnnotationDetailIntervals,
     DatastreamSearch,
     DateRangePicker,
     DetailDialog,
     DetailExternalRefs,
+    DetailIntervals,
     DetailMembers,
     MemberRoleFields,
     StandardAudit,
@@ -360,7 +375,7 @@ export default {
     ValidationProvider
   },
 
-  mixins: [member],
+  mixins: [interval, member],
 
   props: {
     editing: { default: false, type: Boolean },
@@ -371,22 +386,9 @@ export default {
   data: () => ({
     datastreamDialog: false,
     flagDialog: false,
-    momentDialog: false,
-    rangeDialog: false,
     stationDialog: false,
 
     flag: null,
-
-    intervalKey: -1,
-
-    dateRange: {
-      from: null,
-      fromEnabled: true,
-      fromTime: null,
-      to: null,
-      toEnabled: true,
-      toTime: null
-    },
 
     member: {
       roles: [
@@ -406,64 +408,7 @@ export default {
     ...mapGetters({
       cartCount: 'cart/count',
       cartIds: 'cart/ids'
-    }),
-
-    dateRangeResolved() {
-      const { dateRange } = this
-
-      const resolved = { from: null, to: null }
-
-      if (dateRange.fromEnabled) {
-        const date = moment(dateRange.from, this.$dateFormats.y4md, true)
-        const time = moment(dateRange.fromTime, this.$dateFormats.hm12, true)
-
-        if (date.isValid() && time.isValid()) {
-          resolved.from = moment(
-            `${date.format('YYYYMMDD')} ${time.format('HHmm')}`,
-            'YYYYMMDD HHmm',
-            true
-          ).toISOString()
-        } else {
-          resolved.invalid = true
-        }
-      }
-
-      if (dateRange.toEnabled) {
-        const date = moment(dateRange.to, this.$dateFormats.y4md, true)
-        const time = moment(dateRange.toTime, this.$dateFormats.hm12, true)
-
-        if (date.isValid() && time.isValid()) {
-          resolved.to = moment(
-            `${date.format('YYYYMMDD')} ${time.format('HHmm')}`,
-            'YYYYMMDD HHmm',
-            true
-          ).toISOString()
-        } else {
-          resolved.invalid = true
-        }
-      }
-
-      return resolved
-    },
-
-    momentDialogValid() {
-      const { dateRangeResolved } = this
-
-      if (dateRangeResolved.invalid) return false
-      return true
-    },
-
-    rangeDialogValid() {
-      const { dateRangeResolved } = this
-
-      if (dateRangeResolved.invalid) return false
-      if (dateRangeResolved.from && dateRangeResolved.to) {
-        return moment(dateRangeResolved.from).isBefore(
-          moment(dateRangeResolved.to)
-        )
-      }
-      return true
-    }
+    })
   },
 
   methods: {
@@ -498,49 +443,6 @@ export default {
       this[`${item.target}Dialog`] = true
     },
 
-    addInterval(item) {
-      if (!item.target) return
-
-      const date = moment()
-      const time = moment('0000', 'HHmm', true)
-
-      this.intervalKey = -1
-      this.dateRange = {
-        from: date.format(this.$dateFormats.y4md),
-        fromEnabled: true,
-        fromTime: time.format(this.$dateFormats.hm12),
-        to: date.add(1, 'd').format(this.$dateFormats.y4md),
-        toEnabled: true,
-        toTime: time.format(this.$dateFormats.hm12)
-      }
-
-      this[`${item.target}Dialog`] = true
-    },
-
-    editInterval(item) {
-      if (!item.target) return
-
-      this.intervalKey = item.key
-      this.dateRange = {
-        from: item.beginsAt
-          ? item.beginsAt.format(this.$dateFormats.y4md)
-          : null,
-        fromEnabled: !!item.beginsAt,
-        fromTime: item.beginsAt
-          ? item.beginsAt.format(this.$dateFormats.hm12)
-          : null,
-        to: item.endsBefore
-          ? item.endsBefore.format(this.$dateFormats.y4md)
-          : null,
-        toEnabled: !!item.endsBefore,
-        toTime: item.endsBefore
-          ? item.endsBefore.format(this.$dateFormats.hm12)
-          : null
-      }
-
-      this[`${item.target}Dialog`] = true
-    },
-
     removeAction(item) {
       this.value.actions = this.value.actions.filter(
         (action, index) => index !== item.key
@@ -554,12 +456,6 @@ export default {
       const ids = this.value[key]
 
       this.$set(this.value, key, ids.filter(id => id !== item.id))
-    },
-
-    removeInterval(item) {
-      this.value.intervals = this.value.intervals.filter(
-        (interval, index) => index !== item.key
-      )
     },
 
     datastreamDialogCommit() {
@@ -584,44 +480,6 @@ export default {
       }
 
       this.flagDialog = false
-    },
-
-    momentDialogCommit() {
-      const { dateRangeResolved, intervalKey, value } = this
-      const newInterval = {}
-
-      if (dateRangeResolved.from) {
-        newInterval.begins_at = dateRangeResolved.from
-        newInterval.ends_before = moment(dateRangeResolved.from).add(1, 'ms')
-      }
-
-      if (intervalKey > -1) {
-        value.intervals = value.intervals.map((interval, index) =>
-          index === intervalKey ? newInterval : interval
-        )
-      } else {
-        value.intervals.push(newInterval)
-      }
-
-      this.momentDialog = false
-    },
-
-    rangeDialogCommit() {
-      const { dateRangeResolved, intervalKey, value } = this
-      const newInterval = {}
-
-      if (dateRangeResolved.from) newInterval.begins_at = dateRangeResolved.from
-      if (dateRangeResolved.to) newInterval.ends_before = dateRangeResolved.to
-
-      if (intervalKey > -1) {
-        value.intervals = value.intervals.map((interval, index) =>
-          index === intervalKey ? newInterval : interval
-        )
-      } else {
-        value.intervals.push(newInterval)
-      }
-
-      this.rangeDialog = false
     },
 
     stationDialogCommit() {
