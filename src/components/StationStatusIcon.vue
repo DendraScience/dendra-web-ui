@@ -24,8 +24,8 @@ export default {
 
       const threshold =
         ((station &&
-          station.general_config &&
-          station.general_config.stationOfflineThreshold) ||
+          station.general_config_resolved &&
+          station.general_config_resolved.station_offline_threshold) ||
           DEFAULT_THRESHOLD) | 0
       if (currentTime - lastSeenTime > threshold * 60000) return 2
 

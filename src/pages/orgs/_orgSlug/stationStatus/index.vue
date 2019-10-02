@@ -83,6 +83,11 @@
                         />
 
                         <a
+                          v-if="
+                            station.general_config_resolved &&
+                              station.general_config_resolved
+                                .station_status_links_to_old_dashboard
+                          "
                           :href="
                             'https://' +
                               org.slug +
@@ -92,7 +97,9 @@
                           class="black--text station-link"
                           target="_blank"
                           >{{ station.name }}</a
-                        >
+                        ><span v-else class="black--text">{{
+                          station.name
+                        }}</span>
                       </div>
                     </v-expansion-panel-header>
 
@@ -228,7 +235,7 @@ export default {
         }
       ],
 
-      timerInterval: 150000,
+      timerInterval: 300000,
 
       viewToggle: 0
     }
@@ -267,7 +274,7 @@ export default {
         $limit: 2000, // TODO: Deal with this
         $select: [
           '_id',
-          'general_config',
+          'general_config_resolved',
           'geo',
           'media',
           'name',
