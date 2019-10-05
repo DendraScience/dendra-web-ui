@@ -397,6 +397,19 @@ export default {
   watch: {
     queryFaceted() {
       this.tabIndex = 0
+    },
+
+    tabIndex(newValue) {
+      const route = this.$route
+      let path = route.path
+
+      // Follow SPA best practices -- virtual pageviews
+      // SEE: https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
+      if (route.query.faceted) path = `${path}/faceted`
+      if (newValue === 0) path = `${path}/view`
+      else if (newValue === 1) path = `${path}/chart`
+
+      this.$tracker.pageView({ name: route.name, path })
     }
   },
 

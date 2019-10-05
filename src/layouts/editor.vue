@@ -104,7 +104,14 @@ export default {
 
   watch: {
     editing(newValue) {
-      if (newValue) this.$vuetify.goTo(0)
+      if (newValue) {
+        this.$vuetify.goTo(0)
+
+        // Follow SPA best practices -- virtual pageviews
+        // SEE: https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
+        const route = this.$route
+        this.$tracker.pageView({ name: route.name, path: `${route.path}/edit` })
+      }
     }
   },
 

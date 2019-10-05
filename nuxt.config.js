@@ -1,5 +1,12 @@
 import colors from 'vuetify/lib/util/colors'
 
+const title = 'Dendra'
+const description =
+  'Dendra is a cyberinfrastructure project for real-time sensor data storage, retrieval, management, and curation.'
+
+const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
+const googleTrackingId = process.env.GOOGLE_TRACKING_ID
+
 module.exports = {
   /**
    * Build configuration
@@ -44,24 +51,22 @@ module.exports = {
 
     datapointsMax: 288 * 365 * 10, // 10 years of 5 minute data
 
-    googleMapsAPIKey:
-      process.env.GOOGLE_MAPS_API_KEY ||
-      'AIzaSyC8zfohXmxg5VzAg9G2rCypfKmU-KpOv6k'
+    googleMapsAPIKey,
+    googleTrackingId
   },
 
   /**
    * Headers of the page
    */
   head: {
-    title: 'Dendra',
+    title,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content:
-          'Dendra is a cyberinfrastructure project for real-time sensor data storage, retrieval, management, and curation.'
+        content: description
       }
     ],
     link: [
@@ -143,6 +148,23 @@ module.exports = {
         href:
           'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'
       }
+    ],
+    script: [
+      // For Global Site Tag (gtag.js) - Google Analytics
+      { src: '/vendor/js/gtag.js', type: 'text/javascript' },
+      {
+        src: `https://www.googletagmanager.com/gtag/js?id=${googleTrackingId}`,
+        type: 'text/javascript',
+        async: 'async'
+      }
+
+      // For Google Tag Manager (gtm.js)
+      // { src: '/vendor/js/gtm.js', type: 'text/javascript' },
+      // {
+      //   src: `https://www.googletagmanager.com/gtm.js?id=${googleTrackingId}`,
+      //   type: 'text/javascript',
+      //   async: 'async'
+      // }
     ]
   },
 
@@ -162,6 +184,7 @@ module.exports = {
    */
   plugins: [
     { src: '~/plugins/logger', ssr: false },
+    { src: '~/plugins/tracker.js', ssr: false },
     { src: '~/plugins/route', ssr: false },
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },

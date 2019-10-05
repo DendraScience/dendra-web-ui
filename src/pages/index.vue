@@ -50,7 +50,7 @@
 
             <p>
               Dendra is an open source project. All code can be found on
-              <a href="http://github.com/dendrascience" target="_blank"
+              <a href="https://github.com/DendraScience" target="_blank"
                 >GitHub</a
               >. Please feel free to report any bugs, feature requests, or
               issues in the
