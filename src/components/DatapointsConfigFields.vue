@@ -12,7 +12,7 @@
 
           <v-tab-item>
             <v-card flat>
-              <v-container fluid>
+              <v-container fluid pt-4>
                 <v-layout column>
                   <v-flex>
                     <ValidationProvider name="path" rules="required">
@@ -38,8 +38,8 @@
                       >Make Pretty</v-btn
                     >
 
-                    <v-btn class="mb-2" @click="pasteSnippet"
-                      >Paste Snippet</v-btn
+                    <v-btn class="mb-2" @click="pasteSample"
+                      >Paste Sample</v-btn
                     >
                   </v-flex>
 
@@ -47,19 +47,19 @@
                     <ValidationProvider
                       name="params"
                       :rules="{
-                        params_resolved: paramsResolved
+                        resolved_valid: paramsResolved
                       }"
                     >
                       <v-textarea
-                        id="datapointsConfigFieldsParamsTextarea"
+                        id="textarea1571758369645"
                         v-model.trim="value.params"
+                        :error-messages="paramsResolved.error"
                         background-color="grey darken-4"
                         dark
-                        :error-messages="paramsResolved.error"
+                        label="Config params"
                         rows="16"
-                        class="params-textarea"
                         spellcheck="false"
-                        outlined
+                        filled
                       ></v-textarea>
                     </ValidationProvider>
                   </v-flex>
@@ -72,7 +72,7 @@
             <v-card flat>
               <ValidationProvider
                 :rules="{
-                  date_range_resolved: dateRangeResolved
+                  resolved_valid: dateRangeResolved
                 }"
               >
                 <date-range-picker v-model="value.dateRange" nullable show-time>
@@ -135,6 +135,7 @@
 <script>
 import { ValidationProvider } from 'vee-validate'
 import DateRangePicker from '@/components/DateRangePicker'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
   components: {
@@ -151,22 +152,21 @@ export default {
 
   methods: {
     makePretty() {
-      this.value.params = JSON.stringify(this.paramsResolved.data, null, 2)
+      this.value.params = jsonFormat(this.paramsResolved.data)
     },
 
-    pasteSnippet(item) {
+    pasteSample(item) {
       const { value } = this
       const pathItem = this.pathItems.find(item => item.value === value.path)
 
-      if (pathItem)
-        this.value.params = JSON.stringify(pathItem.spec.snippet, null, 2)
+      if (pathItem) this.value.params = jsonFormat(pathItem.spec.sample)
     }
   }
 }
 </script>
 
 <style>
-#datapointsConfigFieldsParamsTextarea {
+#textarea1571758369645 {
   font-family: monospace !important;
 }
 </style>

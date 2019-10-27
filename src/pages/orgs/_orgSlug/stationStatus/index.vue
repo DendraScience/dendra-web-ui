@@ -256,7 +256,7 @@ export default {
       return moment
         .utc(this.getTime('utc').now)
         .subtract(48, 'h')
-        .toISOString()
+        .valueOf()
     },
 
     stationsFetchQuery() {

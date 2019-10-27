@@ -20,8 +20,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.description="{ item }" class="py-4">
-              <span v-if="item.label" class="mr-1">{{ item.label }}</span>
+            <template v-slot:item.value="{ item }">
               <v-chip
                 v-for="val in item.values"
                 :key="val"
@@ -29,7 +28,7 @@
                 label
                 >{{ val }}</v-chip
               >
-              <pre v-if="item.custom">{{ item.custom }}</pre>
+              <pre-block :value="item.code" />
             </template>
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
@@ -75,9 +74,15 @@
 </template>
 
 <script>
+import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
+  components: {
+    PreBlock
+  },
+
   mixins: [itemEditing],
 
   props: {
@@ -88,13 +93,25 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'block',
+        icon: 'mdi-dice-multiple',
+        subtitle: 'Datastreams will be attributed with a value.',
+        target: 'attrib',
+        title: 'Attrib'
+      },
+      {
+        icon: 'mdi-calculator',
+        subtitle: 'Datapoints will be evaluated with an expression.',
+        target: 'evaluate',
+        title: 'Evaluate'
+      },
+      {
+        icon: 'mdi-cancel',
         subtitle: 'Datapoints will be excluded from downloads and graphs.',
         target: 'exclude',
         title: 'Exclude'
       },
       {
-        icon: 'flag',
+        icon: 'mdi-flag',
         subtitle: 'Datapoints will marked with a textual flag.',
         target: 'flag',
         title: 'Flag'
@@ -111,7 +128,13 @@ export default {
         align: 'left',
         text: 'Description',
         value: 'description',
-        width: '60%'
+        width: '20%'
+      },
+      {
+        align: 'left',
+        text: 'Value',
+        value: 'value',
+        width: '40%'
       },
       {
         align: 'right',
@@ -127,26 +150,46 @@ export default {
 
     items() {
       return this.actions.map((item, key) => {
+        if (item.attrib !== undefined) {
+          return {
+            code: jsonFormat(item.attrib),
+            description: 'Attrib datastreams',
+            icon: 'mdi-dice-multiple',
+            key
+          }
+        }
+
+        if (item.evaluate !== undefined) {
+          return {
+            code: item.evaluate,
+            description: 'Evaluate datapoints',
+            icon: 'mdi-calculator',
+            key
+          }
+        }
+
         if (item.exclude !== undefined) {
           return {
-            icon: 'block',
-            key,
-            label: 'Exclude datapoints'
+            description: 'Exclude datapoints',
+            icon: 'mdi-cancel',
+            key
           }
         }
 
         if (item.flag !== undefined) {
           return {
-            icon: 'flag',
+            description: 'Flag datapoints',
+            icon: 'mdi-flag',
             key,
-            label: 'Flag datapoints',
             values: item.flag
           }
         }
 
         return {
-          custom: JSON.stringify(item),
-          icon: 'code',
+          code: jsonFormat(item),
+          custom: true,
+          description: 'Custom action',
+          icon: 'mdi-code-tags',
           key
         }
       })

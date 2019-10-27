@@ -355,7 +355,7 @@ export default {
             'query.coalesce',
             'query.utc_offset'
           ],
-          snippet: {
+          sample: {
             query: {
               api: 'org',
               db: 'station_name',
@@ -372,7 +372,7 @@ export default {
       {
         spec: {
           required: ['query.datastream_id', 'query.time_adjust'],
-          snippet: {
+          sample: {
             query: {
               datastream_id: 1234,
               time_adjust: -28800
@@ -385,7 +385,7 @@ export default {
       {
         spec: {
           required: ['query.datastream_id', 'query.time_adjust'],
-          snippet: {
+          sample: {
             query: {
               datastream_id: 1234,
               time_adjust: -28800
@@ -396,7 +396,7 @@ export default {
         value: '/legacy/datavalues-ucnrs'
       }
     ],
-    sourceTypeItems: ['sensor'],
+    sourceTypeItems: ['datastream', 'sensor'],
     stateItems: ['pending', 'ready']
   }),
 

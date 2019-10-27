@@ -10,8 +10,9 @@ async function getBatteryVoltageDatastreamId(stationId) {
   const params = {
     is_enabled: true,
     station_id: stationId,
-    '$and[0][terms_info.class_tags]': 'ds_Medium_Battery',
-    '$and[1][terms_info.class_tags]': 'ds_Variable_Voltage',
+    '$and[0][terms_info.class_tags]': 'ds_Function_Status',
+    '$and[1][terms_info.class_tags]': 'ds_Medium_Battery',
+    '$and[2][terms_info.class_tags]': 'ds_Variable_Voltage',
     $limit: 1,
     '$select[]': '_id',
     '$sort[terms_info.class_keys]': 1

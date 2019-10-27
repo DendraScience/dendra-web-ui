@@ -97,7 +97,9 @@ export default {
     datastreamsQuery() {
       return {
         _id: { $in: this.cartIds },
-        $sort: { name: 1 }
+        $sort: {
+          fullNameWithUnit: 1
+        }
       }
     }
   },

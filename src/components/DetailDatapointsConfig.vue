@@ -16,11 +16,8 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.params="{ item }" class="py-4">
-              <span v-if="$vuetify.breakpoint.xsOnly">{{
-                item.params | truncate({ length: 50 })
-              }}</span>
-              <pre v-else>{{ item.params }}</pre>
+            <template v-slot:item.params="{ item }">
+              <pre-block :value="item.params" />
             </template>
 
             <template v-slot:item.begins="{ item }" class="py-4">
@@ -73,11 +70,14 @@
 <script>
 import moment from 'moment'
 import DateChip from '@/components/DateChip'
+import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
   components: {
-    DateChip
+    DateChip,
+    PreBlock
   },
 
   mixins: [itemEditing],
@@ -139,7 +139,7 @@ export default {
       return datapointsConfig.map((item, key) => {
         const beginsAt = item.begins_at && moment.utc(item.begins_at)
         const endsBefore = item.ends_before && moment.utc(item.ends_before)
-        const params = JSON.stringify(item.params, null, 2)
+        const params = jsonFormat(item.params)
         const { connection, path } = item
 
         if (beginsAt && endsBefore) {

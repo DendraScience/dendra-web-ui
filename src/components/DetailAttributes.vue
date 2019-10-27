@@ -20,11 +20,8 @@
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.value="{ item }" class="py-4">
-              <span v-if="$vuetify.breakpoint.xsOnly">{{
-                item.value | truncate({ length: 50 })
-              }}</span>
-              <pre v-else>{{ item.value }}</pre>
+            <template v-slot:item.value="{ item }">
+              <pre-block :value="item.value" />
             </template>
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
@@ -73,9 +70,15 @@
 
 <script>
 import _sortBy from 'lodash/sortBy'
+import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
+  components: {
+    PreBlock
+  },
+
   mixins: [itemEditing],
 
   props: {
@@ -92,7 +95,7 @@ export default {
         title: 'Single value'
       },
       {
-        icon: 'mdi-dice-multiple',
+        icon: 'mdi-dice-2',
         subtitle: 'Specify a delta, range or value with unit.',
         target: 'object',
         title: 'Structured value'
@@ -138,10 +141,10 @@ export default {
 
           if (typeof item === 'object') {
             return {
-              icon: 'mdi-dice-multiple',
+              icon: 'mdi-dice-2',
               key,
               target: 'object',
-              value: JSON.stringify(item, null, 2)
+              value: jsonFormat(item)
             }
           }
 
@@ -149,7 +152,7 @@ export default {
             icon: 'mdi-dice-1',
             key,
             target: 'value',
-            value: JSON.stringify(item)
+            value: jsonFormat(item)
           }
         }),
         ['key']

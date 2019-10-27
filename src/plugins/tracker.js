@@ -64,9 +64,6 @@ export default ({ app }, inject) => {
   inject('tracker', tracker)
 
   app.router.afterEach((to, from) => {
-    /* eslint-disable-next-line no-console */
-    console.log(to)
-
     // Follow SPA best practices -- virtual pageviews
     // SEE: https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
     if (to.query.faceted) {

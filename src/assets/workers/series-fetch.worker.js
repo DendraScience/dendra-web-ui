@@ -65,7 +65,7 @@ async function processFetch({ id, fetchSpec }) {
 
       self.postMessage({ id, total })
 
-      fromTime = new Date(json.data[json.data.length - 1].lt).toISOString()
+      fromTime = json.data[json.data.length - 1].lt
     }
 
     self.postMessage({ id, series: { data, index } })

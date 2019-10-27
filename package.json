@@ -22,7 +22,7 @@
     "@feathersjs/authentication-client": "^1.0.11",
     "@feathersjs/feathers": "^3.3.1",
     "@feathersjs/socketio-client": "^1.2.1",
-    "@nuxtjs/vuetify": "^1.8.6",
+    "@nuxtjs/vuetify": "^1.9.0",
     "ajv": "^6.10.2",
     "chroma-js": "^2.0.6",
     "cross-env": "^5.2.1",
@@ -32,15 +32,15 @@
     "highcharts": "^7.2.0",
     "load-google-maps-api": "^1.3.3",
     "lodash": "^4.17.15",
-    "mathjs": "^5.10.3",
+    "mathjs": "^6.2.3",
     "moment": "^2.24.0",
-    "nuxt": "^2.9.2",
+    "nuxt": "^2.10.2",
     "socket.io-client": "^2.3.0",
-    "vee-validate": "^3.0.8"
+    "vee-validate": "^3.0.11"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.2",
-    "@babel/core": "^7.6.2",
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
     "@nuxtjs/eslint-config": "^1.1.2",
     "@nuxtjs/eslint-module": "^1.1.0",
     "@vue/test-utils": "^1.0.0-beta.29",
@@ -48,7 +48,7 @@
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-nuxt": "^0.4.3",
     "eslint-plugin-prettier": "^3.1.1",
-    "nodemon": "^1.19.3",
+    "nodemon": "^1.19.4",
     "prettier": "^1.18.2",
     "worker-loader": "git+https://github.com/DendraScience/worker-loader.git#jss-hotfix"
   }

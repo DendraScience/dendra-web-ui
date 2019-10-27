@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-xs>
+  <v-container fluid grid-list-xs pt-0>
     <feathers-vuex-find
       v-slot="{ items: vocabularies }"
       :query="{

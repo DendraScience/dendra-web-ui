@@ -1,3 +1,5 @@
+import { attributeData } from '@/lib/attribute'
+
 export default {
   data: () => ({
     attribute: {
@@ -87,37 +89,11 @@ export default {
       })
     },
 
-    commitAttribute({
-      booleanValue,
-      key,
-      target,
-      textValue,
-      textValue2,
-      type,
-      unitTag
-    }) {
+    commitAttribute(commit) {
       const { value } = this
-      let data
+      const data = attributeData(commit)
 
-      if (target === 'object') {
-        data = {}
-        if (type === 'delta' || type === 'range') {
-          data[type] = [parseFloat(textValue), parseFloat(textValue2)]
-        } else if (type === 'value') {
-          data[type] = parseFloat(textValue)
-        }
-        if (unitTag) data.unit_tag = unitTag
-      } else if (target === 'value') {
-        if (type === 'boolean') {
-          data = booleanValue
-        } else if (type === 'number') {
-          data = parseFloat(textValue)
-        } else {
-          data = textValue
-        }
-      }
-
-      if (data) this.$set(value.attributes, key, data)
+      if (data) this.$set(value.attributes, commit.key, data)
 
       this.attribute.dialog = false
     },

@@ -22,11 +22,8 @@
               </v-avatar>
             </template>
 
-            <template v-slot:item.value="{ item }" class="py-4">
-              <span v-if="$vuetify.breakpoint.xsOnly">{{
-                item.value | truncate({ length: 50 })
-              }}</span>
-              <pre v-else>{{ item.value }}</pre>
+            <template v-slot:item.value="{ item }">
+              <pre-block :value="item.value" />
             </template>
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
@@ -87,9 +84,15 @@
 
 <script>
 import _sortBy from 'lodash/sortBy'
+import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
+  components: {
+    PreBlock
+  },
+
   mixins: [itemEditing],
 
   props: {
@@ -131,7 +134,7 @@ export default {
           return {
             icon: 'mdi-book-open-variant',
             key,
-            value: JSON.stringify(item, null, 2)
+            value: jsonFormat(item)
           }
         }),
         ['key']

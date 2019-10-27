@@ -34,15 +34,17 @@ export const plugins = [
   service('datastreams', {
     instanceDefaults(data, { store }) {
       return {
-        // TODO: Find a better way - optimize
-        // get unitTerm() {
-        //   const unitVocabulary = store.getters['vocabularies/get']('dt-unit')
-        //   if (!(unitVocabulary && this.terms && this.terms.dt)) return {}
-        //   const term = unitVocabulary.terms.find(
-        //     term => term.label === this.terms.dt.Unit
-        //   )
-        //   return term || {}
-        // },
+        get dtUnit() {
+          return (this.terms && this.terms.dt && this.terms.dt.Unit) || ''
+        },
+
+        get fullName() {
+          return `${this.station_lookup.name} ${this.name}`
+        },
+
+        get fullNameWithUnit() {
+          return `${this.fullName} ${this.dtUnit}`
+        },
 
         get quantitySelected() {
           return store.state.cart.quantitiesById[this._id]

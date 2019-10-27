@@ -24,21 +24,15 @@ extend('date_format', {
     return moment(value, dateFormats[key], true).isValid()
   }
 })
-extend('date_range_resolved', {
+extend('email', email)
+extend('resolved_valid', {
   params: ['resolved'],
   validate(value, { resolved }) {
     return resolved.valid
   }
 })
-extend('email', email)
 extend('max', max)
 extend('min', min)
-extend('params_resolved', {
-  params: ['resolved'],
-  validate(value, { resolved }) {
-    return resolved.valid
-  }
-})
 extend('regex', regex)
 extend('required', required)
 extend('time_format', {

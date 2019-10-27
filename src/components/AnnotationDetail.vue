@@ -132,53 +132,51 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="flagDialog" max-width="380">
-      <v-card>
-        <ValidationObserver ref="flagObserver" v-slot="{ invalid }">
-          <v-card-title class="headline grey lighten-4 mb-4"
-            >Specify flag</v-card-title
-          >
+    <detail-dialog
+      ref="attribActionDialog"
+      v-model="attribAction"
+      @commit="commitAttribAction"
+    >
+      <template v-slot:title
+        >Specify attribute</template
+      >
+      <template>
+        <attrib-action-fields v-model="attribAction" />
+      </template>
+    </detail-dialog>
 
-          <v-container fluid>
-            <v-layout column>
-              <v-flex>
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  :rules="{ alpha_num: true, max: 20, required: true }"
-                  name="flag"
-                >
-                  <v-text-field
-                    v-if="flagDialog"
-                    v-model.trim="flag"
-                    :error-messages="errors"
-                    autofocus
-                    label="Flag"
-                    prepend-inner-icon="flag"
-                    solo
-                  ></v-text-field>
-                </ValidationProvider>
-              </v-flex>
-            </v-layout>
-          </v-container>
+    <detail-dialog
+      ref="evaluateActionDialog"
+      v-model="evaluateAction"
+      max-width="800"
+      @commit="commitEvaluateAction"
+    >
+      <template v-slot:title
+        >Specify expression</template
+      >
+      <template>
+        <evaluate-action-fields
+          v-model="evaluateAction"
+          :attributes-resolved="evaluateAttributesResolved"
+          :datapoint-resolved="evaluateDatapointResolved"
+          :expr-resolved="evaluateExprResolved"
+          :result-resolved="evaluateResultResolved"
+        />
+      </template>
+    </detail-dialog>
 
-          <v-divider />
-
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              :disabled="invalid"
-              color="primary"
-              text
-              @click="flagDialogCommit"
-              >OK</v-btn
-            >
-            <v-btn color="primary" text @click="flagDialog = false"
-              >Cancel</v-btn
-            >
-          </v-card-actions>
-        </ValidationObserver>
-      </v-card>
-    </v-dialog>
+    <detail-dialog
+      ref="flagActionDialog"
+      v-model="flagAction"
+      @commit="commitFlagAction"
+    >
+      <template v-slot:title
+        >Specify flag</template
+      >
+      <template>
+        <flag-action-fields v-model="flagAction" />
+      </template>
+    </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
       <template v-slot:title
@@ -205,7 +203,7 @@
       <template>
         <ValidationProvider
           :rules="{
-            date_range_resolved: momentIntervalResolved
+            resolved_valid: momentIntervalResolved
           }"
         >
           <date-range-picker
@@ -242,7 +240,7 @@
       <template>
         <ValidationProvider
           :rules="{
-            date_range_resolved: rangeIntervalResolved
+            resolved_valid: rangeIntervalResolved
           }"
         >
           <date-range-picker
@@ -339,17 +337,21 @@
 <script>
 import _union from 'lodash/union'
 import { mapGetters, mapMutations } from 'vuex'
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationProvider } from 'vee-validate'
+import actions from '@/mixins/actions'
 import interval from '@/mixins/interval'
 import member from '@/mixins/member'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
+import AttribActionFields from '@/components/AttribActionFields'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangePicker from '@/components/DateRangePicker'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailIntervals from '@/components/DetailIntervals'
 import DetailMembers from '@/components/DetailMembers'
+import EvaluateActionFields from '@/components/EvaluateActionFields'
+import FlagActionFields from '@/components/FlagActionFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
@@ -360,22 +362,24 @@ export default {
   components: {
     AnnotationDetailActions,
     AnnotationDetailApplies,
+    AttribActionFields,
     DatastreamSearch,
     DateRangePicker,
     DetailDialog,
     DetailExternalRefs,
     DetailIntervals,
     DetailMembers,
+    EvaluateActionFields,
+    FlagActionFields,
     MemberRoleFields,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,
     StationSearch,
-    ValidationObserver,
     ValidationProvider
   },
 
-  mixins: [interval, member],
+  mixins: [actions, interval, member],
 
   props: {
     editing: { default: false, type: Boolean },
@@ -385,11 +389,23 @@ export default {
 
   data: () => ({
     datastreamDialog: false,
-    flagDialog: false,
     stationDialog: false,
 
-    flag: null,
-
+    evaluateSample: {
+      attributes: {
+        height: 10
+      },
+      datapoint: {
+        d: {
+          max: 220.8,
+          min: 190.1
+        },
+        lt: '2019-10-26T12:40:00.000',
+        t: '2019-10-26T20:40:00.000Z',
+        v: 192.96,
+        va: [192.92, 192.93]
+      }
+    },
     member: {
       roles: [
         {
@@ -417,36 +433,12 @@ export default {
       resetCart: 'cart/reset'
     }),
 
-    addAction(item) {
-      if (item.target === 'exclude') {
-        const { value } = this
-        const action = value.actions.find(
-          action => action.exclude !== undefined
-        )
-
-        if (!action) value.actions.push({ exclude: true })
-      } else if (item.target === 'flag') {
-        this.flagDialog = true
-        this.flag = null
-
-        requestAnimationFrame(() => {
-          this.$refs.flagObserver.reset()
-        })
-      }
-    },
-
     addApplies(item) {
       if (!item.target) return
 
       this.resetCart()
 
       this[`${item.target}Dialog`] = true
-    },
-
-    removeAction(item) {
-      this.value.actions = this.value.actions.filter(
-        (action, index) => index !== item.key
-      )
     },
 
     removeApplies(item) {
@@ -466,20 +458,6 @@ export default {
       )
 
       this.datastreamDialog = false
-    },
-
-    flagDialogCommit() {
-      const { value } = this
-      const action = value.actions.find(action => action.flag !== undefined)
-      const flag = [this.flag]
-
-      if (action) {
-        action.flag = _union(action.flag, flag)
-      } else {
-        value.actions.push({ flag })
-      }
-
-      this.flagDialog = false
     },
 
     stationDialogCommit() {

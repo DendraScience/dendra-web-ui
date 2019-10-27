@@ -306,7 +306,8 @@ import Vue from 'vue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import _forEach from 'lodash/forEach'
-import _get from 'lodash/get'
+import _map from 'lodash/map'
+import _sortBy from 'lodash/sortBy'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { exportItems } from '@/lib/chart-export'
 import { dateFormats } from '@/lib/date'
@@ -523,58 +524,68 @@ export default {
           this.dateRange.from,
           dateFormats.y4md,
           true
-        ).toISOString(),
+        ).valueOf(),
         untilTime: moment(this.dateRange.to, dateFormats.y4md, true)
           .startOf('d')
           .add(1, 'd')
-          .toISOString()
+          .valueOf()
       }
       const unitVocabulary = this.getVocabulary('dt-unit')
       const { yAxis } = options
+
       let canDownload = true
-
-      _forEach(this.quantitiesById, (value, id) => {
+      let items = _map(this.quantitiesById, (value, id) => {
         const datastream = this.getDatastream(id)
-
-        if (this.$cannot('download', datastream)) canDownload = false
-
-        const unit = _get(datastream, 'terms.dt.Unit', '')
+        const unit = datastream.dtUnit
         const term =
           unitVocabulary && unitVocabulary.terms
             ? unitVocabulary.terms.find(term => term.label === unit)
             : null
         const unitText = term && term.abbreviation ? term.abbreviation : unit
-        const stationName = datastream.station_lookup.name
-        const yAxisLabelFormat = `{value} ${unitText}`
-        const yAxisOpposite = value === 2 // Based on cart quantity
 
-        let yAxisIndex = yAxis.findIndex(
-          axis =>
-            axis.labels.format === yAxisLabelFormat &&
-            axis.opposite === yAxisOpposite
-        )
-        if (yAxisIndex === -1) {
-          yAxisIndex = yAxis.length
-          yAxis.push({
-            labels: {
-              format: yAxisLabelFormat,
-              style: {
-                color: colors[yAxisIndex]
-              }
-            },
-            opposite: yAxisOpposite,
-            title: {
-              text: null
-            }
-          })
+        return {
+          datastream,
+          seriesName: `${datastream.fullName} ${unitText}`,
+          yAxisLabelFormat: `{value} ${unitText}`,
+          yAxisOpposite: value === 2 // Based on cart quantity
         }
-
-        seriesOptions.push({
-          name: `${stationName} ${datastream.name} ${unitText}`,
-          yAxis: yAxisIndex
-        })
-        fetchSpec.queries.push({ datastream_id: id })
       })
+
+      items = _sortBy(items, ['datastream.fullNameWithUnit'])
+
+      _forEach(
+        items,
+        ({ datastream, seriesName, yAxisLabelFormat, yAxisOpposite }) => {
+          if (this.$cannot('download', datastream)) canDownload = false
+
+          let yAxisIndex = yAxis.findIndex(
+            axis =>
+              axis.labels.format === yAxisLabelFormat &&
+              axis.opposite === yAxisOpposite
+          )
+          if (yAxisIndex === -1) {
+            yAxisIndex = yAxis.length
+            yAxis.push({
+              labels: {
+                format: yAxisLabelFormat,
+                style: {
+                  color: colors[yAxisIndex]
+                }
+              },
+              opposite: yAxisOpposite,
+              title: {
+                text: null
+              }
+            })
+          }
+
+          seriesOptions.push({
+            name: seriesName,
+            yAxis: yAxisIndex
+          })
+          fetchSpec.queries.push({ datastream_id: datastream._id })
+        }
+      )
 
       this.seriesFetchWorker.postMessage({
         accessToken: this.auth.accessToken

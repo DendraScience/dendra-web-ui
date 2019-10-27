@@ -39,11 +39,11 @@ module.exports = {
       }
     },
 
-    vendor: ['chroma-js', 'highcharts', 'lodash', 'moment']
+    vendor: ['chroma-js', 'highcharts', 'lodash', 'mathjs', 'moment']
   },
 
   /**
-   * Global CSS
+   * Environment variables
    */
   env: {
     apiPath: process.env.API_PATH,

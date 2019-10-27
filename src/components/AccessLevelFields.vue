@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-lg>
+  <v-container fluid grid-list-md pt-2>
     <v-layout column>
       <v-flex>
         <v-slider

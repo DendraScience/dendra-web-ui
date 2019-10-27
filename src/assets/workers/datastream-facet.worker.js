@@ -6,29 +6,31 @@ const headers = new Headers()
 
 headers.append('Content-Type', 'application/json')
 
-async function getUnitVocabulary() {
-  const url = new URL(`${api.uri}${api.path}/vocabularies/dt-unit`)
+// TODO: Can this be deleted?
+// async function getUnitVocabulary() {
+//   const url = new URL(`${api.uri}${api.path}/vocabularies/dt-unit`)
 
-  const response = await fetch(url, {
-    mode: 'cors',
-    cache: 'no-cache',
-    headers
-  })
+//   const response = await fetch(url, {
+//     mode: 'cors',
+//     cache: 'no-cache',
+//     headers
+//   })
 
-  const json = await response.json()
+//   const json = await response.json()
 
-  if (!response.ok)
-    throw new Error(`Non-success status code ${response.status}`)
+//   if (!response.ok)
+//     throw new Error(`Non-success status code ${response.status}`)
 
-  if (!json) throw new Error(`No unit type vocabulary`)
+//   if (!json) throw new Error(`No unit type vocabulary`)
 
-  return json
-}
+//   return json
+// }
 
 async function processFetch({ id, fetchSpec }) {
   const { isEnabled, orgId, schemeId, stationId } = fetchSpec
 
-  const unitVocabulary = await getUnitVocabulary()
+  // TODO: Can this be deleted?
+  // const unitVocabulary = await getUnitVocabulary()
 
   const url = new URL(`${api.uri}${api.path}/datastreams`)
   const params = {
@@ -79,10 +81,11 @@ async function processFetch({ id, fetchSpec }) {
     if (terms.dt && terms.dt.Unit) {
       indexer.add('Unit', terms.dt.Unit, index)
 
-      const term = unitVocabulary.terms.find(
-        term => term.label === terms.dt.Unit
-      )
-      if (term) datastream.unitTerm = term
+      // TODO: Can this be deleted?
+      // const term = unitVocabulary.terms.find(
+      //   term => term.label === terms.dt.Unit
+      // )
+      // if (term) datastream.unitTerm = term
     }
   })
 
