@@ -1,7 +1,12 @@
-import _get from 'lodash/get'
 import _union from 'lodash/union'
-import math from '@/lib/math'
 import { attributeData } from '@/lib/attribute'
+import {
+  resolveAttributes,
+  resolveDatapoint,
+  resolveExpr,
+  resolveResult
+} from '@/lib/evaluate'
+import { sampleAttributes, sampleDatapoint, sampleExpr } from '@/lib/samples'
 import { jsonFormat } from '@/lib/utils'
 
 export default {
@@ -21,79 +26,25 @@ export default {
 
   computed: {
     evaluateAttributesResolved() {
-      const { evaluateAction: value } = this
-      const resolved = { data: null, valid: true }
-
-      try {
-        resolved.data = JSON.parse(value.attributes)
-      } catch (err) {
-        resolved.error = `Parse error: ${err.message}.`
-        resolved.valid = false
-      }
-
-      return resolved
+      return resolveAttributes(this.evaluateAction.attributes)
     },
 
     evaluateDatapointResolved() {
-      const { evaluateAction: value } = this
-      const resolved = { data: null, valid: true }
-
-      try {
-        resolved.data = JSON.parse(value.datapoint)
-      } catch (err) {
-        resolved.error = `Parse error: ${err.message}.`
-        resolved.valid = false
-      }
-
-      return resolved
+      return resolveDatapoint(this.evaluateAction.datapoint)
     },
 
     evaluateExprResolved() {
-      const {
-        evaluateAttributesResolved: attributesResolved,
-
-        evaluateAction: value
-      } = this
-      const resolved = { code: null, valid: true }
-      let expr = value.expr || ''
-
-      expr = expr.replace(/@{([.\w]+)}/g, (m, p) =>
-        _get(attributesResolved.data, p, null)
+      return resolveExpr(
+        this.evaluateAction.expr,
+        this.evaluateAttributesResolved
       )
-
-      try {
-        resolved.code = math.compile(expr)
-      } catch (err) {
-        resolved.error = `Compile error: ${err.message}.`
-        resolved.valid = false
-      }
-
-      return resolved
     },
 
     evaluateResultResolved() {
-      const {
-        evaluateDatapointResolved: datapointResolved,
-        evaluateExprResolved: exprResolved
-      } = this
-      const resolved = { valid: true }
-
-      if (datapointResolved.valid) {
-        const data = JSON.parse(JSON.stringify(datapointResolved.data))
-
-        if (exprResolved.valid) {
-          try {
-            exprResolved.code.evaluate(data)
-          } catch (err) {
-            resolved.error = `Evaluate error: ${err.message}.`
-            resolved.valid = false
-          }
-        }
-
-        resolved.datapoint = jsonFormat(data)
-      }
-
-      return resolved
+      return resolveResult(
+        this.evaluateDatapointResolved,
+        this.evaluateExprResolved
+      )
     }
   },
 
@@ -130,10 +81,10 @@ export default {
         })
       } else if (item.target === 'evaluate') {
         this.evaluateAction = {
-          attributes: jsonFormat(this.evaluateSample.attributes),
-          datapoint: jsonFormat(this.evaluateSample.datapoint),
+          attributes: jsonFormat(sampleAttributes()),
+          datapoint: jsonFormat(sampleDatapoint()),
           dialog: true,
-          expr: 'v = number(v * @{height})'
+          expr: sampleExpr()
         }
 
         requestAnimationFrame(() => {

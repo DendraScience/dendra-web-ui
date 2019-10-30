@@ -6,6 +6,14 @@ import {
   resolveDateRange,
   resolvedToIntervalRange
 } from '@/lib/date'
+import {
+  resolveAttributes,
+  resolveDatapoint,
+  resolveExpr,
+  resolveResult
+} from '@/lib/evaluate'
+import { sampleAttributes, sampleDatapoint } from '@/lib/samples'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
   data: () => ({
@@ -51,14 +59,39 @@ export default {
       }
 
       return resolved
+    },
+
+    configAttributesResolved() {
+      return resolveAttributes(this.datapointsConfig.attributes)
+    },
+
+    configDatapointResolved() {
+      return resolveDatapoint(this.datapointsConfig.datapoint)
+    },
+
+    configExprResolved() {
+      return resolveExpr(
+        this.datapointsConfig.expr,
+        this.configAttributesResolved
+      )
+    },
+
+    configResultResolved() {
+      return resolveResult(
+        this.configDatapointResolved,
+        this.configExprResolved
+      )
     }
   },
 
   methods: {
     addDatapointsConfig() {
       this.datapointsConfig = {
+        attributes: jsonFormat(sampleAttributes()),
+        datapoint: jsonFormat(sampleDatapoint()),
         dialog: true,
         dateRange: defaultDateRange(),
+        expr: null,
         params: '{}',
         path: null,
         tabIndex: 0
@@ -72,8 +105,11 @@ export default {
 
     editDatapointsConfig(item) {
       this.datapointsConfig = {
+        attributes: jsonFormat(sampleAttributes()),
+        datapoint: jsonFormat(sampleDatapoint()),
         dialog: true,
         dateRange: dateRangeFromItem(item),
+        expr: item.actions && item.actions.evaluate,
         params: item.params,
         path: item.path,
         tabIndex: 0
@@ -85,7 +121,7 @@ export default {
       })
     },
 
-    commitDatapointsConfig({ path }) {
+    commitDatapointsConfig({ expr, path }) {
       const {
         configDateRangeResolved: dateRangeResolved,
         configParamsResolved: paramsResolved,
@@ -97,6 +133,8 @@ export default {
         params: paramsResolved.data,
         path
       }
+
+      if (expr && expr.length) newInst.actions = { evaluate: expr }
 
       if (datapointsConfigKey > -1) {
         value.datapoints_config = value.datapoints_config.map((inst, index) =>

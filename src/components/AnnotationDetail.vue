@@ -391,32 +391,6 @@ export default {
     datastreamDialog: false,
     stationDialog: false,
 
-    evaluateSample: {
-      attributes: {
-        height: 10
-      },
-      datapoint: {
-        d: {
-          max: 220.8,
-          min: 190.1
-        },
-        lt: '2019-10-26T12:40:00.000',
-        t: '2019-10-26T20:40:00.000Z',
-        v: 192.96,
-        va: [192.92, 192.93]
-      }
-    },
-    member: {
-      roles: [
-        {
-          text: 'contact'
-        },
-        {
-          text: 'reporter'
-        }
-      ]
-    },
-
     stateItems: ['pending', 'approved', 'rejected']
   }),
 

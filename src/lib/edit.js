@@ -13,6 +13,7 @@ const arrays = [
 ]
 const fields = [
   'derivation_description',
+  'derivation_method',
   'description',
   'full_name',
   'is_active',

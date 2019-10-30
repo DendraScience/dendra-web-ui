@@ -39,7 +39,9 @@ export const plugins = [
         },
 
         get fullName() {
-          return `${this.station_lookup.name} ${this.name}`
+          return `${this.station_lookup && this.station_lookup.name} ${
+            this.name
+          }`
         },
 
         get fullNameWithUnit() {

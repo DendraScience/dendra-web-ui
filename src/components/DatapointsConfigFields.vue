@@ -1,13 +1,21 @@
 <template>
-  <v-container fluid pt-0>
+  <v-container fluid pa-0>
     <v-layout column>
       <v-flex>
-        <v-tabs v-model="value.tabIndex">
+        <v-tabs
+          v-model="value.tabIndex"
+          background-color="primary"
+          dark
+          fixed-tabs
+        >
           <v-tab>
             Parameters
           </v-tab>
           <v-tab>
             Timeframe
+          </v-tab>
+          <v-tab>
+            Expression
           </v-tab>
 
           <v-tab-item>
@@ -124,6 +132,12 @@
                   </template>
                 </date-range-picker>
               </ValidationProvider>
+            </v-card>
+          </v-tab-item>
+
+          <v-tab-item>
+            <v-card flat>
+              <slot name="expression" :value="value" />
             </v-card>
           </v-tab-item>
         </v-tabs>

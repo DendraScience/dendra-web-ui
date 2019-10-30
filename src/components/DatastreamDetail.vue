@@ -224,6 +224,7 @@
     <detail-dialog
       ref="datapointsConfigDialog"
       v-model="datapointsConfig"
+      max-width="800"
       @commit="commitDatapointsConfig"
     >
       <template v-slot:title
@@ -235,7 +236,18 @@
           :date-range-resolved="configDateRangeResolved"
           :params-resolved="configParamsResolved"
           :path-items="configPathItems"
-        />
+        >
+          <template v-slot:expression="{ value }">
+            <evaluate-action-fields
+              v-model="value"
+              :attributes-resolved="configAttributesResolved"
+              :datapoint-resolved="configDatapointResolved"
+              :expr-resolved="configExprResolved"
+              :required="false"
+              :result-resolved="configResultResolved"
+            />
+          </template>
+        </datapoints-config-fields>
       </template>
     </detail-dialog>
 
@@ -290,6 +302,7 @@ import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailMembers from '@/components/DetailMembers'
 import DetailTerms from '@/components/DetailTerms'
+import EvaluateActionFields from '@/components/EvaluateActionFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
@@ -311,6 +324,7 @@ export default {
     DetailGeoPoint,
     DetailMembers,
     DetailTerms,
+    EvaluateActionFields,
     MemberRoleFields,
     StandardAudit,
     StandardIdentifier,

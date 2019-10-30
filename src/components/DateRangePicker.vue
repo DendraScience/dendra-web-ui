@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid grid-list-md pt-0>
+  <v-container fluid grid-list-md>
     <v-layout align-center justify-center wrap>
       <v-flex shrink>
         <v-checkbox

@@ -17,7 +17,7 @@
             item-key="key"
           >
             <template v-slot:item.key="{ item }" class="text-no-wrap px-0">
-              <v-avatar color="grey darken-1" size="25">
+              <v-avatar color="grey darken-1" size="27">
                 <span class="white--text caption">{{ item.key }}</span>
               </v-avatar>
             </template>

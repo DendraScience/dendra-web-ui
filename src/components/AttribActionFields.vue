@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid pt-0>
+  <v-container fluid>
     <v-layout column>
       <v-flex>
         <v-select

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid pt-0>
+  <v-container fluid>
     <v-layout column>
       <v-flex align-self-end>
         <a href="https://mathjs.org/" target="_blank">
@@ -11,7 +11,7 @@
         <ValidationProvider
           name="expr"
           :rules="{
-            required: true,
+            required,
             resolved_valid: exprResolved
           }"
         >
@@ -130,6 +130,7 @@ export default {
     attributesResolved: { type: Object, required: true },
     datapointResolved: { type: Object, required: true },
     exprResolved: { type: Object, required: true },
+    required: { default: true, type: Boolean },
     resultResolved: { type: Object, required: true },
     value: { type: Object, required: true }
   },

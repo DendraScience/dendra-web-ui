@@ -9,8 +9,11 @@
               or downloading data.
             </v-alert>
 
-            <!-- TODO: Remove elevation? -->
-            <v-tabs v-model="tabIndex" fixed-tabs>
+            <v-tabs
+              v-model="tabIndex"
+              background-color="grey lighten-2"
+              fixed-tabs
+            >
               <v-tab>
                 View
               </v-tab>

@@ -40,7 +40,7 @@
 
     <v-dialog v-model="dialog" max-width="680">
       <v-card>
-        <v-card-title class="headline grey lighten-4 mb-4"
+        <v-card-title class="headline primary white--text"
           >Date range</v-card-title
         >
 

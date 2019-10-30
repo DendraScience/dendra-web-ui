@@ -32,21 +32,49 @@
         </v-flex>
       </v-layout>
 
-      <v-layout>
+      <v-layout v-if="items.length">
         <v-flex>
-          <ValidationProvider
-            v-slot="{ errors }"
-            name="derived description"
-            rules="min:5|max:5000"
-          >
-            <v-textarea
-              v-model.trim="value.derivation_description"
-              :error-messages="errors"
-              :readonly="!editing"
-              auto-grow
-              label="Derivation description"
-            ></v-textarea>
-          </ValidationProvider>
+          <v-card outlined>
+            <v-container fluid>
+              <v-layout column>
+                <v-flex>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="derived description"
+                    rules="required|min:5|max:5000"
+                  >
+                    <v-textarea
+                      v-model.trim="value.derivation_description"
+                      :error-messages="errors"
+                      :readonly="!editing"
+                      auto-grow
+                      label="Derivation description"
+                      required
+                    ></v-textarea>
+                  </ValidationProvider>
+
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="derived method"
+                    :rules="{
+                      regex: /^[A-Za-z][A-Za-z0-9]*$/,
+                      required: true,
+                      min: 1,
+                      max: 100
+                    }"
+                  >
+                    <v-text-field
+                      v-model.trim="value.derivation_method"
+                      :error-messages="errors"
+                      :readonly="!editing"
+                      label="Derivation method"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card>
         </v-flex>
       </v-layout>
     </v-container>

@@ -140,10 +140,11 @@ export default {
         const beginsAt = item.begins_at && moment.utc(item.begins_at)
         const endsBefore = item.ends_before && moment.utc(item.ends_before)
         const params = jsonFormat(item.params)
-        const { connection, path } = item
+        const { actions, connection, path } = item
 
         if (beginsAt && endsBefore) {
           return {
+            actions,
             beginsAt,
             beginsLabel: 'Begins at',
             connection,
@@ -158,6 +159,7 @@ export default {
 
         if (!beginsAt && endsBefore) {
           return {
+            actions,
             beginsLabel: 'Begins with first row and ends before',
             connection,
             endsBefore,
@@ -170,6 +172,7 @@ export default {
 
         if (beginsAt && !endsBefore) {
           return {
+            actions,
             beginsAt,
             beginsLabel: 'Begins at',
             connection,
@@ -182,6 +185,7 @@ export default {
         }
 
         return {
+          actions,
           beginsLabel: 'Begins with first row',
           connection,
           endsLabel: 'and returns all rows thereafter',

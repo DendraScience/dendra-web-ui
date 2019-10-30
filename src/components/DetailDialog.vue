@@ -2,7 +2,7 @@
   <v-dialog v-model="value.dialog" :max-width="maxWidth">
     <v-card>
       <ValidationObserver ref="observer" v-slot="{ invalid }">
-        <v-card-title class="headline grey lighten-4 mb-4"
+        <v-card-title class="headline primary white--text"
           ><slot name="title"
         /></v-card-title>
 
