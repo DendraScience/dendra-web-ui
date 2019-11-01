@@ -35,10 +35,9 @@
             v-model="value.fromTime"
             :disabled="fromDisabled"
             :error-messages="errors"
+            :placeholder="$timeFormats.hm24"
             class="mt-2"
-            data-vv-name="fromTime"
             label="From time"
-            placeholder="h:mm a"
             prepend-inner-icon="access_time"
             solo
           ></v-text-field>
@@ -79,9 +78,9 @@
             v-model="value.toTime"
             :disabled="toDisabled"
             :error-messages="errors"
+            :placeholder="$timeFormats.hm24"
             class="mt-2"
             label="To time"
-            placeholder="h:mm a"
             prepend-inner-icon="access_time"
             solo
           ></v-text-field>
@@ -109,7 +108,7 @@ export default {
     hideTo: { default: false, type: Boolean },
     nullable: { default: false, type: Boolean },
     showTime: { default: false, type: Boolean },
-    timeFormat: { default: 'hm12', type: String },
+    timeFormat: { default: 'hm24', type: String },
     value: { type: Object, required: true }
   },
 

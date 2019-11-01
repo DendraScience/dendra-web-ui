@@ -26,9 +26,9 @@
               }}</span>
               <date-chip
                 :value="Object.freeze(item.beginsAt)"
-                class="mr-1 my-1"
+                class="ma-1"
                 color="success"
-                format="lll (UTC)"
+                small
               />
             </template>
 
@@ -38,9 +38,9 @@
               }}</span>
               <date-chip
                 :value="Object.freeze(item.endsBefore)"
-                class="mr-1 my-1"
+                class="ma-1"
                 color="error"
-                format="lll (UTC)"
+                small
               />
             </template>
 

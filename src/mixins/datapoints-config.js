@@ -87,7 +87,7 @@ export default {
   methods: {
     addDatapointsConfig() {
       this.datapointsConfig = {
-        attributes: jsonFormat(sampleAttributes()),
+        attributes: jsonFormat(this.value.attributes || sampleAttributes()),
         datapoint: jsonFormat(sampleDatapoint()),
         dialog: true,
         dateRange: defaultDateRange(),
@@ -105,7 +105,7 @@ export default {
 
     editDatapointsConfig(item) {
       this.datapointsConfig = {
-        attributes: jsonFormat(sampleAttributes()),
+        attributes: jsonFormat(this.value.attributes || sampleAttributes()),
         datapoint: jsonFormat(sampleDatapoint()),
         dialog: true,
         dateRange: dateRangeFromItem(item),

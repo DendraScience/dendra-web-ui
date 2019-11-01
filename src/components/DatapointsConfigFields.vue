@@ -4,8 +4,7 @@
       <v-flex>
         <v-tabs
           v-model="value.tabIndex"
-          background-color="primary"
-          dark
+          background-color="grey lighten-2"
           fixed-tabs
         >
           <v-tab>
@@ -85,50 +84,59 @@
               >
                 <date-range-picker v-model="value.dateRange" nullable show-time>
                   <template v-slot:footer>
-                    <span class="font-weight-medium">
-                      <span v-if="!dateRangeResolved.valid">
-                        Please specify a begin and end time
+                    <div class="text-center">
+                      <span class="font-weight-medium ">
+                        <span v-if="!dateRangeResolved.valid">
+                          Please specify a begin and end time
+                        </span>
+
+                        <span
+                          v-else-if="
+                            dateRangeResolved.from && dateRangeResolved.to
+                          "
+                        >
+                          Begins at
+                          <date-chip
+                            :value="Object.freeze(dateRangeResolved.from)"
+                            class="ma-1"
+                            color="success"
+                          />
+                          and ends before
+                          <date-chip
+                            :value="Object.freeze(dateRangeResolved.to)"
+                            class="ma-1"
+                            color="error"
+                          />
+                        </span>
+
+                        <span
+                          v-else-if="
+                            !dateRangeResolved.from && dateRangeResolved.to
+                          "
+                        >
+                          Begins with first row and ends before
+                          <date-chip
+                            :value="Object.freeze(dateRangeResolved.to)"
+                            class="ma-1"
+                            color="error"
+                          />
+                        </span>
+
+                        <span
+                          v-else-if="
+                            dateRangeResolved.from && !dateRangeResolved.to
+                          "
+                        >
+                          Begins at
+                          <date-chip
+                            :value="Object.freeze(dateRangeResolved.from)"
+                            class="ma-1"
+                            color="success"
+                          />
+                          and returns all rows thereafter</span
+                        >
                       </span>
-                      <span
-                        v-else-if="
-                          dateRangeResolved.from && dateRangeResolved.to
-                        "
-                      >
-                        Begins at
-                        {{
-                          dateRangeResolved.from
-                            | moment('', ['format', 'lll (UTC)'])
-                        }}
-                        and ends before
-                        {{
-                          dateRangeResolved.to
-                            | moment('', ['format', 'lll (UTC)'])
-                        }}</span
-                      >
-                      <span
-                        v-else-if="
-                          !dateRangeResolved.from && dateRangeResolved.to
-                        "
-                      >
-                        Begins with first row and ends before
-                        {{
-                          dateRangeResolved.to
-                            | moment('', ['format', 'lll (UTC)'])
-                        }}</span
-                      >
-                      <span
-                        v-else-if="
-                          dateRangeResolved.from && !dateRangeResolved.to
-                        "
-                      >
-                        Begins at
-                        {{
-                          dateRangeResolved.from
-                            | moment('', ['format', 'lll (UTC)'])
-                        }}
-                        and returns all rows thereafter</span
-                      >
-                    </span>
+                    </div>
                   </template>
                 </date-range-picker>
               </ValidationProvider>
@@ -148,11 +156,13 @@
 
 <script>
 import { ValidationProvider } from 'vee-validate'
+import DateChip from '@/components/DateChip'
 import DateRangePicker from '@/components/DateRangePicker'
 import { jsonFormat } from '@/lib/utils'
 
 export default {
   components: {
+    DateChip,
     DateRangePicker,
     ValidationProvider
   },

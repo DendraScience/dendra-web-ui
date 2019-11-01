@@ -26,8 +26,9 @@
               }}</span>
               <date-chip
                 :value="Object.freeze(item.beginsAt)"
-                class="mr-1 my-1"
+                class="ma-1"
                 color="success"
+                small
               />
             </template>
 
@@ -37,8 +38,9 @@
               }}</span>
               <date-chip
                 :value="Object.freeze(item.endsBefore)"
-                class="mr-1 my-1"
+                class="ma-1"
                 color="error"
+                small
               />
             </template>
 
@@ -150,8 +152,8 @@ export default {
 
     items() {
       return this.intervals.map((item, key) => {
-        const beginsAt = item.begins_at && moment(item.begins_at)
-        const endsBefore = item.ends_before && moment(item.ends_before)
+        const beginsAt = item.begins_at && moment.utc(item.begins_at)
+        const endsBefore = item.ends_before && moment.utc(item.ends_before)
 
         if (beginsAt && endsBefore) {
           if (endsBefore.diff(beginsAt) === 1) {

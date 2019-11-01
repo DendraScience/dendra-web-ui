@@ -212,17 +212,22 @@
             show-time
           >
             <template v-slot:footer>
-              <span class="font-weight-bold">
-                <span v-if="!momentIntervalResolved.valid">
-                  Please specify a single point in time
+              <div class="text-center">
+                <span class="font-weight-medium">
+                  <span v-if="!momentIntervalResolved.valid">
+                    Please specify a single point in time
+                  </span>
+
+                  <span v-else-if="momentIntervalResolved.from">
+                    Occurred at
+                    <date-chip
+                      :value="Object.freeze(momentIntervalResolved.from)"
+                      class="ma-1"
+                      color="success"
+                    />
+                  </span>
                 </span>
-                <span v-else-if="momentIntervalResolved.from">
-                  Occurred at
-                  {{
-                    momentIntervalResolved.from | moment('', ['format', 'lll'])
-                  }}</span
-                >
-              </span>
+              </div>
             </template>
           </date-range-picker>
         </ValidationProvider>
@@ -249,46 +254,59 @@
             show-time
           >
             <template v-slot:footer>
-              <span class="font-weight-medium">
-                <span v-if="!rangeIntervalResolved.valid">
-                  Please specify a begin and end time
+              <div class="text-center">
+                <span class="font-weight-medium">
+                  <span v-if="!rangeIntervalResolved.valid">
+                    Please specify a begin and end time
+                  </span>
+
+                  <span
+                    v-else-if="
+                      rangeIntervalResolved.from && rangeIntervalResolved.to
+                    "
+                  >
+                    Begins at
+                    <date-chip
+                      :value="Object.freeze(rangeIntervalResolved.from)"
+                      class="ma-1"
+                      color="success"
+                    />
+                    and ends before
+                    <date-chip
+                      :value="Object.freeze(rangeIntervalResolved.to)"
+                      class="ma-1"
+                      color="error"
+                    />
+                  </span>
+
+                  <span
+                    v-else-if="
+                      !rangeIntervalResolved.from && rangeIntervalResolved.to
+                    "
+                  >
+                    Begins with first datapoint and ends before
+                    <date-chip
+                      :value="Object.freeze(rangeIntervalResolved.to)"
+                      class="ma-1"
+                      color="error"
+                    />
+                  </span>
+
+                  <span
+                    v-else-if="
+                      rangeIntervalResolved.from && !rangeIntervalResolved.to
+                    "
+                  >
+                    Begins at
+                    <date-chip
+                      :value="Object.freeze(rangeIntervalResolved.from)"
+                      class="ma-1"
+                      color="success"
+                    />
+                    and affects all datapoints thereafter</span
+                  >
                 </span>
-                <span
-                  v-else-if="
-                    rangeIntervalResolved.from && rangeIntervalResolved.to
-                  "
-                >
-                  Begins at
-                  {{
-                    rangeIntervalResolved.from | moment('', ['format', 'lll'])
-                  }}
-                  and ends before
-                  {{
-                    rangeIntervalResolved.to | moment('', ['format', 'lll'])
-                  }}</span
-                >
-                <span
-                  v-else-if="
-                    !rangeIntervalResolved.from && rangeIntervalResolved.to
-                  "
-                >
-                  Begins with first datapoint and ends before
-                  {{
-                    rangeIntervalResolved.to | moment('', ['format', 'lll'])
-                  }}</span
-                >
-                <span
-                  v-else-if="
-                    rangeIntervalResolved.from && !rangeIntervalResolved.to
-                  "
-                >
-                  Begins at
-                  {{
-                    rangeIntervalResolved.from | moment('', ['format', 'lll'])
-                  }}
-                  and affects all datapoints thereafter</span
-                >
-              </span>
+              </div>
             </template>
           </date-range-picker>
         </ValidationProvider>
@@ -345,6 +363,7 @@ import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AttribActionFields from '@/components/AttribActionFields'
 import DatastreamSearch from '@/components/DatastreamSearch'
+import DateChip from '@/components/DateChip'
 import DateRangePicker from '@/components/DateRangePicker'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
@@ -364,6 +383,7 @@ export default {
     AnnotationDetailApplies,
     AttribActionFields,
     DatastreamSearch,
+    DateChip,
     DateRangePicker,
     DetailDialog,
     DetailExternalRefs,
