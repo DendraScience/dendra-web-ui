@@ -175,18 +175,14 @@
       v-model="accessLevel"
       @commit="commitAccessLevel"
     >
-      <template v-slot:title
-        >Specify access level</template
-      >
+      <template v-slot:title>Specify access level</template>
       <template>
         <access-level-fields v-model="accessLevel" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title
-        >Specify member</template
-      >
+      <template v-slot:title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"
@@ -201,9 +197,7 @@
       v-model="externalLink"
       @commit="commitExternalLink"
     >
-      <template v-slot:title
-        >Specify external link</template
-      >
+      <template v-slot:title>Specify external link</template>
       <template>
         <external-link-fields v-model="externalLink" />
       </template>

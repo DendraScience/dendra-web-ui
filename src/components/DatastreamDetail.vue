@@ -164,9 +164,7 @@
       v-model="attribute"
       @commit="commitAttribute"
     >
-      <template v-slot:title
-        >Specify attribute</template
-      >
+      <template v-slot:title>Specify attribute</template>
       <template>
         <attribute-fields
           v-model="attribute"
@@ -213,9 +211,7 @@
     </v-dialog>
 
     <detail-dialog ref="termsDialog" v-model="terms" @commit="commitTerms">
-      <template v-slot:title
-        >Specify terms</template
-      >
+      <template v-slot:title>Specify terms</template>
       <template>
         <terms-fields v-model="terms" />
       </template>
@@ -227,9 +223,7 @@
       max-width="800"
       @commit="commitDatapointsConfig"
     >
-      <template v-slot:title
-        >Specify configuration</template
-      >
+      <template v-slot:title>Specify configuration</template>
       <template>
         <datapoints-config-fields
           v-model="datapointsConfig"
@@ -256,18 +250,14 @@
       v-model="accessLevel"
       @commit="commitAccessLevel"
     >
-      <template v-slot:title
-        >Specify access level</template
-      >
+      <template v-slot:title>Specify access level</template>
       <template>
         <access-level-fields v-model="accessLevel" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title
-        >Specify member</template
-      >
+      <template v-slot:title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"
@@ -410,7 +400,7 @@ export default {
         value: '/legacy/datavalues-ucnrs'
       }
     ],
-    sourceTypeItems: ['datastream', 'sensor'],
+    sourceTypeItems: ['deriver', 'sensor'],
     stateItems: ['pending', 'ready']
   }),
 
@@ -437,7 +427,11 @@ export default {
       const key = 'derived_from_datastream_ids'
       const ids = this.value[key]
 
-      this.$set(this.value, key, ids.filter(id => id !== item.id))
+      this.$set(
+        this.value,
+        key,
+        ids.filter(id => id !== item.id)
+      )
     },
 
     datastreamDialogCommit() {

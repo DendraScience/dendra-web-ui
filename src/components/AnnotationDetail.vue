@@ -137,9 +137,7 @@
       v-model="attribAction"
       @commit="commitAttribAction"
     >
-      <template v-slot:title
-        >Specify attribute</template
-      >
+      <template v-slot:title>Specify attribute</template>
       <template>
         <attrib-action-fields v-model="attribAction" />
       </template>
@@ -151,9 +149,7 @@
       max-width="800"
       @commit="commitEvaluateAction"
     >
-      <template v-slot:title
-        >Specify expression</template
-      >
+      <template v-slot:title>Specify expression</template>
       <template>
         <evaluate-action-fields
           v-model="evaluateAction"
@@ -170,18 +166,14 @@
       v-model="flagAction"
       @commit="commitFlagAction"
     >
-      <template v-slot:title
-        >Specify flag</template
-      >
+      <template v-slot:title>Specify flag</template>
       <template>
         <flag-action-fields v-model="flagAction" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title
-        >Specify member</template
-      >
+      <template v-slot:title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"
@@ -197,9 +189,7 @@
       max-width="380"
       @commit="commitMomentInterval"
     >
-      <template v-slot:title
-        >Specify moment</template
-      >
+      <template v-slot:title>Specify moment</template>
       <template>
         <ValidationProvider
           :rules="{
@@ -239,9 +229,7 @@
       v-model="rangeInterval"
       @commit="commitRangeInterval"
     >
-      <template v-slot:title
-        >Specify range</template
-      >
+      <template v-slot:title>Specify range</template>
       <template>
         <ValidationProvider
           :rules="{
@@ -441,7 +429,11 @@ export default {
       const key = `${item.target}_ids`
       const ids = this.value[key]
 
-      this.$set(this.value, key, ids.filter(id => id !== item.id))
+      this.$set(
+        this.value,
+        key,
+        ids.filter(id => id !== item.id)
+      )
     },
 
     datastreamDialogCommit() {
