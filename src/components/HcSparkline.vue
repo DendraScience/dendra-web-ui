@@ -43,7 +43,8 @@ export default {
         tooltip: {
           hideDelay: 0,
           outside: true,
-          shared: true
+          shared: true,
+          xDateFormat: '%a %Y-%m-%d %H:%M'
         },
         xAxis: {
           endOnTick: false,

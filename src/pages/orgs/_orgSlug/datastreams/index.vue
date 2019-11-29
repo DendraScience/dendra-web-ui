@@ -511,7 +511,8 @@ export default {
           text: this.chartTitle
         },
         tooltip: {
-          shared: true
+          shared: true,
+          xDateFormat: '%a %Y-%m-%d %H:%M'
         },
         xAxis: {
           crosshair: true,
