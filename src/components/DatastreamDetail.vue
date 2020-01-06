@@ -134,6 +134,16 @@
       </v-flex>
 
       <v-flex>
+        <detail-general-config
+          :editing="editing"
+          :value="value"
+          @add="addGeneralConfig"
+          @edit="editGeneralConfig"
+          @remove="removeGeneralConfig"
+        />
+      </v-flex>
+
+      <v-flex>
         <detail-access-levels
           :editing="editing"
           :value="value"
@@ -246,6 +256,21 @@
     </detail-dialog>
 
     <detail-dialog
+      ref="generalConfigDialog"
+      v-model="generalConfig"
+      max-width="800"
+      @commit="commitGeneralConfig"
+    >
+      <template v-slot:title>Specify configuration</template>
+      <template>
+        <general-config-fields
+          v-model="generalConfig"
+          :settings-resolved="configSettingsResolved"
+        />
+      </template>
+    </detail-dialog>
+
+    <detail-dialog
       ref="accessLevelDialog"
       v-model="accessLevel"
       @commit="commitAccessLevel"
@@ -276,6 +301,7 @@ import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import attribute from '@/mixins/attribute'
 import datapointsConfig from '@/mixins/datapoints-config'
+import generalConfig from '@/mixins/general-config'
 import geo from '@/mixins/geo'
 import member from '@/mixins/member'
 import terms from '@/mixins/terms'
@@ -289,10 +315,12 @@ import DetailAttributes from '@/components/DetailAttributes'
 import DetailDatapointsConfig from '@/components/DetailDatapointsConfig'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import DetailGeneralConfig from '@/components/DetailGeneralConfig'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailMembers from '@/components/DetailMembers'
 import DetailTerms from '@/components/DetailTerms'
 import EvaluateActionFields from '@/components/EvaluateActionFields'
+import GeneralConfigFields from '@/components/GeneralConfigFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
@@ -311,10 +339,12 @@ export default {
     DetailDatapointsConfig,
     DetailDialog,
     DetailExternalRefs,
+    DetailGeneralConfig,
     DetailGeoPoint,
     DetailMembers,
     DetailTerms,
     EvaluateActionFields,
+    GeneralConfigFields,
     MemberRoleFields,
     StandardAudit,
     StandardIdentifier,
@@ -323,7 +353,15 @@ export default {
     ValidationProvider
   },
 
-  mixins: [accessLevel, attribute, datapointsConfig, geo, member, terms],
+  mixins: [
+    accessLevel,
+    attribute,
+    datapointsConfig,
+    generalConfig,
+    geo,
+    member,
+    terms
+  ],
 
   props: {
     editing: { default: false, type: Boolean },

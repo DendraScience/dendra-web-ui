@@ -98,7 +98,7 @@ export default {
             {
               icon: 'check_circle',
               org: true,
-              name: 'orgs-orgSlug-stationStatus',
+              name: 'orgs-orgSlug-status',
               title: 'Station status'
             },
             {

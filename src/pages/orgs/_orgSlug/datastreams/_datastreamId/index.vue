@@ -123,6 +123,7 @@ export default {
           attributes: {},
           datapoints_config: [],
           derived_from_datastream_ids: [],
+          general_config: null,
           geo: null,
           geoCoordinates: {
             ele: coordinates[2],

@@ -122,6 +122,7 @@ export default {
         {
           access_levels: {},
           external_links: [],
+          general_config: null,
           geo: null,
           geoCoordinates: {
             ele: coordinates[2],

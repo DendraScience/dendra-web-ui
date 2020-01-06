@@ -29,7 +29,7 @@ export default {
 
     editAttribute({ key, target }) {
       const data = this.value.attributes[key]
-      const type = typeof attribute
+      const type = typeof data
 
       if (target === 'object') {
         const attribute = {

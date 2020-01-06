@@ -24,7 +24,7 @@
 
           <v-btn
             :to="{
-              name: 'orgs-orgSlug-stationStatus',
+              name: 'orgs-orgSlug-status',
               params: {
                 orgSlug: org.slug
               }

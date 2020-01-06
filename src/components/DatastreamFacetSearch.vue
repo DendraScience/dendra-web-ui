@@ -397,7 +397,6 @@ export default {
 
   methods: {
     ...mapActions({
-      fetchDatastreams: 'datastreams/find',
       fetchStations: 'stations/find',
       fetchVocabularies: 'vocabularies/find'
     }),

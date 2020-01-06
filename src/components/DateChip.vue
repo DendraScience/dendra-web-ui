@@ -17,7 +17,7 @@ export default {
   props: {
     color: { default: '', type: String },
     small: { default: false, type: Boolean },
-    value: { default: null, type: Object }
+    value: { default: null, type: [Object, String] }
   },
 
   data: () => ({

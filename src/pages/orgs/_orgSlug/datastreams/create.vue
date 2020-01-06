@@ -109,6 +109,7 @@ export default {
         datapoints_config: [],
         derived_from_datastream_ids: [],
         description: '',
+        general_config: null,
         geo: null,
         geoCoordinates: {
           ele: null,

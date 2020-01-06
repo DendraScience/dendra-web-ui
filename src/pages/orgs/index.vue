@@ -47,7 +47,7 @@
                   <v-list-item
                     :disabled="!organization.slug"
                     :to="{
-                      name: 'orgs-orgSlug-stationStatus',
+                      name: 'orgs-orgSlug-status',
                       params: { orgSlug: organization.slug }
                     }"
                     nuxt

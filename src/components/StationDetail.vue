@@ -81,7 +81,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="description"
-                  rules="required|min:5|max:5000"
+                  rules="min:5|max:5000"
                 >
                   <v-textarea
                     v-model.trim="value.description"
@@ -135,6 +135,16 @@
       </v-flex>
 
       <v-flex>
+        <detail-general-config
+          :editing="editing"
+          :value="value"
+          @add="addGeneralConfig"
+          @edit="editGeneralConfig"
+          @remove="removeGeneralConfig"
+        />
+      </v-flex>
+
+      <v-flex>
         <detail-access-levels
           :editing="editing"
           :value="value"
@@ -169,6 +179,21 @@
         <detail-external-refs :editing="editing" :value="value" />
       </v-flex>
     </v-layout>
+
+    <detail-dialog
+      ref="generalConfigDialog"
+      v-model="generalConfig"
+      max-width="800"
+      @commit="commitGeneralConfig"
+    >
+      <template v-slot:title>Specify configuration</template>
+      <template>
+        <general-config-fields
+          v-model="generalConfig"
+          :settings-resolved="configSettingsResolved"
+        />
+      </template>
+    </detail-dialog>
 
     <detail-dialog
       ref="accessLevelDialog"
@@ -209,6 +234,7 @@
 import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import externalLink from '@/mixins/external-link'
+import generalConfig from '@/mixins/general-config'
 import geo from '@/mixins/geo'
 import member from '@/mixins/member'
 import { timeZoneItems, timeZoneOffsets } from '@/lib/time-zone'
@@ -218,9 +244,11 @@ import DetailAccessLevels from '@/components/DetailAccessLevels'
 import DetailDialog from '@/components/DetailDialog'
 import DetailExternalLinks from '@/components/DetailExternalLinks'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
+import DetailGeneralConfig from '@/components/DetailGeneralConfig'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailMembers from '@/components/DetailMembers'
 import ExternalLinkFields from '@/components/ExternalLinkFields'
+import GeneralConfigFields from '@/components/GeneralConfigFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
@@ -234,9 +262,11 @@ export default {
     DetailDialog,
     DetailExternalLinks,
     DetailExternalRefs,
-    ExternalLinkFields,
+    DetailGeneralConfig,
     DetailGeoPoint,
     DetailMembers,
+    ExternalLinkFields,
+    GeneralConfigFields,
     MemberRoleFields,
     StandardAudit,
     StandardIdentifier,
@@ -244,7 +274,7 @@ export default {
     ValidationProvider
   },
 
-  mixins: [accessLevel, externalLink, geo, member],
+  mixins: [accessLevel, externalLink, generalConfig, geo, member],
 
   props: {
     editing: { default: false, type: Boolean },

@@ -29,7 +29,13 @@ const fields = [
   'time_zone',
   'title'
 ]
-const objects = ['access_levels', 'attributes', 'geo', 'terms']
+const objects = [
+  'access_levels',
+  'attributes',
+  'general_config',
+  'geo',
+  'terms'
+]
 
 export function setData(instance) {
   const data = _pickBy(instance, (value, key) => {

@@ -109,6 +109,7 @@ export default {
         description: '',
         external_links: [],
         full_name: '',
+        general_config: null,
         geo: null,
         geoCoordinates: {
           ele: null,

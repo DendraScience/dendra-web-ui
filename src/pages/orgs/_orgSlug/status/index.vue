@@ -12,10 +12,10 @@
           v-model.trim="stationsSearchDebounce"
           append-icon="search"
           clearable
-          full-width
+          flat
           hide-details
           label="Search for a station"
-          single-line
+          solo
         ></v-text-field>
 
         <v-btn-toggle v-model="viewToggle" class="pa-2" mandatory>
@@ -59,7 +59,7 @@
                 :id="station._id"
                 :key="station._id"
                 :fetch-spec="{ startTime, stationId: station._id }"
-                :worker="Object.freeze(statFetchWorker)"
+                :worker="Object.freeze(statusFetchWorker)"
               >
                 <template v-slot="{ result }">
                   <v-expansion-panel
@@ -70,7 +70,7 @@
                         <hc-sparkline
                           :id="station._id"
                           :series-options="Object.freeze(seriesOptions)"
-                          :worker="Object.freeze(statFetchWorker)"
+                          :worker="Object.freeze(statusFetchWorker)"
                         />
                       </template>
 
@@ -367,8 +367,8 @@ export default {
       this.stationsSearch = value
     }, 400)
 
-    this.statFetchWorker = this.$workers.createStationStatFetchWorker()
-    this.statFetchWorker.postMessage({
+    this.statusFetchWorker = this.$workers.createStatusFetchWorker()
+    this.statusFetchWorker.postMessage({
       accessToken: this.auth.accessToken,
       api: this.$api
     })
@@ -381,8 +381,8 @@ export default {
     this.debouncedStationsSearch.cancel()
     this.debouncedStationsSearch = null
 
-    this.statFetchWorker.terminate()
-    this.statFetchWorker = null
+    this.statusFetchWorker.terminate()
+    this.statusFetchWorker = null
   },
 
   methods: {

@@ -91,6 +91,7 @@ export default {
     removeAllSeries() {
       const { chart } = this
       if (!chart) return
+
       while (chart.series.length > 0) {
         chart.series[0].remove()
       }
