@@ -14,6 +14,10 @@
               The name is derived from dendritic networks, such as river networks or tree roots.
               Environmental monitoring performs in a similar manner, pulling data from the earth’s surface to a single location.
             </p>
+
+            <div class="alert alert-success" role="alert">
+              <strong>We’ve been busy!</strong> Check out our new <a href="https://edge.dendra.science/" class="alert-link" target="_blank">beta website <i class="fa fa-external-link-square" aria-hidden="true"></i></a>.
+            </div>
           </div>
         </div>
       </section>

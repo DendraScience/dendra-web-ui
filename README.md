@@ -31,12 +31,3 @@ For detailed explanation on how things work, checkout the [Nuxt.js docs](https:/
 3. Tag the desired image, e.g. `docker tag f0ec409b5194 dendra/dendra-web-ui:latest`.
 
 4. Push it via `docker push dendra/dendra-web-ui`.
-
-
-## Snippets
-
-To run in dev mode against a location Docker installation
-
-```
-$ WEB_UI_API_PATH=/v1/socket.io WEB_UI_API_URI=http://api.local.dendra.science:8080 npm run dev
-```

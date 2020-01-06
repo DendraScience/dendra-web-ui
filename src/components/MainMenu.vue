@@ -53,6 +53,7 @@
     <section class="px-2 py-2 border-bottom-darken-10">
       <nav class="nav nav-pills text-truncate flex-column">
         <a class="nav-link" href="mailto:collin@berkeley.edu"><i class="fa fa-fw fa-envelope" aria-hidden="true"></i> Support</a>
+        <a class="nav-link" href="https://edge.dendra.science/" target="_blank"><i class="fa fa-fw fa-external-link-square" aria-hidden="true"></i> Beta Website</a>
         <a class="nav-link" href="https://github.com/DendraScience/issues/issues" target="_blank"><i class="fa fa-fw fa-github" aria-hidden="true"></i> Report Issues</a>
         <a class="nav-link" href="https://github.com/DendraScience" target="_blank"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a>
       </nav>
