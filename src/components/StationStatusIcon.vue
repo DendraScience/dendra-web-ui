@@ -1,8 +1,8 @@
 <template>
   <div class="d-inline">
-    <v-icon v-if="status === 1" color="success" small>check_circle</v-icon>
-    <v-icon v-else-if="status === 2" color="error" small>error</v-icon>
-    <v-icon v-else color="accent" small>help_outline</v-icon>
+    <v-icon v-if="status === 1" color="success" small>mdi-check-circle</v-icon>
+    <v-icon v-else-if="status === 2" color="error" small>mdi-alert</v-icon>
+    <v-icon v-else color="accent" small>mdi-help-rhombus-outline</v-icon>
   </div>
 </template>
 

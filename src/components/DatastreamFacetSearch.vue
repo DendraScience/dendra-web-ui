@@ -350,7 +350,6 @@ export default {
 
   created() {
     this.datastreams = []
-    // this.indexer = null
 
     this.datastreamFacetWorker = this.$workers.createDatastreamFacetWorker()
     this.datastreamFacetWorker.postMessage({
@@ -466,12 +465,12 @@ export default {
     },
 
     workerMessageHandler(event) {
-      if (event.data.datastreams) {
-        this.datastreams = event.data.datastreams
-        this.indexer = new FacetIndexer(event.data.indexer)
+      if (!event.data.datastreams) return
 
-        this.apply()
-      }
+      this.datastreams = event.data.datastreams
+      this.indexer = new FacetIndexer(event.data.indexer)
+
+      this.apply()
     }
   }
 }

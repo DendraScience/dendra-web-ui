@@ -53,7 +53,7 @@
 
                     <template v-slot:actions="{ item }">
                       <v-icon color="tertiary" @click="open(item._id)"
-                        >open_in_new</v-icon
+                        >mdi-open-in-new</v-icon
                       >
                     </template>
                   </datastream-facet-search>
@@ -86,7 +86,7 @@
 
                     <template v-slot:actions="{ item }">
                       <v-icon color="tertiary" @click="open(item._id)"
-                        >open_in_new</v-icon
+                        >mdi-open-in-new</v-icon
                       >
                     </template>
                   </datastream-search>
@@ -170,48 +170,11 @@
     </v-flex>
 
     <v-flex v-if="charts.length" v-show="tabIndex === 1">
-      <v-container fluid grid-list-xl>
-        <v-layout column>
-          <v-flex v-for="(chart, i) in charts" :key="chart.id">
-            <datastream-chart
-              :value="chart"
-              :worker="Object.freeze(seriesFetchWorker)"
-            >
-              <template v-slot:menu>
-                <v-list>
-                  <v-list-item @click="charts.splice(i, 1)">
-                    <v-list-item-title>Remove</v-list-item-title>
-                  </v-list-item>
-
-                  <v-list-item
-                    :disabled="!chart.isReady"
-                    @click="showExportDialog(chart)"
-                  >
-                    <v-list-item-title>Export as...</v-list-item-title>
-                  </v-list-item>
-
-                  <v-list-item
-                    v-if="previousExportIndex > -1"
-                    :disabled="
-                      !chart.isReady ||
-                        (exportItems[previousExportIndex].download &&
-                          !chart.canDownload)
-                    "
-                    @click="exportChart(chart, previousExportIndex)"
-                  >
-                    <v-list-item-title
-                      >Export as
-                      {{
-                        exportItems[previousExportIndex].title
-                      }}</v-list-item-title
-                    >
-                  </v-list-item>
-                </v-list>
-              </template>
-            </datastream-chart>
-          </v-flex>
-        </v-layout>
-      </v-container>
+      <datastream-charts
+        :value="charts"
+        :worker="Object.freeze(seriesFetchWorker)"
+        @remove="charts.splice($event, 1)"
+      />
     </v-flex>
 
     <v-btn
@@ -241,45 +204,6 @@
     >
       <v-icon>add</v-icon>
     </v-btn>
-
-    <v-dialog v-model="exportDialog" max-width="380">
-      <v-card>
-        <v-card-title class="headline grey lighten-4">Export as</v-card-title>
-
-        <v-container grid-list-lg>
-          <v-layout align-center justify-center column>
-            <v-flex>
-              <v-radio-group v-model="selectedExportIndex" column>
-                <v-radio
-                  v-for="(item, j) in exportItems"
-                  :key="j"
-                  :disabled="
-                    item.download && selectedChart && !selectedChart.canDownload
-                  "
-                  :label="item.title"
-                  :value="j"
-                />
-              </v-radio-group>
-            </v-flex>
-          </v-layout>
-        </v-container>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            @click="exportChart(selectedChart, selectedExportIndex)"
-            >Export</v-btn
-          >
-          <v-btn text color="primary" @click="exportDialog = false"
-            >Cancel</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
       <v-card>
@@ -312,10 +236,11 @@ import _forEach from 'lodash/forEach'
 import _map from 'lodash/map'
 import _sortBy from 'lodash/sortBy'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import { exportItems } from '@/lib/chart-export'
+import { defaultOptions } from '@/lib/chart'
 import { dateFormats } from '@/lib/date'
+import { idRandom } from '@/lib/utils'
 import ChartDatastreamCart from '@/components/ChartDatastreamCart'
-import DatastreamChart from '@/components/DatastreamChart'
+import DatastreamCharts from '@/components/DatastreamCharts'
 import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
@@ -323,7 +248,7 @@ import DateRangeFields from '@/components/DateRangeFields'
 export default {
   components: {
     ChartDatastreamCart,
-    DatastreamChart,
+    DatastreamCharts,
     DatastreamFacetSearch,
     DatastreamSearch,
     DateRangeFields,
@@ -344,38 +269,20 @@ export default {
       to: null
     },
 
-    exportChartOptions: {
-      plotOptions: {
-        series: {
-          dataLabels: {
-            enabled: false
-          }
-        }
-      }
-    },
-    exportDialog: false,
-    exportItems,
-
     leaveDialog: false,
-
-    previousExportIndex: -1,
-    selectedExportIndex: 0,
-
-    selectedChart: null,
 
     seriesFetchWorker: null
   }),
 
   computed: {
-    ...mapGetters(['getUnitAbbr', 'org']),
+    ...mapGetters(['getUnitText', 'org']),
     ...mapGetters({
       cartCount: 'cart/count',
       cartIds: 'cart/ids'
     }),
     ...mapGetters({
       getDatastream: 'datastreams/get',
-      getStation: 'stations/get',
-      getVocabulary: 'vocabularies/get'
+      getStation: 'stations/get'
     }),
 
     ...mapState(['auth']),
@@ -435,8 +342,6 @@ export default {
       this.workerMessageHandler
     )
 
-    this.uniqueCounter = (Math.random() * 0x80000000) | 0
-
     this.resetCart()
   },
 
@@ -481,46 +386,9 @@ export default {
     }),
 
     addChart() {
+      const { getUnitText } = this
       const colors = Highcharts.getOptions().colors
-      const options = {
-        chart: {
-          height: 500,
-          zoomType: 'x'
-        },
-        exporting: {
-          chartOptions: {
-            plotOptions: {
-              series: {
-                dataLabels: { enabled: true }
-              }
-            }
-          },
-          fallbackToExportServer: false
-        },
-        navigation: {
-          buttonOptions: { enabled: false }
-        },
-        plotOptions: {
-          series: {
-            states: {
-              inactive: { opacity: 0.9 }
-            }
-          }
-        },
-        title: {
-          text: this.chartTitle
-        },
-        tooltip: {
-          shared: true,
-          xDateFormat: '%a %Y-%m-%d %H:%M'
-        },
-        xAxis: {
-          crosshair: true,
-          title: { text: 'Time' },
-          type: 'datetime'
-        },
-        yAxis: []
-      }
+      const options = defaultOptions(this.chartTitle)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -534,28 +402,24 @@ export default {
           .add(1, 'd')
           .valueOf()
       }
-      const unitVocabulary = this.getVocabulary('dt-unit')
       const { yAxis } = options
+
+      options.chart.resetPointer = true
 
       let canDownload = true
       let items = _map(this.quantitiesById, (value, id) => {
         const datastream = this.getDatastream(id)
-        const unit = datastream.dtUnit
-        const term =
-          unitVocabulary && unitVocabulary.terms
-            ? unitVocabulary.terms.find(term => term.label === unit)
-            : null
-        const unitText = term && term.abbreviation ? term.abbreviation : unit
+        const unitText = getUnitText(datastream.dtUnit)
 
         return {
           datastream,
-          seriesName: `${datastream.fullName} ${unitText}`,
+          seriesName: `${datastream.nameWithStation} ${unitText}`,
           yAxisLabelFormat: `{value} ${unitText}`,
           yAxisOpposite: value === 2 // Based on cart quantity
         }
       })
 
-      items = _sortBy(items, ['datastream.fullNameWithUnit'])
+      items = _sortBy(items, ['datastream.nameWithStationAndUnit'])
 
       _forEach(
         items,
@@ -598,21 +462,12 @@ export default {
         alert: null,
         bus: new Vue(),
         canDownload,
-        id: ++this.uniqueCounter,
+        fetchSpec,
+        id: `datastreams-${new Date().getTime()}-${idRandom()}`,
         isReady: false,
         options,
-        seriesOptions,
-        fetchSpec
+        seriesOptions
       })
-    },
-
-    exportChart(chart, exportIndex) {
-      const item = this.exportItems[exportIndex]
-
-      this.exportDialog = false
-      this.previousExportIndex = exportIndex
-
-      chart.bus.$emit(item.event, item.options)
     },
 
     goToChartTab() {
@@ -648,12 +503,6 @@ export default {
         id: item._id,
         max: 1
       })
-    },
-
-    showExportDialog(chart) {
-      this.selectedChart = chart
-      this.selectedExportIndex = 0
-      this.exportDialog = true
     },
 
     workerMessageHandler(event) {

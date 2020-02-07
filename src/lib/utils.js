@@ -6,6 +6,10 @@ export function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
+export function idRandom() {
+  return Math.floor(Math.random() * 10000)
+}
+
 export function jsonFormat(data) {
   return JSON.stringify(data, null, 2)
 }

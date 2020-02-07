@@ -38,7 +38,7 @@
             :placeholder="$timeFormats.hm24"
             class="mt-2"
             label="From time"
-            prepend-inner-icon="access_time"
+            prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>
@@ -81,7 +81,7 @@
             :placeholder="$timeFormats.hm24"
             class="mt-2"
             label="To time"
-            prepend-inner-icon="access_time"
+            prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>

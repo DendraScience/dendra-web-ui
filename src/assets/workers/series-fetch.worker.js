@@ -1,19 +1,26 @@
-const api = {}
-const processIds = {}
-const datapointsMax = process.env.datapointsMax
-const headers = new Headers()
+import { WorkerFetcher } from '@/lib/worker-fetcher'
 
-headers.append('Content-Type', 'application/json')
+const datapointsMax = process.env.datapointsMax
+const fetcher = new WorkerFetcher({ processFetch, self })
+const { api, headers, processIds } = fetcher
+
 headers.append('Dendra-Fetch-Action', 'graph')
 
+// Respond to message from parent thread
+self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
+
 async function processFetch({ id, fetchSpec }) {
-  const { baseQuery, queries, startTime, untilTime } = fetchSpec
+  const { baseQuery, queries, startTime, untilTime, useDummyWY } = fetchSpec
+  let first
+  let point
   let total = 0
+  let value
 
   for (let index = 0; index < queries.length; index++) {
     const query = queries[index]
     const data = []
-    let fromTime = startTime
+    const v = query.uom_id ? 'uv' : 'v'
+    let fromTime = Array.isArray(startTime) ? startTime[index] : startTime
 
     while (processIds[id] !== undefined) {
       if (data.length > datapointsMax) {
@@ -27,10 +34,10 @@ async function processFetch({ id, fetchSpec }) {
       const url = new URL(`${api.uri}${api.path}/datapoints`)
       const params = Object.assign({}, baseQuery, query, {
         t_int: true,
-        t_local: true,
+        // t_local: true,
         time_local: true,
         [data.length ? 'time[$gt]' : 'time[$gte]']: fromTime,
-        'time[$lt]': untilTime,
+        'time[$lt]': Array.isArray(untilTime) ? untilTime[index] : untilTime,
         $limit: 2016,
         '$sort[time]': 1
       })
@@ -54,11 +61,37 @@ async function processFetch({ id, fetchSpec }) {
         }
       }
 
-      if (!(json && Array.isArray(json.data) && json.data.length)) break
+      if (!(json && json.data && json.data.length)) break
 
-      for (let i = 0; i < json.data.length; i++) {
-        const { lt, v } = json.data[i]
-        data.push([lt, v])
+      if (useDummyWY) {
+        for (let i = 0; i < json.data.length; i++) {
+          point = json.data[i]
+          value = point[v]
+
+          if (!first) first = { point, value }
+
+          // HACK: Toss everything except hourly points (MOVE TO THE BACKEND!)
+          const date = new Date(point.lt)
+          if (date.getUTCMinutes() > 0) continue
+
+          /*
+            All series have a dummy year in order to be compared on the same x axis.
+            Make sure we use a leap year (e.g. 1972)!
+           */
+
+          date.setUTCFullYear(date.getUTCMonth() > 8 ? 1971 : 1972)
+
+          data.push([date.getTime(), value])
+        }
+      } else {
+        for (let i = 0; i < json.data.length; i++) {
+          point = json.data[i]
+          value = point[v]
+
+          if (!first) first = { point, value }
+
+          data.push([point.lt, value])
+        }
       }
 
       total += json.data.length
@@ -68,47 +101,12 @@ async function processFetch({ id, fetchSpec }) {
       fromTime = json.data[json.data.length - 1].lt
     }
 
-    self.postMessage({ id, series: { data, index } })
+    self.postMessage({
+      first,
+      id,
+      last: { point, value },
+      query,
+      series: { data, index }
+    })
   }
 }
-
-// Respond to message from parent thread
-self.addEventListener('message', event => {
-  const { data } = event
-  const { id } = data
-
-  if (data.accessToken) {
-    headers.set('Authorization', data.accessToken)
-  }
-
-  if (data.api) {
-    Object.assign(api, data.api)
-  }
-
-  if (id !== undefined && data.cancel === true) {
-    delete processIds[id]
-  }
-
-  if (id !== undefined && data.fetchSpec && !processIds[id]) {
-    self.postMessage({ id, isFetching: true })
-
-    processIds[id] = true
-    processFetch(data).then(
-      () => {
-        self.postMessage({ id, isFetching: false })
-        delete processIds[id]
-      },
-      err => {
-        self.postMessage({
-          id,
-          error: {
-            message: err.message,
-            name: err.name
-          },
-          isFetching: false
-        })
-        delete processIds[id]
-      }
-    )
-  }
-})

@@ -98,7 +98,7 @@ export default {
       return {
         _id: { $in: this.cartIds },
         $sort: {
-          fullNameWithUnit: 1
+          nameWithStationAndUnit: 1
         }
       }
     }

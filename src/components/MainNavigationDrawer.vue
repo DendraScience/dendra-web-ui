@@ -15,13 +15,13 @@
         -->
     </v-toolbar>
 
-    <div v-for="(list, l) in filteredLists" :key="l">
+    <div v-for="(list, listIndex) in filteredLists" :key="listIndex">
       <v-subheader v-if="list.header">{{ list.header }}</v-subheader>
 
       <v-list>
         <v-list-item
-          v-for="(item, i) in list.items"
-          :key="i"
+          v-for="(item, itemIndex) in list.items"
+          :key="itemIndex"
           :disabled="item.disabled"
           :to="
             item.org
@@ -96,7 +96,7 @@ export default {
               title: 'Overview'
             },
             {
-              icon: 'check_circle',
+              icon: 'mdi-check-circle',
               org: true,
               name: 'orgs-orgSlug-status',
               title: 'Station status'

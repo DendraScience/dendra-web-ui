@@ -7,7 +7,10 @@ export default {
       default: null,
       type: Object
     },
-    id: { default: '', type: String },
+    id: {
+      default: 0,
+      type: [Number, String]
+    },
     fetchSpec: {
       default: () => ({}),
       type: Object

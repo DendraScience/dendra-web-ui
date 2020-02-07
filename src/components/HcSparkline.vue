@@ -7,7 +7,10 @@ import Highcharts from 'highcharts'
 
 export default {
   props: {
-    id: { default: '', type: String },
+    id: {
+      default: 0,
+      type: [Number, String]
+    },
     options: {
       default: () => ({
         chart: {

@@ -59,7 +59,7 @@
                 :id="station._id"
                 :key="station._id"
                 :fetch-spec="{ startTime, stationId: station._id }"
-                :worker="Object.freeze(statusFetchWorker)"
+                :worker="Object.freeze(stationStatusWorker)"
               >
                 <template v-slot="{ result }">
                   <v-expansion-panel
@@ -70,7 +70,7 @@
                         <hc-sparkline
                           :id="station._id"
                           :series-options="Object.freeze(seriesOptions)"
-                          :worker="Object.freeze(statusFetchWorker)"
+                          :worker="Object.freeze(stationStatusWorker)"
                         />
                       </template>
 
@@ -84,7 +84,8 @@
 
                         <a
                           v-if="
-                            station.general_config_resolved &&
+                            linksToOldDashboard &&
+                              station.general_config_resolved &&
                               station.general_config_resolved
                                 .station_status_links_to_old_dashboard
                           "
@@ -96,10 +97,22 @@
                           "
                           class="black--text station-link"
                           target="_blank"
+                          @click="$event.stopImmediatePropagation()"
                           >{{ station.name }}</a
-                        ><span v-else class="black--text">{{
-                          station.name
-                        }}</span>
+                        >
+                        <nuxt-link
+                          v-else
+                          :to="{
+                            name: 'orgs-orgSlug-status-stationSlug',
+                            params: {
+                              orgSlug: org.slug,
+                              stationSlug: station.slug
+                            }
+                          }"
+                          class="black--text station-link"
+                          @click.native="$event.stopImmediatePropagation()"
+                          >{{ station.name }}</nuxt-link
+                        >
                       </div>
                     </v-expansion-panel-header>
 
@@ -190,6 +203,7 @@
 </template>
 
 <script>
+import vuetifyColors from 'vuetify/lib/util/colors'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import moment from 'moment'
 import _debounce from 'lodash/debounce'
@@ -217,11 +231,14 @@ export default {
     return {
       drawer: true,
 
+      linksToOldDashboard: process.env.linksToOldDashboard,
+
       stationsMultiple: false,
       stationsPanel: [],
       stationsPanelOpen: [],
       stationsSearch: null,
       stationsSearchDebounce: null,
+      stationStatusWorker: null,
 
       queryStationIds: [],
       shownStationIds: [],
@@ -231,6 +248,7 @@ export default {
 
       seriesOptions: [
         {
+          color: vuetifyColors.grey.base,
           name: 'Battery Voltage'
         }
       ],
@@ -359,30 +377,28 @@ export default {
   },
 
   created() {
-    const { query } = this.$route
+    // const { query } = this.$route
 
-    if (query && query.orgId) this.selectedOrgIds = [query.orgId]
+    // TODO: Implement later
+    // if (query && query.orgId) this.selectedOrgIds = [query.orgId]
 
     this.debouncedStationsSearch = _debounce(value => {
       this.stationsSearch = value
     }, 400)
 
-    this.statusFetchWorker = this.$workers.createStatusFetchWorker()
-    this.statusFetchWorker.postMessage({
+    this.stationStatusWorker = this.$workers.createStationStatusWorker()
+    this.stationStatusWorker.postMessage({
       accessToken: this.auth.accessToken,
       api: this.$api
     })
   },
 
-  // mounted() {
-  // },
-
   beforeDestroy() {
     this.debouncedStationsSearch.cancel()
     this.debouncedStationsSearch = null
 
-    this.statusFetchWorker.terminate()
-    this.statusFetchWorker = null
+    this.stationStatusWorker.terminate()
+    this.stationStatusWorker = null
   },
 
   methods: {

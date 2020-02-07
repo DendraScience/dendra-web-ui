@@ -1,13 +1,12 @@
 export default async function({ error, params, store }) {
-  const { orgSlug } = params
+  const { orgId, orgSlug } = params
 
   try {
-    const res = await store.dispatch('organizations/find', {
-      query: {
-        slug: orgSlug,
-        $limit: 1
-      }
-    })
+    const query = { $limit: 1 }
+    if (orgId) query._id = orgId
+    if (orgSlug) query.slug = orgSlug
+
+    const res = await store.dispatch('organizations/find', { query })
 
     if (!(res && res.data && res.data.length)) {
       return error({

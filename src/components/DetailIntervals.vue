@@ -200,7 +200,7 @@ export default {
 
         return {
           beginsLabel: 'Invalid interval!',
-          icon: 'error',
+          icon: 'mdi-alert',
           key
         }
       })

@@ -44,7 +44,7 @@
                       >
 
                       <v-icon color="tertiary" @click="open(item._id)"
-                        >open_in_new</v-icon
+                        >mdi-open-in-new</v-icon
                       >
                     </template>
                   </station-search>

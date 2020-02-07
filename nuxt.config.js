@@ -51,6 +51,8 @@ module.exports = {
 
     datapointsMax: 288 * 365 * 10, // 10 years of 5 minute data
 
+    linksToOldDashboard: process.env.LINKS_TO_OLD_DASHBOARD === 'true',
+
     googleMapsAPIKey,
     googleTrackingId
   },

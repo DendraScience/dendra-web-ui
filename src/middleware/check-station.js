@@ -1,15 +1,13 @@
 export default async function({ error, params, store }) {
   const { orgId } = store.getters
-  const { stationId } = params
+  const { stationId, stationSlug } = params
 
   try {
-    const res = await store.dispatch('stations/find', {
-      query: {
-        _id: stationId,
-        organization_id: orgId,
-        $limit: 1
-      }
-    })
+    const query = { organization_id: orgId, $limit: 1 }
+    if (stationId) query._id = stationId
+    if (stationSlug) query.slug = stationSlug
+
+    const res = await store.dispatch('stations/find', { query })
 
     if (!(res && res.data && res.data.length)) {
       return error({

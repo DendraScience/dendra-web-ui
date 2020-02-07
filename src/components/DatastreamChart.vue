@@ -7,16 +7,25 @@
     </v-card-text>
 
     <div class="pt-1" style="position: relative;">
-      <hc-time-series
-        v-if="worker"
+      <worker-fetch
         :id="value.id"
-        :bus="value.bus"
-        :export-chart-options="exportChartOptions"
-        :options="Object.freeze(value.options)"
-        :series-options="Object.freeze(value.seriesOptions)"
         :fetch-spec="Object.freeze(value.fetchSpec)"
-        :worker="worker"
-      />
+        :worker="Object.freeze(worker)"
+      >
+        <hc-time-series
+          v-if="worker"
+          :id="value.id"
+          :bus="value.bus"
+          :export-chart-options="exportChartOptions"
+          :group="value.group"
+          :options="Object.freeze(value.options)"
+          :series-options="Object.freeze(value.seriesOptions)"
+          :sync-crosshairs="value.sync"
+          :sync-extremes="value.sync"
+          :fetch-spec="Object.freeze(value.fetchSpec)"
+          :worker="Object.freeze(worker)"
+        />
+      </worker-fetch>
 
       <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
         <template v-slot:activator="{ on }">
@@ -33,10 +42,12 @@
 
 <script>
 import HcTimeSeries from '@/components/HcTimeSeries'
+import WorkerFetch from '@/components/WorkerFetch'
 
 export default {
   components: {
-    HcTimeSeries
+    HcTimeSeries,
+    WorkerFetch
   },
 
   props: {

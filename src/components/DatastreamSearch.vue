@@ -34,7 +34,7 @@
             flat
             hide-details
             hide-no-data
-            item-text="longName"
+            item-text="nameWithEnabled"
             item-value="_id"
             multiple
           ></v-autocomplete>

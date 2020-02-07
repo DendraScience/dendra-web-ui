@@ -53,7 +53,7 @@
                     nuxt
                   >
                     <v-list-item-action
-                      ><v-icon>check_circle</v-icon></v-list-item-action
+                      ><v-icon>mdi-check-circle</v-icon></v-list-item-action
                     >
                     <v-list-item-content>
                       <v-list-item-title>Station status</v-list-item-title>
@@ -122,7 +122,7 @@
                     target="_blank"
                   >
                     <v-list-item-action
-                      ><v-icon>open_in_browser</v-icon></v-list-item-action
+                      ><v-icon>mdi-open-in-app</v-icon></v-list-item-action
                     >
                     <v-list-item-content>
                       <v-list-item-title>Visit website</v-list-item-title>

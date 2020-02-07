@@ -17,7 +17,7 @@ export default {
   props: {
     color: { default: '', type: String },
     small: { default: false, type: Boolean },
-    value: { default: null, type: [Object, String] }
+    value: { default: null, type: [Number, Object, String] }
   },
 
   data: () => ({
@@ -27,7 +27,9 @@ export default {
   computed: {
     text() {
       const { index, value } = this
-      const m = typeof value === 'string' ? moment.utc(value) : value
+      const type = typeof value
+      const m =
+        type === 'number' || type === 'string' ? moment.utc(value) : value
 
       switch (index) {
         case 0:

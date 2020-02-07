@@ -38,14 +38,14 @@ export const plugins = [
           return (this.terms && this.terms.dt && this.terms.dt.Unit) || ''
         },
 
-        get fullName() {
-          return `${this.station_lookup && this.station_lookup.name} ${
-            this.name
-          }`
+        get nameWithStation() {
+          return this.station_lookup
+            ? `${this.station_lookup.name} ${this.name}`
+            : this.name
         },
 
-        get fullNameWithUnit() {
-          return `${this.fullName} ${this.dtUnit}`
+        get nameWithStationAndUnit() {
+          return `${this.nameWithStation} ${this.dtUnit}`
         },
 
         get quantitySelected() {
@@ -77,7 +77,7 @@ export const plugins = [
   service('stations', {
     instanceDefaults(data, { store }) {
       return {
-        get longName() {
+        get nameWithEnabled() {
           return this.is_enabled ? this.name : `${this.name} (disabled)`
         },
 
@@ -87,8 +87,10 @@ export const plugins = [
 
         get time() {
           try {
-            const utc = store.getters['time/get']('utc')
-            return moment(utc.now).valueOf() + (this.utc_offset | 0) * 1000
+            return (
+              moment.utc(store.getters['time/get']('utc').now).valueOf() +
+              (this.utc_offset | 0) * 1000
+            )
           } catch (err) {
             return null
           }
@@ -142,12 +144,15 @@ export const getters = {
     return state.abilityUpdateTime
   },
 
-  getUnitAbbr(state, { 'vocabularies/get': get }) {
-    return (label, id = 'dt-unit') => {
-      const vocabulary = get(id)
-      const term = vocabulary.terms.find(term => term.label === label)
+  getUnitText(state, { 'vocabularies/get': get }) {
+    const vocabulary = get('dt-unit')
 
-      return term && term.abbreviation
+    return unit => {
+      const term =
+        vocabulary && vocabulary.terms
+          ? vocabulary.terms.find(term => term.label === unit)
+          : null
+      return term && term.abbreviation ? term.abbreviation : unit
     }
   },
 

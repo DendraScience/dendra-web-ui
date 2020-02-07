@@ -56,7 +56,7 @@
                       :label="loading ? 'Loading...' : 'Station'"
                       :loading="loading"
                       :readonly="!editing"
-                      item-text="longName"
+                      item-text="nameWithEnabled"
                       item-value="_id"
                     ></v-select>
                   </ValidationProvider>

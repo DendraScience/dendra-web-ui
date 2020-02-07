@@ -1,11 +1,14 @@
-const api = {}
-const processIds = {}
-const headers = new Headers()
+import { WorkerFetcher } from '@/lib/worker-fetcher'
 
-headers.append('Content-Type', 'application/json')
+const fetcher = new WorkerFetcher({ processFetch, self })
+const { api, headers } = fetcher
+
 headers.append('Dendra-Fetch-Action', 'graph')
 
-async function getBatteryVoltageDatastreamId(stationId) {
+// Respond to message from parent thread
+self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
+
+async function getBatteryVoltageDatastream(stationId) {
   const url = new URL(`${api.uri}${api.path}/datastreams`)
   const params = {
     is_enabled: true,
@@ -15,7 +18,7 @@ async function getBatteryVoltageDatastreamId(stationId) {
     '$and[2][terms_info.class_tags]': 'ds_Variable_Voltage',
     $limit: 1,
     '$select[]': '_id',
-    '$sort[terms_info.class_keys]': 1
+    '$sort[_id]': 1
   }
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 
@@ -30,10 +33,10 @@ async function getBatteryVoltageDatastreamId(stationId) {
   if (!response.ok)
     throw new Error(`Non-success status code ${response.status}`)
 
-  if (!(json && Array.isArray(json.data) && json.data.length))
+  if (!(json && json.data && json.data.length))
     throw new Error(`No Batery Voltage datastream for station ${stationId}`)
 
-  return json.data[0]._id
+  return json.data[0]
 }
 
 async function fetchLastSeen(id, query) {
@@ -60,7 +63,7 @@ async function fetchLastSeen(id, query) {
     }
   }
 
-  if (json && Array.isArray(json.data) && json.data.length) {
+  if (json && json.data && json.data.length) {
     self.postMessage({
       id,
       result: {
@@ -98,7 +101,7 @@ async function fetchSeries(id, index, query, { startTime }) {
     }
   }
 
-  if (json && Array.isArray(json.data) && json.data.length) {
+  if (json && json.data && json.data.length) {
     for (let i = 0; i < json.data.length; i++) {
       const { t, v } = json.data[i]
       data.push([t, v])
@@ -109,61 +112,20 @@ async function fetchSeries(id, index, query, { startTime }) {
 }
 
 async function processFetch({ id, cache, fetchSpec }) {
-  let { batteryVoltageDatastreamId } = cache
+  let { batteryVoltageDatastream } = cache
 
-  if (!batteryVoltageDatastreamId)
-    batteryVoltageDatastreamId = await getBatteryVoltageDatastreamId(
+  if (!batteryVoltageDatastream)
+    batteryVoltageDatastream = await getBatteryVoltageDatastream(
       fetchSpec.stationId
     )
 
-  self.postMessage({ id, cache: { batteryVoltageDatastreamId } })
+  self.postMessage({ id, cache: { batteryVoltageDatastream } })
 
-  await fetchLastSeen(id, { datastream_id: batteryVoltageDatastreamId })
+  await fetchLastSeen(id, { datastream_id: batteryVoltageDatastream._id })
   await fetchSeries(
     id,
     0,
-    { datastream_id: batteryVoltageDatastreamId },
+    { datastream_id: batteryVoltageDatastream._id },
     fetchSpec
   )
 }
-
-// Respond to message from parent thread
-self.addEventListener('message', event => {
-  const { data } = event
-  const { id } = data
-
-  if (data.accessToken) {
-    headers.set('Authorization', data.accessToken)
-  }
-
-  if (data.api) {
-    Object.assign(api, data.api)
-  }
-
-  if (id !== undefined && data.cancel === true) {
-    delete processIds[id]
-  }
-
-  if (id !== undefined && data.fetchSpec && !processIds[id]) {
-    self.postMessage({ id, isFetching: true })
-
-    processIds[id] = true
-    processFetch(data).then(
-      () => {
-        self.postMessage({ id, isFetching: false })
-        delete processIds[id]
-      },
-      err => {
-        self.postMessage({
-          id,
-          error: {
-            message: err.message,
-            name: err.name
-          },
-          isFetching: false
-        })
-        delete processIds[id]
-      }
-    )
-  }
-})
