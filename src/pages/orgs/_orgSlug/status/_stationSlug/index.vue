@@ -483,7 +483,7 @@ export default {
         for (let i = 0; i < 3; i++) {
           seriesOptions.push({
             color: colors[i],
-            name: `${start.year()} ${
+            name: `${until.year()} ${
               cumulativePrecipitation.name
             } ${unitTextPrecipitation}`,
             yAxis: 0
