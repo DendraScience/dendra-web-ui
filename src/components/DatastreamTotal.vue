@@ -34,8 +34,10 @@ export default {
   props: {
     hideActions: { default: false, type: Boolean },
     isEnabled: { default: null, type: [Boolean, String] },
+    isHidden: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
+    showHidden: { default: false, type: Boolean },
     stationId: { default: '', type: String },
     totalLabel: { default: 'total', type: String }
   },
@@ -43,13 +45,15 @@ export default {
   computed: {
     totalQuery() {
       const query = {
-        is_hidden: false,
         organization_id: this.org._id,
         $limit: 0
       }
 
       if (this.isEnabled !== null) query.is_enabled = this.isEnabled
       else if (!this.showDisabled) query.is_enabled = true
+
+      if (this.isHidden !== null) query.is_hidden = this.isHidden
+      else if (!this.showHidden) query.is_hidden = false
 
       if (this.stationId) query.station_id = this.stationId
 

@@ -7,6 +7,7 @@
     height="64"
   >
     <v-app-bar-nav-icon @click="toggleDrawer" />
+
     <v-toolbar-title>
       <nuxt-link
         v-if="orgSlug"

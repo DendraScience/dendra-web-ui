@@ -6,13 +6,13 @@
     <v-app-bar
       v-show="editing"
       :color="editorColor"
-      :app="editing"
+      app
       dark
       dense
       fixed
       style="margin-top: 64px;"
     >
-      <v-toolbar-title v-if="editorTitle">{{ editorTitle }}</v-toolbar-title>
+      <v-toolbar-title>{{ editorTitle }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -30,7 +30,7 @@
     <v-content>
       <status-bar v-model="status" />
 
-      <v-container fluid pa-0>
+      <v-container :style="editing ? { marginTop: '48px' } : {}" fluid pa-0>
         <nuxt />
       </v-container>
     </v-content>

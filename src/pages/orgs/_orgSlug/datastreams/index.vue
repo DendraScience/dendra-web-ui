@@ -64,6 +64,8 @@
                     :org="org"
                     :scheme-id="queryScheme"
                     :show-disabled="$can('create', 'datastreams')"
+                    :show-hidden="$can('create', 'datastreams')"
+                    :show-options="$can('create', 'datastreams')"
                     :station-id="queryStationId"
                     show-link
                   >

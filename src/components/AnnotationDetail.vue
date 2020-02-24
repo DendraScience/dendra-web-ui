@@ -113,7 +113,12 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <datastream-search :org="org" show-disabled>
+        <datastream-search
+          :org="org"
+          :show-hidden="$can('create', 'datastreams')"
+          :show-options="$can('create', 'datastreams')"
+          show-disabled
+        >
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -319,7 +324,11 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <station-search :org="org" show-disabled>
+        <station-search
+          :org="org"
+          :show-hidden="$can('create', 'stations')"
+          show-disabled
+        >
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"

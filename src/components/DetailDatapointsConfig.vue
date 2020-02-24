@@ -60,7 +60,7 @@
     </v-container>
 
     <v-card-actions v-if="editing">
-      <v-btn color="primary" @click="add">
+      <v-btn color="primary" :disabled="!value.station_id" @click="add">
         <v-icon>add</v-icon>
       </v-btn>
     </v-card-actions>

@@ -5,7 +5,7 @@
         <datastream-chart :value="chart" :worker="Object.freeze(worker)">
           <template v-slot:menu>
             <v-list>
-              <v-list-item @click="remove(index)">
+              <v-list-item v-if="showRemove" @click="remove(index)">
                 <v-list-item-title>Remove</v-list-item-title>
               </v-list-item>
 
@@ -89,6 +89,7 @@ export default {
   },
 
   props: {
+    showRemove: { default: true, type: Boolean },
     value: { type: Array, required: true },
     worker: { default: null, type: Worker }
   },

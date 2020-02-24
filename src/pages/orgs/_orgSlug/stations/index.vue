@@ -23,6 +23,7 @@
                     :is-enabled="queryIsEnabled"
                     :org="org"
                     :show-disabled="$can('create', 'stations')"
+                    :show-hidden="$can('create', 'stations')"
                     show-link
                   >
                     <template v-slot:actions="{ item }">

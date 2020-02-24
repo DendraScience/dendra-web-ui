@@ -4,7 +4,7 @@
       <v-container grid-list-xl>
         <v-layout v-if="!editing">
           <v-flex>
-            <h4 class="display-1 font-weight-light mb-2">Station details</h4>
+            <h4 class="display-1 font-weight-light my-3">Station details</h4>
           </v-flex>
         </v-layout>
 

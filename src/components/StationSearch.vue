@@ -90,8 +90,10 @@ export default {
 
   props: {
     isEnabled: { default: null, type: [Boolean, String] },
+    isHidden: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
+    showHidden: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean }
   },
 
@@ -144,7 +146,6 @@ export default {
       const { page, itemsPerPage } = tableOptions
 
       const query = {
-        is_hidden: false,
         organization_id: this.org._id,
         station_type: 'weather',
         $limit: itemsPerPage,
@@ -162,10 +163,13 @@ export default {
         $sort: { name: 1, _id: 1 }
       }
 
-      if (this.isEnabled !== null) query.is_enabled = this.isEnabled
-      else if (!this.showDisabled) query.is_enabled = true
-
       const ands = []
+
+      if (this.isEnabled !== null) ands.push({ is_enabled: this.isEnabled })
+      else if (!this.showDisabled) ands.push({ is_enabled: true })
+
+      if (this.isHidden !== null) ands.push({ is_hidden: this.isHidden })
+      else if (!this.showHidden) ands.push({ is_hidden: false })
 
       if (search && search.length) {
         // TODO: Implement n-grams for partial full-text search! https://en.wikipedia.org/wiki/N-gram

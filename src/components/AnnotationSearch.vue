@@ -185,10 +185,10 @@ export default {
         }
       }
 
-      if (this.isEnabled !== null) query.is_enabled = this.isEnabled
-      else if (!this.showDisabled) query.is_enabled = true
-
       const ands = []
+
+      if (this.isEnabled !== null) ands.push({ is_enabled: this.isEnabled })
+      else if (!this.showDisabled) ands.push({ is_enabled: true })
 
       if (search && search.length) {
         // TODO: Implement n-grams for partial full-text search! https://en.wikipedia.org/wiki/N-gram

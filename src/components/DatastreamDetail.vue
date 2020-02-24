@@ -201,7 +201,12 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <datastream-search :org="org" show-disabled>
+        <datastream-search
+          :org="org"
+          :station-id="value.station_id"
+          show-disabled
+          show-hidden
+        >
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -389,6 +394,16 @@ export default {
     configPathItems: [
       {
         spec: {
+          required: [],
+          sample: {
+            query: {}
+          }
+        },
+        text: 'Dendra datapoints',
+        value: '/dendra/datapoints'
+      },
+      {
+        spec: {
           required: [
             'query.api',
             'query.db',
@@ -408,7 +423,7 @@ export default {
             }
           }
         },
-        text: 'Influx SELECT',
+        text: 'Influx select',
         value: '/influx/select'
       },
       {

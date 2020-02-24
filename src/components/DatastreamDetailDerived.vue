@@ -58,7 +58,7 @@
                     name="derived method"
                     :rules="{
                       regex: /^[A-Za-z][A-Za-z0-9]*$/,
-                      required: true,
+                      required: value.source_type === 'deriver',
                       min: 1,
                       max: 100
                     }"
@@ -68,7 +68,6 @@
                       :error-messages="errors"
                       :readonly="!editing"
                       label="Derivation method"
-                      required
                     ></v-text-field>
                   </ValidationProvider>
                 </v-flex>

@@ -1,27 +1,27 @@
 <template>
   <v-container fluid grid-list-lg>
-    <feathers-vuex-find
-      v-if="!stationId"
-      v-slot="{ isFindPending: loading, items: stations }"
-      :query="
-        showDisabled
-          ? {
-              is_hidden: false,
-              organization_id: org._id,
-              station_type: 'weather',
-              $sort: { name: 1 }
-            }
-          : {
-              is_enabled: true,
-              is_hidden: false,
-              organization_id: org._id,
-              station_type: 'weather',
-              $sort: { name: 1 }
-            }
-      "
-      service="stations"
-    >
-      <v-layout wrap>
+    <v-layout wrap>
+      <feathers-vuex-find
+        v-if="!stationId"
+        v-slot="{ isFindPending: loading, items: stations }"
+        :query="
+          showDisabled
+            ? {
+                is_hidden: false,
+                organization_id: org._id,
+                station_type: 'weather',
+                $sort: { name: 1 }
+              }
+            : {
+                is_enabled: true,
+                is_hidden: false,
+                organization_id: org._id,
+                station_type: 'weather',
+                $sort: { name: 1 }
+              }
+        "
+        service="stations"
+      >
         <v-flex xs12 md6>
           <v-autocomplete
             v-model="selectedStationIds"
@@ -39,8 +39,32 @@
             multiple
           ></v-autocomplete>
         </v-flex>
-      </v-layout>
-    </feathers-vuex-find>
+      </feathers-vuex-find>
+
+      <v-flex
+        v-if="
+          isEnabled === null &&
+            isHidden === null &&
+            showDisabled &&
+            showHidden &&
+            showOptions
+        "
+        xs12
+        md6
+      >
+        <v-select
+          v-model="selectedOptions"
+          :items="optionItems"
+          chips
+          deletable-chips
+          label="Options"
+          filled
+          flat
+          hide-details
+          multiple
+        ></v-select>
+      </v-flex>
+    </v-layout>
 
     <feathers-vuex-find
       v-slot="{ items: vocabularies }"
@@ -179,9 +203,12 @@ export default {
 
   props: {
     isEnabled: { default: null, type: [Boolean, String] },
+    isHidden: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
     schemeId: { default: 'ds', type: String },
     showDisabled: { default: false, type: Boolean },
+    showHidden: { default: false, type: Boolean },
+    showOptions: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean },
     stationId: { default: null, type: String }
   },
@@ -228,11 +255,14 @@ export default {
       }
     ],
 
+    optionItems: ['Disabled', 'Hidden'],
+
     queryDatastreamIds: [],
 
     search: null,
     searchDebounce: null,
 
+    selectedOptions: null,
     selectedStationIds: null,
     selectedTermLabels: {},
 
@@ -249,6 +279,7 @@ export default {
       const {
         schemeId,
         search,
+        selectedOptions,
         selectedStationIds,
         selectedTermLabels,
         tableOptions
@@ -256,7 +287,6 @@ export default {
       const { page, itemsPerPage } = tableOptions
 
       const query = {
-        is_hidden: false,
         organization_id: this.org._id,
         $limit: itemsPerPage,
         $skip: (page - 1) * itemsPerPage,
@@ -275,10 +305,17 @@ export default {
         $sort: { name: 1, _id: 1 }
       }
 
-      if (this.isEnabled !== null) query.is_enabled = this.isEnabled
-      else if (!this.showDisabled) query.is_enabled = true
-
       const ands = []
+
+      if (this.isEnabled !== null) ands.push({ is_enabled: this.isEnabled })
+      else if (!this.showDisabled) ands.push({ is_enabled: true })
+      else if (selectedOptions && selectedOptions.includes('Disabled'))
+        ands.push({ is_enabled: false })
+
+      if (this.isHidden !== null) ands.push({ is_hidden: this.isHidden })
+      else if (!this.showHidden) ands.push({ is_hidden: false })
+      else if (selectedOptions && selectedOptions.includes('Hidden'))
+        ands.push({ is_hidden: true })
 
       if (search && search.length) {
         // TODO: Implement n-grams for partial full-text search! https://en.wikipedia.org/wiki/N-gram
@@ -334,6 +371,10 @@ export default {
 
     searchDebounce(newValue) {
       this.debouncedSearch(newValue)
+    },
+
+    selectedOptions() {
+      this.tableOptions.page = 1
     },
 
     selectedStationIds() {

@@ -1,6 +1,6 @@
 import Highcharts from 'highcharts'
 
-export function defaultOptions(title) {
+export function defaultOptions(title = '', subtitle = '') {
   return {
     chart: {
       height: 500,
@@ -26,6 +26,9 @@ export function defaultOptions(title) {
           inactive: { opacity: 0.9 }
         }
       }
+    },
+    subtitle: {
+      text: subtitle
     },
     title: {
       text: title

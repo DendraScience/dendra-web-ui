@@ -213,6 +213,7 @@
 
     <v-flex v-if="charts.length">
       <datastream-charts
+        :show-remove="false"
         :value="charts"
         :worker="Object.freeze(seriesFetchWorker)"
       />
@@ -436,7 +437,7 @@ export default {
         vuetifyColors.blue.base,
         vuetifyColors.blue.lighten3
       ]
-      const options = defaultOptions('Cumulative Rainfall')
+      const options = defaultOptions('Cumulative Rainfall', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -527,7 +528,7 @@ export default {
         vuetifyColors.cyan.lighten4,
         vuetifyColors.cyan.lighten5
       ]
-      const options = defaultOptions('Air Temperature / RH')
+      const options = defaultOptions('Air Temperature / RH', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -615,7 +616,7 @@ export default {
 
     addBatteryVoltageChart(id, { startTime, untilTime }, { batteryVoltage }) {
       const { getUnitText } = this
-      const options = defaultOptions('Battery Voltage')
+      const options = defaultOptions('Battery Voltage', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -680,15 +681,16 @@ export default {
     ) {
       const { getUnitText } = this
       const colors = [
-        vuetifyColors.brown.lighten4,
-        vuetifyColors.brown.lighten2,
+        vuetifyColors.yellow.darken2,
+        vuetifyColors.lime.darken2,
+        vuetifyColors.lime.darken4,
         vuetifyColors.brown.base,
         vuetifyColors.brown.darken2,
         vuetifyColors.brown.darken4,
         vuetifyColors.grey.darken4,
         vuetifyColors.black
       ]
-      const options = defaultOptions('Soil Temperature')
+      const options = defaultOptions('Soil Temperature', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -753,7 +755,7 @@ export default {
       { par, solarRadiation }
     ) {
       const { getUnitText } = this
-      const options = defaultOptions('Solar Radiation')
+      const options = defaultOptions('Solar Radiation', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -832,7 +834,7 @@ export default {
       { airSpeedAverage, airSpeedMaximum }
     ) {
       const { getUnitText } = this
-      const options = defaultOptions('Wind Speed')
+      const options = defaultOptions('Wind Speed', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -867,7 +869,8 @@ export default {
         seriesOptions.push({
           color: vuetifyColors.purple.base,
           name: `${airSpeedAverage.name} ${unitTextSpeed}`,
-          yAxis: 0
+          yAxis: 0,
+          zIndex: 2
         })
         fetchSpec.queries.push({
           datastream_id: airSpeedAverage._id,
@@ -877,9 +880,10 @@ export default {
 
       if (airSpeedMaximum) {
         seriesOptions.push({
-          color: vuetifyColors.red.base,
+          color: vuetifyColors.red.lighten2,
           name: `${airSpeedMaximum.name} ${unitTextSpeed}`,
-          yAxis: 0
+          yAxis: 0,
+          zIndex: 1
         })
         fetchSpec.queries.push({
           datastream_id: airSpeedMaximum._id,

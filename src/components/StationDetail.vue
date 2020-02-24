@@ -107,6 +107,7 @@
             <datastream-total
               :is-enabled="true"
               :org="org"
+              :show-hidden="$can('create', 'datastreams')"
               :station-id="value._id"
               hide-actions
               total-label="enabled"
@@ -117,6 +118,7 @@
             <datastream-total
               :is-enabled="false"
               :org="org"
+              :show-hidden="true"
               :station-id="value._id"
               hide-actions
               total-label="disabled"
