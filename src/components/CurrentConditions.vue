@@ -64,14 +64,14 @@ export default {
       },
       {
         align: 'left',
-        text: 'Last seen',
-        value: 'lastSeenTime',
-        width: '20%'
+        text: 'Datastream',
+        value: 'datastream.name'
       },
       {
         align: 'left',
-        text: 'Datastream',
-        value: 'datastream.name'
+        text: 'Last seen',
+        value: 'lastSeenTime',
+        width: '20%'
       }
     ],
 
