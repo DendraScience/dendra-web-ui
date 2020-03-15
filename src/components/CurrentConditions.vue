@@ -1,12 +1,16 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Current conditions</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row>
+        <v-col class="headline" cols="12" sm="8">
+          <slot>Current conditions</slot>
+        </v-col>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout>
-        <v-flex>
+        <v-col cols="12" sm="4"><slot name="units"/></v-col>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -34,8 +38,8 @@
               >
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
   </v-card>
 </template>
@@ -45,6 +49,7 @@ export default {
   props: {
     datastreamsByKey: { default: null, type: Object },
     org: { default: null, type: Object },
+    units: { default: null, type: Object },
     value: { type: Object, required: true }
   },
 
@@ -54,13 +59,19 @@ export default {
         align: 'left',
         text: 'Measurement',
         value: 'name',
-        width: '30%'
+        width: '20%'
+      },
+      {
+        align: 'right',
+        text: 'Value',
+        value: 'value',
+        width: '15%'
       },
       {
         align: 'left',
-        text: 'Value',
-        value: 'value',
-        width: '20%'
+        text: 'Unit',
+        value: 'unit.text',
+        width: '10%'
       },
       {
         align: 'left',
@@ -79,51 +90,61 @@ export default {
       {
         datastreamKey: 'airTemperature',
         name: 'Air temperature',
+        unitKey: 'temperature',
         valueKey: 'airTemperature'
       },
       {
         datastreamKey: 'relativeHumidity',
         name: 'Relative humidity',
+        unitKey: 'relativeHumidity',
         valueKey: 'relativeHumidity'
       },
       {
         datastreamKey: 'barometricPressure',
         name: 'Barometric pressure',
+        unitKey: 'barometricPressure',
         valueKey: 'barometricPressure'
       },
       {
         datastreamKey: 'barometricPressure',
         name: 'Mean sea-level pressure',
+        unitKey: 'barometricPressure',
         valueKey: 'meanSeaLevelPressure'
       },
       {
         datastreamKey: 'par',
         name: 'PAR',
+        unitKey: 'par',
         valueKey: 'par'
       },
       {
         datastreamKey: 'solarRadiation',
         name: 'Total solar',
+        unitKey: 'solarRadiation',
         valueKey: 'solarRadiation'
       },
       {
         datastreamKey: 'cumulativePrecipitation',
         name: "Today's rainfall",
+        unitKey: 'precipitation',
         valueKey: 'rainfallToday'
       },
       {
         datastreamKey: 'cumulativePrecipitation',
         name: "Yesterday's rainfall",
+        unitKey: 'precipitation',
         valueKey: 'rainfallYesterday'
       },
       {
         datastreamKey: 'cumulativePrecipitation',
         name: 'WY precipitation to date',
+        unitKey: 'precipitation',
         valueKey: 'wyPrecipToDate'
       },
       {
         datastreamKey: 'airSpeedAverage',
         name: 'Wind speed',
+        unitKey: 'speed',
         valueKey: 'windSpeed'
       }
     ]
@@ -131,14 +152,15 @@ export default {
 
   computed: {
     items() {
-      const { datastreamsByKey, value } = this
+      const { datastreamsByKey, units, value } = this
 
       return this.measurements.map(measurement => {
-        const { datastreamKey, valueKey } = measurement
+        const { datastreamKey, unitKey, valueKey } = measurement
         const newMeasurement = Object.assign(
           {
             datastream: null,
             lastSeenTime: null,
+            unitText: null,
             value: null
           },
           measurement
@@ -146,6 +168,8 @@ export default {
 
         if (datastreamsByKey && datastreamsByKey[datastreamKey])
           newMeasurement.datastream = datastreamsByKey[datastreamKey]
+
+        if (units && units[unitKey]) newMeasurement.unit = units[unitKey]
 
         if (value && value[valueKey]) {
           const last = value[valueKey]

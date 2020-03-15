@@ -204,8 +204,23 @@
             <current-conditions
               :datastreams-by-key="datastreamsByKey"
               :org="org"
+              :units="units"
               :value="current"
-            />
+            >
+              <template v-slot:units>
+                <v-select
+                  v-model="somId"
+                  :items="findSOMs().data"
+                  hide-details
+                  item-text="name"
+                  item-value="_id"
+                  label="Units"
+                  dense
+                  filled
+                >
+                </v-select>
+              </template>
+            </current-conditions>
           </v-flex>
         </v-layout>
       </v-container>
@@ -230,6 +245,7 @@ import timer from '@/mixins/timer'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
 import { defaultOptions } from '@/lib/chart'
+import { newCurrent, unitsData } from '@/lib/dashboard'
 import { idRandom } from '@/lib/utils'
 import CurrentConditions from '@/components/CurrentConditions'
 import DatastreamCharts from '@/components/DatastreamCharts'
@@ -244,7 +260,8 @@ export default {
     'check-org',
     'check-station',
     'dt-unit-vocabulary',
-    'system-time-utc'
+    'system-time-utc',
+    'soms'
   ],
 
   mixins: [timer],
@@ -252,18 +269,7 @@ export default {
   data: () => ({
     charts: [],
 
-    current: {
-      airTemperature: null,
-      relativeHumidity: null,
-      barometricPressure: null,
-      meanSeaLevelPressure: null,
-      par: null,
-      totalSolar: null,
-      rainfallToday: null,
-      rainfallYesterday: null,
-      wyPrecipToDate: null,
-      windSpeed: null
-    },
+    current: newCurrent(),
 
     datastreamsByKey: null,
 
@@ -271,15 +277,20 @@ export default {
 
     photoIndex: 0,
 
+    somId: 'met',
+
     seriesFetchWorker: null,
     stationDashboardWorker: null,
 
-    timerInterval: 300000
+    timerInterval: 300000,
+
+    units: null
   }),
 
   computed: {
     ...mapGetters(['getUnitText', 'org', 'station']),
     ...mapGetters({
+      findSOMs: 'soms/find',
       getTime: 'time/get'
     }),
     ...mapState(['auth']),
@@ -368,6 +379,12 @@ export default {
     }
   },
 
+  watch: {
+    somId(newValue) {
+      this.load()
+    }
+  },
+
   created() {
     this.seriesFetchWorker = this.$workers.createSeriesFetchWorker()
     this.seriesFetchWorker.postMessage({
@@ -431,7 +448,7 @@ export default {
       { startTime, untilTime },
       { cumulativePrecipitation }
     ) {
-      const { getUnitText } = this
+      const { units } = this
       const colors = [
         vuetifyColors.blue.darken3,
         vuetifyColors.blue.base,
@@ -455,9 +472,8 @@ export default {
         year: '%b'
       }
 
-      const unitTextPrecipitation = getUnitText('Millimeter')
       const labels = {
-        format: `{value} ${unitTextPrecipitation}`,
+        format: `{value} ${units.precipitation.text}`,
         style: {
           color: vuetifyColors.blue.base
         }
@@ -484,14 +500,14 @@ export default {
         for (let i = 0; i < 3; i++) {
           seriesOptions.push({
             color: colors[i],
-            name: `${until.year()} ${
-              cumulativePrecipitation.name
-            } ${unitTextPrecipitation}`,
+            name: `${until.year()} ${cumulativePrecipitation.name} ${
+              units.precipitation.text
+            }`,
             yAxis: 0
           })
           fetchSpec.queries.push({
             datastream_id: cumulativePrecipitation._id,
-            uom_id: 'millimeter'
+            uom_id: units.precipitation.uomId
           })
           fetchSpec.startTime.push(start.valueOf())
           fetchSpec.untilTime.push(until.valueOf())
@@ -520,7 +536,7 @@ export default {
       { startTime, untilTime },
       { airTemperature, airTemperaturesAtHeight, relativeHumidity }
     ) {
-      const { getUnitText } = this
+      const { units } = this
       const colors = [
         vuetifyColors.cyan.lighten1,
         vuetifyColors.cyan.lighten2,
@@ -537,15 +553,13 @@ export default {
       }
       const { yAxis } = options
 
-      const unitTextTemperature = getUnitText('DegreeCelsius')
-      const unitTextRelativeHumidity = getUnitText('Percent')
       const title = {
         text: null
       }
 
       yAxis.push({
         labels: {
-          format: `{value} ${unitTextTemperature}`,
+          format: `{value} ${units.temperature.text}`,
           style: {
             color: vuetifyColors.cyan.base
           }
@@ -554,7 +568,7 @@ export default {
       })
       yAxis.push({
         labels: {
-          format: `{value} ${unitTextRelativeHumidity}`,
+          format: `{value} ${units.relativeHumidity.text}`,
           style: {
             color: vuetifyColors.green.base
           }
@@ -566,31 +580,31 @@ export default {
       if (airTemperature) {
         seriesOptions.push({
           color: vuetifyColors.cyan.darken4,
-          name: `${airTemperature.name} ${unitTextTemperature}`,
+          name: `${airTemperature.name} ${units.temperature.text}`,
           yAxis: 0
         })
         fetchSpec.queries.push({
           datastream_id: airTemperature._id,
-          uom_id: 'degree-celsius'
+          uom_id: units.temperature.uomId
         })
       }
 
       airTemperaturesAtHeight.forEach(({ _id, name }, i) => {
         seriesOptions.push({
           color: colors[i],
-          name: `${name} ${unitTextTemperature}`,
+          name: `${name} ${units.temperature.text}`,
           yAxis: 0
         })
         fetchSpec.queries.push({
           datastream_id: _id,
-          uom_id: 'degree-celsius'
+          uom_id: units.temperature.uomId
         })
       })
 
       if (relativeHumidity) {
         seriesOptions.push({
           color: vuetifyColors.green.base,
-          name: `${relativeHumidity.name} ${unitTextRelativeHumidity}`,
+          name: `${relativeHumidity.name} ${units.relativeHumidity.text}`,
           yAxis: 1
         })
         fetchSpec.queries.push({
@@ -615,7 +629,7 @@ export default {
     },
 
     addBatteryVoltageChart(id, { startTime, untilTime }, { batteryVoltage }) {
-      const { getUnitText } = this
+      const { units } = this
       const options = defaultOptions('Battery Voltage', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
@@ -625,9 +639,8 @@ export default {
       }
       const { yAxis } = options
 
-      const unitTextBatteryVoltage = getUnitText('Voltage')
       const labels = {
-        format: `{value} ${unitTextBatteryVoltage}`,
+        format: `{value} ${units.batteryVoltage.text}`,
         style: {
           color: vuetifyColors.grey.base
         }
@@ -650,7 +663,7 @@ export default {
       if (batteryVoltage) {
         seriesOptions.push({
           color: vuetifyColors.grey.base,
-          name: `${batteryVoltage.name} ${unitTextBatteryVoltage}`,
+          name: `${batteryVoltage.name} ${units.batteryVoltage.text}`,
           yAxis: 0
         })
         fetchSpec.queries.push({
@@ -679,7 +692,7 @@ export default {
       { startTime, untilTime },
       { soilTemperaturesAtDepth }
     ) {
-      const { getUnitText } = this
+      const { units } = this
       const colors = [
         vuetifyColors.yellow.darken2,
         vuetifyColors.lime.darken2,
@@ -699,9 +712,8 @@ export default {
       }
       const { yAxis } = options
 
-      const unitTextTemperature = getUnitText('DegreeCelsius')
       const labels = {
-        format: `{value} ${unitTextTemperature}`,
+        format: `{value} ${units.temperature.text}`,
         style: {
           color: vuetifyColors.brown.base
         }
@@ -724,12 +736,12 @@ export default {
       soilTemperaturesAtDepth.forEach(({ _id, name }, i) => {
         seriesOptions.push({
           color: colors[i],
-          name: `${name} ${unitTextTemperature}`,
+          name: `${name} ${units.temperature.text}`,
           yAxis: 0
         })
         fetchSpec.queries.push({
           datastream_id: _id,
-          uom_id: 'degree-celsius'
+          uom_id: units.temperature.uomId
         })
       })
 
@@ -754,7 +766,7 @@ export default {
       { startTime, untilTime },
       { par, solarRadiation }
     ) {
-      const { getUnitText } = this
+      const { units } = this
       const options = defaultOptions('Solar Radiation', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
@@ -764,15 +776,13 @@ export default {
       }
       const { yAxis } = options
 
-      const unitTextSolarRadiation = getUnitText('WattPerSquareMeter')
-      const unitTextPAR = getUnitText('MicromolePerSquareMeter')
       const title = {
         text: null
       }
 
       yAxis.push({
         labels: {
-          format: `{value} ${unitTextSolarRadiation}`,
+          format: `{value} ${units.solarRadiation.text}`,
           style: {
             color: vuetifyColors.orange.base
           }
@@ -781,7 +791,7 @@ export default {
       })
       yAxis.push({
         labels: {
-          format: `{value} ${unitTextPAR}`,
+          format: `{value} ${units.par.text}`,
           style: {
             color: vuetifyColors.lightGreen.base
           }
@@ -793,7 +803,7 @@ export default {
       if (solarRadiation) {
         seriesOptions.push({
           color: vuetifyColors.orange.base,
-          name: `${solarRadiation.name} ${unitTextSolarRadiation}`,
+          name: `${solarRadiation.name} ${units.solarRadiation.text}`,
           yAxis: 0
         })
         fetchSpec.queries.push({
@@ -804,7 +814,7 @@ export default {
       if (par) {
         seriesOptions.push({
           color: vuetifyColors.lightGreen.base,
-          name: `${par.name} ${unitTextPAR}`,
+          name: `${par.name} ${units.par.text}`,
           yAxis: 1
         })
         fetchSpec.queries.push({
@@ -833,7 +843,7 @@ export default {
       { startTime, untilTime },
       { airSpeedAverage, airSpeedMaximum }
     ) {
-      const { getUnitText } = this
+      const { units } = this
       const options = defaultOptions('Wind Speed', this.station.name)
       const seriesOptions = []
       const fetchSpec = {
@@ -843,9 +853,8 @@ export default {
       }
       const { yAxis } = options
 
-      const unitTextSpeed = getUnitText('MeterPerSecond')
       const labels = {
-        format: `{value} ${unitTextSpeed}`,
+        format: `{value} ${units.speed.text}`,
         style: {
           color: vuetifyColors.purple.base
         }
@@ -868,26 +877,26 @@ export default {
       if (airSpeedAverage) {
         seriesOptions.push({
           color: vuetifyColors.purple.base,
-          name: `${airSpeedAverage.name} ${unitTextSpeed}`,
+          name: `${airSpeedAverage.name} ${units.speed.text}`,
           yAxis: 0,
           zIndex: 2
         })
         fetchSpec.queries.push({
           datastream_id: airSpeedAverage._id,
-          uom_id: 'meter-per-second'
+          uom_id: units.speed.uomId
         })
       }
 
       if (airSpeedMaximum) {
         seriesOptions.push({
           color: vuetifyColors.red.lighten2,
-          name: `${airSpeedMaximum.name} ${unitTextSpeed}`,
+          name: `${airSpeedMaximum.name} ${units.speed.text}`,
           yAxis: 0,
           zIndex: 1
         })
         fetchSpec.queries.push({
           datastream_id: airSpeedMaximum._id,
-          uom_id: 'meter-per-second'
+          uom_id: units.speed.uomId
         })
       }
 
@@ -923,6 +932,7 @@ export default {
       { startTime, untilTime },
       { barometricPressure }
     ) {
+      const { units } = this
       const fetchSpec = {
         queries: [],
         startTime,
@@ -932,7 +942,7 @@ export default {
       if (barometricPressure) {
         fetchSpec.queries.push({
           datastream_id: barometricPressure._id,
-          uom_id: 'millibar'
+          uom_id: units.barometricPressure.uomId
         })
 
         this.seriesFetchWorker.postMessage({
@@ -947,6 +957,7 @@ export default {
       { startTime, untilTime },
       { cumulativePrecipitation }
     ) {
+      const { units } = this
       const fetchSpec = {
         queries: [],
         startTime,
@@ -956,7 +967,7 @@ export default {
       if (cumulativePrecipitation) {
         fetchSpec.queries.push({
           datastream_id: cumulativePrecipitation._id,
-          uom_id: 'millimeter'
+          uom_id: units.precipitation.uomId
         })
 
         this.seriesFetchWorker.postMessage({
@@ -964,6 +975,58 @@ export default {
           fetchSpec
         })
       }
+    },
+
+    load() {
+      const id = (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
+      const { datastreamsByKey, today, twoWeeks, waterYear, yesterday } = this
+
+      this.units = unitsData[this.somId](this.getUnitText)
+      this.charts = []
+      this.current = newCurrent()
+
+      this.addCumulativeRainfallChart(
+        `${id}-cumulativeRainfall`,
+        waterYear,
+        datastreamsByKey
+      )
+      this.addBatteryVoltageChart(
+        `${id}-batteryVoltage`,
+        twoWeeks,
+        datastreamsByKey
+      )
+      this.addAirTemperatureChart(
+        `${id}-airTemperature`,
+        twoWeeks,
+        datastreamsByKey
+      )
+      this.addSoilTemperatureChart(
+        `${id}-soilTemperature`,
+        twoWeeks,
+        datastreamsByKey
+      )
+      this.addWindSpeedChart(`${id}-windSpeed`, twoWeeks, datastreamsByKey)
+      this.addSolarRadiationChart(
+        `${id}-solarRadiation`,
+        twoWeeks,
+        datastreamsByKey
+      )
+
+      this.fetchBarometricPressure(
+        `${id}-barometricPressure`,
+        today,
+        datastreamsByKey
+      )
+      this.fetchCumulativeRainfall(
+        `${id}-rainfallToday`,
+        today,
+        datastreamsByKey
+      )
+      this.fetchCumulativeRainfall(
+        `${id}-rainfallYesterday`,
+        yesterday,
+        datastreamsByKey
+      )
     },
 
     seriesFetchWorkerMessageHandler(event) {
@@ -1109,61 +1172,13 @@ export default {
     stationDashboardWorkerMessageHandler(event) {
       if (!event.data.datastreamsByKey) return
 
+      this.datastreamsByKey = event.data.datastreamsByKey
+
       this.seriesFetchWorker.postMessage({
         accessToken: this.auth.accessToken
       })
 
-      const id = (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
-      const { today, twoWeeks, waterYear, yesterday } = this
-
-      this.datastreamsByKey = event.data.datastreamsByKey
-
-      this.addCumulativeRainfallChart(
-        `${id}-cumulativeRainfall`,
-        waterYear,
-        event.data.datastreamsByKey
-      )
-      this.addBatteryVoltageChart(
-        `${id}-batteryVoltage`,
-        twoWeeks,
-        event.data.datastreamsByKey
-      )
-      this.addAirTemperatureChart(
-        `${id}-airTemperature`,
-        twoWeeks,
-        event.data.datastreamsByKey
-      )
-      this.addSoilTemperatureChart(
-        `${id}-soilTemperature`,
-        twoWeeks,
-        event.data.datastreamsByKey
-      )
-      this.addWindSpeedChart(
-        `${id}-windSpeed`,
-        twoWeeks,
-        event.data.datastreamsByKey
-      )
-      this.addSolarRadiationChart(
-        `${id}-solarRadiation`,
-        twoWeeks,
-        event.data.datastreamsByKey
-      )
-
-      this.fetchBarometricPressure(
-        `${id}-barometricPressure`,
-        today,
-        event.data.datastreamsByKey
-      )
-      this.fetchCumulativeRainfall(
-        `${id}-rainfallToday`,
-        today,
-        event.data.datastreamsByKey
-      )
-      this.fetchCumulativeRainfall(
-        `${id}-rainfallYesterday`,
-        yesterday,
-        event.data.datastreamsByKey
-      )
+      this.load()
     }
   }
 }
