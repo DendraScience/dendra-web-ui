@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import math from '@/lib/math'
+
 export default {
   props: {
     datastreamsByKey: { default: null, type: Object },
@@ -175,7 +177,8 @@ export default {
           const last = value[valueKey]
           if (last.point !== undefined)
             newMeasurement.lastSeenTime = last.point.t
-          if (last.value !== undefined) newMeasurement.value = last.value
+          if (last.value !== undefined)
+            newMeasurement.value = math.round(last.value, 4)
         }
 
         return newMeasurement

@@ -21,11 +21,11 @@ export const unitsData = {
         uomId: 'millibar'
       },
       batteryVoltage: {
-        text: getUnitText('Voltage'),
-        uomId: 'volt'
+        text: getUnitText('Voltage')
       },
       par: {
-        text: getUnitText('MicromolePerSquareMeter')
+        text: getUnitText('MicromolePerSquareFoot'),
+        uomId: 'micromole-per-square-foot'
       },
       precipitation: {
         text: getUnitText('Inch'),
@@ -35,7 +35,8 @@ export const unitsData = {
         text: getUnitText('Percent')
       },
       solarRadiation: {
-        text: getUnitText('WattPerSquareMeter')
+        text: getUnitText('WattPerSquareFoot'),
+        uomId: 'watt-per-square-foot'
       },
       speed: {
         text: getUnitText('MilePerHour'),
@@ -51,15 +52,15 @@ export const unitsData = {
   met(getUnitText) {
     return {
       barometricPressure: {
-        text: getUnitText('Millibar'),
-        uomId: 'millibar'
+        text: getUnitText('Hectopascal'),
+        uomId: 'hectopascal'
       },
       batteryVoltage: {
-        text: getUnitText('Voltage'),
-        uomId: 'volt'
+        text: getUnitText('Voltage')
       },
       par: {
-        text: getUnitText('MicromolePerSquareMeter')
+        text: getUnitText('MicromolePerSquareMeter'),
+        uomId: 'micromole-per-square-meter'
       },
       precipitation: {
         text: getUnitText('Millimeter'),
@@ -69,7 +70,8 @@ export const unitsData = {
         text: getUnitText('Percent')
       },
       solarRadiation: {
-        text: getUnitText('WattPerSquareMeter')
+        text: getUnitText('WattPerSquareMeter'),
+        uomId: 'watt-per-square-meter'
       },
       speed: {
         text: getUnitText('MeterPerSecond'),

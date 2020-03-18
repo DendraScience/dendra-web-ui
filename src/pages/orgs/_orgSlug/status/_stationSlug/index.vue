@@ -57,7 +57,12 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title
-                      >{{ station.geo.coordinates[2] }} m</v-list-item-title
+                      >{{
+                        station.geo.coordinates[2]
+                          | unit('', 'm', somId === 'imp' ? 'ft' : 'm')
+                          | round('', 4)
+                      }}
+                      m</v-list-item-title
                     >
                   </v-list-item-content>
                 </v-list-item>
@@ -807,7 +812,8 @@ export default {
           yAxis: 0
         })
         fetchSpec.queries.push({
-          datastream_id: solarRadiation._id
+          datastream_id: solarRadiation._id,
+          uom_id: units.solarRadiation.uomId
         })
       }
 
@@ -818,7 +824,8 @@ export default {
           yAxis: 1
         })
         fetchSpec.queries.push({
-          datastream_id: par._id
+          datastream_id: par._id,
+          uom_id: units.par.uomId
         })
       }
 

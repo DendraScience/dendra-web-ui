@@ -27,10 +27,6 @@ Vue.filter('get', (...args) => {
   return _get(...args)
 })
 
-Vue.filter('truncate', (...args) => {
-  return _truncate(...args)
-})
-
 Vue.filter('math', (value, defaultValue = '', ...calls) => {
   return value === undefined || value === null
     ? defaultValue
@@ -49,4 +45,20 @@ Vue.filter('moment', (value, defaultValue = '', ...calls) => {
 
 Vue.filter('pluralize', (value, singular, plural) => {
   return value === 1 ? singular : plural || `${singular}s`
+})
+
+Vue.filter('round', (value, defaultValue = '', n = 0) => {
+  return value === undefined || value === null
+    ? defaultValue
+    : math.round(value, n)
+})
+
+Vue.filter('truncate', (...args) => {
+  return _truncate(...args)
+})
+
+Vue.filter('unit', (value, defaultValue = '', name, toName) => {
+  return value === undefined || value === null
+    ? defaultValue
+    : math.unit(value, name).toNumber(toName)
 })
