@@ -10,17 +10,24 @@ headers.append('Dendra-Fetch-Action', 'graph')
 self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
 
 async function processFetch({ id, fetchSpec }) {
-  const { baseQuery, queries, startTime, untilTime, useDummyWY } = fetchSpec
-  let first
-  let point
+  const {
+    baseQuery,
+    queries,
+    seriesType,
+    startTime,
+    timeLocal = true,
+    untilTime
+  } = fetchSpec
   let total = 0
-  let value
 
   for (let index = 0; index < queries.length; index++) {
     const query = queries[index]
     const data = []
-    const v = query.uom_id ? 'uv' : 'v'
+    const toTime = Array.isArray(untilTime) ? untilTime[index] : untilTime
     let fromTime = Array.isArray(startTime) ? startTime[index] : startTime
+    let first
+    let point
+    let value
 
     while (processIds[id] !== undefined) {
       if (data.length > datapointsMax) {
@@ -32,15 +39,20 @@ async function processFetch({ id, fetchSpec }) {
       }
 
       const url = new URL(`${api.uri}${api.path}/datapoints`)
-      const params = Object.assign({}, baseQuery, query, {
-        t_int: true,
-        // t_local: true,
-        time_local: true,
-        [data.length ? 'time[$gt]' : 'time[$gte]']: fromTime,
-        'time[$lt]': Array.isArray(untilTime) ? untilTime[index] : untilTime,
-        $limit: 2016,
-        '$sort[time]': 1
-      })
+      const params = Object.assign(
+        {
+          t_int: true,
+          $limit: 2016
+        },
+        baseQuery,
+        query,
+        {
+          time_local: timeLocal,
+          [data.length ? 'time[$gt]' : 'time[$gte]']: fromTime,
+          '$sort[time]': 1
+        }
+      )
+      if (toTime) params['time[$lt]'] = toTime
       Object.keys(params).forEach(key =>
         url.searchParams.append(key, params[key])
       )
@@ -63,7 +75,9 @@ async function processFetch({ id, fetchSpec }) {
 
       if (!(json && json.data && json.data.length)) break
 
-      if (useDummyWY) {
+      const v = json.data[0].d ? 'd' : query.uom_id ? 'uv' : 'v'
+
+      if (seriesType === 'waterYear') {
         for (let i = 0; i < json.data.length; i++) {
           point = json.data[i]
           value = point[v]
@@ -83,7 +97,7 @@ async function processFetch({ id, fetchSpec }) {
 
           data.push([date.getTime(), value])
         }
-      } else {
+      } else if (json.data[0].lt) {
         for (let i = 0; i < json.data.length; i++) {
           point = json.data[i]
           value = point[v]
@@ -92,13 +106,25 @@ async function processFetch({ id, fetchSpec }) {
 
           data.push([point.lt, value])
         }
+      } else {
+        // HACK: Handle data services that don't return 'lt' (e.g. NWS)
+        for (let i = 0; i < json.data.length; i++) {
+          point = json.data[i]
+          value = point[v]
+
+          if (!first) first = { point, value }
+
+          data.push([new Date(point.t).getTime() + point.o * 1000, value])
+        }
       }
 
       total += json.data.length
 
       self.postMessage({ id, total })
 
-      fromTime = json.data[json.data.length - 1].lt
+      if (untilTime === undefined) break
+
+      fromTime = json.data[json.data.length - 1][timeLocal ? 'lt' : 't']
     }
 
     self.postMessage({

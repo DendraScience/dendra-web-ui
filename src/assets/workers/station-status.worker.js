@@ -77,12 +77,17 @@ async function fetchSeries(id, index, query, { startTime }) {
   const data = []
 
   const url = new URL(`${api.uri}${api.path}/datapoints`)
-  const params = Object.assign({}, query, {
-    t_int: true,
-    'time[$gte]': startTime,
-    $limit: 2016,
-    '$sort[time]': 1
-  })
+  const params = Object.assign(
+    {
+      t_int: true,
+      $limit: 2016
+    },
+    query,
+    {
+      'time[$gte]': startTime,
+      '$sort[time]': 1
+    }
+  )
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
 
   const response = await fetch(url, {

@@ -1,12 +1,12 @@
 <template>
   <v-card>
     <v-container fluid>
-      <v-row>
+      <v-row dense>
         <v-col class="headline" cols="12" sm="8">
           <slot>Current conditions</slot>
         </v-col>
 
-        <v-col cols="12" sm="4"><slot name="units"/></v-col>
+        <v-col align="end" cols="12" sm="4"><slot name="util"/></v-col>
       </v-row>
 
       <v-row no-gutters>

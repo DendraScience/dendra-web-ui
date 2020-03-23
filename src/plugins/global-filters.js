@@ -17,12 +17,6 @@ Vue.filter('dateTimeFormat', (value, defaultValue = '', key = 'y4md_hm24') => {
     : moment.utc(value).format(dateTimeFormats[key])
 })
 
-Vue.filter('timeFormat', (value, defaultValue = '', key = 'hm24') => {
-  return value === undefined || value === null
-    ? defaultValue
-    : moment.utc(value).format(timeFormats[key])
-})
-
 Vue.filter('get', (...args) => {
   return _get(...args)
 })
@@ -51,6 +45,12 @@ Vue.filter('round', (value, defaultValue = '', n = 0) => {
   return value === undefined || value === null
     ? defaultValue
     : math.round(value, n)
+})
+
+Vue.filter('timeFormat', (value, defaultValue = '', key = 'hm24') => {
+  return value === undefined || value === null
+    ? defaultValue
+    : moment.utc(value).format(timeFormats[key])
 })
 
 Vue.filter('truncate', (...args) => {

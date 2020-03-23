@@ -1,4 +1,4 @@
-<template>
+.geo<template>
   <v-layout v-if="station && org" column>
     <v-flex>
       <v-container grid-list-xl>
@@ -212,7 +212,7 @@
               :units="units"
               :value="current"
             >
-              <template v-slot:units>
+              <template v-slot:util>
                 <v-select
                   v-model="somId"
                   :items="findSOMs().data"
@@ -229,6 +229,20 @@
           </v-flex>
         </v-layout>
       </v-container>
+    </v-flex>
+
+    <v-flex v-if="station.geo">
+      <forecast-conditions :units="units" :value="forecast">
+        <template v-slot:util>
+          <a
+            :href="
+              `http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`
+            "
+            target="_blank"
+            >Visit NWS site</a
+          >
+        </template>
+      </forecast-conditions>
     </v-flex>
 
     <v-flex v-if="charts.length">
@@ -250,31 +264,33 @@ import timer from '@/mixins/timer'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
 import { defaultOptions } from '@/lib/chart'
-import { newCurrent, unitsData } from '@/lib/dashboard'
+import { newCurrent, newForecast, unitsData } from '@/lib/dashboard'
 import { idRandom } from '@/lib/utils'
 import CurrentConditions from '@/components/CurrentConditions'
 import DatastreamCharts from '@/components/DatastreamCharts'
+import ForecastConditions from '@/components/ForecastConditions'
 
 export default {
   components: {
     CurrentConditions,
-    DatastreamCharts
+    DatastreamCharts,
+    ForecastConditions
   },
 
   middleware: [
     'check-org',
     'check-station',
     'dt-unit-vocabulary',
-    'system-time-utc',
-    'soms'
+    'soms',
+    'system-time-utc'
   ],
 
   mixins: [timer],
 
   data: () => ({
     charts: [],
-
     current: newCurrent(),
+    forecast: newForecast(),
 
     datastreamsByKey: null,
 
@@ -299,6 +315,10 @@ export default {
       getTime: 'time/get'
     }),
     ...mapState(['auth']),
+
+    currentTime() {
+      return moment.utc(this.getTime('utc').now).valueOf()
+    },
 
     externalLinks() {
       return this.station.external_links || []
@@ -386,7 +406,7 @@ export default {
 
   watch: {
     somId(newValue) {
-      this.load()
+      this.loadSeries()
     }
   },
 
@@ -463,9 +483,9 @@ export default {
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
+        seriesType: 'waterYear',
         startTime: [],
-        untilTime: [],
-        useDummyWY: true
+        untilTime: []
       }
       const { yAxis } = options
 
@@ -984,7 +1004,63 @@ export default {
       }
     },
 
-    load() {
+    fetchForecast(
+      id,
+      { startTime },
+      {
+        nwsConditionsIcon,
+        nwsTemperatureMaximum,
+        nwsTemperatureMinimum,
+        nwsWeather
+      }
+    ) {
+      const { currentTime, station, units } = this
+
+      if (!(station.geo && station.geo.coordinates.length > 1)) return
+
+      const coordinates = station.geo.coordinates
+      const fetchSpec = {
+        baseQuery: {
+          lat: coordinates[1],
+          lng: coordinates[0],
+          $limit: 20
+        },
+        queries: [],
+        startTime: currentTime, // startTime - (station.utc_offset | 0) * 1000,
+        timeLocal: false
+      }
+
+      if (nwsConditionsIcon)
+        fetchSpec.queries.push({
+          datastream_id: nwsConditionsIcon._id
+        })
+
+      if (nwsTemperatureMaximum)
+        fetchSpec.queries.push({
+          datastream_id: nwsTemperatureMaximum._id,
+          uom_id: units.temperature.uomId
+        })
+
+      if (nwsTemperatureMinimum)
+        fetchSpec.queries.push({
+          datastream_id: nwsTemperatureMinimum._id,
+          uom_id: units.temperature.uomId
+        })
+
+      if (nwsWeather)
+        fetchSpec.queries.push({
+          datastream_id: nwsWeather._id
+        })
+
+      if (fetchSpec.queries.length) {
+        this.seriesFetchWorker.postMessage({
+          id,
+          fetchSpec
+        })
+      }
+    },
+
+    loadSeries() {
       const id = (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
       const { datastreamsByKey, today, twoWeeks, waterYear, yesterday } = this
 
@@ -1034,12 +1110,13 @@ export default {
         yesterday,
         datastreamsByKey
       )
+      this.fetchForecast(`${id}-forecast`, today, datastreamsByKey)
     },
 
     seriesFetchWorkerMessageHandler(event) {
       const { data } = event
-      const { first, id, isFetching, last, query } = data
-      const { current, datastreamsByKey, station } = this
+      const { first, id, isFetching, last, query, series } = data
+      const { current, datastreamsByKey, forecast, station } = this
 
       if (id === `${this.id}-airTemperature`) {
         if (isFetching === true) {
@@ -1174,18 +1251,54 @@ export default {
           current.windSpeed = last
         }
       }
+
+      if (id === `${this.id}-forecast`) {
+        if (isFetching === true) {
+          forecast.conditionsIcon = null
+          forecast.temperatureMaximum = null
+          forecast.temperatureMinimum = null
+          forecast.weather = null
+          return
+        }
+
+        if (!series) return
+
+        if (
+          datastreamsByKey.nwsConditionsIcon &&
+          datastreamsByKey.nwsConditionsIcon._id === query.datastream_id
+        ) {
+          forecast.conditionsIcon = series
+        }
+        if (
+          datastreamsByKey.nwsTemperatureMaximum &&
+          datastreamsByKey.nwsTemperatureMaximum._id === query.datastream_id
+        ) {
+          forecast.temperatureMaximum = series
+        }
+        if (
+          datastreamsByKey.nwsTemperatureMinimum &&
+          datastreamsByKey.nwsTemperatureMinimum._id === query.datastream_id
+        ) {
+          forecast.temperatureMinimum = series
+        }
+        if (
+          datastreamsByKey.nwsWeather &&
+          datastreamsByKey.nwsWeather._id === query.datastream_id
+        ) {
+          forecast.weather = series
+        }
+      }
     },
 
     stationDashboardWorkerMessageHandler(event) {
       if (!event.data.datastreamsByKey) return
 
       this.datastreamsByKey = event.data.datastreamsByKey
-
       this.seriesFetchWorker.postMessage({
         accessToken: this.auth.accessToken
       })
 
-      this.load()
+      this.loadSeries()
     }
   }
 }

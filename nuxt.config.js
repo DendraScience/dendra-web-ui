@@ -53,6 +53,10 @@ module.exports = {
 
     linksToOldDashboard: process.env.LINKS_TO_OLD_DASHBOARD === 'true',
 
+    noaaNWSIcons:
+      process.env.NOAA_NWS_ICONS_URL ||
+      'https://dendrascience.github.io/noaa-nws-icons/jpg',
+
     googleMapsAPIKey,
     googleTrackingId
   },

@@ -1,15 +1,24 @@
 export function newCurrent() {
   return {
     airTemperature: null,
-    relativeHumidity: null,
     barometricPressure: null,
     meanSeaLevelPressure: null,
     par: null,
-    totalSolar: null,
     rainfallToday: null,
     rainfallYesterday: null,
-    wyPrecipToDate: null,
-    windSpeed: null
+    relativeHumidity: null,
+    solarRadiation: null,
+    windSpeed: null,
+    wyPrecipToDate: null
+  }
+}
+
+export function newForecast() {
+  return {
+    conditionsIcon: null,
+    temperatureMaximum: null,
+    temperatureMinimum: null,
+    weather: null
   }
 }
 
