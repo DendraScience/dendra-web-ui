@@ -205,6 +205,7 @@
             v-model="momentInterval.dateRange"
             hide-to
             show-time
+            show-time-zone
           >
             <template v-slot:footer>
               <div class="text-center">
@@ -245,6 +246,7 @@
             v-model="rangeInterval.dateRange"
             nullable
             show-time
+            show-time-zone
           >
             <template v-slot:footer>
               <div class="text-center">

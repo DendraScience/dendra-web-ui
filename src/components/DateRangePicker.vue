@@ -1,7 +1,18 @@
 <template>
-  <v-container fluid grid-list-md>
-    <v-layout align-center justify-center wrap>
-      <v-flex shrink>
+  <v-container fluid>
+    <v-row dense>
+      <v-col v-if="showTimeZone" cols="12">
+        <v-select
+          v-model="value.timeZone"
+          :items="timeZoneItems"
+          hide-details
+          label="Time zone"
+          prepend-inner-icon="mdi-account-box"
+          solo
+        ></v-select>
+      </v-col>
+
+      <v-col>
         <v-checkbox
           v-if="nullable"
           v-model="value.fromEnabled"
@@ -19,6 +30,7 @@
             :disabled="fromDisabled"
             :color="fromDisabled ? 'grey lighten-4' : 'success'"
             no-title
+            width="100%"
           ></v-date-picker>
         </ValidationProvider>
 
@@ -37,14 +49,15 @@
             :error-messages="errors"
             :placeholder="$timeFormats.hm24"
             class="mt-2"
+            hide-details
             label="From time"
             prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
+      </v-col>
 
-      <v-flex v-if="!hideTo" shrink>
+      <v-col v-if="!hideTo">
         <v-checkbox
           v-if="nullable"
           v-model="value.toEnabled"
@@ -62,6 +75,7 @@
             :disabled="toDisabled"
             :color="toDisabled ? 'grey lighten-4' : 'error'"
             no-title
+            width="100%"
           ></v-date-picker>
         </ValidationProvider>
 
@@ -80,24 +94,26 @@
             :error-messages="errors"
             :placeholder="$timeFormats.hm24"
             class="mt-2"
+            hide-details
             label="To time"
             prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
-    <v-layout v-if="$scopedSlots.footer">
-      <v-flex>
+    <v-row v-if="$scopedSlots.footer">
+      <v-col>
         <slot name="footer" :value="value" />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import { ValidationProvider } from 'vee-validate'
+import { timeZoneItems } from '@/lib/time-zone'
 
 export default {
   components: {
@@ -108,9 +124,14 @@ export default {
     hideTo: { default: false, type: Boolean },
     nullable: { default: false, type: Boolean },
     showTime: { default: false, type: Boolean },
+    showTimeZone: { default: false, type: Boolean },
     timeFormat: { default: 'hm24', type: String },
     value: { type: Object, required: true }
   },
+
+  data: () => ({
+    timeZoneItems
+  }),
 
   computed: {
     fromDisabled() {

@@ -24,6 +24,7 @@ export function dateRangeFromItem(item) {
     from: item.beginsAt ? item.beginsAt.format(dateFormats.y4md) : null,
     fromEnabled: !!item.beginsAt,
     fromTime: item.beginsAt ? item.beginsAt.format(timeFormats.hm24) : null,
+    timeZone: 'UTC',
     to: item.endsBefore ? item.endsBefore.format(dateFormats.y4md) : null,
     toEnabled: !!item.endsBefore,
     toTime: item.endsBefore ? item.endsBefore.format(timeFormats.hm24) : null
@@ -38,6 +39,7 @@ export function defaultDateRange() {
     from: date.format(dateFormats.y4md),
     fromEnabled: true,
     fromTime: time.format(timeFormats.hm24),
+    timeZone: 'UTC',
     to: date.add(1, 'd').format(dateFormats.y4md),
     toEnabled: true,
     toTime: time.format(timeFormats.hm24)
@@ -49,6 +51,7 @@ export function newDateRange() {
     from: null,
     fromEnabled: true,
     fromTime: null,
+    timeZone: 'UTC',
     to: null,
     toEnabled: true,
     toTime: null
