@@ -17,6 +17,8 @@ export default {
   props: {
     color: { default: '', type: String },
     small: { default: false, type: Boolean },
+    timeZone: { default: 'UTC', type: String },
+    utcOffset: { default: 0, type: Number },
     value: { default: null, type: [Number, Object, String] }
   },
 
@@ -26,20 +28,18 @@ export default {
 
   computed: {
     text() {
-      const { index, value } = this
-      const type = typeof value
-      const m =
-        type === 'number' || type === 'string' ? moment.utc(value) : value
+      const { index, timeZone, utcOffset, value } = this
+      const m = moment.utc(value)
 
       switch (index) {
         case 0:
-          return m.format(this.$dateTimeFormats.y4md_hm24utc)
+          return m.format(`${this.$dateTimeFormats.y4md_hm24} ([${timeZone}])`)
         case 1:
-          return m.format(this.$dateTimeFormats.m3dy_hm24utc)
+          return m.format(`${this.$dateTimeFormats.m3dy_hm24} ([${timeZone}])`)
         case 2:
-          return m.toISOString()
+          return m.add(-utcOffset, 's').toISOString()
         case 3:
-          return m.valueOf()
+          return m.add(-utcOffset, 's').valueOf()
         default:
           return ''
       }

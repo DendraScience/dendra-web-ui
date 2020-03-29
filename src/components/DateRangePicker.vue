@@ -7,7 +7,7 @@
           :items="timeZoneItems"
           hide-details
           label="Time zone"
-          prepend-inner-icon="mdi-account-box"
+          prepend-inner-icon="mdi-map-clock"
           solo
         ></v-select>
       </v-col>

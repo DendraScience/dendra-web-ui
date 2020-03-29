@@ -8,15 +8,15 @@ export const dateFormats = {
 
 export const dateTimeFormats = {
   m3dy_hm24: 'MMM D, Y HH:mm',
-  m3dy_hm24utc: 'MMM D, Y HH:mm (UTC)',
+  m3dy_hm24utc: 'MMM D, Y HH:mm ([UTC])',
   y4md_hm24: 'YYYY-MM-DD HH:mm',
-  y4md_hm24utc: 'YYYY-MM-DD HH:mm (UTC)'
+  y4md_hm24utc: 'YYYY-MM-DD HH:mm ([UTC])'
 }
 
 export const timeFormats = {
   hm12: 'h:mm a',
   hm24: 'HH:mm',
-  hm24utc: 'HH:mm (UTC)'
+  hm24utc: 'HH:mm ([UTC])'
 }
 
 export function dateRangeFromItem(item) {
@@ -24,14 +24,15 @@ export function dateRangeFromItem(item) {
     from: item.beginsAt ? item.beginsAt.format(dateFormats.y4md) : null,
     fromEnabled: !!item.beginsAt,
     fromTime: item.beginsAt ? item.beginsAt.format(timeFormats.hm24) : null,
-    timeZone: 'UTC',
+    timeZone: item.timeZone || 'UTC',
     to: item.endsBefore ? item.endsBefore.format(dateFormats.y4md) : null,
     toEnabled: !!item.endsBefore,
-    toTime: item.endsBefore ? item.endsBefore.format(timeFormats.hm24) : null
+    toTime: item.endsBefore ? item.endsBefore.format(timeFormats.hm24) : null,
+    utcOffset: item.utcOffset || 0
   }
 }
 
-export function defaultDateRange() {
+export function defaultDateRange(item = {}) {
   const date = moment()
   const time = moment('0000', 'HHmm', true)
 
@@ -39,10 +40,11 @@ export function defaultDateRange() {
     from: date.format(dateFormats.y4md),
     fromEnabled: true,
     fromTime: time.format(timeFormats.hm24),
-    timeZone: 'UTC',
+    timeZone: item.timeZone || 'UTC',
     to: date.add(1, 'd').format(dateFormats.y4md),
     toEnabled: true,
-    toTime: time.format(timeFormats.hm24)
+    toTime: time.format(timeFormats.hm24),
+    utcOffset: item.utcOffset || 0
   }
 }
 
@@ -54,12 +56,23 @@ export function newDateRange() {
     timeZone: 'UTC',
     to: null,
     toEnabled: true,
-    toTime: null
+    toTime: null,
+    utcOffset: 0
   }
 }
 
 export function resolveDateRange(dateRange) {
-  const resolved = { from: null, to: null, valid: true }
+  const timeZone = dateRange.timeZone || 'UTC'
+  const utcOffset = dateRange.utcOffset || 0
+  const resolved = {
+    from: null,
+    timeZone,
+    to: null,
+    utcFrom: null,
+    utcOffset,
+    utcTo: null,
+    valid: true
+  }
 
   let from
   let to
@@ -71,8 +84,12 @@ export function resolveDateRange(dateRange) {
       true
     )
 
-    if (from.isValid()) resolved.from = from.toISOString()
-    else resolved.valid = false
+    if (from.isValid()) {
+      resolved.from = from.toISOString()
+      resolved.utcFrom = moment(from)
+        .add(-utcOffset, 's')
+        .toISOString()
+    } else resolved.valid = false
   }
 
   if (dateRange.toEnabled) {
@@ -82,8 +99,12 @@ export function resolveDateRange(dateRange) {
       true
     )
 
-    if (to.isValid()) resolved.to = to.toISOString()
-    else resolved.valid = false
+    if (to.isValid()) {
+      resolved.to = to.toISOString()
+      resolved.utcTo = moment(to)
+        .add(-utcOffset, 's')
+        .toISOString()
+    } else resolved.valid = false
   }
 
   if (from && to && !from.isBefore(to)) resolved.valid = false
@@ -95,8 +116,8 @@ export function resolvedToIntervalMoment(resolved) {
   const newInterval = {}
 
   if (resolved.from) {
-    newInterval.begins_at = resolved.from
-    newInterval.ends_before = moment(resolved.from).add(1, 'ms')
+    newInterval.begins_at = resolved.utcFrom
+    newInterval.ends_before = moment(resolved.utcFrom).add(1, 'ms')
   }
 
   return newInterval
@@ -105,8 +126,8 @@ export function resolvedToIntervalMoment(resolved) {
 export function resolvedToIntervalRange(resolved) {
   const newInterval = {}
 
-  if (resolved.from) newInterval.begins_at = resolved.from
-  if (resolved.to) newInterval.ends_before = resolved.to
+  if (resolved.from) newInterval.begins_at = resolved.utcFrom
+  if (resolved.to) newInterval.ends_before = resolved.utcTo
 
   return newInterval
 }

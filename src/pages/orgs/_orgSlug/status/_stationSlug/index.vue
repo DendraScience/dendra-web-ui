@@ -216,12 +216,12 @@
                 <v-select
                   v-model="somId"
                   :items="findSOMs().data"
+                  dense
                   hide-details
                   item-text="name"
                   item-value="_id"
                   label="Units"
-                  dense
-                  filled
+                  outlined
                 >
                 </v-select>
               </template>

@@ -32,7 +32,7 @@ export default {
 
   methods: {
     addInterval(item) {
-      const dateRange = defaultDateRange()
+      const dateRange = defaultDateRange(item)
       if (item.target === 'moment') dateRange.toEnabled = false
       this[`${item.target}Interval`] = {
         dialog: true,

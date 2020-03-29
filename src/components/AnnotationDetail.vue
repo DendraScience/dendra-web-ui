@@ -63,6 +63,10 @@
       <v-flex>
         <detail-intervals
           :editing="editing"
+          :initial-time-zone="
+            (org.general_config && org.general_config.default_time_zone) ||
+              'UTC'
+          "
           :value="value"
           @add="addInterval"
           @edit="editInterval"
@@ -205,7 +209,6 @@
             v-model="momentInterval.dateRange"
             hide-to
             show-time
-            show-time-zone
           >
             <template v-slot:footer>
               <div class="text-center">
@@ -217,7 +220,9 @@
                   <span v-else-if="momentIntervalResolved.from">
                     Occurred at
                     <date-chip
-                      :value="Object.freeze(momentIntervalResolved.from)"
+                      :time-zone="rangeIntervalResolved.timeZone"
+                      :utc-offset="rangeIntervalResolved.utcOffset"
+                      :value="rangeIntervalResolved.from"
                       class="ma-1"
                       color="success"
                     />
@@ -246,7 +251,6 @@
             v-model="rangeInterval.dateRange"
             nullable
             show-time
-            show-time-zone
           >
             <template v-slot:footer>
               <div class="text-center">
@@ -262,13 +266,17 @@
                   >
                     Begins at
                     <date-chip
-                      :value="Object.freeze(rangeIntervalResolved.from)"
+                      :time-zone="rangeIntervalResolved.timeZone"
+                      :utc-offset="rangeIntervalResolved.utcOffset"
+                      :value="rangeIntervalResolved.from"
                       class="ma-1"
                       color="success"
                     />
                     and ends before
                     <date-chip
-                      :value="Object.freeze(rangeIntervalResolved.to)"
+                      :time-zone="rangeIntervalResolved.timeZone"
+                      :utc-offset="rangeIntervalResolved.utcOffset"
+                      :value="rangeIntervalResolved.to"
                       class="ma-1"
                       color="error"
                     />
@@ -281,7 +289,9 @@
                   >
                     Begins with first datapoint and ends before
                     <date-chip
-                      :value="Object.freeze(rangeIntervalResolved.to)"
+                      :time-zone="rangeIntervalResolved.timeZone"
+                      :utc-offset="rangeIntervalResolved.utcOffset"
+                      :value="rangeIntervalResolved.to"
                       class="ma-1"
                       color="error"
                     />
@@ -294,7 +304,9 @@
                   >
                     Begins at
                     <date-chip
-                      :value="Object.freeze(rangeIntervalResolved.from)"
+                      :time-zone="rangeIntervalResolved.timeZone"
+                      :utc-offset="rangeIntervalResolved.utcOffset"
+                      :value="rangeIntervalResolved.from"
                       class="ma-1"
                       color="success"
                     />

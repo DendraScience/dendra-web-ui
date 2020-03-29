@@ -24,10 +24,8 @@
 export default {
   middleware: ['no-org'],
 
-  data() {
-    return {
-      email: 'metahuman@dendra.science'
-    }
-  }
+  data: () => ({
+    email: 'metahuman@dendra.science'
+  })
 }
 </script>
