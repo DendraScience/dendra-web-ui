@@ -62,11 +62,9 @@
 
       <v-flex>
         <detail-intervals
+          ref="detailIntervals"
           :editing="editing"
-          :initial-time-zone="
-            (org.general_config && org.general_config.default_time_zone) ||
-              'UTC'
-          "
+          :time-zone.sync="timeZone"
           :value="value"
           @add="addInterval"
           @edit="editInterval"
@@ -198,9 +196,12 @@
       max-width="380"
       @commit="commitMomentInterval"
     >
-      <template v-slot:title>Specify moment</template>
+      <template v-slot:title>{{
+        timeZoneAccepted ? 'Specify moment' : 'Confirm time zone'
+      }}</template>
       <template>
         <ValidationProvider
+          v-if="timeZoneAccepted"
           :rules="{
             resolved_valid: momentIntervalResolved
           }"
@@ -220,9 +221,9 @@
                   <span v-else-if="momentIntervalResolved.from">
                     Occurred at
                     <date-chip
-                      :time-zone="rangeIntervalResolved.timeZone"
-                      :utc-offset="rangeIntervalResolved.utcOffset"
-                      :value="rangeIntervalResolved.from"
+                      :time-zone="momentIntervalResolved.timeZone"
+                      :utc-offset="momentIntervalResolved.utcOffset"
+                      :value="momentIntervalResolved.from"
                       class="ma-1"
                       color="success"
                     />
@@ -232,6 +233,8 @@
             </template>
           </date-range-picker>
         </ValidationProvider>
+
+        <time-zone-picker v-else v-model="momentInterval.dateRange" />
       </template>
     </detail-dialog>
 
@@ -240,9 +243,12 @@
       v-model="rangeInterval"
       @commit="commitRangeInterval"
     >
-      <template v-slot:title>Specify range</template>
+      <template v-slot:title
+        >{{ timeZoneAccepted ? 'Specify range' : 'Confirm time zone' }}
+      </template>
       <template>
         <ValidationProvider
+          v-if="timeZoneAccepted"
           :rules="{
             resolved_valid: rangeIntervalResolved
           }"
@@ -317,6 +323,8 @@
             </template>
           </date-range-picker>
         </ValidationProvider>
+
+        <time-zone-picker v-else v-model="rangeInterval.dateRange" />
       </template>
     </detail-dialog>
 
@@ -387,6 +395,7 @@ import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 import StationSearch from '@/components/StationSearch'
+import TimeZonePicker from '@/components/TimeZonePicker'
 
 export default {
   components: {
@@ -407,6 +416,7 @@ export default {
     StandardIdentifier,
     StandardOptions,
     StationSearch,
+    TimeZonePicker,
     ValidationProvider
   },
 
@@ -418,12 +428,18 @@ export default {
     value: { type: Object, required: true }
   },
 
-  data: () => ({
-    datastreamDialog: false,
-    stationDialog: false,
+  data() {
+    const { org } = this
+    return {
+      datastreamDialog: false,
+      stationDialog: false,
 
-    stateItems: ['pending', 'approved', 'rejected']
-  }),
+      stateItems: ['pending', 'approved', 'rejected'],
+
+      timeZone:
+        (org.general_config && org.general_config.default_time_zone) || 'UTC'
+    }
+  },
 
   computed: {
     ...mapGetters({

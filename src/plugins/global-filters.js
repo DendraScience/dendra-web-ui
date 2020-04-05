@@ -2,19 +2,24 @@ import Vue from 'vue'
 import moment from 'moment'
 import _get from 'lodash/get'
 import _truncate from 'lodash/truncate'
-import { dateFormats, dateTimeFormats, timeFormats } from '@/lib/date'
+import {
+  dateFormat,
+  dateTimeFormat,
+  timeFormat,
+  utcOffsetHours
+} from '@/lib/date'
 import math from '@/lib/math'
 
 Vue.filter('dateFormat', (value, defaultValue = '', key = 'y4md') => {
   return value === undefined || value === null
     ? defaultValue
-    : moment.utc(value).format(dateFormats[key])
+    : dateFormat(value, key)
 })
 
 Vue.filter('dateTimeFormat', (value, defaultValue = '', key = 'y4md_hm24') => {
   return value === undefined || value === null
     ? defaultValue
-    : moment.utc(value).format(dateTimeFormats[key])
+    : dateTimeFormat(value, key)
 })
 
 Vue.filter('get', (...args) => {
@@ -50,7 +55,7 @@ Vue.filter('round', (value, defaultValue = '', n = 0) => {
 Vue.filter('timeFormat', (value, defaultValue = '', key = 'hm24') => {
   return value === undefined || value === null
     ? defaultValue
-    : moment.utc(value).format(timeFormats[key])
+    : timeFormat(value, key)
 })
 
 Vue.filter('truncate', (...args) => {
@@ -61,4 +66,10 @@ Vue.filter('unit', (value, defaultValue = '', name, toName) => {
   return value === undefined || value === null
     ? defaultValue
     : math.unit(value, name).toNumber(toName)
+})
+
+Vue.filter('utcOffsetHours', (value, defaultValue = '') => {
+  return value === undefined || value === null
+    ? defaultValue
+    : utcOffsetHours(value)
 })

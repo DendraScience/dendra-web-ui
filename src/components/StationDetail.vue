@@ -65,6 +65,8 @@
                       v-model="value.time_zone"
                       :items="timeZoneItems"
                       :readonly="!editing"
+                      item-text="text"
+                      item-value="abbr"
                       label="Time zone"
                     ></v-select>
                   </v-flex>

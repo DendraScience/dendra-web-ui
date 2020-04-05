@@ -29,7 +29,7 @@
                         item-text="text"
                         item-value="value"
                         label="Path"
-                        prepend-inner-icon="mdi-settings"
+                        prepend-inner-icon="mdi-cog"
                         solo
                       ></v-select>
                     </ValidationProvider>
@@ -97,12 +97,16 @@
                         >
                           Begins at
                           <date-chip
+                            :time-zone="dateRangeResolved.timeZone"
+                            :utc-offset="dateRangeResolved.utcOffset"
                             :value="Object.freeze(dateRangeResolved.from)"
                             class="ma-1"
                             color="success"
                           />
                           and ends before
                           <date-chip
+                            :time-zone="dateRangeResolved.timeZone"
+                            :utc-offset="dateRangeResolved.utcOffset"
                             :value="Object.freeze(dateRangeResolved.to)"
                             class="ma-1"
                             color="error"
@@ -116,6 +120,8 @@
                         >
                           Begins with first row and ends before
                           <date-chip
+                            :time-zone="dateRangeResolved.timeZone"
+                            :utc-offset="dateRangeResolved.utcOffset"
                             :value="Object.freeze(dateRangeResolved.to)"
                             class="ma-1"
                             color="error"
@@ -129,6 +135,8 @@
                         >
                           Begins at
                           <date-chip
+                            :time-zone="dateRangeResolved.timeZone"
+                            :utc-offset="dateRangeResolved.utcOffset"
                             :value="Object.freeze(dateRangeResolved.from)"
                             class="ma-1"
                             color="success"

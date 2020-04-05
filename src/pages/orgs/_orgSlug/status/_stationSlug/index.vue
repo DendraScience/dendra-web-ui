@@ -26,7 +26,8 @@
                     <v-list-item-title
                       >{{ station.time | timeFormat }}
                       {{ station.time_zone }} (UTC
-                      {{ station.utcOffsetHours }} hours)</v-list-item-title
+                      {{ station.utc_offset | utcOffsetHours }}
+                      hours)</v-list-item-title
                     >
                   </v-list-item-content>
                   <!-- TODO: Implement reload -->

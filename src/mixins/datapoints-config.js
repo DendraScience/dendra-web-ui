@@ -22,7 +22,9 @@ export default {
       dateRange: newDateRange(),
       tabIndex: 0
     },
-    datapointsConfigKey: -1
+    datapointsConfigKey: -1,
+    timeZone: null,
+    timeZoneAccepted: false
   }),
 
   computed: {
@@ -84,13 +86,19 @@ export default {
     }
   },
 
+  watch: {
+    timeZone() {
+      this.timeZoneAccepted = true
+    }
+  },
+
   methods: {
-    addDatapointsConfig() {
+    addDatapointsConfig(item) {
       this.datapointsConfig = {
         attributes: jsonFormat(this.value.attributes || sampleAttributes()),
         datapoint: jsonFormat(sampleDatapoint()),
         dialog: true,
-        dateRange: defaultDateRange(),
+        dateRange: defaultDateRange(item),
         expr: null,
         params: '{}',
         path: null,
@@ -126,8 +134,26 @@ export default {
         configDateRangeResolved: dateRangeResolved,
         configParamsResolved: paramsResolved,
         datapointsConfigKey,
+        timeZoneAccepted,
         value
       } = this
+
+      if (!timeZoneAccepted) {
+        this.timeZone = dateRangeResolved.timeZone
+        this.timeZoneAccepted = true
+
+        const detailDatapointsConfig = this.$refs.detailDatapointsConfig
+        this.$nextTick(() => {
+          if (datapointsConfigKey > -1)
+            this.editDatapointsConfig(
+              detailDatapointsConfig.items[datapointsConfigKey]
+            )
+          else this.addDatapointsConfig(detailDatapointsConfig.addItem)
+        })
+
+        return
+      }
+
       const newInst = {
         ...resolvedToIntervalRange(dateRangeResolved),
         params: paramsResolved.data,

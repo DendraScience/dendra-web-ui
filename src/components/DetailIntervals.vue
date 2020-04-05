@@ -8,12 +8,15 @@
 
         <v-col align="end" cols="12" sm="4">
           <v-select
-            v-model="timeZone"
             :items="timeZoneItems"
+            :value="timeZone"
             dense
             hide-details
+            item-text="text"
+            item-value="abbr"
             label="Time zone"
             outlined
+            @change="$emit('update:timeZone', $event)"
           ></v-select>
         </v-col>
       </v-row>
@@ -120,7 +123,7 @@ export default {
 
   props: {
     editing: { default: false, type: Boolean },
-    initialTimeZone: { default: 'UTC', type: String },
+    timeZone: { default: 'UTC', type: String },
     value: { type: Object, required: true }
   },
 
@@ -149,7 +152,6 @@ export default {
         }
       ],
 
-      timeZone: this.initialTimeZone,
       timeZoneItems
     }
   },

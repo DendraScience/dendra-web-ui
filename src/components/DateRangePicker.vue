@@ -1,17 +1,6 @@
 <template>
   <v-container fluid>
     <v-row dense>
-      <v-col v-if="showTimeZone" cols="12">
-        <v-select
-          v-model="value.timeZone"
-          :items="timeZoneItems"
-          hide-details
-          label="Time zone"
-          prepend-inner-icon="mdi-map-clock"
-          solo
-        ></v-select>
-      </v-col>
-
       <v-col>
         <v-checkbox
           v-if="nullable"
@@ -113,7 +102,6 @@
 
 <script>
 import { ValidationProvider } from 'vee-validate'
-import { timeZoneItems } from '@/lib/time-zone'
 
 export default {
   components: {
@@ -124,14 +112,9 @@ export default {
     hideTo: { default: false, type: Boolean },
     nullable: { default: false, type: Boolean },
     showTime: { default: false, type: Boolean },
-    showTimeZone: { default: false, type: Boolean },
     timeFormat: { default: 'hm24', type: String },
     value: { type: Object, required: true }
   },
-
-  data: () => ({
-    timeZoneItems
-  }),
 
   computed: {
     fromDisabled() {

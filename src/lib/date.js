@@ -1,3 +1,4 @@
+import math from '@/lib/math'
 import moment from 'moment'
 
 export const dateFormats = {
@@ -19,6 +20,10 @@ export const timeFormats = {
   hm24utc: 'HH:mm ([UTC])'
 }
 
+export function dateFormat(value, key) {
+  return moment.utc(value).format(dateFormats[key])
+}
+
 export function dateRangeFromItem(item) {
   return {
     from: item.beginsAt ? item.beginsAt.format(dateFormats.y4md) : null,
@@ -30,6 +35,10 @@ export function dateRangeFromItem(item) {
     toTime: item.endsBefore ? item.endsBefore.format(timeFormats.hm24) : null,
     utcOffset: item.utcOffset || 0
   }
+}
+
+export function dateTimeFormat(value, key) {
+  return moment.utc(value).format(dateTimeFormats[key])
 }
 
 export function defaultDateRange(item = {}) {
@@ -132,10 +141,21 @@ export function resolvedToIntervalRange(resolved) {
   return newInterval
 }
 
+export function timeFormat(value, key) {
+  return moment.utc(value).format(timeFormats[key])
+}
+
 export function updateDateRange(dateRange, value) {
   const from = value.from && moment.utc(value.from)
   const to = value.to && moment.utc(value.to)
 
   dateRange.from = from && from.isValid() ? from.format(dateFormats.y4md) : null
   dateRange.to = to && to.isValid() ? to.format(dateFormats.y4md) : null
+}
+
+export function utcOffsetHours(value) {
+  return `${value < 0 ? '' : '+'}${math.round(
+    math.unit(value | 0, 's').toNumber('h'),
+    2
+  )}`
 }

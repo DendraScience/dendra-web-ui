@@ -1,12 +1,28 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Datapoints configuration</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline" cols="12" sm="8">
+          <slot>Datapoints configuration</slot>
+        </v-col>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+        <v-col align="end" cols="12" sm="4">
+          <v-select
+            :items="timeZoneItems"
+            :value="timeZone"
+            dense
+            hide-details
+            item-text="text"
+            item-value="abbr"
+            label="Time zone"
+            outlined
+            @change="$emit('update:timeZone', $event)"
+          ></v-select>
+        </v-col>
+      </v-row>
+
+      <v-row no-gutters>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -25,6 +41,8 @@
                 item.beginsLabel
               }}</span>
               <date-chip
+                :time-zone="item.timeZone"
+                :utc-offset="item.utcOffset"
                 :value="Object.freeze(item.beginsAt)"
                 class="ma-1"
                 color="success"
@@ -37,6 +55,8 @@
                 item.endsLabel
               }}</span>
               <date-chip
+                :time-zone="item.timeZone"
+                :utc-offset="item.utcOffset"
                 :value="Object.freeze(item.endsBefore)"
                 class="ma-1"
                 color="error"
@@ -55,12 +75,12 @@
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
-      <v-btn color="primary" @click="add">
+      <v-btn color="primary" @click="add(addItem)">
         <v-icon>add</v-icon>
       </v-btn>
     </v-card-actions>
@@ -72,6 +92,7 @@ import moment from 'moment'
 import DateChip from '@/components/DateChip'
 import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
+import { timeZoneItems, timeZoneOffsets } from '@/lib/time-zone'
 import { jsonFormat } from '@/lib/utils'
 
 export default {
@@ -84,25 +105,11 @@ export default {
 
   props: {
     editing: { default: false, type: Boolean },
+    timeZone: { default: 'UTC', type: String },
     value: { type: Object, required: true }
   },
 
   data: () => ({
-    addItems: [
-      {
-        icon: 'mdi-dice-1',
-        subtitle: 'Specify a typed value without unit.',
-        target: 'value',
-        title: 'Single value'
-      },
-      {
-        icon: 'mdi-dice-multiple',
-        subtitle: 'Specify a delta, range or value with unit.',
-        target: 'object',
-        title: 'Structured value'
-      }
-    ],
-
     headers: [
       {
         align: 'left',
@@ -125,20 +132,37 @@ export default {
         align: 'right',
         value: 'icons'
       }
-    ]
+    ],
+
+    timeZoneItems
   }),
 
   computed: {
+    addItem() {
+      const { timeZone } = this
+      const timeZoneOffset = timeZoneOffsets[timeZone]
+      const utcOffset = timeZoneOffset || 0
+
+      return {
+        timeZone,
+        utcOffset
+      }
+    },
+
     datapointsConfig() {
       return this.value.datapoints_config || []
     },
 
     items() {
-      const { datapointsConfig } = this
+      const { datapointsConfig, timeZone } = this
+      const timeZoneOffset = timeZoneOffsets[timeZone]
+      const utcOffset = timeZoneOffset || 0
 
       return datapointsConfig.map((item, key) => {
-        const beginsAt = item.begins_at && moment.utc(item.begins_at)
-        const endsBefore = item.ends_before && moment.utc(item.ends_before)
+        const beginsAt =
+          item.begins_at && moment.utc(item.begins_at).add(utcOffset, 's')
+        const endsBefore =
+          item.ends_before && moment.utc(item.ends_before).add(utcOffset, 's')
         const params = jsonFormat(item.params)
         const { actions, connection, path } = item
 
@@ -153,7 +177,9 @@ export default {
             icon: 'mdi-calendar-range',
             key,
             params,
-            path
+            path,
+            timeZone,
+            utcOffset
           }
         }
 
@@ -166,7 +192,9 @@ export default {
             icon: 'mdi-calendar-range',
             key,
             params,
-            path
+            path,
+            timeZone,
+            utcOffset
           }
         }
 
@@ -180,7 +208,9 @@ export default {
             icon: 'mdi-calendar-range',
             key,
             params,
-            path
+            path,
+            timeZone,
+            utcOffset
           }
         }
 
@@ -192,7 +222,9 @@ export default {
           icon: 'mdi-calendar-range',
           key,
           params,
-          path
+          path,
+          timeZone,
+          utcOffset
         }
       })
     }

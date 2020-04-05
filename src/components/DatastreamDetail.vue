@@ -116,7 +116,9 @@
 
       <v-flex>
         <detail-datapoints-config
+          ref="detailDatapointsConfig"
           :editing="editing"
+          :time-zone.sync="timeZone"
           :value="value"
           @add="addDatapointsConfig"
           @edit="editDatapointsConfig"
@@ -238,9 +240,12 @@
       max-width="800"
       @commit="commitDatapointsConfig"
     >
-      <template v-slot:title>Specify configuration</template>
+      <template v-slot:title
+        >{{ timeZoneAccepted ? 'Specify configuration' : 'Confirm time zone' }}
+      </template>
       <template>
         <datapoints-config-fields
+          v-if="timeZoneAccepted"
           v-model="datapointsConfig"
           :date-range-resolved="configDateRangeResolved"
           :params-resolved="configParamsResolved"
@@ -257,6 +262,8 @@
             />
           </template>
         </datapoints-config-fields>
+
+        <time-zone-picker v-else v-model="datapointsConfig.dateRange" />
       </template>
     </detail-dialog>
 
@@ -331,6 +338,7 @@ import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 import TermsFields from '@/components/TermsFields'
+import TimeZonePicker from '@/components/TimeZonePicker'
 
 export default {
   components: {
@@ -355,6 +363,7 @@ export default {
     StandardIdentifier,
     StandardOptions,
     TermsFields,
+    TimeZonePicker,
     ValidationProvider
   },
 
@@ -374,88 +383,94 @@ export default {
     value: { type: Object, required: true }
   },
 
-  data: () => ({
-    datastreamDialog: false,
+  data() {
+    const { org } = this
+    return {
+      datastreamDialog: false,
 
-    member: {
-      roles: [
+      member: {
+        roles: [
+          {
+            text: 'admin'
+          },
+          {
+            text: 'contact'
+          },
+          {
+            text: 'manager'
+          }
+        ]
+      },
+
+      configPathItems: [
         {
-          text: 'admin'
+          spec: {
+            required: [],
+            sample: {
+              query: {}
+            }
+          },
+          text: 'Dendra datapoints',
+          value: '/dendra/datapoints'
         },
         {
-          text: 'contact'
+          spec: {
+            required: [
+              'query.api',
+              'query.db',
+              'query.fc',
+              'query.sc',
+              'query.coalesce',
+              'query.utc_offset'
+            ],
+            sample: {
+              query: {
+                api: 'org',
+                db: 'station_name',
+                fc: 'source_tenmin',
+                sc: '"time", "Field_Name"',
+                utc_offset: -28800,
+                coalesce: false
+              }
+            }
+          },
+          text: 'Influx select',
+          value: '/influx/select'
         },
         {
-          text: 'manager'
+          spec: {
+            required: ['query.datastream_id', 'query.time_adjust'],
+            sample: {
+              query: {
+                datastream_id: 1234,
+                time_adjust: -28800
+              }
+            }
+          },
+          text: 'Legacy datavalues2',
+          value: '/legacy/datavalues2'
+        },
+        {
+          spec: {
+            required: ['query.datastream_id', 'query.time_adjust'],
+            sample: {
+              query: {
+                datastream_id: 1234,
+                time_adjust: -28800
+              }
+            }
+          },
+          text: 'Legacy datavalues-ucnrs',
+          value: '/legacy/datavalues-ucnrs'
         }
-      ]
-    },
+      ],
+      sourceTypeItems: ['deriver', 'sensor'],
+      stateItems: ['pending', 'ready'],
 
-    configPathItems: [
-      {
-        spec: {
-          required: [],
-          sample: {
-            query: {}
-          }
-        },
-        text: 'Dendra datapoints',
-        value: '/dendra/datapoints'
-      },
-      {
-        spec: {
-          required: [
-            'query.api',
-            'query.db',
-            'query.fc',
-            'query.sc',
-            'query.coalesce',
-            'query.utc_offset'
-          ],
-          sample: {
-            query: {
-              api: 'org',
-              db: 'station_name',
-              fc: 'source_tenmin',
-              sc: '"time", "Field_Name"',
-              utc_offset: -28800,
-              coalesce: false
-            }
-          }
-        },
-        text: 'Influx select',
-        value: '/influx/select'
-      },
-      {
-        spec: {
-          required: ['query.datastream_id', 'query.time_adjust'],
-          sample: {
-            query: {
-              datastream_id: 1234,
-              time_adjust: -28800
-            }
-          }
-        },
-        text: 'Legacy datavalues2',
-        value: '/legacy/datavalues2'
-      },
-      {
-        spec: {
-          required: ['query.datastream_id', 'query.time_adjust'],
-          sample: {
-            query: {
-              datastream_id: 1234,
-              time_adjust: -28800
-            }
-          }
-        },
-        text: 'Legacy datavalues-ucnrs',
-        value: '/legacy/datavalues-ucnrs'
-      }
-    ],
-    sourceTypeItems: ['deriver', 'sensor'],
-    stateItems: ['pending', 'ready']
-  }),
+      timeZone:
+        (org.general_config && org.general_config.default_time_zone) || 'UTC'
+    }
+  },
 
   computed: {
     ...mapGetters({

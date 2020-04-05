@@ -17,7 +17,9 @@ export default {
       dialog: false,
       dateRange: newDateRange()
     },
-    intervalKey: -1
+    intervalKey: -1,
+    timeZone: null,
+    timeZoneAccepted: false
   }),
 
   computed: {
@@ -27,6 +29,12 @@ export default {
 
     rangeIntervalResolved() {
       return resolveDateRange(this.rangeInterval.dateRange)
+    }
+  },
+
+  watch: {
+    timeZone() {
+      this.timeZoneAccepted = true
     }
   },
 
@@ -61,8 +69,27 @@ export default {
       const {
         momentIntervalResolved: dateRangeResolved,
         intervalKey,
+        timeZoneAccepted,
         value
       } = this
+
+      if (!timeZoneAccepted) {
+        this.timeZone = dateRangeResolved.timeZone
+        this.timeZoneAccepted = true
+
+        const detailIntervals = this.$refs.detailIntervals
+        this.$nextTick(() => {
+          if (intervalKey > -1)
+            this.editInterval(detailIntervals.items[intervalKey])
+          else
+            this.addInterval(
+              detailIntervals.addItems.find(item => item.target === 'moment')
+            )
+        })
+
+        return
+      }
+
       const newInterval = resolvedToIntervalMoment(dateRangeResolved)
 
       if (intervalKey > -1) {
@@ -80,8 +107,27 @@ export default {
       const {
         rangeIntervalResolved: dateRangeResolved,
         intervalKey,
+        timeZoneAccepted,
         value
       } = this
+
+      if (!timeZoneAccepted) {
+        this.timeZone = dateRangeResolved.timeZone
+        this.timeZoneAccepted = true
+
+        const detailIntervals = this.$refs.detailIntervals
+        this.$nextTick(() => {
+          if (intervalKey > -1)
+            this.editInterval(detailIntervals.items[intervalKey])
+          else
+            this.addInterval(
+              detailIntervals.addItems.find(item => item.target === 'range')
+            )
+        })
+
+        return
+      }
+
       const newInterval = resolvedToIntervalRange(dateRangeResolved)
 
       if (intervalKey > -1) {

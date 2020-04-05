@@ -3,7 +3,6 @@ import moment from 'moment'
 import feathersVuex from 'feathers-vuex'
 import feathersClient from '@/lib/feathers-client'
 import helpersVuex from '@/lib/helpers-vuex'
-import math from '@/lib/math'
 
 import { TYPE_KEY } from '@/lib/ability'
 
@@ -94,13 +93,6 @@ export const plugins = [
           } catch (err) {
             return null
           }
-        },
-
-        get utcOffsetHours() {
-          return math.round(
-            math.unit(this.utc_offset | 0, 's').toNumber('h'),
-            2
-          )
         },
 
         [TYPE_KEY]: 'stations'
