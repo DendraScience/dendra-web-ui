@@ -240,8 +240,13 @@ export default {
       },
       {
         align: 'left',
-        text: 'Description',
-        value: 'description'
+        text: 'Begins at',
+        value: 'config_lookup.first.begins_at'
+      },
+      {
+        align: 'left',
+        text: 'Ends before',
+        value: 'config_lookup.last.ends_before'
       },
       {
         align: 'right',
@@ -300,6 +305,8 @@ export default {
           'organization_id',
           'station_id',
           'station_lookup',
+          'config_lookup.first.begins_at',
+          'config_lookup.last.ends_before',
           'terms'
         ],
         $sort: { name: 1, _id: 1 }

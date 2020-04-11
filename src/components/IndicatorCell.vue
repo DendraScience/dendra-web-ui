@@ -1,18 +1,32 @@
 <template>
   <span class="text-xs-right text-no-wrap">
-    <v-avatar v-if="value.is_enabled === false" color="red" size="20">
-      <v-icon dark small>not_interested</v-icon>
-    </v-avatar>
+    <v-tooltip v-if="value.is_enabled === false" bottom>
+      <template v-slot:activator="{ on }">
+        <v-icon class="mx-1" color="red" v-on="on">mdi-engine-off</v-icon>
+      </template>
+      <span>Disabled</span>
+    </v-tooltip>
 
-    <v-avatar v-if="value.is_hidden === true" color="indigo" size="20">
-      <v-icon dark small>visibility_off</v-icon>
-    </v-avatar>
+    <v-tooltip v-if="value.is_hidden === true" bottom>
+      <template v-slot:activator="{ on }">
+        <v-icon class="mx-1" color="indigo" v-on="on">mdi-eye-off</v-icon>
+      </template>
+      <span>Hidden</span>
+    </v-tooltip>
+
+    <v-tooltip v-if="!hideDescription && value.description" bottom>
+      <template v-slot:activator="{ on }">
+        <v-icon class="mx-1" v-on="on">mdi-note-text</v-icon>
+      </template>
+      <span>{{ value.description }}</span>
+    </v-tooltip>
   </span>
 </template>
 
 <script>
 export default {
   props: {
+    hideDescription: { default: false, type: Boolean },
     value: { type: Object, required: true }
   }
 }

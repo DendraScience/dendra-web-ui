@@ -69,7 +69,7 @@
             </template>
 
             <template v-slot:item.indicators="{ item }">
-              <indicator-cell :value="item" />
+              <indicator-cell :value="item" hide-description />
             </template>
 
             <template v-slot:item.icons="{ item }">

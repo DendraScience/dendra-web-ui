@@ -26,6 +26,10 @@ Vue.filter('get', (...args) => {
   return _get(...args)
 })
 
+Vue.filter('https', value => {
+  return typeof value === 'string' ? value.replace('http:', 'https:') : null
+})
+
 Vue.filter('math', (value, defaultValue = '', ...calls) => {
   return value === undefined || value === null
     ? defaultValue

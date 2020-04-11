@@ -149,8 +149,16 @@
                   <v-col v-if="photoIndex < photos.length">
                     <v-img
                       :key="photoIndex"
-                      :lazy-src="photos[photoIndex].sizes.small.url"
-                      :src="photos[photoIndex].sizes.large.url"
+                      :lazy-src="
+                        $options.filters.https(
+                          photos[photoIndex].sizes.small.url
+                        )
+                      "
+                      :src="
+                        $options.filters.https(
+                          photos[photoIndex].sizes.large.url
+                        )
+                      "
                       aspect="1"
                       contain
                       height="320"
