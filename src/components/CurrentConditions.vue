@@ -21,7 +21,7 @@
             item-key="key"
           >
             <template v-slot:item.lastSeenTime="{ item }">
-              {{ item.lastSeenTime | moment('(no data)', ['format', 'lll']) }}
+              {{ item.lastSeenTime | dateTimeFormatLocal('(no data)') }}
             </template>
 
             <template v-slot:item.datastream.name="{ item }">

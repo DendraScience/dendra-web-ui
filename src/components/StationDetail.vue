@@ -106,6 +106,18 @@
       <v-flex v-if="!editing">
         <v-layout wrap>
           <v-flex>
+            <annotation-total
+              :is-enabled="true"
+              :org="org"
+              :station-id="value._id"
+              hide-actions
+              total-label="enabled"
+            />
+          </v-flex>
+        </v-layout>
+
+        <v-layout wrap>
+          <v-flex>
             <datastream-total
               :is-enabled="true"
               :org="org"
@@ -243,6 +255,7 @@ import geo from '@/mixins/geo'
 import member from '@/mixins/member'
 import { timeZoneItems, timeZoneOffsets } from '@/lib/time-zone'
 import AccessLevelFields from '@/components/AccessLevelFields'
+import AnnotationTotal from '@/components/AnnotationTotal'
 import DatastreamTotal from '@/components/DatastreamTotal'
 import DetailAccessLevels from '@/components/DetailAccessLevels'
 import DetailDialog from '@/components/DetailDialog'
@@ -261,6 +274,7 @@ import StandardOptions from '@/components/StandardOptions'
 export default {
   components: {
     AccessLevelFields,
+    AnnotationTotal,
     DatastreamTotal,
     DetailAccessLevels,
     DetailDialog,

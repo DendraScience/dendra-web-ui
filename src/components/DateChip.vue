@@ -33,9 +33,9 @@ export default {
 
       switch (index) {
         case 0:
-          return m.format(`${this.$dateTimeFormats.y4md_hm24} ([${timeZone}])`)
+          return m.format(`${this.$dateTimeFormats.y4md_hm24} [${timeZone}]`)
         case 1:
-          return m.format(`${this.$dateTimeFormats.m3dy_hm24} ([${timeZone}])`)
+          return m.format(`${this.$dateTimeFormats.m3dy_hm24} [${timeZone}]`)
         case 2:
           return m.add(-utcOffset, 's').toISOString()
         case 3:

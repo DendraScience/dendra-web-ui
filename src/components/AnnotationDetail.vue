@@ -95,6 +95,20 @@
       <v-flex v-if="!editing">
         <detail-external-refs :editing="editing" :value="value" />
       </v-flex>
+
+      <v-flex v-if="!editing && $can('patch', value)">
+        <v-card>
+          <v-card-title class="headline">
+            <slot>Tools</slot>
+          </v-card-title>
+
+          <v-card-actions>
+            <v-btn color="primary">
+              Rebuild
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
     </v-layout>
 
     <v-dialog

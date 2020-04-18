@@ -24,6 +24,8 @@ async function processFetch({ id, fetchSpec }) {
     '$select[organization_id]': 1,
     '$select[station_id]': 1,
     '$select[station_lookup]': 1,
+    '$select[config_built_lookup.first.begins_at]': 1,
+    '$select[config_built_lookup.last.ends_before]': 1,
     '$select[terms]': 1
   }
 
@@ -45,6 +47,10 @@ async function processFetch({ id, fetchSpec }) {
 
   const datastreams = json && json.data ? json.data : []
   const indexer = new FacetIndexer()
+
+  const ddd = datastreams.filter(
+    datastream => !datastream.config_built_lookup.first
+  )
 
   datastreams.forEach((datastream, index) => {
     const { station_id: stationId, terms } = datastream

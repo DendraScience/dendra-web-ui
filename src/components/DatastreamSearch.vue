@@ -161,6 +161,40 @@
               }}</span>
             </template>
 
+            <template
+              v-slot:item.config_built_lookup.first.begins_at="{
+                item
+              }"
+              ><span v-if="item.config_built_lookup.first">
+                {{
+                  item.config_built_lookup.first.begins_at
+                    | dateTimeFormatExtra(
+                      undefined,
+                      undefined,
+                      item.station_lookup.utc_offset,
+                      item.station_lookup.time_zone
+                    )
+                }}</span
+              >
+            </template>
+
+            <template
+              v-slot:item.config_built_lookup.last.ends_before="{
+                item
+              }"
+              ><span v-if="item.config_built_lookup.last">
+                {{
+                  item.config_built_lookup.last.ends_before
+                    | dateTimeFormatExtra(
+                      undefined,
+                      undefined,
+                      item.station_lookup.utc_offset,
+                      item.station_lookup.time_zone
+                    )
+                }}</span
+              >
+            </template>
+
             <template v-slot:item.name="{ item }">
               <nuxt-link
                 v-if="showLink"
@@ -229,8 +263,7 @@ export default {
       {
         align: 'left',
         text: 'Datastream',
-        value: 'name',
-        width: '30%'
+        value: 'name'
       },
       {
         align: 'left',
@@ -241,12 +274,14 @@ export default {
       {
         align: 'left',
         text: 'Begins at',
-        value: 'config_lookup.first.begins_at'
+        value: 'config_built_lookup.first.begins_at',
+        width: '12%'
       },
       {
         align: 'left',
         text: 'Ends before',
-        value: 'config_lookup.last.ends_before'
+        value: 'config_built_lookup.last.ends_before',
+        width: '12%'
       },
       {
         align: 'right',
@@ -305,8 +340,8 @@ export default {
           'organization_id',
           'station_id',
           'station_lookup',
-          'config_lookup.first.begins_at',
-          'config_lookup.last.ends_before',
+          'config_built_lookup.first.begins_at',
+          'config_built_lookup.last.ends_before',
           'terms'
         ],
         $sort: { name: 1, _id: 1 }

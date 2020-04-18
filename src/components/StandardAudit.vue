@@ -1,11 +1,11 @@
 <template>
   <v-layout column class="grey--text">
     <v-flex v-if="value.created_at" py-2>
-      Created {{ value.created_at | moment('', ['fromNow']) }} by {{ creator }}
+      Created {{ value.created_at | timeFromNow }} by {{ creator }}
     </v-flex>
 
     <v-flex v-if="value.updated_at" py-2>
-      Updated {{ value.updated_at | moment('', ['fromNow']) }} by {{ updator }}
+      Updated {{ value.updated_at | timeFromNow }} by {{ updator }}
     </v-flex>
   </v-layout>
 </template>

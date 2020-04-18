@@ -1,6 +1,12 @@
 import math from '@/lib/math'
 import moment from 'moment'
 
+// Reasonable min and max dates to perform low-level querying
+// NOTE: Didn't use min/max integer since db date conversion could choke
+// NOTE: Revised to be within InfluxDB default dates
+const MIN_TIME = Date.UTC(1800, 1, 2)
+const MAX_TIME = Date.UTC(2200, 1, 2)
+
 export const dateFormats = {
   m3dy: 'MMM D, Y',
   y2md: 'YY-MM-DD',
@@ -9,19 +15,20 @@ export const dateFormats = {
 
 export const dateTimeFormats = {
   m3dy_hm24: 'MMM D, Y HH:mm',
-  m3dy_hm24utc: 'MMM D, Y HH:mm ([UTC])',
-  y4md_hm24: 'YYYY-MM-DD HH:mm',
-  y4md_hm24utc: 'YYYY-MM-DD HH:mm ([UTC])'
+  y4md_hm24: 'YYYY-MM-DD HH:mm'
 }
 
 export const timeFormats = {
   hm12: 'h:mm a',
-  hm24: 'HH:mm',
-  hm24utc: 'HH:mm ([UTC])'
+  hm24: 'HH:mm'
 }
 
-export function dateFormat(value, key) {
+export function dateFormat(value, key = 'y4md') {
   return moment.utc(value).format(dateFormats[key])
+}
+
+export function dateFormatLocal(value, key = 'y4md') {
+  return moment(value).format(dateFormats[key])
 }
 
 export function dateRangeFromItem(item) {
@@ -37,8 +44,29 @@ export function dateRangeFromItem(item) {
   }
 }
 
-export function dateTimeFormat(value, key) {
+export function dateTimeFormat(value, key = 'y4md_hm24') {
   return moment.utc(value).format(dateTimeFormats[key])
+}
+
+export function dateTimeFormatExtra(
+  value,
+  key = 'y4md_hm24',
+  offset = 0,
+  timeZone
+) {
+  const m = moment.utc(value)
+  const t = m.valueOf()
+
+  if (t === MIN_TIME) return 'First row'
+  if (t === MAX_TIME) return 'No end'
+
+  const s = m.add(offset, 's').format(dateTimeFormats[key])
+
+  return timeZone ? `${s} ${timeZone}` : s
+}
+
+export function dateTimeFormatLocal(value, key = 'y4md_hm24') {
+  return moment(value).format(dateTimeFormats[key])
 }
 
 export function defaultDateRange(item = {}) {
@@ -141,8 +169,16 @@ export function resolvedToIntervalRange(resolved) {
   return newInterval
 }
 
-export function timeFormat(value, key) {
+export function timeFormat(value, key = 'hm24') {
   return moment.utc(value).format(timeFormats[key])
+}
+
+export function timeFormatLocal(value, key = 'hm24') {
+  return moment.format(timeFormats[key])
+}
+
+export function timeFromNow(value, ...args) {
+  return moment(value).fromNow(...args)
 }
 
 export function updateDateRange(dateRange, value) {

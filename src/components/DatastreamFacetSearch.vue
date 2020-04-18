@@ -153,6 +153,40 @@
                         <slot name="select" :item="item" />
                       </template>
 
+                      <template
+                        v-slot:item.config_built_lookup.first.begins_at="{
+                          item
+                        }"
+                        ><span v-if="item.config_built_lookup.first">
+                          {{
+                            item.config_built_lookup.first.begins_at
+                              | dateTimeFormatExtra(
+                                undefined,
+                                undefined,
+                                item.station_lookup.utc_offset,
+                                item.station_lookup.time_zone
+                              )
+                          }}</span
+                        >
+                      </template>
+
+                      <template
+                        v-slot:item.config_built_lookup.last.ends_before="{
+                          item
+                        }"
+                        ><span v-if="item.config_built_lookup.last">
+                          {{
+                            item.config_built_lookup.last.ends_before
+                              | dateTimeFormatExtra(
+                                undefined,
+                                undefined,
+                                item.station_lookup.utc_offset,
+                                item.station_lookup.time_zone
+                              )
+                          }}</span
+                        >
+                      </template>
+
                       <template v-slot:item.indicators="{ item }">
                         <indicator-cell :value="item" />
                       </template>
@@ -179,6 +213,8 @@ import _set from 'lodash/set'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { FacetIndexer } from '@/lib/facet-indexer'
 import IndicatorCell from '@/components/IndicatorCell'
+
+const dateSortPred = (a = '', b = '') => (a < b ? -1 : a > b ? 1 : 0)
 
 export default {
   components: {
@@ -210,8 +246,7 @@ export default {
       {
         align: 'left',
         text: 'Datastream',
-        value: 'name',
-        width: '30%'
+        value: 'name'
       },
       {
         align: 'left',
@@ -221,8 +256,17 @@ export default {
       },
       {
         align: 'left',
-        text: 'Description',
-        value: 'description'
+        sort: dateSortPred,
+        text: 'Begins at',
+        value: 'config_built_lookup.first.begins_at',
+        width: '12%'
+      },
+      {
+        align: 'left',
+        sort: dateSortPred,
+        text: 'Ends before',
+        value: 'config_built_lookup.last.ends_before',
+        width: '12%'
       },
       {
         align: 'right',

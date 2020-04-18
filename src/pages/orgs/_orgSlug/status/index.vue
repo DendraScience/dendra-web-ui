@@ -124,7 +124,7 @@
                               Last seen:
                               {{
                                 result.lastSeenTime
-                                  | moment('(no data)', ['format', 'lll'])
+                                  | dateTimeFormatLocal('(no data)')
                               }}
                             </v-card-text>
 
