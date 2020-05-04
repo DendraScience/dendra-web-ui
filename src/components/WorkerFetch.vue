@@ -79,6 +79,8 @@ export default {
 
       if (data.cache) this.cache = Object.assign({}, this.cache, data.cache)
       if (data.result) this.result = Object.assign({}, this.result, data.result)
+
+      this.$emit('data', data)
     }
   },
 

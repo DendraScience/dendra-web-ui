@@ -1,16 +1,15 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex>
-        <v-btn
-          :disabled="!settingsResolved.valid"
-          class="mb-2"
-          @click="makePretty"
+    <v-row dense>
+      <v-col>
+        <v-btn :disabled="!settingsResolved.valid" @click="makePretty"
           >Make Pretty</v-btn
         >
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <ValidationProvider
           name="settings"
           :rules="{
@@ -29,8 +28,8 @@
             filled
           ></v-textarea>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

@@ -52,6 +52,14 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import {
+  mdiHome,
+  mdiChartTimelineVariant,
+  mdiCheckCircle,
+  mdiNature,
+  mdiNoteOutline,
+  mdiViewGrid
+} from '@mdi/js'
 
 export default {
   data() {
@@ -60,7 +68,7 @@ export default {
         {
           items: [
             {
-              icon: 'home',
+              icon: mdiHome,
               title: 'Dendra home',
               to: '/'
             },
@@ -90,19 +98,19 @@ export default {
           header: 'ORG_NAME',
           items: [
             {
-              icon: 'mdi-view-grid',
+              icon: mdiViewGrid,
               org: true,
               name: 'orgs-orgSlug',
               title: 'Overview'
             },
             {
-              icon: 'mdi-check-circle',
+              icon: mdiCheckCircle,
               org: true,
               name: 'orgs-orgSlug-status',
               title: 'Station status'
             },
             {
-              icon: 'mdi-chart-timeline-variant',
+              icon: mdiChartTimelineVariant,
               org: true,
               name: 'orgs-orgSlug-datastreams',
               query: {
@@ -116,19 +124,19 @@ export default {
         {
           items: [
             {
-              icon: 'mdi-nature',
+              icon: mdiNature,
               org: true,
               name: 'orgs-orgSlug-stations',
               title: 'Stations'
             },
             {
-              icon: 'mdi-chart-timeline-variant',
+              icon: mdiChartTimelineVariant,
               org: true,
               name: 'orgs-orgSlug-datastreams',
               title: 'Datastreams'
             },
             {
-              icon: 'mdi-note-outline',
+              icon: mdiNoteOutline,
               org: true,
               name: 'orgs-orgSlug-annotations',
               title: 'Annotations'

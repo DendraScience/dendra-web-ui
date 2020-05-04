@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <ValidationProvider
           v-slot="{ errors }"
           :rules="{ alpha_num: true, max: 20, required: true }"
@@ -10,15 +10,15 @@
           <v-text-field
             v-model.trim="value.flag"
             :error-messages="errors"
+            :prepend-inner-icon="mdiFlag"
             autofocus
             label="Flag"
-            prepend-inner-icon="mdi-flag"
             required
             solo
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

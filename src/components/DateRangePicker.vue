@@ -3,9 +3,11 @@
     <v-row dense>
       <v-col>
         <v-checkbox
-          v-if="nullable"
+          v-if="optional"
           v-model="value.fromEnabled"
-          :disabled="toDisabled"
+          :disabled="toDisabled && optional !== 'both'"
+          class="mt-1"
+          dense
           label="From date"
         ></v-checkbox>
 
@@ -37,10 +39,10 @@
             :disabled="fromDisabled"
             :error-messages="errors"
             :placeholder="$timeFormats.hm24"
-            class="mt-2"
+            :prepend-inner-icon="mdiClockOutline"
+            class="my-2"
             hide-details
             label="From time"
-            prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>
@@ -48,9 +50,11 @@
 
       <v-col v-if="!hideTo">
         <v-checkbox
-          v-if="nullable"
+          v-if="optional"
           v-model="value.toEnabled"
-          :disabled="fromDisabled"
+          :disabled="fromDisabled && optional !== 'both'"
+          class="mt-1"
+          dense
           label="To date"
         ></v-checkbox>
 
@@ -82,10 +86,10 @@
             :disabled="toDisabled"
             :error-messages="errors"
             :placeholder="$timeFormats.hm24"
-            class="mt-2"
+            :prepend-inner-icon="mdiClockOutline"
+            class="my-2"
             hide-details
             label="To time"
-            prepend-inner-icon="mdi-clock-outline"
             solo
           ></v-text-field>
         </ValidationProvider>
@@ -110,7 +114,7 @@ export default {
 
   props: {
     hideTo: { default: false, type: Boolean },
-    nullable: { default: false, type: Boolean },
+    optional: { default: false, type: [Boolean, String] },
     showTime: { default: false, type: Boolean },
     timeFormat: { default: 'hm24', type: String },
     value: { type: Object, required: true }
@@ -118,11 +122,11 @@ export default {
 
   computed: {
     fromDisabled() {
-      return this.nullable && !this.value.fromEnabled
+      return this.optional && !this.value.fromEnabled
     },
 
     toDisabled() {
-      return this.nullable && !this.value.toEnabled
+      return this.optional && !this.value.toEnabled
     }
   }
 }

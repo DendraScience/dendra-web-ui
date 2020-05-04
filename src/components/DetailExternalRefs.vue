@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>External references</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>External references</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -28,22 +30,22 @@
 
             <template v-slot:item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-btn color="primary" @click="add">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>

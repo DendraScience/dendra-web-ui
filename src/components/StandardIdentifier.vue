@@ -1,12 +1,12 @@
 <template>
-  <v-layout>
-    <v-flex>
-      <v-chip v-if="value._id" class="mr-2" label>id: {{ value._id }}</v-chip>
-      <v-chip v-if="value.version_id" label outlined
+  <v-row>
+    <v-col>
+      <v-chip v-if="value._id" class="ma-1" label>id: {{ value._id }}</v-chip>
+      <v-chip v-if="value.version_id" class="ma-1" label outlined
         >version: {{ value.version_id }}</v-chip
       >
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

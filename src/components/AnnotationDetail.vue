@@ -1,11 +1,11 @@
 <template>
   <v-container fluid pa-0>
-    <v-layout column>
-      <v-flex>
+    <v-row>
+      <v-col>
         <v-card>
-          <v-container fluid>
-            <v-layout column>
-              <v-flex pb-0>
+          <v-container fluid pt-0>
+            <v-row>
+              <v-col>
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="title"
@@ -24,7 +24,10 @@
                   v-if="typeof value.state === 'string'"
                   v-model="value.state"
                   :items="stateItems"
-                  :readonly="!editing || $cannot('assign', value, '$set.state')"
+                  :readonly="
+                    !editing ||
+                      $cannotAssign('annotations', value, '$set.state')
+                  "
                   label="State"
                 ></v-select>
 
@@ -41,26 +44,56 @@
                     label="Description"
                   ></v-textarea>
                 </ValidationProvider>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <standard-options :editing="editing" :value="value" />
+            <standard-options
+              :editing="editing"
+              :value="value"
+              as="annotations"
+            />
             <standard-audit v-if="!editing" :value="value" />
             <standard-identifier :value="value" />
           </v-container>
         </v-card>
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row v-if="!editing">
+      <v-col cols="12" md="6">
+        <station-total
+          :annotation="value"
+          :org="org"
+          hide-actions
+          show-disabled
+          show-hidden
+        />
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <datastream-total
+          :annotation="value"
+          :org="org"
+          hide-actions
+          show-disabled
+          show-hidden
+        />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
         <annotation-detail-applies
           :editing="editing"
           :value="value"
           @add="addApplies"
           @remove="removeApplies"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-intervals
           ref="detailIntervals"
           :editing="editing"
@@ -70,18 +103,22 @@
           @edit="editInterval"
           @remove="removeInterval"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <annotation-detail-actions
           :editing="editing"
           :value="value"
           @add="addAction"
           @remove="removeAction"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-members
           :editing="editing"
           :value="value"
@@ -89,27 +126,15 @@
           @edit="editMember"
           @remove="removeMember"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <!-- TODO: Implement editing later! -->
-      <v-flex v-if="!editing">
+    <!-- TODO: Implement editing later! -->
+    <v-row v-if="!editing">
+      <v-col>
         <detail-external-refs :editing="editing" :value="value" />
-      </v-flex>
-
-      <v-flex v-if="!editing && $can('patch', value)">
-        <v-card>
-          <v-card-title class="headline">
-            <slot>Tools</slot>
-          </v-card-title>
-
-          <v-card-actions>
-            <v-btn color="primary">
-              Rebuild
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <v-dialog
       v-model="datastreamDialog"
@@ -120,7 +145,7 @@
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="datastreamDialog = false">
-            <v-icon>close</v-icon>
+            <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
           <v-toolbar-title>Select datastreams</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -129,12 +154,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <datastream-search
-          :org="org"
-          :show-hidden="$can('create', 'datastreams')"
-          :show-options="$can('create', 'datastreams')"
-          show-disabled
-        >
+        <datastream-search :org="org" show-hidden show-disabled show-options>
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -145,7 +165,9 @@
                 })
               "
               >{{
-                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+                getQuantity(item._id)
+                  ? mdiCheckboxMarked
+                  : mdiCheckboxBlankOutline
               }}</v-icon
             >
           </template>
@@ -269,7 +291,7 @@
         >
           <date-range-picker
             v-model="rangeInterval.dateRange"
-            nullable
+            optional
             show-time
           >
             <template v-slot:footer>
@@ -351,7 +373,7 @@
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="stationDialog = false">
-            <v-icon>close</v-icon>
+            <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
           <v-toolbar-title>Select stations</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -360,11 +382,7 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <station-search
-          :org="org"
-          :show-hidden="$can('create', 'stations')"
-          show-disabled
-        >
+        <station-search :org="org" show-hidden show-disabled>
           <template v-slot:select="{ item }">
             <v-icon
               color="primary"
@@ -375,7 +393,9 @@
                 })
               "
               >{{
-                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+                getQuantity(item._id)
+                  ? mdiCheckboxMarked
+                  : mdiCheckboxBlankOutline
               }}</v-icon
             >
           </template>
@@ -387,7 +407,7 @@
 
 <script>
 import _union from 'lodash/union'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ValidationProvider } from 'vee-validate'
 import actions from '@/mixins/actions'
 import interval from '@/mixins/interval'
@@ -396,6 +416,7 @@ import AnnotationDetailActions from '@/components/AnnotationDetailActions'
 import AnnotationDetailApplies from '@/components/AnnotationDetailApplies'
 import AttribActionFields from '@/components/AttribActionFields'
 import DatastreamSearch from '@/components/DatastreamSearch'
+import DatastreamTotal from '@/components/DatastreamTotal'
 import DateChip from '@/components/DateChip'
 import DateRangePicker from '@/components/DateRangePicker'
 import DetailDialog from '@/components/DetailDialog'
@@ -409,6 +430,7 @@ import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 import StationSearch from '@/components/StationSearch'
+import StationTotal from '@/components/StationTotal'
 import TimeZonePicker from '@/components/TimeZonePicker'
 
 export default {
@@ -417,6 +439,7 @@ export default {
     AnnotationDetailApplies,
     AttribActionFields,
     DatastreamSearch,
+    DatastreamTotal,
     DateChip,
     DateRangePicker,
     DetailDialog,
@@ -430,6 +453,7 @@ export default {
     StandardIdentifier,
     StandardOptions,
     StationSearch,
+    StationTotal,
     TimeZonePicker,
     ValidationProvider
   },
@@ -448,6 +472,20 @@ export default {
       datastreamDialog: false,
       stationDialog: false,
 
+      member: {
+        roles: [
+          {
+            text: 'contact'
+          },
+          {
+            text: 'reporter'
+          },
+          {
+            text: 'approver'
+          }
+        ]
+      },
+
       stateItems: ['pending', 'approved', 'rejected'],
 
       timeZone:
@@ -458,8 +496,24 @@ export default {
   computed: {
     ...mapGetters({
       cartCount: 'cart/count',
-      cartIds: 'cart/ids'
-    })
+      cartIds: 'cart/ids',
+      getQuantity: 'cart/getQuantity'
+    }),
+
+    ...mapState(['auth'])
+  },
+
+  watch: {
+    'value.state': {
+      handler(newValue, oldValue) {
+        if (
+          this.editing &&
+          oldValue !== newValue &&
+          (newValue === 'approved' || newValue === 'rejected')
+        )
+          this.setMemberRole(this.auth.user.person_id, 'approver')
+      }
+    }
   },
 
   methods: {

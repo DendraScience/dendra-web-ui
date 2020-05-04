@@ -6,9 +6,9 @@
     <v-content>
       <status-bar v-model="status" />
 
-      <v-container fluid pa-0>
+      <div>
         <nuxt />
-      </v-container>
+      </div>
     </v-content>
 
     <session-expired-dialog @status="status = $event" />

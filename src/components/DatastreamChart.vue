@@ -1,12 +1,20 @@
 <template>
   <v-card>
-    <v-card-text v-if="value.alert">
-      <v-alert v-model="value.alert.isShown" :type="value.alert.type" outlined>
-        {{ value.alert.message }}
-      </v-alert>
-    </v-card-text>
+    <v-container v-if="value.alert" fluid>
+      <v-row dense>
+        <v-col>
+          <v-alert
+            v-model="value.alert.isShown"
+            :type="value.alert.type"
+            outlined
+          >
+            {{ value.alert.message }}
+          </v-alert>
+        </v-col>
+      </v-row>
+    </v-container>
 
-    <div class="pt-1" style="position: relative;">
+    <div class="pt-2" style="position: relative;">
       <worker-fetch
         :id="value.id"
         :fetch-spec="Object.freeze(value.fetchSpec)"
@@ -30,7 +38,7 @@
       <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
         <template v-slot:activator="{ on }">
           <v-btn absolute icon right small text top v-on="on">
-            <v-icon>more_vert</v-icon>
+            <v-icon>{{ mdiDotsVertical }}</v-icon>
           </v-btn>
         </template>
 

@@ -1,21 +1,13 @@
 <template>
-  <v-layout v-if="instance && org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <ValidationObserver ref="observer">
-              <station-detail
-                v-model="instance"
-                :editing="editing"
-                :org="org"
-              />
-            </ValidationObserver>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+  <v-container v-if="instance && org">
+    <v-row>
+      <v-col>
+        <ValidationObserver ref="observer">
+          <station-detail v-model="instance" :editing="editing" :org="org" />
+        </ValidationObserver>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -126,8 +118,7 @@ export default {
         organization_id: this.org._id,
         slug: 'new-station',
         state: 'ready',
-        time_zone: 'PST',
-        [this.$abilityTypeKey]: 'stations'
+        time_zone: 'PST'
       }
     },
 

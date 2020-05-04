@@ -1,44 +1,40 @@
 <template>
-  <v-layout v-if="org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout>
-          <v-flex xs12>
-            <h2 class="display-3 font-weight-light mb-2">{{ org.name }}</h2>
+  <v-container v-if="org">
+    <v-row>
+      <v-col>
+        <h2 class="display-2 font-weight-light mb-2">{{ org.name }}</h2>
 
-            <p>
-              {{ org.description }}
-            </p>
-          </v-flex>
-        </v-layout>
+        <h3 v-if="org.description" class="subtitle-1 mb-2">
+          {{ org.description }}
+        </h3>
+      </v-col>
+    </v-row>
 
-        <v-layout wrap mt-6>
-          <v-flex xs12 md4>
-            <station-total
-              :show-disabled="$can('create', 'stations')"
-              :org="org"
-            />
-          </v-flex>
+    <v-row>
+      <v-col cols="12" md="4">
+        <station-total
+          :show-disabled="$canCreate('stations', org)"
+          :org="org"
+        />
+      </v-col>
 
-          <v-flex xs12 md4>
-            <datastream-total
-              :show-disabled="$can('create', 'datastreams')"
-              :org="org"
-            />
-          </v-flex>
-        </v-layout>
+      <v-col cols="12" md="4">
+        <datastream-total
+          :show-disabled="$canCreate('datastreams', org)"
+          :org="org"
+        />
+      </v-col>
+    </v-row>
 
-        <v-layout wrap>
-          <v-flex xs12 md4>
-            <annotation-total
-              :show-disabled="$can('create', 'annotations')"
-              :org="org"
-            />
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+    <v-row>
+      <v-col cols="12" md="4">
+        <annotation-total
+          :show-disabled="$canCreate('annotations', org)"
+          :org="org"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

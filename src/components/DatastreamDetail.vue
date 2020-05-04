@@ -1,11 +1,11 @@
 <template>
   <v-container fluid pa-0>
-    <v-layout column>
-      <v-flex>
+    <v-row>
+      <v-col>
         <v-card>
-          <v-container fluid>
-            <v-layout column>
-              <v-flex pb-0>
+          <v-container fluid pt-0>
+            <v-row>
+              <v-col>
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="name"
@@ -52,11 +52,16 @@
                     <v-select
                       v-model="value.station_id"
                       :error-messages="errors"
+                      :item-text="
+                        station =>
+                          station.is_enabled
+                            ? station.name
+                            : `${station.name} (disabled)`
+                      "
                       :items="stations"
                       :label="loading ? 'Loading...' : 'Station'"
                       :loading="loading"
                       :readonly="!editing"
-                      item-text="nameWithEnabled"
                       item-value="_id"
                     ></v-select>
                   </ValidationProvider>
@@ -75,26 +80,75 @@
                     label="Description"
                   ></v-textarea>
                 </ValidationProvider>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <standard-options :editing="editing" :value="value" />
+            <standard-options
+              :editing="editing"
+              :value="value"
+              as="datastreams"
+            />
             <standard-audit v-if="!editing" :value="value" />
             <standard-identifier :value="value" />
           </v-container>
-        </v-card>
-      </v-flex>
 
-      <v-flex>
+          <v-card-actions v-if="!editing" class="flex-wrap">
+            <v-btn
+              :to="{
+                name: 'orgs-orgSlug-stations-stationId',
+                params: {
+                  orgSlug: org.slug,
+                  stationId: value.station_id
+                }
+              }"
+              color="green"
+              dark
+              nuxt
+              ><v-icon left>{{ mdiNature }}</v-icon
+              >Station details</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="!editing">
+      <v-col cols="12" md="6">
+        <annotation-total
+          :datastream-id="value._id"
+          :is-enabled="true"
+          :org="org"
+          :show-hidden="$canCreate('annotations', org)"
+          hide-actions
+          total-label="enabled"
+        />
+      </v-col>
+
+      <v-col v-if="$canCreate('annotations', org)" cols="12" md="6">
+        <annotation-total
+          :datastream-id="value._id"
+          :is-enabled="false"
+          :org="org"
+          :show-hidden="true"
+          hide-actions
+          total-label="disabled"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
         <detail-geo-point
           :editing="editing"
           :value="value"
           @add="addGeoPoint"
           @remove="removeGeo"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-attributes
           :editing="editing"
           :value="value"
@@ -102,9 +156,11 @@
           @edit="editAttribute"
           @remove="removeAttribute"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-terms
           :editing="editing"
           :value="value"
@@ -112,9 +168,11 @@
           @edit="editTerms"
           @remove="removeTerms"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-datapoints-config
           ref="detailDatapointsConfig"
           :editing="editing"
@@ -124,18 +182,22 @@
           @edit="editDatapointsConfig"
           @remove="removeDatapointsConfig"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <datastream-detail-derived
           :editing="editing"
           :value="value"
           @add="addDerived"
           @remove="removeDerived"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-general-config
           :editing="editing"
           :value="value"
@@ -143,9 +205,11 @@
           @edit="editGeneralConfig"
           @remove="removeGeneralConfig"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-access-levels
           :editing="editing"
           :value="value"
@@ -153,9 +217,11 @@
           @edit="editAccessLevel"
           @remove="removeAccessLevel"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-members
           :editing="editing"
           :value="value"
@@ -163,13 +229,15 @@
           @edit="editMember"
           @remove="removeMember"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <!-- TODO: Implement editing later! -->
-      <v-flex v-if="!editing">
+    <!-- TODO: Implement editing later! -->
+    <v-row v-if="!editing">
+      <v-col>
         <detail-external-refs :editing="editing" :value="value" />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <detail-dialog
       ref="attributeDialog"
@@ -194,7 +262,7 @@
       <v-card>
         <v-toolbar dark color="primary">
           <v-btn icon dark @click="datastreamDialog = false">
-            <v-icon>close</v-icon>
+            <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
           <v-toolbar-title>Select derived datastreams</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -219,7 +287,9 @@
                 })
               "
               >{{
-                item.quantitySelected ? 'check_box' : 'check_box_outline_blank'
+                getQuantity(item._id)
+                  ? mdiCheckboxMarked
+                  : mdiCheckboxBlankOutline
               }}</v-icon
             >
           </template>
@@ -318,6 +388,7 @@ import geo from '@/mixins/geo'
 import member from '@/mixins/member'
 import terms from '@/mixins/terms'
 import AccessLevelFields from '@/components/AccessLevelFields'
+import AnnotationTotal from '@/components/AnnotationTotal'
 import AttributeFields from '@/components/AttributeFields'
 import DatapointsConfigFields from '@/components/DatapointsConfigFields'
 import DatastreamDetailDerived from '@/components/DatastreamDetailDerived'
@@ -343,6 +414,7 @@ import TimeZonePicker from '@/components/TimeZonePicker'
 export default {
   components: {
     AccessLevelFields,
+    AnnotationTotal,
     AttributeFields,
     DatapointsConfigFields,
     DatastreamDetailDerived,
@@ -475,7 +547,8 @@ export default {
   computed: {
     ...mapGetters({
       cartCount: 'cart/count',
-      cartIds: 'cart/ids'
+      cartIds: 'cart/ids',
+      getQuantity: 'cart/getQuantity'
     })
   },
 

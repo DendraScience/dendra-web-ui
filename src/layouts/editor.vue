@@ -30,12 +30,12 @@
     <v-content>
       <status-bar v-model="status" />
 
-      <v-container :style="editing ? { marginTop: '48px' } : {}" fluid pa-0>
+      <div :style="editing ? { marginTop: '48px' } : { marginTop: '16px' }">
         <nuxt />
-      </v-container>
+      </div>
     </v-content>
 
-    <v-dialog v-model="cancelDialog" dark max-width="500px" persistent>
+    <v-dialog v-model="cancelDialog" dark max-width="500" persistent>
       <v-card>
         <v-card-title class="headline">
           Unsaved changes
@@ -54,7 +54,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
+    <v-dialog v-model="leaveDialog" dark max-width="500" persistent>
       <v-card>
         <v-card-title class="headline">
           Unsaved changes

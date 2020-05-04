@@ -1,13 +1,15 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex align-self-end>
-        <a href="https://mathjs.org/" target="_blank">
+    <v-row dense>
+      <v-col align="end">
+        <a class="body-2" href="https://mathjs.org/" target="_blank">
           See Math.js for help
         </a>
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <ValidationProvider
           name="expr"
           :rules="{
@@ -18,20 +20,20 @@
           <v-text-field
             v-model.trim="value.expr"
             :error-messages="exprResolved.error || resultResolved.error"
+            :prepend-inner-icon="mdiCalculator"
             autofocus
             label="Expression"
-            prepend-inner-icon="mdi-calculator"
             required
             solo
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
-    <v-flex>
-      <v-container grid-list-md pa-0>
-        <v-layout wrap>
-          <v-flex>
+    <v-row no-gutters>
+      <v-col>
+        <v-row dense>
+          <v-col>
             <v-tabs v-model="tabIndex">
               <v-tab>
                 Datapoint
@@ -51,12 +53,13 @@
                     id="textarea1571758315461"
                     v-model.trim="value.datapoint"
                     :error-messages="datapointResolved.error"
-                    label="Input datapoint"
                     background-color="grey darken-4"
                     dark
-                    rows="16"
-                    spellcheck="false"
+                    dense
                     filled
+                    label="Input datapoint"
+                    rows="14"
+                    spellcheck="false"
                   ></v-textarea>
                 </ValidationProvider>
               </v-tab-item>
@@ -72,19 +75,20 @@
                     id="textarea1572143364122"
                     v-model.trim="value.attributes"
                     :error-messages="attributesResolved.error"
-                    label="Input attributes"
                     background-color="grey darken-4"
                     dark
-                    rows="16"
-                    spellcheck="false"
+                    dense
                     filled
+                    label="Input attributes"
+                    rows="14"
+                    spellcheck="false"
                   ></v-textarea>
                 </ValidationProvider>
               </v-tab-item>
             </v-tabs>
-          </v-flex>
+          </v-col>
 
-          <v-flex>
+          <v-col>
             <v-tabs :value="0">
               <v-tab>
                 Datapoint
@@ -103,18 +107,19 @@
                     label="Evaluated datapoint"
                     background-color="grey darken-4"
                     dark
-                    readonly
-                    rows="16"
-                    spellcheck="false"
+                    dense
                     filled
+                    readonly
+                    rows="14"
+                    spellcheck="false"
                   ></v-textarea>
                 </ValidationProvider>
               </v-tab-item>
             </v-tabs>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

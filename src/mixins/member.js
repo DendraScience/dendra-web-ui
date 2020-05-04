@@ -29,23 +29,37 @@ export default {
     },
 
     editMember({ id }) {
-      const roles = this.value.involved_parties
-        .filter(party => party.person_id === id)
-        .reduce((accum, party) => accum.concat(party.roles), [])
-
       this.member = {
         dialog: true,
         personId: id,
-        roles: this.member.roles.map(role => ({
-          text: role.text,
-          value: roles.includes(role.text)
-        })),
+        roles: this.getMemberRoles(id),
         selectDisabled: true
       }
 
       requestAnimationFrame(() => {
         this.$refs.memberDialog.$refs.observer.reset()
       })
+    },
+
+    getMemberRoles(id) {
+      const roles = this.value.involved_parties
+        .filter(party => party.person_id === id)
+        .reduce((accum, party) => accum.concat(party.roles), [])
+
+      return this.member.roles.map(role => ({
+        text: role.text,
+        value: roles.includes(role.text)
+      }))
+    },
+
+    setMemberRole(id, text, value = true) {
+      const roles = this.getMemberRoles(id)
+      const role = roles.find(role => role.text === text)
+
+      if (role) {
+        role.value = value
+        this.commitMember({ personId: id, roles })
+      }
     },
 
     commitMember({ personId, roles }) {

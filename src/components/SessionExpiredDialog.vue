@@ -14,15 +14,20 @@
           </v-card-text>
 
           <v-container fluid>
-            <v-layout column>
-              <v-flex>
+            <v-row dense>
+              <v-col>
                 <v-text-field
                   :value="auth && auth.user && auth.user.email"
                   disabled
+                  hide-details
                   label="Email"
                   solo
                 ></v-text-field>
+              </v-col>
+            </v-row>
 
+            <v-row>
+              <v-col>
                 <ValidationProvider
                   v-slot="{ errors }"
                   :rules="'required|min:6|max:100'"
@@ -38,8 +43,8 @@
                     type="password"
                   ></v-text-field>
                 </ValidationProvider>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-container>
 
           <v-divider />

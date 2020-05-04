@@ -21,7 +21,7 @@
         </v-col>
       </v-row>
 
-      <v-row no-gutters>
+      <v-row dense>
         <v-col>
           <v-data-table
             :headers="headers"
@@ -66,12 +66,12 @@
 
             <template v-slot:item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
@@ -83,7 +83,7 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -113,6 +113,7 @@ import moment from 'moment'
 import DateChip from '@/components/DateChip'
 import itemEditing from '@/mixins/item-editing'
 import { timeZoneItems, timeZoneOffsets } from '@/lib/time-zone'
+import { mdiAlert, mdiCalendarRange, mdiWatch } from '@mdi/js'
 
 export default {
   components: {
@@ -164,7 +165,7 @@ export default {
 
       return [
         {
-          icon: 'mdi-calendar-range',
+          icon: mdiCalendarRange,
           subtitle: 'Specify a begin and end time.',
           target: 'range',
           title: 'Range',
@@ -172,7 +173,7 @@ export default {
           utcOffset
         },
         {
-          icon: 'mdi-watch',
+          icon: mdiWatch,
           subtitle: 'Specify a single point in time.',
           target: 'moment',
           title: 'Moment',
@@ -202,7 +203,7 @@ export default {
             return {
               beginsAt,
               beginsLabel: 'Occurred at',
-              icon: 'mdi-watch',
+              icon: mdiWatch,
               key,
               target: 'moment',
               timeZone,
@@ -215,7 +216,7 @@ export default {
             beginsLabel: 'Begins at',
             endsBefore,
             endsLabel: 'and ends before',
-            icon: 'mdi-calendar-range',
+            icon: mdiCalendarRange,
             key,
             target: 'range',
             timeZone,
@@ -227,7 +228,7 @@ export default {
           return {
             beginsLabel: 'Begins with first datapoint and ends before',
             endsBefore,
-            icon: 'mdi-calendar-range',
+            icon: mdiCalendarRange,
             key,
             target: 'range',
             timeZone,
@@ -240,7 +241,7 @@ export default {
             beginsAt,
             beginsLabel: 'Begins at',
             endsLabel: 'and affects all datapoints thereafter',
-            icon: 'mdi-calendar-range',
+            icon: mdiCalendarRange,
             key,
             target: 'range',
             timeZone,
@@ -250,7 +251,7 @@ export default {
 
         return {
           beginsLabel: 'Invalid interval!',
-          icon: 'mdi-alert',
+          icon: mdiAlert,
           key
         }
       })

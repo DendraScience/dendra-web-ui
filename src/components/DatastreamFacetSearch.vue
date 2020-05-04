@@ -1,16 +1,17 @@
 <template>
-  <v-container fluid grid-list-lg>
-    <v-layout>
-      <v-flex>
+  <v-container fluid>
+    <v-row dense>
+      <v-col>
         <v-expansion-panels v-model="panel" focusable multiple>
           <v-expansion-panel>
             <v-expansion-panel-header>
               1. Narrow the list of datastreams
             </v-expansion-panel-header>
+
             <v-expansion-panel-content>
-              <v-container fluid>
-                <v-layout wrap>
-                  <v-flex v-if="!stationId && stations" xs12 sm6 md3>
+              <v-container fluid px-0>
+                <v-row no-gutters>
+                  <v-col v-if="!stationId && stations" cols="12" md="3" sm="6">
                     <v-list dense>
                       <v-subheader>Stations</v-subheader>
                       <v-list-item-group
@@ -53,14 +54,14 @@
                         </v-list-item>
                       </v-list-item-group>
                     </v-list>
-                  </v-flex>
+                  </v-col>
 
-                  <v-flex
+                  <v-col
                     v-for="vocabulary in filteredVocabularies"
                     :key="vocabulary._id"
-                    xs12
-                    sm6
-                    md3
+                    cols="12"
+                    md="3"
+                    sm="6"
                   >
                     <v-list dense>
                       <v-subheader>{{ vocabulary.label }}</v-subheader>
@@ -111,8 +112,8 @@
                         </v-list-item>
                       </v-list-item-group>
                     </v-list>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -121,22 +122,26 @@
             <v-expansion-panel-header>
               2. Select datastreams
             </v-expansion-panel-header>
+
             <v-expansion-panel-content>
-              <v-container fluid>
-                <v-layout wrap>
-                  <v-flex xs12>
+              <v-container fluid px-0>
+                <v-row dense>
+                  <v-col>
                     <v-text-field
                       v-model.trim="search"
-                      append-icon="search"
+                      :append-icon="mdiMagnify"
+                      filled
                       flat
                       label="Filter datastreams"
                     ></v-text-field>
-                  </v-flex>
+                  </v-col>
+                </v-row>
 
-                  <v-flex xs12>
+                <v-row dense>
+                  <v-col>
                     <v-data-table
                       :footer-props="{
-                        itemsPerPageOptions: [10, 50, 100, 500]
+                        itemsPerPageOptions: [10, 50, 100]
                       }"
                       :headers="headers"
                       :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -144,6 +149,7 @@
                       :options.sync="tableOptions"
                       :search="search"
                       item-key="_id"
+                      @current-items="$emit('current-items', $event)"
                     >
                       <template
                         v-if="$scopedSlots.select"
@@ -154,37 +160,37 @@
                       </template>
 
                       <template
-                        v-slot:item.config_built_lookup.first.begins_at="{
+                        v-slot:item.extent.begins_at="{
                           item
                         }"
-                        ><span v-if="item.config_built_lookup.first">
-                          {{
-                            item.config_built_lookup.first.begins_at
+                      >
+                        {{
+                          item.extent &&
+                            item.extent.begins_at
                               | dateTimeFormatExtra(
                                 undefined,
                                 undefined,
                                 item.station_lookup.utc_offset,
                                 item.station_lookup.time_zone
                               )
-                          }}</span
-                        >
+                        }}
                       </template>
 
                       <template
-                        v-slot:item.config_built_lookup.last.ends_before="{
+                        v-slot:item.extent.ends_before="{
                           item
                         }"
-                        ><span v-if="item.config_built_lookup.last">
-                          {{
-                            item.config_built_lookup.last.ends_before
+                      >
+                        {{
+                          item.extent &&
+                            item.extent.ends_before
                               | dateTimeFormatExtra(
                                 undefined,
                                 undefined,
                                 item.station_lookup.utc_offset,
                                 item.station_lookup.time_zone
                               )
-                          }}</span
-                        >
+                        }}
                       </template>
 
                       <template v-slot:item.indicators="{ item }">
@@ -197,14 +203,14 @@
                         </span>
                       </template>
                     </v-data-table>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -258,14 +264,14 @@ export default {
         align: 'left',
         sort: dateSortPred,
         text: 'Begins at',
-        value: 'config_built_lookup.first.begins_at',
+        value: 'extent.begins_at',
         width: '12%'
       },
       {
         align: 'left',
         sort: dateSortPred,
         text: 'Ends before',
-        value: 'config_built_lookup.last.ends_before',
+        value: 'extent.ends_before',
         width: '12%'
       },
       {
@@ -306,7 +312,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      findDatastreams: 'datastreams/find',
       findVocabularies: 'vocabularies/find'
     }),
     ...mapState(['auth']),
@@ -515,6 +520,9 @@ export default {
       this.indexer = new FacetIndexer(event.data.indexer)
 
       this.apply()
+
+      // HACK: For faceted search
+      this.$emit('datastreams', this.datastreams)
     }
   }
 }

@@ -5,11 +5,11 @@
         <v-select
           v-model="value.timeZone"
           :items="timeZoneItems"
+          :prepend-inner-icon="mdiMapClock"
           hide-details
           item-text="text"
           item-value="abbr"
           label="Time zone"
-          prepend-inner-icon="mdi-map-clock"
           solo
         ></v-select>
       </v-col>

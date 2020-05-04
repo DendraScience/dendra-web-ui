@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid grid-list-xl>
-    <v-layout column>
-      <v-flex>
+  <v-container fluid>
+    <v-row no-gutters>
+      <v-col cols="12">
         <v-card>
           <v-container fluid>
             <v-row dense>
@@ -85,8 +85,8 @@
             </v-row>
           </v-container>
         </v-card>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

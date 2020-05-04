@@ -1,193 +1,188 @@
 <template>
-  <v-layout v-if="org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <v-alert :value="$cannot('graph', org)" type="warning">
-              Note that your current access level may prevent you from graphing
-              or downloading data.
-            </v-alert>
+  <v-container v-if="org" fluid pa-0>
+    <v-row no-gutters>
+      <v-col>
+        <v-container>
+          <v-row dense>
+            <v-col>
+              <v-alert
+                :value="$cannotGraph('organizations', org)"
+                type="warning"
+              >
+                Note that your current access level may prevent you from
+                graphing or downloading data.
+              </v-alert>
 
-            <v-tabs
-              v-model="tabIndex"
-              background-color="grey lighten-2"
-              fixed-tabs
-            >
-              <v-tab>
-                View
-              </v-tab>
-              <v-tab>
-                Chart
-              </v-tab>
-              <v-tab disabled>
-                Download
-              </v-tab>
+              <v-tabs v-model="tabIndex" grow>
+                <v-tab>
+                  View
+                </v-tab>
+                <v-tab>
+                  Chart
+                </v-tab>
+                <v-tab disabled>
+                  Download
+                </v-tab>
 
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-title v-if="queryStationId" class="headline">
-                    {{ getStation(queryStationId).name }} datastreams
-                  </v-card-title>
-                  <v-card-title v-else class="headline">
-                    Datastreams
-                  </v-card-title>
+                <v-tab-item>
+                  <v-card tile>
+                    <query-header name="datastreams" :org="org">
+                      Datastreams
+                    </query-header>
 
-                  <datastream-facet-search
-                    v-if="queryFaceted"
-                    :is-enabled="queryIsEnabled"
-                    :org="org"
-                    :scheme-id="queryScheme"
-                    :show-disabled="$can('create', 'datastreams')"
-                    :station-id="queryStationId"
-                    show-link
-                  >
-                    <template v-slot:select="{ item }">
-                      <v-icon color="primary" @click="selectDatastream(item)">{{
-                        getDatastream(item._id) &&
-                        getDatastream(item._id).quantitySelected
-                          ? 'check_box'
-                          : 'check_box_outline_blank'
-                      }}</v-icon>
-                    </template>
-
-                    <template v-slot:actions="{ item }">
-                      <v-icon color="tertiary" @click="open(item._id)"
-                        >mdi-open-in-new</v-icon
-                      >
-                    </template>
-                  </datastream-facet-search>
-
-                  <datastream-search
-                    v-else
-                    :is-enabled="queryIsEnabled"
-                    :org="org"
-                    :scheme-id="queryScheme"
-                    :show-disabled="$can('create', 'datastreams')"
-                    :show-hidden="$can('create', 'datastreams')"
-                    :show-options="$can('create', 'datastreams')"
-                    :station-id="queryStationId"
-                    show-link
-                  >
-                    <template v-slot:select="{ item }">
-                      <v-icon
-                        color="primary"
-                        @click="
-                          incrementQuantity({
-                            id: item._id,
-                            max: 1
-                          })
-                        "
-                        >{{
-                          item.quantitySelected
-                            ? 'check_box'
-                            : 'check_box_outline_blank'
-                        }}</v-icon
-                      >
-                    </template>
-
-                    <template v-slot:actions="{ item }">
-                      <v-icon color="tertiary" @click="open(item._id)"
-                        >mdi-open-in-new</v-icon
-                      >
-                    </template>
-                  </datastream-search>
-
-                  <v-card-actions>
-                    <v-btn :disabled="!cartCount" @click="resetCart"
-                      >Reset</v-btn
+                    <datastream-facet-search
+                      v-if="queryFaceted"
+                      :is-enabled="queryIsEnabled"
+                      :org="org"
+                      :scheme-id="queryScheme"
+                      :show-disabled="showOutliers"
+                      :station-id="queryStationId"
+                      show-link
+                      @current-items="currentItems = $event"
+                      @datastreams="datastreams = $event"
                     >
-                    <v-btn :disabled="!cartCount" @click="goToChartTab"
-                      >Chart</v-btn
+                      <template v-slot:select="{ item }">
+                        <v-icon color="primary" @click="selectItem(item)">{{
+                          getQuantity(item._id)
+                            ? mdiCheckboxMarked
+                            : mdiCheckboxBlankOutline
+                        }}</v-icon>
+                      </template>
+
+                      <template v-slot:actions="{ item }">
+                        <v-icon color="tertiary" @click="open(item._id)">{{
+                          mdiOpenInNew
+                        }}</v-icon>
+                      </template>
+                    </datastream-facet-search>
+
+                    <datastream-search
+                      v-else
+                      :annotation="annotation"
+                      :is-enabled="queryIsEnabled"
+                      :org="org"
+                      :scheme-id="queryScheme"
+                      :show-disabled="showOutliers"
+                      :show-hidden="showOutliers"
+                      :show-options="showOutliers"
+                      :station-id="queryStationId"
+                      show-link
+                      @current-items="currentItems = $event"
                     >
-                    <v-btn disabled>Download</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-tab-item>
+                      <template v-slot:select="{ item }">
+                        <v-icon color="primary" @click="selectItem(item)">{{
+                          getQuantity(item._id)
+                            ? mdiCheckboxMarked
+                            : mdiCheckboxBlankOutline
+                        }}</v-icon>
+                      </template>
 
-              <v-tab-item>
-                <v-card v-if="cartCount || !charts.length" flat text>
-                  <v-card-title class="headline">
-                    Selected datastreams
-                  </v-card-title>
-
-                  <chart-datastream-cart />
-                </v-card>
-
-                <v-card flat>
-                  <ValidationObserver v-slot="{ valid }">
-                    <v-container fluid>
-                      <v-layout wrap>
-                        <v-flex xs12>
-                          <date-range-fields v-model="dateRange" />
-                        </v-flex>
-
-                        <v-flex v-if="cartCount || !charts.length" xs12>
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="chart title"
-                            rules="required|max:100"
-                          >
-                            <v-text-field
-                              v-model="chartTitle"
-                              :error-messages="errors"
-                              clearable
-                              filled
-                              flat
-                              label="Chart title"
-                              required
-                            ></v-text-field>
-                          </ValidationProvider>
-                        </v-flex>
-                      </v-layout>
-                    </v-container>
+                      <template v-slot:actions="{ item }">
+                        <v-icon color="tertiary" @click="open(item._id)">{{
+                          mdiOpenInNew
+                        }}</v-icon>
+                      </template>
+                    </datastream-search>
 
                     <v-card-actions>
                       <v-btn
-                        :disabled="!(cartCount && valid)"
-                        block
-                        color="primary"
-                        large
-                        @click="addChart"
-                        >Chart
-                        {{ cartCount }}
-                        {{ cartCount | pluralize('Datastream') }}
-                      </v-btn>
+                        :disabled="!selectableItems.length"
+                        @click="selectAll"
+                        >Select All</v-btn
+                      >
+                      <v-btn :disabled="!cartCount" @click="resetCart"
+                        >Reset</v-btn
+                      >
+                      <v-btn :disabled="!cartCount" @click="goToChartTab"
+                        >Chart</v-btn
+                      >
+                      <v-btn disabled>Download</v-btn>
                     </v-card-actions>
-                  </ValidationObserver>
-                </v-card>
-              </v-tab-item>
+                  </v-card>
+                </v-tab-item>
 
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    Coming soon!
-                  </v-card-text>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+                <v-tab-item>
+                  <v-card v-if="cartCount || !charts.length" tile>
+                    <query-header>
+                      Selected datastreams
+                    </query-header>
 
-    <v-flex v-if="charts.length" v-show="tabIndex === 1">
-      <datastream-charts
-        :value="charts"
-        :worker="Object.freeze(seriesFetchWorker)"
-        @remove="charts.splice($event, 1)"
-      />
-    </v-flex>
+                    <chart-datastream-cart :datastreams="selectedDatastreams" />
+
+                    <ValidationObserver v-slot="{ valid }">
+                      <v-container fluid>
+                        <v-row dense>
+                          <v-col>
+                            <date-range-fields
+                              v-model="dateRange"
+                              class="pa-0"
+                            />
+                          </v-col>
+                        </v-row>
+
+                        <v-row dense>
+                          <v-col v-if="cartCount || !charts.length">
+                            <ValidationProvider
+                              v-slot="{ errors }"
+                              name="chart title"
+                              rules="required|max:100"
+                            >
+                              <v-text-field
+                                v-model="chartTitle"
+                                :error-messages="errors"
+                                clearable
+                                filled
+                                flat
+                                label="Chart title"
+                                required
+                              ></v-text-field>
+                            </ValidationProvider>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+
+                      <v-card-actions>
+                        <v-btn
+                          :disabled="!(cartCount && valid)"
+                          block
+                          color="primary"
+                          large
+                          @click="addChart"
+                          >Chart
+                          {{ cartCount }}
+                          {{ cartCount | pluralize('Datastream') }}
+                        </v-btn>
+                      </v-card-actions>
+                    </ValidationObserver>
+                  </v-card>
+                </v-tab-item>
+
+                <v-tab-item>
+                  <v-card tile>
+                    <query-header>
+                      Coming soon!
+                    </query-header>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="charts.length" v-show="tabIndex === 1">
+      <v-col>
+        <datastream-charts
+          :value="charts"
+          :worker="Object.freeze(seriesFetchWorker)"
+          @remove="charts.splice($event, 1)"
+        />
+      </v-col>
+    </v-row>
 
     <v-btn
-      v-if="
-        !queryFaceted &&
-          $can('create', {
-            organization_id: org._id,
-            state: 'pending',
-            [$abilityTypeKey]: 'datastreams'
-          })
-      "
+      v-show="!queryFaceted && $canCreate('datastreams', org)"
       :to="{
         name: 'orgs-orgSlug-datastreams-create',
         params: {
@@ -204,10 +199,10 @@
       style="top: 80px;"
       top
     >
-      <v-icon>add</v-icon>
+      <v-icon>{{ mdiPlus }}</v-icon>
     </v-btn>
 
-    <v-dialog v-model="leaveDialog" dark max-width="500px" persistent>
+    <v-dialog v-model="leaveDialog" dark max-width="500" persistent>
       <v-card>
         <v-card-title class="headline">
           Charts exist
@@ -225,7 +220,22 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-layout>
+
+    <v-dialog v-model="selecting" dark hide-overlay persistent width="300">
+      <v-card>
+        <v-card-title class="title">
+          Selecting items...
+        </v-card-title>
+
+        <v-card-text>
+          <v-progress-circular
+            indeterminate
+            color="white"
+          ></v-progress-circular>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script>
@@ -235,17 +245,18 @@ import Vue from 'vue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import moment from 'moment'
 import _forEach from 'lodash/forEach'
-import _map from 'lodash/map'
 import _sortBy from 'lodash/sortBy'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { defaultOptions } from '@/lib/chart'
 import { dateFormats } from '@/lib/date'
 import { idRandom } from '@/lib/utils'
+import routeQuery from '@/mixins/route-query'
 import ChartDatastreamCart from '@/components/ChartDatastreamCart'
 import DatastreamCharts from '@/components/DatastreamCharts'
 import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
+import QueryHeader from '@/components/QueryHeader'
 
 export default {
   components: {
@@ -254,15 +265,28 @@ export default {
     DatastreamFacetSearch,
     DatastreamSearch,
     DateRangeFields,
+    QueryHeader,
     ValidationObserver,
     ValidationProvider
   },
 
-  middleware: ['check-org', 'dt-unit-vocabulary', 'fetch-station'],
+  middleware: [
+    'check-org',
+    'dt-unit-vocabulary',
+    'fetch-station',
+    'fetch-annotation'
+  ],
+
+  mixins: [routeQuery],
 
   data: () => ({
     charts: [],
     chartTitle: 'Enter Chart Title Here',
+
+    currentItems: [],
+
+    // HACK: For faceted search
+    datastreams: [],
 
     tabIndex: 0,
 
@@ -273,43 +297,56 @@ export default {
 
     leaveDialog: false,
 
+    selecting: false,
+    progressCount: 0,
+
     seriesFetchWorker: null
   }),
 
   computed: {
     ...mapGetters(['getUnitText', 'org']),
+
     ...mapGetters({
       cartCount: 'cart/count',
-      cartIds: 'cart/ids'
+      cartIds: 'cart/ids',
+      getQuantity: 'cart/getQuantity'
     }),
     ...mapGetters({
-      getDatastream: 'datastreams/get',
-      getStation: 'stations/get'
+      findDatastreams: 'datastreams/find',
+      getAnnotation: 'annotations/get'
     }),
 
     ...mapState(['auth']),
     ...mapState('cart', ['quantitiesById']),
 
-    queryFaceted() {
-      return this.$route.query.faceted
+    annotation() {
+      return this.queryAnnotationId
+        ? this.getAnnotation(this.queryAnnotationId)
+        : null
     },
 
-    queryIsEnabled() {
-      return this.$route.query.isEnabled
+    selectableItems() {
+      const { currentItems, getQuantity } = this
+      return currentItems.filter(item => !getQuantity(item._id))
     },
 
-    queryScheme() {
-      return this.$route.query.scheme
+    selectedDatastreams() {
+      const { cartIds, quantitiesById } = this
+
+      return this.queryFaceted
+        ? this.datastreams.filter(datastream => quantitiesById[datastream._id])
+        : this.findDatastreams({ query: { _id: { $in: cartIds } } }).data
     },
 
-    queryStationId() {
-      return this.$route.query.stationId
+    showOutliers() {
+      return !!this.annotation || this.$canCreate('datastreams', this.org)
     }
   },
 
   watch: {
     queryFaceted() {
       this.tabIndex = 0
+      this.resetCart()
     },
 
     tabIndex(newValue) {
@@ -348,6 +385,9 @@ export default {
   },
 
   beforeDestroy() {
+    // HACK: For faceted search
+    this.datastreams = null
+
     this.seriesFetchWorker.removeEventListener(
       'message',
       this.workerMessageHandler
@@ -384,11 +424,12 @@ export default {
     ...mapMutations({
       addDatastream: 'datastreams/addItem',
       incrementQuantity: 'cart/incrementQuantity',
-      resetCart: 'cart/reset'
+      resetCart: 'cart/reset',
+      setQuantity: 'cart/setQuantity'
     }),
 
     addChart() {
-      const { getUnitText } = this
+      const { getUnitText, quantitiesById, selectedDatastreams } = this
       const colors = Highcharts.getOptions().colors
       const options = defaultOptions(this.chartTitle)
       const seriesOptions = []
@@ -409,24 +450,26 @@ export default {
       options.chart.resetPointer = true
 
       let canDownload = true
-      let items = _map(this.quantitiesById, (value, id) => {
-        const datastream = this.getDatastream(id)
-        const unitText = getUnitText(datastream.dtUnit)
+      let items = selectedDatastreams.map(datastream => {
+        const dtUnit =
+          datastream.terms && datastream.terms.dt && datastream.terms.dt.Unit
+        const unitText = getUnitText(dtUnit) || ''
 
         return {
           datastream,
-          seriesName: `${datastream.nameWithStation} ${unitText}`,
+          seriesName: `${datastream.station_lookup.name} ${datastream.name} ${unitText}`,
           yAxisLabelFormat: `{value} ${unitText}`,
-          yAxisOpposite: value === 2 // Based on cart quantity
+          yAxisOpposite: quantitiesById[datastream._id] === 2 // Based on cart quantity
         }
       })
 
-      items = _sortBy(items, ['datastream.nameWithStationAndUnit'])
+      items = _sortBy(items, ['seriesName'])
 
       _forEach(
         items,
         ({ datastream, seriesName, yAxisLabelFormat, yAxisOpposite }) => {
-          if (this.$cannot('download', datastream)) canDownload = false
+          if (this.$cannotDownload('datastreams', datastream))
+            canDownload = false
 
           let yAxisIndex = yAxis.findIndex(
             axis =>
@@ -497,10 +540,19 @@ export default {
       )
     },
 
-    selectDatastream(item) {
-      // HACK: Ensure datastream is in store for cart lookup
-      this.addDatastream(item)
+    selectAll() {
+      this.selecting = true
 
+      // HACK:
+      setTimeout(() => {
+        this.selectableItems.forEach(item =>
+          this.setQuantity({ id: item._id, value: 1 })
+        )
+        this.selecting = false
+      }, 500)
+    },
+
+    selectItem(item) {
       this.incrementQuantity({
         id: item._id,
         max: 1

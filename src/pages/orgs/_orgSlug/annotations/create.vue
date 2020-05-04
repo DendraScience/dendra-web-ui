@@ -1,21 +1,13 @@
 <template>
-  <v-layout v-if="instance && org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <ValidationObserver ref="observer">
-              <annotation-detail
-                v-model="instance"
-                :editing="editing"
-                :org="org"
-              />
-            </ValidationObserver>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+  <v-container v-if="instance && org">
+    <v-row>
+      <v-col>
+        <ValidationObserver ref="observer">
+          <annotation-detail v-model="instance" :editing="editing" :org="org" />
+        </ValidationObserver>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -116,8 +108,7 @@ export default {
         ],
         organization_id: this.org._id,
         station_ids: [],
-        title: '',
-        [this.$abilityTypeKey]: 'annotations'
+        title: ''
       }
     },
 

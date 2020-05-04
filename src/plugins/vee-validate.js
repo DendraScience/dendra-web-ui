@@ -11,6 +11,7 @@ import {
 } from 'vee-validate/dist/rules'
 import moment from 'moment'
 import { dateFormats, timeFormats } from '@/lib/date'
+import isURL from 'validator/es/lib/isURL'
 
 extend('alpha_num', alphaNum)
 extend('between', between)
@@ -42,5 +43,11 @@ extend('time_format', {
   params: ['key'],
   validate(value, { key }) {
     return moment(value, timeFormats[key], true).isValid()
+  }
+})
+extend('url', {
+  params: ['options'],
+  validate(value, { options }) {
+    return isURL(value, options)
   }
 })

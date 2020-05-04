@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid grid-list-md>
-    <v-layout column>
-      <v-flex>
+  <v-container fluid>
+    <v-row>
+      <v-col>
         <v-slider
           v-model="value.level"
           :max="accessLevelItems.length - 1"
@@ -10,12 +10,18 @@
           ticks="always"
           tick-size="4"
         ></v-slider>
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex class="font-weight-medium">
-        {{ description }}
-      </v-flex>
-    </v-layout>
+    <v-row>
+      <v-col class="font-weight-medium">
+        <v-card outlined>
+          <v-card-text class="body-1">
+            {{ description }}
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

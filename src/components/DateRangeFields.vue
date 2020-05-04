@@ -1,42 +1,42 @@
 <template>
-  <v-container fluid pa-0>
-    <v-layout wrap>
-      <v-flex xs12 sm6>
+  <v-container fluid>
+    <v-row dense>
+      <v-col cols="12" md="6">
         <ValidationProvider
           v-slot="{ errors }"
           name="from date"
-          :rules="{ date_format: dateFormat, required: true }"
+          :rules="{ date_format: dateFormat, required }"
         >
           <v-text-field
             v-model="value.from"
+            :append-icon="mdiCalendar"
             :error-messages="errors"
-            append-icon="event"
+            :required="required"
             filled
             label="From date"
-            required
             @click:append="showDialog"
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
+      </v-col>
 
-      <v-flex xs12 sm6>
+      <v-col cols="12" md="6">
         <ValidationProvider
           v-slot="{ errors }"
           name="to date"
-          :rules="{ date_format: dateFormat, required: true }"
+          :rules="{ date_format: dateFormat, required }"
         >
           <v-text-field
             v-model="value.to"
+            :append-icon="mdiCalendar"
             :error-messages="errors"
-            append-icon="event"
+            :required="required"
             filled
             label="To date"
-            required
             @click:append="showDialog"
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <v-dialog v-model="dialog" max-width="680">
       <v-card>
@@ -44,7 +44,10 @@
           >Date range</v-card-title
         >
 
-        <date-range-picker v-model="dateRange" />
+        <date-range-picker
+          v-model="dateRange"
+          :optional="required ? false : 'both'"
+        />
 
         <v-divider />
 
@@ -70,6 +73,7 @@ export default {
 
   props: {
     dateFormat: { default: 'y4md', type: String },
+    required: { default: true, type: Boolean },
     value: { type: Object, required: true }
   },
 
@@ -82,8 +86,8 @@ export default {
     dateRange: {
       handler(newValue) {
         this.$emit('input', {
-          from: newValue.from,
-          to: newValue.to
+          from: newValue.fromEnabled === false ? null : newValue.from,
+          to: newValue.toEnabled === false ? null : newValue.to
         })
       },
       deep: true

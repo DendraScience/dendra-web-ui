@@ -21,7 +21,7 @@
         </v-col>
       </v-row>
 
-      <v-row no-gutters>
+      <v-row dense>
         <v-col>
           <v-data-table
             :headers="headers"
@@ -66,12 +66,12 @@
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing && !item.connection" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
@@ -81,7 +81,7 @@
 
     <v-card-actions v-if="editing">
       <v-btn color="primary" @click="add(addItem)">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -174,7 +174,6 @@ export default {
             connection,
             endsBefore,
             endsLabel: 'and ends before',
-            icon: 'mdi-calendar-range',
             key,
             params,
             path,
@@ -189,7 +188,6 @@ export default {
             beginsLabel: 'Begins with first row and ends before',
             connection,
             endsBefore,
-            icon: 'mdi-calendar-range',
             key,
             params,
             path,
@@ -205,7 +203,6 @@ export default {
             beginsLabel: 'Begins at',
             connection,
             endsLabel: 'and returns all rows thereafter',
-            icon: 'mdi-calendar-range',
             key,
             params,
             path,
@@ -219,7 +216,6 @@ export default {
           beginsLabel: 'Begins with first row',
           connection,
           endsLabel: 'and returns all rows thereafter',
-          icon: 'mdi-calendar-range',
           key,
           params,
           path,

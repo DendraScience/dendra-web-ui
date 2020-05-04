@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Members involved</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Members involved</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -32,22 +34,22 @@
 
             <template v-slot:item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-btn color="primary" @click="add">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -55,8 +57,9 @@
 
 <script>
 import _sortBy from 'lodash/sortBy'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import itemEditing from '@/mixins/item-editing'
+import { mdiAccountBox } from '@mdi/js'
 
 export default {
   mixins: [itemEditing],
@@ -101,6 +104,7 @@ export default {
     ...mapGetters({
       getPerson: 'persons/get'
     }),
+    ...mapState(['auth']),
 
     involvedParties() {
       return this.value.involved_parties
@@ -114,7 +118,7 @@ export default {
 
           return {
             email: person && person.email,
-            icon: 'mdi-account-box',
+            icon: mdiAccountBox,
             id,
             key,
             name: person ? person.full_name || person.name : id,
@@ -140,6 +144,9 @@ export default {
       const personIds = this.involvedParties
         .filter(party => party.person_id)
         .map(party => party.person_id)
+
+      // HACK: Always include the current user
+      personIds.push(this.auth.user.person_id)
 
       // Fetch referenced persons
       if (personIds.length) {

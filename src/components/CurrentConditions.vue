@@ -9,7 +9,7 @@
         <v-col align="end" cols="12" sm="4"><slot name="util"/></v-col>
       </v-row>
 
-      <v-row no-gutters>
+      <v-row dense>
         <v-col>
           <v-data-table
             :headers="headers"

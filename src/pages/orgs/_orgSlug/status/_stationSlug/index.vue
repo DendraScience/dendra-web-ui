@@ -1,76 +1,79 @@
-.geo<template>
-  <v-layout v-if="station && org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout>
-          <v-flex xs12>
-            <h3 class="display-2 font-weight-light mb-2">
-              {{ station.name }}
-            </h3>
+<template>
+  <v-container v-if="station && org" fluid pa-0>
+    <v-row no-gutters>
+      <v-col>
+        <v-container>
+          <v-row>
+            <v-col>
+              <h2 class="display-2 font-weight-light mb-2">
+                {{ station.name }}
+              </h2>
 
-            <p v-if="station.description">
-              {{ station.description }}
-            </p>
-          </v-flex>
-        </v-layout>
+              <h3 v-if="station.description" class="subtitle-2 mb-2">
+                {{ station.description }}
+              </h3>
+            </v-col>
+          </v-row>
 
-        <v-layout wrap>
-          <v-flex xs12 md6>
-            <v-card>
-              <v-list dense>
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-clock-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      >{{ station.time | timeFormat }}
-                      {{ station.time_zone }} (UTC
-                      {{ station.utc_offset | utcOffsetHours }}
-                      hours)</v-list-item-title
-                    >
-                  </v-list-item-content>
-                  <!-- TODO: Implement reload -->
-                  <!--
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-card>
+                <v-list dense>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiClockOutline }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >{{
+                          (currentTime + station.utc_offset * 1000) | timeFormat
+                        }}
+                        {{ station.time_zone }} (UTC
+                        {{ station.utc_offset | utcOffsetHours }}
+                        hours)</v-list-item-title
+                      >
+                    </v-list-item-content>
+                    <!-- TODO: Implement reload -->
+                    <!--
                   <v-list-item-action>
                     <v-icon small>mdi-reload</v-icon>
                   </v-list-item-action>
  -->
-                </v-list-item>
+                  </v-list-item>
 
-                <v-list-item v-if="station.geo">
-                  <v-list-item-icon>
-                    <v-icon>mdi-map-marker</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      >{{ station.geo.coordinates[1] }}&deg;,
-                      {{ station.geo.coordinates[0] }}&deg;</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
+                  <v-list-item v-if="station.geo">
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiMapMarker }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >{{ station.geo.coordinates[1] }}&deg;,
+                        {{ station.geo.coordinates[0] }}&deg;</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
 
-                <v-list-item
-                  v-if="station.geo && station.geo.coordinates.length > 2"
-                >
-                  <v-list-item-icon>
-                    <v-icon>mdi-elevation-rise</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      >{{
-                        station.geo.coordinates[2]
-                          | unit('', 'm', somId === 'imp' ? 'ft' : 'm')
-                          | round('', 4)
-                      }}
-                      m</v-list-item-title
-                    >
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+                  <v-list-item
+                    v-if="station.geo && station.geo.coordinates.length > 2"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiElevationRise }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title
+                        >{{
+                          station.geo.coordinates[2]
+                            | unit('', 'm', somId === 'imp' ? 'ft' : 'm')
+                            | round('', 4)
+                        }}
+                        m</v-list-item-title
+                      >
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
 
-              <v-divider />
-              <!--
+                <v-divider />
+                <!--
               <v-list>
                 <v-list-item class="success" dark two-line>
                   <v-list-item-icon>
@@ -90,47 +93,47 @@
                 </v-list-item>
               </v-list>
  -->
-              <v-list dense>
-                <v-list-item
-                  :to="{
-                    name: 'orgs-orgSlug-stations-stationId',
-                    params: {
-                      orgSlug: org.slug,
-                      stationId: station._id
-                    }
-                  }"
-                  nuxt
-                >
-                  <v-list-item-icon>
-                    <v-icon>mdi-nature</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>Station metadata</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
+                <v-list dense>
+                  <v-list-item
+                    :to="{
+                      name: 'orgs-orgSlug-stations-stationId',
+                      params: {
+                        orgSlug: org.slug,
+                        stationId: station._id
+                      }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiNature }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Station details</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
 
-                <v-list-item
-                  v-for="(item, index) in externalLinks"
-                  :key="index"
-                  :disabled="!item.url"
-                  :href="item.url"
-                  target="_blank"
-                >
-                  <v-list-item-icon>
-                    <v-icon>mdi-open-in-app</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-flex>
+                  <v-list-item
+                    v-for="(item, index) in externalLinks"
+                    :key="index"
+                    :disabled="!item.url"
+                    :href="item.url"
+                    target="_blank"
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiOpenInApp }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-col>
 
-          <v-flex xs12 md6>
-            <v-card v-if="photos.length > 0" color="grey lighten-4">
-              <!-- TODO: Implement zoom -->
-              <!--
+            <v-col cols="12" md="6">
+              <v-card v-if="photos.length > 0" color="grey lighten-4">
+                <!-- TODO: Implement zoom -->
+                <!--
               <v-btn
                 absolute
                 color="tertiary"
@@ -144,124 +147,129 @@
                 <v-icon>mdi-magnify</v-icon>
               </v-btn>
  -->
-              <v-container fluid>
-                <v-row dense>
-                  <v-col v-if="photoIndex < photos.length">
-                    <v-img
-                      :key="photoIndex"
-                      :lazy-src="
-                        $options.filters.https(
-                          photos[photoIndex].sizes.small.url
-                        )
-                      "
-                      :src="
-                        $options.filters.https(
-                          photos[photoIndex].sizes.large.url
-                        )
-                      "
-                      aspect="1"
-                      contain
-                      height="320"
-                    >
-                      <template v-slot:placeholder>
-                        <v-row
-                          align="center"
-                          class="fill-height ma-0"
-                          justify="center"
-                        >
-                          <v-progress-circular
-                            color="grey lighten-5"
-                            indeterminate
-                          ></v-progress-circular>
-                        </v-row>
-                      </template>
-                    </v-img>
-                  </v-col>
-
-                  <v-col>
-                    <v-slide-group
-                      v-model="photoIndex"
-                      center-active
-                      mandatory
-                      show-arrows
-                    >
-                      <v-slide-item
-                        v-for="(photo, index) in photos"
-                        :key="index"
+                <v-container fluid>
+                  <v-row dense>
+                    <v-col v-if="photoIndex < photos.length">
+                      <v-img
+                        :key="photoIndex"
+                        :lazy-src="
+                          $options.filters.https(
+                            photos[photoIndex].sizes.small.url
+                          )
+                        "
+                        :src="
+                          $options.filters.https(
+                            photos[photoIndex].sizes.large.url
+                          )
+                        "
+                        aspect="1"
+                        contain
+                        height="320"
                       >
-                        <template v-slot:default="{ active, toggle }">
-                          <v-card
-                            :style="{ opacity: active ? 1 : 0.6 }"
-                            class="ma-1"
-                            flat
-                            tile
-                            @click="toggle"
+                        <template v-slot:placeholder>
+                          <v-row
+                            align="center"
+                            class="fill-height ma-0"
+                            justify="center"
                           >
-                            <v-img :src="photo.sizes.small.url" width="80" />
-                          </v-card>
+                            <v-progress-circular
+                              color="grey lighten-5"
+                              indeterminate
+                            ></v-progress-circular>
+                          </v-row>
                         </template>
-                      </v-slide-item>
-                    </v-slide-group>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card>
+                      </v-img>
+                    </v-col>
 
-            <v-alert v-else type="info">
-              Sorry, no photos.
-            </v-alert>
-          </v-flex>
-        </v-layout>
+                    <v-col>
+                      <v-slide-group
+                        v-model="photoIndex"
+                        center-active
+                        mandatory
+                        show-arrows
+                      >
+                        <v-slide-item
+                          v-for="(photo, index) in photos"
+                          :key="index"
+                        >
+                          <template v-slot:default="{ active, toggle }">
+                            <v-card
+                              :style="{ opacity: active ? 1 : 0.6 }"
+                              class="ma-1"
+                              flat
+                              tile
+                              @click="toggle"
+                            >
+                              <v-img :src="photo.sizes.small.url" width="80" />
+                            </v-card>
+                          </template>
+                        </v-slide-item>
+                      </v-slide-group>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card>
 
-        <v-layout column>
-          <v-flex>
-            <current-conditions
-              :datastreams-by-key="datastreamsByKey"
-              :org="org"
-              :units="units"
-              :value="current"
+              <v-alert v-else type="info">
+                Sorry, no photos.
+              </v-alert>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <current-conditions
+                :datastreams-by-key="datastreamsByKey"
+                :org="org"
+                :units="units"
+                :value="current"
+              >
+                <template v-slot:util>
+                  <v-select
+                    v-model="somId"
+                    :items="findSOMs().data"
+                    dense
+                    hide-details
+                    item-text="name"
+                    item-value="_id"
+                    label="Units"
+                    outlined
+                  >
+                  </v-select>
+                </template>
+              </current-conditions>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="station.geo" no-gutters>
+      <v-col>
+        <forecast-conditions :units="units" :value="forecast">
+          <template v-slot:util>
+            <a
+              :href="
+                `http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`
+              "
+              target="_blank"
+              >Visit NWS site</a
             >
-              <template v-slot:util>
-                <v-select
-                  v-model="somId"
-                  :items="findSOMs().data"
-                  dense
-                  hide-details
-                  item-text="name"
-                  item-value="_id"
-                  label="Units"
-                  outlined
-                >
-                </v-select>
-              </template>
-            </current-conditions>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+          </template>
+        </forecast-conditions>
+      </v-col>
+    </v-row>
 
-    <v-flex v-if="station.geo">
-      <forecast-conditions :units="units" :value="forecast">
-        <template v-slot:util>
-          <a
-            :href="
-              `http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`
-            "
-            target="_blank"
-            >Visit NWS site</a
-          >
-        </template>
-      </forecast-conditions>
-    </v-flex>
-
-    <v-flex v-if="charts.length">
-      <datastream-charts
-        :show-remove="false"
-        :value="charts"
-        :worker="Object.freeze(seriesFetchWorker)"
-      />
-    </v-flex>
-  </v-layout>
+    <v-row v-if="charts.length" no-gutters>
+      <v-col>
+        <datastream-charts
+          :show-remove="false"
+          :value="charts"
+          :worker="Object.freeze(seriesFetchWorker)"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -1035,7 +1043,7 @@ export default {
           $limit: 20
         },
         queries: [],
-        startTime: currentTime, // startTime - (station.utc_offset | 0) * 1000,
+        startTime: currentTime,
         timeLocal: false
       }
 

@@ -1,18 +1,21 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <v-select
           v-model="value.type"
           :items="typeItems"
           :prepend-inner-icon="icons[value.type]"
+          hide-details
           item-text="text"
           item-value="value"
           solo
         ></v-select>
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row no-gutters>
+      <v-col>
         <attribute-fields
           v-if="value.type === 'single'"
           v-model="value.single"
@@ -23,13 +26,14 @@
           v-model="value.struct"
           class="pa-0"
         />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import AttributeFields from '@/components/AttributeFields'
+import { mdiDice1, mdiDice2 } from '@mdi/js'
 
 export default {
   components: {
@@ -42,8 +46,8 @@ export default {
 
   data: () => ({
     icons: {
-      single: 'mdi-dice-1',
-      struct: 'mdi-dice-2'
+      single: mdiDice1,
+      struct: mdiDice2
     },
     typeItems: [
       {

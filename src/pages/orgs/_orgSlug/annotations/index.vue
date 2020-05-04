@@ -1,52 +1,41 @@
 <template>
-  <v-layout v-if="org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <v-tabs
-              v-model="tabIndex"
-              background-color="grey lighten-2"
-              fixed-tabs
-            >
-              <v-tab>
-                View
-              </v-tab>
+  <v-container v-if="org">
+    <v-row dense>
+      <v-col>
+        <v-tabs v-model="tabIndex" grow>
+          <v-tab>
+            View
+          </v-tab>
 
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-title class="headline">
-                    Annotations
-                  </v-card-title>
+          <v-tab-item>
+            <v-card tile>
+              <query-header name="annotations" :org="org">
+                Annotations
+              </query-header>
 
-                  <annotation-search
-                    :is-enabled="queryIsEnabled"
-                    :org="org"
-                    :show-disabled="$can('create', 'annotations')"
-                    show-link
-                  >
-                    <template v-slot:actions="{ item }">
-                      <v-icon color="tertiary" @click="open(item._id)"
-                        >mdi-open-in-new</v-icon
-                      >
-                    </template>
-                  </annotation-search>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+              <annotation-search
+                :datastream-id="queryDatastreamId"
+                :is-enabled="queryIsEnabled"
+                :org="org"
+                :show-disabled="showOutliers"
+                :show-options="showOutliers"
+                :station-id="queryStationId"
+                show-link
+              >
+                <template v-slot:actions="{ item }">
+                  <v-icon color="tertiary" @click="open(item._id)">{{
+                    mdiOpenInNew
+                  }}</v-icon>
+                </template>
+              </annotation-search>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
+      </v-col>
+    </v-row>
 
     <v-btn
-      v-if="
-        $can('create', {
-          organization_id: org._id,
-          state: 'pending',
-          [$abilityTypeKey]: 'annotations'
-        })
-      "
+      v-show="$canCreate('annotations', org, { state: 'pending' })"
       :to="{
         name: 'orgs-orgSlug-annotations-create',
         params: {
@@ -63,51 +52,43 @@
       style="top: 80px;"
       top
     >
-      <v-icon>add</v-icon>
+      <v-icon>{{ mdiPlus }}</v-icon>
     </v-btn>
-  </v-layout>
+  </v-container>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import routeQuery from '@/mixins/route-query'
 import AnnotationSearch from '@/components/AnnotationSearch'
+import QueryHeader from '@/components/QueryHeader'
 
 export default {
   components: {
-    AnnotationSearch
+    AnnotationSearch,
+    QueryHeader
   },
 
-  middleware: ['check-org'],
+  middleware: ['check-org', 'fetch-station', 'fetch-datastream'],
+
+  mixins: [routeQuery],
 
   data: () => ({
     tabIndex: 0
   }),
 
   computed: {
-    // TODO: Remove cart helpers?
     ...mapGetters(['org']),
     ...mapGetters({
-      cartCount: 'cart/count',
-      cartIds: 'cart/ids'
+      getStation: 'stations/get'
     }),
 
-    ...mapState('cart', ['quantitiesById']),
-
-    queryIsEnabled() {
-      return this.$route.query.isEnabled
+    showOutliers() {
+      return this.$canCreate('annotations', this.org)
     }
   },
 
-  created() {
-    this.resetCart()
-  },
-
   methods: {
-    ...mapMutations({
-      resetCart: 'cart/reset',
-      setQuantity: 'cart/setQuantity'
-    }),
-
     open(annotationId) {
       window.open(
         this.$router.resolve({

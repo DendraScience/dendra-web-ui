@@ -22,6 +22,12 @@ export const getters = {
     return Object.keys(state.quantitiesById).length
   },
 
+  getQuantity(state) {
+    return id => {
+      return state.quantitiesById[id]
+    }
+  },
+
   ids(state) {
     return Object.keys(state.quantitiesById)
   }

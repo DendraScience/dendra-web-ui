@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Derived from</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Derived from</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -25,19 +27,19 @@
                 v-if="editing && !item.custom"
                 color="tertiary"
                 @click="remove(item)"
-                >mdi-minus-circle</v-icon
+                >{{ mdiMinusCircle }}</v-icon
               >
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
-      <v-layout v-if="items.length">
-        <v-flex>
+      <v-row v-if="items.length">
+        <v-col>
           <v-card outlined>
             <v-container fluid>
-              <v-layout column>
-                <v-flex>
+              <v-row no-gutters>
+                <v-col>
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="derived description"
@@ -70,17 +72,17 @@
                       label="Derivation method"
                     ></v-text-field>
                   </ValidationProvider>
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-btn color="primary" @click="add">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -91,6 +93,7 @@ import { ValidationProvider } from 'vee-validate'
 import _uniq from 'lodash/uniq'
 import { mapActions, mapGetters } from 'vuex'
 import itemEditing from '@/mixins/item-editing'
+import { mdiChartTimelineVariant } from '@mdi/js'
 
 export default {
   components: {
@@ -143,11 +146,11 @@ export default {
     items() {
       return this.datastreamIds.map(id => {
         const datastream = this.getDatastream(id)
-        const station = datastream && datastream.station
+        const station = datastream && this.getStation(datastream.station_id)
 
         return {
           datastream: datastream ? datastream.name : id,
-          icon: 'mdi-chart-timeline-variant',
+          icon: mdiChartTimelineVariant,
           id,
           key: `datastream-${id}`,
           station: station ? station.name : id,

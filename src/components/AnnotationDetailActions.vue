@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Actions</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Actions</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -36,19 +38,19 @@
                 v-if="editing && !item.custom"
                 color="tertiary"
                 @click="remove(item)"
-                >mdi-minus-circle</v-icon
+                >{{ mdiMinusCircle }}</v-icon
               >
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -77,6 +79,13 @@
 import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
 import { jsonFormat } from '@/lib/utils'
+import {
+  mdiCalculator,
+  mdiCancel,
+  mdiCodeTags,
+  mdiDiceMultiple,
+  mdiFlag
+} from '@mdi/js'
 
 export default {
   components: {
@@ -93,25 +102,25 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-dice-multiple',
+        icon: mdiDiceMultiple,
         subtitle: 'Datastreams will be attributed with a value.',
         target: 'attrib',
         title: 'Attrib'
       },
       {
-        icon: 'mdi-calculator',
+        icon: mdiCalculator,
         subtitle: 'Datapoints will be evaluated with an expression.',
         target: 'evaluate',
         title: 'Evaluate'
       },
       {
-        icon: 'mdi-cancel',
+        icon: mdiCancel,
         subtitle: 'Datapoints will be excluded from downloads and graphs.',
         target: 'exclude',
         title: 'Exclude'
       },
       {
-        icon: 'mdi-flag',
+        icon: mdiFlag,
         subtitle: 'Datapoints will marked with a textual flag.',
         target: 'flag',
         title: 'Flag'
@@ -154,7 +163,7 @@ export default {
           return {
             code: jsonFormat(item.attrib),
             description: 'Attrib datastreams',
-            icon: 'mdi-dice-multiple',
+            icon: mdiDiceMultiple,
             key
           }
         }
@@ -163,7 +172,7 @@ export default {
           return {
             code: item.evaluate,
             description: 'Evaluate datapoints',
-            icon: 'mdi-calculator',
+            icon: mdiCalculator,
             key
           }
         }
@@ -171,7 +180,7 @@ export default {
         if (item.exclude !== undefined) {
           return {
             description: 'Exclude datapoints',
-            icon: 'mdi-cancel',
+            icon: mdiCancel,
             key
           }
         }
@@ -179,7 +188,7 @@ export default {
         if (item.flag !== undefined) {
           return {
             description: 'Flag datapoints',
-            icon: 'mdi-flag',
+            icon: mdiFlag,
             key,
             values: item.flag
           }
@@ -189,7 +198,7 @@ export default {
           code: jsonFormat(item),
           custom: true,
           description: 'Custom action',
-          icon: 'mdi-code-tags',
+          icon: mdiCodeTags,
           key
         }
       })

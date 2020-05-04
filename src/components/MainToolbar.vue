@@ -33,7 +33,7 @@
     <v-menu v-if="auth.payload" offset-y left>
       <template v-slot:activator="{ on }">
         <v-btn dark icon v-on="on">
-          <v-icon>person</v-icon>
+          <v-icon>{{ mdiAccount }}</v-icon>
         </v-btn>
       </template>
 

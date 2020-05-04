@@ -1,38 +1,41 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot v-if="editing">General configuration overrides</slot>
-      <slot v-else>General configuration</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot v-if="editing">General configuration overrides</slot>
+          <slot v-else>General configuration</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout v-if="!editing">
-        <v-flex>
+      <v-row v-if="!editing" dense>
+        <v-col>
           <v-tabs v-model="tabIndex">
             <v-tab>Resolved</v-tab>
             <v-tab>Overrides</v-tab>
           </v-tabs>
-        </v-flex>
-      </v-layout>
+          <v-divider />
+        </v-col>
+      </v-row>
 
-      <v-layout>
-        <v-flex>
+      <v-row>
+        <v-col>
           <pre-block :value="item.settings" />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-btn v-if="value.general_config" color="primary" @click="edit(item)">
-        <v-icon>edit</v-icon>
+        <v-icon>{{ mdiPencil }}</v-icon>
       </v-btn>
 
       <v-btn v-if="value.general_config" color="primary" @click="remove">
-        <v-icon>remove</v-icon>
+        <v-icon>{{ mdiMinus }}</v-icon>
       </v-btn>
 
       <v-btn v-else color="primary" @click="add">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>

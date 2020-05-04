@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <ValidationProvider
           v-slot="{ errors }"
           name="title"
@@ -21,8 +21,11 @@
           v-slot="{ errors }"
           name="url"
           :rules="{
-            regex: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
-            required: true
+            required: true,
+            url: {
+              protocols: ['http', 'https'],
+              require_protocol: true
+            }
           }"
         >
           <v-text-field
@@ -33,8 +36,8 @@
             solo
           ></v-text-field>
         </ValidationProvider>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

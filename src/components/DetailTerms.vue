@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Vocabulary terms</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Vocabulary terms</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -17,7 +19,7 @@
             item-key="key"
           >
             <template v-slot:item.key="{ item }" class="text-no-wrap px-0">
-              <v-avatar color="grey darken-1" size="27">
+              <v-avatar color="grey darken-1" size="32">
                 <span class="white--text caption">{{ item.key }}</span>
               </v-avatar>
             </template>
@@ -28,24 +30,24 @@
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -64,7 +66,7 @@
               :disabled="terms[scheme._id] !== undefined"
               @click="add({ key: scheme._id })"
             >
-              <v-list-item-avatar color="grey darken-1" size="25">
+              <v-list-item-avatar color="grey darken-1" size="32">
                 <span class="white--text caption">{{ scheme._id }}</span>
               </v-list-item-avatar>
 
@@ -132,7 +134,6 @@ export default {
         Object.keys(terms).map(key => {
           const item = terms[key]
           return {
-            icon: 'mdi-book-open-variant',
             key,
             value: jsonFormat(item)
           }

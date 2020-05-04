@@ -7,11 +7,11 @@
     <v-card v-if="pagination" color="blue" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
-          <v-icon class="mr-2" dark>mdi-chart-timeline-variant</v-icon>
-          Datastreams
+          <v-icon class="mr-2" dark>{{ mdiChartTimelineVariant }}</v-icon
+          >Datastreams
         </v-card-title>
 
-        <v-card-text class="display-2 text-truncate">
+        <v-card-text class="display-1 text-truncate">
           {{ pagination | get('total', 0) }}
           <small class="font-weight-light">{{ totalLabel }}</small>
         </v-card-text>
@@ -32,6 +32,7 @@
 <script>
 export default {
   props: {
+    annotation: { default: null, type: Object },
     hideActions: { default: false, type: Boolean },
     isEnabled: { default: null, type: [Boolean, String] },
     isHidden: { default: null, type: [Boolean, String] },
@@ -57,23 +58,13 @@ export default {
 
       if (this.stationId) query.station_id = this.stationId
 
+      if (this.annotation)
+        query.$or = [
+          { _id: { $in: this.annotation.datastream_ids || [] } },
+          { station_id: { $in: this.annotation.affected_station_ids || [] } }
+        ]
+
       return query
-    },
-
-    viewTo() {
-      const to = {
-        name: 'orgs-orgSlug-datastreams',
-        params: {
-          orgSlug: this.org.slug
-        },
-        query: {}
-      }
-
-      if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
-
-      if (this.stationId) to.query.stationId = this.stationId
-
-      return to
     },
 
     queryTo() {
@@ -91,6 +82,24 @@ export default {
       if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
 
       if (this.stationId) to.query.stationId = this.stationId
+
+      return to
+    },
+
+    viewTo() {
+      const to = {
+        name: 'orgs-orgSlug-datastreams',
+        params: {
+          orgSlug: this.org.slug
+        },
+        query: {}
+      }
+
+      if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
+
+      if (this.stationId) to.query.stationId = this.stationId
+
+      if (this.annotation) to.query.annotationId = this.annotation._id
 
       return to
     }

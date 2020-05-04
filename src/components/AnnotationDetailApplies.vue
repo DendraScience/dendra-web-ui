@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Applies to</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Applies to</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -25,19 +27,19 @@
                 v-if="editing && !item.custom"
                 color="tertiary"
                 @click="remove(item)"
-                >mdi-minus-circle</v-icon
+                >{{ mdiMinusCircle }}</v-icon
               >
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -66,6 +68,7 @@
 import _uniq from 'lodash/uniq'
 import { mapActions, mapGetters } from 'vuex'
 import itemEditing from '@/mixins/item-editing'
+import { mdiNature, mdiChartTimelineVariant } from '@mdi/js'
 
 export default {
   mixins: [itemEditing],
@@ -78,13 +81,13 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-nature',
+        icon: mdiNature,
         subtitle: 'Apply to ALL datastreams for selected stations.',
         target: 'station',
         title: 'Station'
       },
       {
-        icon: 'mdi-chart-timeline-variant',
+        icon: mdiChartTimelineVariant,
         subtitle: 'Apply to selected datastreams.',
         target: 'datastream',
         title: 'Datastream'
@@ -137,7 +140,7 @@ export default {
 
           return {
             datastream: 'All datastreams',
-            icon: 'mdi-nature',
+            icon: mdiNature,
             id,
             key: `station-${id}`,
             station: station ? station.name : id,
@@ -147,11 +150,11 @@ export default {
         .concat(
           this.datastreamIds.map(id => {
             const datastream = this.getDatastream(id)
-            const station = datastream && datastream.station
+            const station = datastream && this.getStation(datastream.station_id)
 
             return {
               datastream: datastream ? datastream.name : id,
-              icon: 'mdi-chart-timeline-variant',
+              icon: mdiChartTimelineVariant,
               id,
               key: `datastream-${id}`,
               station: station ? station.name : id,

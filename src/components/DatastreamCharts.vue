@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid grid-list-xl>
-    <v-layout column>
-      <v-flex v-for="(chart, index) in value" :key="chart.id">
+  <v-container fluid>
+    <v-row v-for="(chart, index) in value" :key="chart.id">
+      <v-col cols="12">
         <datastream-chart :value="chart" :worker="Object.freeze(worker)">
           <template v-slot:menu>
             <v-list>
@@ -35,17 +35,23 @@
             </v-list>
           </template>
         </datastream-chart>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <v-dialog v-model="exportDialog" max-width="380">
       <v-card>
         <v-card-title class="headline grey lighten-4">Export as</v-card-title>
 
-        <v-container grid-list-lg>
-          <v-layout align-center justify-center column>
-            <v-flex>
-              <v-radio-group v-model="selectedExportIndex" column>
+        <v-container fluid>
+          <v-row dense>
+            <v-col offset="1">
+              <v-radio-group
+                v-model="selectedExportIndex"
+                class="mb-4 mt-2"
+                column
+                dense
+                hide-details
+              >
                 <v-radio
                   v-for="(item, j) in exportItems"
                   :key="j"
@@ -56,8 +62,8 @@
                   :value="j"
                 />
               </v-radio-group>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-container>
 
         <v-divider />

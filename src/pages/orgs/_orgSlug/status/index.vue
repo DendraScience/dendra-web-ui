@@ -10,7 +10,7 @@
       <v-card raised>
         <v-text-field
           v-model.trim="stationsSearchDebounce"
-          append-icon="search"
+          :append-icon="mdiMagnify"
           clearable
           flat
           hide-details
@@ -20,13 +20,13 @@
 
         <v-btn-toggle v-model="viewToggle" class="pa-2" mandatory>
           <v-btn small text>
-            <v-icon small>mdi-view-list</v-icon>
+            <v-icon small>{{ mdiViewList }}</v-icon>
           </v-btn>
           <v-btn small text>
-            <v-icon small>mdi-view-agenda</v-icon>
+            <v-icon small>{{ mdiViewAgenda }}</v-icon>
           </v-btn>
           <v-btn small text>
-            <v-icon small>mdi-arrow-expand-all</v-icon>
+            <v-icon small>{{ mdiArrowExpandAll }}</v-icon>
           </v-btn>
         </v-btn-toggle>
       </v-card>
@@ -58,12 +58,15 @@
                 v-for="station in stations"
                 :id="station._id"
                 :key="station._id"
+                :bus="bus"
                 :fetch-spec="{ startTime, stationId: station._id }"
                 :worker="Object.freeze(stationStatusWorker)"
+                @data="stationStatusData"
               >
                 <template v-slot="{ result }">
                   <v-expansion-panel
                     v-show="shownStationIds.includes(station._id)"
+                    @click="selectMarker(viewToggle === 0 ? station : null)"
                   >
                     <v-expansion-panel-header>
                       <template v-slot:actions>
@@ -76,9 +79,8 @@
 
                       <div>
                         <station-status-icon
-                          :current-time="currentTime"
-                          :last-seen-time="result.lastSeenTime"
                           :station="station"
+                          :value="statusById[station._id]"
                           class="mr-1"
                         />
 
@@ -117,16 +119,20 @@
                     </v-expansion-panel-header>
 
                     <v-expansion-panel-content>
-                      <v-layout>
-                        <v-flex grow>
+                      <v-row dense>
+                        <v-col>
                           <v-card flat>
-                            <v-card-text>
-                              Last seen:
-                              {{
-                                result.lastSeenTime
-                                  | dateTimeFormatLocal('(no data)')
-                              }}
-                            </v-card-text>
+                            <v-card-subtitle>
+                              <h4 class="subtitle-2">
+                                Last seen:
+                                <span class="font-weight-regular">
+                                  {{
+                                    result.lastSeenTime
+                                      | dateTimeFormatLocal('(no data)')
+                                  }}</span
+                                >
+                              </h4>
+                            </v-card-subtitle>
 
                             <v-card-actions>
                               <v-btn
@@ -142,7 +148,7 @@
                                 nuxt
                                 small
                                 text
-                                >Info</v-btn
+                                >Details</v-btn
                               >
 
                               <v-btn
@@ -164,19 +170,18 @@
                               >
                             </v-card-actions>
                           </v-card>
-                        </v-flex>
+                        </v-col>
 
-                        <v-flex
+                        <v-col
                           v-if="station.media && station.media[0]"
-                          shrink
-                          pb-2
+                          cols="auto"
                         >
                           <v-img
                             :src="station.media[0].sizes.small.url"
                             width="90"
                           />
-                        </v-flex>
-                      </v-layout>
+                        </v-col>
+                      </v-row>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
                 </template>
@@ -186,6 +191,10 @@
 
           <google-map
             :filter-keys="shownStationIds"
+            :icons="icons"
+            :info-content="infoContent"
+            :info-open="infoOpen"
+            :locations-data="statusById"
             :locations="stations"
             :map-options="{}"
             auto-fit
@@ -195,6 +204,7 @@
             location-lng="geo.coordinates[0]"
             location-title="name"
             style="width: 100%; height: 100%;"
+            @select-marker="selectMarker"
           />
         </div>
       </template>
@@ -203,6 +213,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import vuetifyColors from 'vuetify/lib/util/colors'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import moment from 'moment'
@@ -213,7 +224,10 @@ import GoogleMap from '@/components/GoogleMap'
 import HcSparkline from '@/components/HcSparkline'
 import StationStatusIcon from '@/components/StationStatusIcon'
 import WorkerFetch from '@/components/WorkerFetch'
+import { dateTimeFormatLocal } from '@/lib/date'
 import { escapeRegExp } from '@/lib/utils'
+
+const DEFAULT_THRESHOLD = 120
 
 export default {
   components: {
@@ -229,7 +243,12 @@ export default {
 
   data() {
     return {
+      bus: new Vue(),
+
       drawer: true,
+
+      infoContent: null,
+      infoOpen: null,
 
       linksToOldDashboard: process.env.linksToOldDashboard,
 
@@ -253,6 +272,8 @@ export default {
         }
       ],
 
+      statusById: {},
+
       timerInterval: 300000,
 
       viewToggle: 0
@@ -262,12 +283,46 @@ export default {
   computed: {
     ...mapGetters(['org']),
     ...mapGetters({
+      getStation: 'stations/get',
       getTime: 'time/get'
     }),
     ...mapState(['auth']),
 
-    currentTime() {
-      return moment.utc(this.getTime('utc').now).valueOf()
+    icons() {
+      return {
+        default: {
+          anchor: { x: 8, y: 20 },
+          fillColor: vuetifyColors.blueGrey.darken2,
+          fillOpacity: 1,
+          path: this.mdiMapMarkerQuestion,
+          scale: 2,
+          strokeColor: 'white',
+          strokeOpacity: 0.5,
+          strokeWeight: 1
+        },
+
+        offline: {
+          anchor: { x: 8, y: 20 },
+          fillColor: vuetifyColors.deepOrange.darken3,
+          fillOpacity: 1,
+          path: this.mdiMapMarkerAlert,
+          scale: 2,
+          strokeColor: 'white',
+          strokeOpacity: 0.5,
+          strokeWeight: 1
+        },
+
+        online: {
+          anchor: { x: 8, y: 20 },
+          fillColor: vuetifyColors.green.darken1,
+          fillOpacity: 1,
+          path: this.mdiMapMarkerCheck,
+          scale: 2,
+          strokeColor: 'white',
+          strokeOpacity: 0.5,
+          strokeWeight: 1
+        }
+      }
     },
 
     startTime() {
@@ -358,6 +413,11 @@ export default {
       this.shownStationIds = (newValue && newValue.ids) || []
     },
 
+    // TODO:
+    // stationsPanel(newValue) {
+    //   if (typeof newValue === 'number')
+    // },
+
     stationsSearchDebounce(newValue) {
       this.debouncedStationsSearch(newValue)
     },
@@ -404,8 +464,60 @@ export default {
   methods: {
     ...mapActions(['getSystemTimeUTC']),
 
-    timerCallback() {
-      return this.getSystemTimeUTC()
+    selectMarker(station) {
+      const { statusById } = this
+
+      if (!station) return
+
+      const coords = station.geo.coordinates
+      const link = this.$router.resolve({
+        name: 'orgs-orgSlug-status-stationSlug',
+        params: {
+          orgSlug: this.org.slug,
+          stationSlug: station.slug
+        }
+      })
+      const status = statusById[station._id]
+
+      this.infoContent =
+        `<h3 class="title">${station.name}</h3>` +
+        `<div class="body-1">` +
+        (status
+          ? `Last seen: ${dateTimeFormatLocal(status.lastSeenTime)}<br />`
+          : '') +
+        `<a href="${link.href}">Dashboard</a> | ` +
+        `<a href="https://www.google.com/maps?q=${coords[1]},${coords[0]}" target="_blank">Google</a></div>`
+      this.infoOpen = station._id
+    },
+
+    stationStatusData(data) {
+      const { id, result } = data
+
+      if (!(id && result && result.lastSeenTime)) return
+
+      const station = this.getStation(id)
+      const threshold =
+        ((station.general_config_resolved &&
+          station.general_config_resolved.station_offline_threshold) ||
+          DEFAULT_THRESHOLD) | 0
+      const currentTime = moment.utc(this.getTime('utc').now).valueOf()
+      const { lastSeenTime } = result
+      const isOnline = currentTime - lastSeenTime <= threshold * 60000
+
+      this.$set(this.statusById, id, {
+        currentTime,
+        lastSeenTime,
+        icon: isOnline ? 'online' : 'offline',
+        isOnline
+      })
+    },
+
+    async timerCallback() {
+      await this.getSystemTimeUTC()
+
+      this.statusById = {}
+
+      this.bus.$emit('fetch')
     }
   }
 }

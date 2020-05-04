@@ -185,8 +185,11 @@ export function updateDateRange(dateRange, value) {
   const from = value.from && moment.utc(value.from)
   const to = value.to && moment.utc(value.to)
 
-  dateRange.from = from && from.isValid() ? from.format(dateFormats.y4md) : null
-  dateRange.to = to && to.isValid() ? to.format(dateFormats.y4md) : null
+  dateRange.fromEnabled = from && from.isValid()
+  dateRange.from = dateRange.fromEnabled ? from.format(dateFormats.y4md) : null
+
+  dateRange.toEnabled = to && to.isValid()
+  dateRange.to = dateRange.toEnabled ? to.format(dateFormats.y4md) : null
 }
 
 export function utcOffsetHours(value) {

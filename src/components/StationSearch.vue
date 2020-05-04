@@ -1,30 +1,31 @@
 <template>
-  <v-container fluid grid-list-lg>
-    <feathers-vuex-find
-      v-slot="{
-        isFindPending: loading,
-        items: stations,
-        pagination
-      }"
-      :fetch-query="stationsFetchQuery"
-      :query="stationsQuery"
-      :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"
-      qid="search"
-      service="stations"
-    >
-      <v-layout wrap>
-        <v-flex xs12>
-          <v-text-field
-            v-model.trim="searchDebounce"
-            append-icon="search"
-            clearable
-            filled
-            flat
-            label="Filter stations"
-          ></v-text-field>
-        </v-flex>
+  <v-container fluid>
+    <v-row dense>
+      <v-col>
+        <v-text-field
+          v-model.trim="searchDebounce"
+          :append-icon="mdiMagnify"
+          filled
+          flat
+          label="Filter stations"
+        ></v-text-field>
+      </v-col>
+    </v-row>
 
-        <v-flex xs12>
+    <v-row dense>
+      <v-col>
+        <feathers-vuex-find
+          v-slot="{
+            isFindPending: loading,
+            items: stations,
+            pagination
+          }"
+          :fetch-query="stationsFetchQuery"
+          :query="stationsQuery"
+          :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"
+          qid="search"
+          service="stations"
+        >
           <v-data-table
             :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
             :headers="headers"
@@ -72,9 +73,9 @@
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
-    </feathers-vuex-find>
+        </feathers-vuex-find>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -89,8 +90,9 @@ export default {
   },
 
   props: {
-    isEnabled: { default: null, type: [Boolean, String] },
-    isHidden: { default: null, type: [Boolean, String] },
+    annotation: { default: null, type: Object },
+    isEnabled: { default: null, type: Boolean },
+    isHidden: { default: null, type: Boolean },
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
     showHidden: { default: false, type: Boolean },
@@ -187,6 +189,11 @@ export default {
           ]
         })
       }
+
+      if (this.annotation)
+        ands.push({
+          _id: { $in: this.annotation.affected_station_ids || [] }
+        })
 
       if (ands.length) query.$and = ands
 

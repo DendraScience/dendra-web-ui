@@ -1,22 +1,86 @@
 import Vue from 'vue'
+import {
+  mdiAccount,
+  mdiAccountBox,
+  mdiAlert,
+  mdiArrowExpandAll,
+  mdiAsterisk,
+  mdiCalculator,
+  mdiCalendar,
+  mdiChartTimelineVariant,
+  mdiCheckboxBlankOutline,
+  mdiCheckboxMarked,
+  mdiCheckCircle,
+  mdiClockOutline,
+  mdiClose,
+  mdiCog,
+  mdiDotsVertical,
+  mdiElevationRise,
+  mdiEmail,
+  mdiEngine,
+  mdiEngineOff,
+  mdiEye,
+  mdiEyeOff,
+  mdiHelpRhombusOutline,
+  mdiMagnify,
+  mdiMapClock,
+  mdiMapMarker,
+  mdiMapMarkerAlert,
+  mdiMapMarkerCheck,
+  mdiMapMarkerQuestion,
+  mdiMinus,
+  mdiMinusCircle,
+  mdiNature,
+  mdiNoteOutline,
+  mdiNoteText,
+  mdiOpenInApp,
+  mdiOpenInNew,
+  mdiPencil,
+  mdiPlus,
+  mdiViewAgenda,
+  mdiViewList
+} from '@mdi/js'
 
-// TODO: Use inject instead?
 Vue.mixin({
-  computed: {
-    $can() {
-      return (...args) => {
-        return this.$store.getters.abilityUpdateTime > 0
-          ? this.$ability.can(...args)
-          : false
-      }
-    },
-
-    $cannot() {
-      return (...args) => {
-        return this.$store.getters.abilityUpdateTime > 0
-          ? this.$ability.cannot(...args)
-          : true
-      }
-    }
-  }
+  data: () => ({
+    mdiAccount,
+    mdiAccountBox,
+    mdiAlert,
+    mdiArrowExpandAll,
+    mdiAsterisk,
+    mdiCalculator,
+    mdiCalendar,
+    mdiChartTimelineVariant,
+    mdiCheckboxBlankOutline,
+    mdiCheckboxMarked,
+    mdiCheckCircle,
+    mdiClockOutline,
+    mdiClose,
+    mdiCog,
+    mdiDotsVertical,
+    mdiElevationRise,
+    mdiEmail,
+    mdiEngine,
+    mdiEngineOff,
+    mdiEye,
+    mdiEyeOff,
+    mdiHelpRhombusOutline,
+    mdiMagnify,
+    mdiMapClock,
+    mdiMapMarker,
+    mdiMapMarkerAlert,
+    mdiMapMarkerCheck,
+    mdiMapMarkerQuestion,
+    mdiMinus,
+    mdiMinusCircle,
+    mdiNature,
+    mdiNoteOutline,
+    mdiNoteText,
+    mdiOpenInApp,
+    mdiOpenInNew,
+    mdiPencil,
+    mdiPlus,
+    mdiViewAgenda,
+    mdiViewList
+  })
 })

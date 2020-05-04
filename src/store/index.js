@@ -1,10 +1,7 @@
 import Vue from 'vue'
-import moment from 'moment'
 import feathersVuex from 'feathers-vuex'
 import feathersClient from '@/lib/feathers-client'
 import helpersVuex from '@/lib/helpers-vuex'
-
-import { TYPE_KEY } from '@/lib/ability'
 
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: '_id',
@@ -18,87 +15,18 @@ Vue.use(FeathersVuex)
 export const plugins = [
   service('ability'),
   service('annotations', {
-    instanceDefaults(data, { store, Models }) {
-      return {
-        get quantitySelected() {
-          return store.state.cart.quantitiesById[this._id]
-        },
-
-        [TYPE_KEY]: 'annotations'
-      }
-    },
-
     paginate: true
   }),
   service('datastreams', {
-    instanceDefaults(data, { store }) {
-      return {
-        get dtUnit() {
-          return (this.terms && this.terms.dt && this.terms.dt.Unit) || ''
-        },
-
-        get nameWithStation() {
-          return this.station_lookup
-            ? `${this.station_lookup.name} ${this.name}`
-            : this.name
-        },
-
-        get nameWithStationAndUnit() {
-          return `${this.nameWithStation} ${this.dtUnit}`
-        },
-
-        get quantitySelected() {
-          return store.state.cart.quantitiesById[this._id]
-        },
-
-        get station() {
-          return store.getters['stations/get'](this.station_id) || {}
-        },
-
-        [TYPE_KEY]: 'datastreams'
-      }
-    },
-
     paginate: true
   }),
   service('memberships'),
-  service('organizations', {
-    instanceDefaults(data, { store }) {
-      return {
-        [TYPE_KEY]: 'organizations'
-      }
-    }
-  }),
+  service('organizations'),
   service('persons'),
   service('places'),
   service('schemes'),
   service('soms'),
   service('stations', {
-    instanceDefaults(data, { store }) {
-      return {
-        get nameWithEnabled() {
-          return this.is_enabled ? this.name : `${this.name} (disabled)`
-        },
-
-        get quantitySelected() {
-          return store.state.cart.quantitiesById[this._id]
-        },
-
-        get time() {
-          try {
-            return (
-              moment.utc(store.getters['time/get']('utc').now).valueOf() +
-              (this.utc_offset | 0) * 1000
-            )
-          } catch (err) {
-            return null
-          }
-        },
-
-        [TYPE_KEY]: 'stations'
-      }
-    },
-
     paginate: true
   }),
   service('system/schemas'),
@@ -134,6 +62,9 @@ export const actions = {
 export const getters = {
   abilityUpdateTime(state) {
     return state.abilityUpdateTime
+  },
+  isAbilityUpdated(state) {
+    return state.abilityUpdateTime > 0
   },
 
   getUnitText(state, { 'vocabularies/get': get }) {

@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Attributes</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Attributes</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0>
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -26,24 +28,24 @@
 
             <template v-slot:item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -73,6 +75,7 @@ import _sortBy from 'lodash/sortBy'
 import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
 import { jsonFormat } from '@/lib/utils'
+import { mdiDice1, mdiDice2 } from '@mdi/js'
 
 export default {
   components: {
@@ -89,13 +92,13 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-dice-1',
+        icon: mdiDice1,
         subtitle: 'Specify a typed value without unit.',
         target: 'value',
         title: 'Single value'
       },
       {
-        icon: 'mdi-dice-2',
+        icon: mdiDice2,
         subtitle: 'Specify a delta, range or value with unit.',
         target: 'object',
         title: 'Structured value'
@@ -141,7 +144,7 @@ export default {
 
           if (typeof item === 'object') {
             return {
-              icon: 'mdi-dice-2',
+              icon: mdiDice2,
               key,
               target: 'object',
               value: jsonFormat(item)
@@ -149,7 +152,7 @@ export default {
           }
 
           return {
-            icon: 'mdi-dice-1',
+            icon: mdiDice1,
             key,
             target: 'value',
             value: jsonFormat(item)

@@ -7,11 +7,11 @@
     <v-card v-if="pagination" color="purple" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
-          <v-icon class="mr-2" dark>mdi-note-outline</v-icon>
-          Annotations
+          <v-icon class="mr-2" dark>{{ mdiNoteOutline }}</v-icon
+          >Annotations
         </v-card-title>
 
-        <v-card-text class="display-2 text-truncate">
+        <v-card-text class="display-1 text-truncate">
           {{ pagination | get('total', 0) }}
           <small class="font-weight-light">{{ totalLabel }}</small>
         </v-card-text>
@@ -31,6 +31,7 @@
 <script>
 export default {
   props: {
+    datastreamId: { default: null, type: String },
     hideActions: { default: false, type: Boolean },
     isEnabled: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
@@ -49,6 +50,8 @@ export default {
       if (this.isEnabled !== null) query.is_enabled = this.isEnabled
       else if (!this.showDisabled) query.is_enabled = true
 
+      if (this.datastreamId) query.datastream_ids = this.datastreamId
+
       if (this.stationId) query.affected_station_ids = this.stationId
 
       return query
@@ -64,6 +67,10 @@ export default {
       }
 
       if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
+
+      if (this.datastreamId) to.query.datastreamId = this.datastreamId
+
+      if (this.stationId) to.query.stationId = this.stationId
 
       return to
     }

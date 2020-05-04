@@ -1,85 +1,79 @@
 <template>
-  <v-layout column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout>
-          <v-flex xs12>
-            <h3 class="display-2 mb-2">Theme</h3>
-          </v-flex>
-        </v-layout>
+  <v-container>
+    <v-row>
+      <v-col>
+        <h2 class="display-2 font-weight-light mb-2">Theme</h2>
+      </v-col>
+    </v-row>
 
-        <v-layout wrap>
-          <v-flex xs6>
-            <v-btn block class="mb-2" color="primary">Primary</v-btn>
-            <v-btn block class="mb-2" color="secondary">Secondary</v-btn>
-            <v-btn block class="mb-2" color="tertiary" dark>Tertiary</v-btn>
-            <v-btn block class="mb-2" color="accent">Accent</v-btn>
-          </v-flex>
+    <v-row>
+      <v-col cols="6">
+        <v-btn block class="mb-2" color="primary">Primary</v-btn>
+        <v-btn block class="mb-2" color="secondary">Secondary</v-btn>
+        <v-btn block class="mb-2" color="tertiary" dark>Tertiary</v-btn>
+        <v-btn block class="mb-2" color="accent">Accent</v-btn>
+      </v-col>
 
-          <v-flex xs6>
-            <v-btn block outlined class="mb-2" color="primary">Primary</v-btn>
-            <v-btn block outlined class="mb-2" color="secondary"
-              >Secondary</v-btn
-            >
-            <v-btn block outlined class="mb-2" color="tertiary" dark
-              >Tertiary</v-btn
-            >
-            <v-btn block outlined class="mb-2" color="accent">Accent</v-btn>
-          </v-flex>
+      <v-col cols="6">
+        <v-btn block outlined class="mb-2" color="primary">Primary</v-btn>
+        <v-btn block outlined class="mb-2" color="secondary">Secondary</v-btn>
+        <v-btn block outlined class="mb-2" color="tertiary" dark
+          >Tertiary</v-btn
+        >
+        <v-btn block outlined class="mb-2" color="accent">Accent</v-btn>
+      </v-col>
 
-          <v-flex xs6>
-            <v-btn block class="mb-2" color="info">Info</v-btn>
-            <v-btn block class="mb-2" color="warning">Warning</v-btn>
-            <v-btn block class="mb-2" color="error">Error</v-btn>
-            <v-btn block class="mb-2" color="success">Success</v-btn>
-          </v-flex>
+      <v-col cols="6">
+        <v-btn block class="mb-2" color="info">Info</v-btn>
+        <v-btn block class="mb-2" color="warning">Warning</v-btn>
+        <v-btn block class="mb-2" color="error">Error</v-btn>
+        <v-btn block class="mb-2" color="success">Success</v-btn>
+      </v-col>
 
-          <v-flex xs6>
-            <v-btn block outlined class="mb-2" color="info">Info</v-btn>
-            <v-btn block outlined class="mb-2" color="warning">Warning</v-btn>
-            <v-btn block outlined class="mb-2" color="error">Error</v-btn>
-            <v-btn block outlined class="mb-2" color="success">Success</v-btn>
-          </v-flex>
+      <v-col cols="6">
+        <v-btn block outlined class="mb-2" color="info">Info</v-btn>
+        <v-btn block outlined class="mb-2" color="warning">Warning</v-btn>
+        <v-btn block outlined class="mb-2" color="error">Error</v-btn>
+        <v-btn block outlined class="mb-2" color="success">Success</v-btn>
+      </v-col>
 
-          <v-flex xs12>
-            <v-alert :value="true" type="info">
-              This is a info alert. {{ lorem }}
-            </v-alert>
+      <v-col cols="12">
+        <v-alert :value="true" type="info">
+          This is a info alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" type="warning">
-              This is a warning alert. {{ lorem }}
-            </v-alert>
+        <v-alert :value="true" type="warning">
+          This is a warning alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" type="error">
-              This is a error alert. {{ lorem }}
-            </v-alert>
+        <v-alert :value="true" type="error">
+          This is a error alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" type="success">
-              This is a success alert. {{ lorem }}
-            </v-alert>
-          </v-flex>
+        <v-alert :value="true" type="success">
+          This is a success alert. {{ lorem }}
+        </v-alert>
+      </v-col>
 
-          <v-flex xs12>
-            <v-alert :value="true" outlined type="info">
-              This is a info alert. {{ lorem }}
-            </v-alert>
+      <v-col cols="12">
+        <v-alert :value="true" outlined type="info">
+          This is a info alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" outlined type="warning">
-              This is a warning alert. {{ lorem }}
-            </v-alert>
+        <v-alert :value="true" outlined type="warning">
+          This is a warning alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" outlined type="error">
-              This is a error alert. {{ lorem }}
-            </v-alert>
+        <v-alert :value="true" outlined type="error">
+          This is a error alert. {{ lorem }}
+        </v-alert>
 
-            <v-alert :value="true" outlined type="success">
-              This is a success alert. {{ lorem }}
-            </v-alert>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+        <v-alert :value="true" outlined type="success">
+          This is a success alert. {{ lorem }}
+        </v-alert>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

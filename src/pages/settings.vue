@@ -1,27 +1,23 @@
 <template>
-  <v-layout column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout>
-          <v-flex>
-            <h3 class="display-2 font-weight-light mb-2">User settings</h3>
-          </v-flex>
-        </v-layout>
+  <v-container>
+    <v-row>
+      <v-col>
+        <h2 class="display-2 font-weight-light mb-2">User settings</h2>
+      </v-col>
+    </v-row>
 
-        <v-layout>
-          <v-flex xs12 md8>
-            <user-account-edit :user="getUser(auth.user._id)" />
-          </v-flex>
-        </v-layout>
+    <v-row>
+      <v-col cols="12" md="8">
+        <user-account-edit :user="getUser(auth.user._id)" />
+      </v-col>
+    </v-row>
 
-        <v-layout>
-          <v-flex xs12 md8>
-            <user-password-edit :user="getUser(auth.user._id)" />
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+    <v-row>
+      <v-col cols="12" md="8">
+        <user-password-edit :user="getUser(auth.user._id)" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

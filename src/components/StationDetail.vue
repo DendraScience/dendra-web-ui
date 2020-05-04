@@ -1,11 +1,11 @@
 <template>
   <v-container fluid pa-0>
-    <v-layout column>
-      <v-flex>
+    <v-row>
+      <v-col>
         <v-card>
-          <v-container fluid>
-            <v-layout column>
-              <v-flex pb-0>
+          <v-container fluid pt-0>
+            <v-row>
+              <v-col>
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="name"
@@ -59,8 +59,8 @@
                   label="State"
                 ></v-select>
 
-                <v-layout row>
-                  <v-flex>
+                <v-row dense>
+                  <v-col>
                     <v-select
                       v-model="value.time_zone"
                       :items="timeZoneItems"
@@ -69,16 +69,16 @@
                       item-value="abbr"
                       label="Time zone"
                     ></v-select>
-                  </v-flex>
+                  </v-col>
 
-                  <v-flex>
+                  <v-col>
                     <v-text-field
                       :value="utcOffset"
                       disabled
                       label="UTC offset (seconds)"
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
 
                 <ValidationProvider
                   v-slot="{ errors }"
@@ -93,64 +93,92 @@
                     label="Description"
                   ></v-textarea>
                 </ValidationProvider>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <standard-options :editing="editing" :value="value" />
+            <standard-options :editing="editing" :value="value" as="stations" />
             <standard-audit v-if="!editing" :value="value" />
             <standard-identifier :value="value" />
           </v-container>
+
+          <v-card-actions v-if="!editing" class="flex-wrap">
+            <v-btn
+              :to="{
+                name: 'orgs-orgSlug-status-stationSlug',
+                params: {
+                  orgSlug: org.slug,
+                  stationSlug: value.slug
+                }
+              }"
+              dark
+              nuxt
+              ><v-icon left flat>{{ mdiCheckCircle }}</v-icon
+              >Station Dashboard</v-btn
+            >
+          </v-card-actions>
         </v-card>
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex v-if="!editing">
-        <v-layout wrap>
-          <v-flex>
-            <annotation-total
-              :is-enabled="true"
-              :org="org"
-              :station-id="value._id"
-              hide-actions
-              total-label="enabled"
-            />
-          </v-flex>
-        </v-layout>
+    <v-row v-if="!editing">
+      <v-col cols="12" md="6">
+        <datastream-total
+          :is-enabled="true"
+          :org="org"
+          :show-hidden="$canCreate('datastreams', org)"
+          :station-id="value._id"
+          hide-actions
+          total-label="enabled"
+        />
+      </v-col>
 
-        <v-layout wrap>
-          <v-flex>
-            <datastream-total
-              :is-enabled="true"
-              :org="org"
-              :show-hidden="$can('create', 'datastreams')"
-              :station-id="value._id"
-              hide-actions
-              total-label="enabled"
-            />
-          </v-flex>
+      <v-col v-if="$canCreate('datastreams', org)" cols="12" md="6">
+        <datastream-total
+          :is-enabled="false"
+          :org="org"
+          :show-hidden="true"
+          :station-id="value._id"
+          hide-actions
+          total-label="disabled"
+        />
+      </v-col>
 
-          <v-flex v-if="$can('create', 'datastreams')">
-            <datastream-total
-              :is-enabled="false"
-              :org="org"
-              :show-hidden="true"
-              :station-id="value._id"
-              hide-actions
-              total-label="disabled"
-            />
-          </v-flex>
-        </v-layout>
-      </v-flex>
+      <v-col cols="12" md="6">
+        <annotation-total
+          :is-enabled="true"
+          :org="org"
+          :show-hidden="$canCreate('annotations', org)"
+          :station-id="value._id"
+          hide-actions
+          total-label="enabled"
+        />
+      </v-col>
 
-      <v-flex>
+      <v-col v-if="$canCreate('annotations', org)" cols="12" md="6">
+        <annotation-total
+          :is-enabled="false"
+          :org="org"
+          :show-hidden="true"
+          :station-id="value._id"
+          hide-actions
+          total-label="disabled"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
         <detail-geo-point
           :editing="editing"
           :value="value"
           @add="addGeoPoint"
           @remove="removeGeo"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-general-config
           :editing="editing"
           :value="value"
@@ -158,9 +186,11 @@
           @edit="editGeneralConfig"
           @remove="removeGeneralConfig"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-access-levels
           :editing="editing"
           :value="value"
@@ -168,9 +198,11 @@
           @edit="editAccessLevel"
           @remove="removeAccessLevel"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-members
           :editing="editing"
           :value="value"
@@ -178,9 +210,11 @@
           @edit="editMember"
           @remove="removeMember"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex>
+    <v-row>
+      <v-col>
         <detail-external-links
           :editing="editing"
           :value="value"
@@ -188,13 +222,15 @@
           @edit="editExternalLink"
           @remove="removeExternalLink"
         />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <!-- TODO: Implement editing later! -->
-      <v-flex v-if="!editing">
+    <!-- TODO: Implement editing later! -->
+    <v-row v-if="!editing">
+      <v-col>
         <detail-external-refs :editing="editing" :value="value" />
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <detail-dialog
       ref="generalConfigDialog"
@@ -316,6 +352,7 @@ export default {
     },
 
     stateItems: ['pending', 'ready'],
+
     timeZoneItems
   }),
 

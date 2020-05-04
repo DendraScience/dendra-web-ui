@@ -1,62 +1,57 @@
 <template>
-  <v-layout column>
-    <v-flex>
-      <v-container grid-list-lg>
-        <v-layout>
-          <v-flex xs12>
-            <h3 class="display-2 font-weight-light mb-2">Log in to Dendra</h3>
-            <span class="body-2"
-              >Don’t have an account?
-              <nuxt-link to="/contact">Contact us</nuxt-link></span
+  <v-container>
+    <v-row>
+      <v-col>
+        <h2 class="display-2 font-weight-light mb-2">Log in to Dendra</h2>
+
+        <h3 class="subtitle-1 mb-4">
+          Don’t have an account?
+          <nuxt-link to="/contact">Contact us</nuxt-link>
+        </h3>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" md="6">
+        <ValidationObserver ref="observer" v-slot="{ valid }">
+          <form @submit.prevent="submit">
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="email"
+              rules="required|email"
             >
-          </v-flex>
-        </v-layout>
+              <v-text-field
+                v-model="email"
+                :error-messages="errors"
+                filled
+                label="Email"
+                required
+              ></v-text-field>
+            </ValidationProvider>
 
-        <v-layout wrap>
-          <v-flex xs12 sm6>
-            <ValidationObserver ref="observer" v-slot="{ valid }">
-              <form @submit.prevent="submit">
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="email"
-                  rules="required|email"
-                >
-                  <v-text-field
-                    v-model="email"
-                    :error-messages="errors"
-                    filled
-                    label="Email"
-                    required
-                  ></v-text-field>
-                </ValidationProvider>
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="password"
+              rules="required|min:6|max:100"
+            >
+              <v-text-field
+                v-model="password"
+                :append-icon="isPasswordShown ? mdiEyeOff : mdiEye"
+                :error-messages="errors"
+                :type="isPasswordShown ? 'text' : 'password'"
+                filled
+                label="Password"
+                required
+                @click:append="isPasswordShown = !isPasswordShown"
+              ></v-text-field>
+            </ValidationProvider>
 
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="password"
-                  rules="required|min:6|max:100"
-                >
-                  <v-text-field
-                    v-model="password"
-                    :append-icon="
-                      isPasswordShown ? 'visibility_off' : 'visibility'
-                    "
-                    :error-messages="errors"
-                    :type="isPasswordShown ? 'text' : 'password'"
-                    filled
-                    label="Password"
-                    required
-                    @click:append="isPasswordShown = !isPasswordShown"
-                  ></v-text-field>
-                </ValidationProvider>
-
-                <v-btn color="primary" type="submit">Log In</v-btn>
-              </form>
-            </ValidationObserver>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
-  </v-layout>
+            <v-btn color="primary" type="submit">Log In</v-btn>
+          </form>
+        </ValidationObserver>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid grid-list-lg>
-    <v-layout wrap>
+  <v-container fluid>
+    <v-row dense>
       <feathers-vuex-find
-        v-if="!stationId"
+        v-if="!(annotation || stationId)"
         v-slot="{ isFindPending: loading, items: stations }"
         :query="
           showDisabled
@@ -22,26 +22,31 @@
         "
         service="stations"
       >
-        <v-flex xs12 md6>
+        <v-col cols="12" md="6">
           <v-autocomplete
             v-model="selectedStationIds"
+            :item-text="
+              station =>
+                station.is_enabled ? station.name : `${station.name} (disabled)`
+            "
             :items="stations"
             :label="loading ? 'Loading...' : 'Station'"
             :loading="loading"
             chips
             deletable-chips
+            dense
             filled
             flat
             hide-details
             hide-no-data
-            item-text="nameWithEnabled"
             item-value="_id"
             multiple
+            small-chips
           ></v-autocomplete>
-        </v-flex>
+        </v-col>
       </feathers-vuex-find>
 
-      <v-flex
+      <v-col
         v-if="
           isEnabled === null &&
             isHidden === null &&
@@ -49,24 +54,27 @@
             showHidden &&
             showOptions
         "
-        xs12
-        md6
+        cols="12"
+        md="6"
       >
         <v-select
           v-model="selectedOptions"
           :items="optionItems"
           chips
           deletable-chips
+          dense
           label="Options"
           filled
           flat
           hide-details
           multiple
+          small-chips
         ></v-select>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
     <feathers-vuex-find
+      v-if="!annotation"
       v-slot="{ items: vocabularies }"
       :query="{
         is_enabled: true,
@@ -77,12 +85,12 @@
       }"
       service="vocabularies"
     >
-      <v-layout wrap>
-        <v-flex
+      <v-row dense>
+        <v-col
           v-for="vocabulary in vocabularies"
           :key="vocabulary._id"
-          xs12
-          md6
+          cols="12"
+          md="6"
         >
           <v-autocomplete
             v-model="selectedTermLabels[vocabulary.label]"
@@ -91,41 +99,45 @@
             :item-text="term => term.name || term.label"
             chips
             deletable-chips
+            dense
             filled
             flat
             hide-details
             hide-no-data
             item-value="label"
             multiple
+            small-chips
           ></v-autocomplete>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </feathers-vuex-find>
 
-    <feathers-vuex-find
-      v-slot="{
-        isFindPending: loading,
-        items: datastreams,
-        pagination
-      }"
-      :fetch-query="datastreamsFetchQuery"
-      :query="datastreamsQuery"
-      :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"
-      qid="search"
-      service="datastreams"
-    >
-      <v-layout wrap>
-        <v-flex xs12>
-          <v-text-field
-            v-model.trim="searchDebounce"
-            append-icon="search"
-            filled
-            flat
-            label="Filter datastreams"
-          ></v-text-field>
-        </v-flex>
+    <v-row>
+      <v-col>
+        <v-text-field
+          v-model.trim="searchDebounce"
+          :append-icon="mdiMagnify"
+          filled
+          flat
+          label="Filter datastreams"
+        ></v-text-field>
+      </v-col>
+    </v-row>
 
-        <v-flex xs12>
+    <v-row dense>
+      <v-col>
+        <feathers-vuex-find
+          v-slot="{
+            isFindPending: loading,
+            items: datastreams,
+            pagination
+          }"
+          :fetch-query="datastreamsFetchQuery"
+          :query="datastreamsQuery"
+          :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"
+          qid="search"
+          service="datastreams"
+        >
           <v-data-table
             :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
             :headers="headers"
@@ -136,6 +148,7 @@
             :server-items-length="pagination ? pagination.total : 0"
             disable-sort
             item-key="_id"
+            @current-items="$emit('current-items', $event)"
           >
             <template
               v-if="$scopedSlots.select"
@@ -162,37 +175,37 @@
             </template>
 
             <template
-              v-slot:item.config_built_lookup.first.begins_at="{
+              v-slot:item.extent.begins_at="{
                 item
               }"
-              ><span v-if="item.config_built_lookup.first">
-                {{
-                  item.config_built_lookup.first.begins_at
+            >
+              {{
+                item.extent &&
+                  item.extent.begins_at
                     | dateTimeFormatExtra(
                       undefined,
                       undefined,
                       item.station_lookup.utc_offset,
                       item.station_lookup.time_zone
                     )
-                }}</span
-              >
+              }}
             </template>
 
             <template
-              v-slot:item.config_built_lookup.last.ends_before="{
+              v-slot:item.extent.ends_before="{
                 item
               }"
-              ><span v-if="item.config_built_lookup.last">
-                {{
-                  item.config_built_lookup.last.ends_before
+            >
+              {{
+                item.extent &&
+                  item.extent.ends_before
                     | dateTimeFormatExtra(
                       undefined,
                       undefined,
                       item.station_lookup.utc_offset,
                       item.station_lookup.time_zone
                     )
-                }}</span
-              >
+              }}
             </template>
 
             <template v-slot:item.name="{ item }">
@@ -219,9 +232,9 @@
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
-    </feathers-vuex-find>
+        </feathers-vuex-find>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -236,6 +249,7 @@ export default {
   },
 
   props: {
+    annotation: { default: null, type: Object },
     isEnabled: { default: null, type: [Boolean, String] },
     isHidden: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
@@ -274,13 +288,13 @@ export default {
       {
         align: 'left',
         text: 'Begins at',
-        value: 'config_built_lookup.first.begins_at',
+        value: 'extent.begins_at',
         width: '12%'
       },
       {
         align: 'left',
         text: 'Ends before',
-        value: 'config_built_lookup.last.ends_before',
+        value: 'extent.ends_before',
         width: '12%'
       },
       {
@@ -334,14 +348,13 @@ export default {
           '_id',
           'access_levels_resolved',
           'description',
+          'extent',
           'is_enabled',
           'is_hidden',
           'name',
           'organization_id',
           'station_id',
           'station_lookup',
-          'config_built_lookup.first.begins_at',
-          'config_built_lookup.last.ends_before',
           'terms'
         ],
         $sort: { name: 1, _id: 1 }
@@ -381,6 +394,14 @@ export default {
       } else if (selectedStationIds && selectedStationIds.length) {
         ands.push({ station_id: { $in: selectedStationIds } })
       }
+
+      if (this.annotation)
+        ands.push({
+          $or: [
+            { _id: { $in: this.annotation.datastream_ids || [] } },
+            { station_id: { $in: this.annotation.affected_station_ids || [] } }
+          ]
+        })
 
       Object.keys(selectedTermLabels).forEach(vLabel => {
         const tags = selectedTermLabels[vLabel].map(

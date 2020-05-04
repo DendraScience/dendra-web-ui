@@ -1,70 +1,57 @@
 <template>
-  <v-layout v-if="org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout column>
-          <v-flex>
-            <v-tabs
-              v-model="tabIndex"
-              background-color="grey lighten-2"
-              fixed-tabs
-            >
-              <v-tab>
-                View
-              </v-tab>
+  <v-container v-if="org">
+    <v-row dense>
+      <v-col>
+        <v-tabs v-model="tabIndex" grow>
+          <v-tab>
+            View
+          </v-tab>
 
-              <v-tab-item>
-                <v-card flat>
-                  <v-card-title class="headline">
-                    Stations
-                  </v-card-title>
+          <v-tab-item>
+            <v-card tile>
+              <query-header name="stations" :org="org">
+                Stations
+              </query-header>
 
-                  <station-search
-                    :is-enabled="queryIsEnabled"
-                    :org="org"
-                    :show-disabled="$can('create', 'stations')"
-                    :show-hidden="$can('create', 'stations')"
-                    show-link
+              <station-search
+                :annotation="annotation"
+                :is-enabled="queryIsEnabled"
+                :org="org"
+                :show-disabled="showOutliers"
+                :show-hidden="showOutliers"
+                show-link
+              >
+                <template v-slot:actions="{ item }">
+                  <v-icon
+                    color="tertiary"
+                    class="mr-2"
+                    @click="
+                      $router.push({
+                        name: 'orgs-orgSlug-datastreams',
+                        params: {
+                          orgSlug: org.slug
+                        },
+                        query: {
+                          stationId: item._id
+                        }
+                      })
+                    "
+                    >{{ mdiChartTimelineVariant }}</v-icon
                   >
-                    <template v-slot:actions="{ item }">
-                      <v-icon
-                        color="tertiary"
-                        class="mr-2"
-                        @click="
-                          $router.push({
-                            name: 'orgs-orgSlug-datastreams',
-                            params: {
-                              orgSlug: org.slug
-                            },
-                            query: {
-                              stationId: item._id
-                            }
-                          })
-                        "
-                        >mdi-chart-timeline-variant</v-icon
-                      >
 
-                      <v-icon color="tertiary" @click="open(item._id)"
-                        >mdi-open-in-new</v-icon
-                      >
-                    </template>
-                  </station-search>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+                  <v-icon color="tertiary" @click="open(item._id)">{{
+                    mdiOpenInNew
+                  }}</v-icon>
+                </template>
+              </station-search>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
+      </v-col>
+    </v-row>
 
     <v-btn
-      v-if="
-        $can('create', {
-          organization_id: org._id,
-          state: 'pending',
-          [$abilityTypeKey]: 'stations'
-        })
-      "
+      v-show="$canCreate('stations', org)"
       :to="{
         name: 'orgs-orgSlug-stations-create',
         params: {
@@ -81,51 +68,49 @@
       style="top: 80px;"
       top
     >
-      <v-icon>add</v-icon>
+      <v-icon>{{ mdiPlus }}</v-icon>
     </v-btn>
-  </v-layout>
+  </v-container>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
+import routeQuery from '@/mixins/route-query'
+import QueryHeader from '@/components/QueryHeader'
 import StationSearch from '@/components/StationSearch'
 
 export default {
   components: {
+    QueryHeader,
     StationSearch
   },
 
-  middleware: ['check-org'],
+  middleware: ['check-org', 'fetch-annotation'],
+
+  mixins: [routeQuery],
 
   data: () => ({
     tabIndex: 0
   }),
 
   computed: {
-    // TODO: Remove cart helpers?
     ...mapGetters(['org']),
     ...mapGetters({
-      cartCount: 'cart/count',
-      cartIds: 'cart/ids'
+      getAnnotation: 'annotations/get'
     }),
 
-    ...mapState('cart', ['quantitiesById']),
+    annotation() {
+      return this.queryAnnotationId
+        ? this.getAnnotation(this.queryAnnotationId)
+        : null
+    },
 
-    queryIsEnabled() {
-      return this.$route.query.isEnabled
+    showOutliers() {
+      return this.annotation || this.$canCreate('stations', this.org)
     }
   },
 
-  created() {
-    this.resetCart()
-  },
-
   methods: {
-    ...mapMutations({
-      resetCart: 'cart/reset',
-      setQuantity: 'cart/setQuantity'
-    }),
-
     open(stationId) {
       window.open(
         this.$router.resolve({

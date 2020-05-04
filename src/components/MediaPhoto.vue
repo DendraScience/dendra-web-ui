@@ -1,7 +1,7 @@
 <template>
-  <v-flex v-if="url">
+  <v-col v-if="url">
     <v-img :src="url" />
-  </v-flex>
+  </v-col>
 </template>
 
 <script>

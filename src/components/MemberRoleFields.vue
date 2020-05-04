@@ -1,20 +1,32 @@
 <template>
   <v-container fluid>
-    <v-layout column>
-      <v-flex>
+    <v-row dense>
+      <v-col>
         <member-select v-model="value" :disabled="selectDisabled" :org="org" />
-      </v-flex>
+      </v-col>
+    </v-row>
 
-      <v-flex v-if="value.personId" mx-2>
-        <v-checkbox
-          v-for="role in value.roles"
-          :key="role.text"
-          v-model="role.value"
-          :label="role.text"
-          class="my-0"
-        ></v-checkbox>
-      </v-flex>
-    </v-layout>
+    <v-row v-if="value.personId">
+      <v-col>
+        <v-card outlined>
+          <v-container fluid>
+            <v-row dense>
+              <v-col>
+                <v-checkbox
+                  v-for="role in value.roles"
+                  :key="role.text"
+                  v-model="role.value"
+                  :label="role.text"
+                  class="my-1"
+                  dense
+                  hide-details
+                ></v-checkbox>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

@@ -7,10 +7,11 @@
     <v-card v-if="pagination" color="green" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
-          <v-icon class="mr-2" dark>mdi-nature</v-icon> Stations
+          <v-icon class="mr-2" dark>{{ mdiNature }}</v-icon
+          >Stations
         </v-card-title>
 
-        <v-card-text class="display-2 text-truncate">
+        <v-card-text class="display-1 text-truncate">
           {{ pagination | get('total', 0) }}
           <small class="font-weight-light">{{ totalLabel }}</small>
         </v-card-text>
@@ -43,6 +44,7 @@
 <script>
 export default {
   props: {
+    annotation: { default: null, type: Object },
     hideActions: { default: false, type: Boolean },
     isEnabled: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
@@ -61,6 +63,9 @@ export default {
       if (this.isEnabled !== null) query.is_enabled = this.isEnabled
       else if (!this.showDisabled) query.is_enabled = true
 
+      if (this.annotation)
+        query._id = { $in: this.annotation.affected_station_ids || [] }
+
       return query
     },
 
@@ -74,6 +79,8 @@ export default {
       }
 
       if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
+
+      if (this.annotation) to.query.annotationId = this.annotation._id
 
       return to
     }

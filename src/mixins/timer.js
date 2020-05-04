@@ -26,11 +26,13 @@ export default {
   methods: {
     clearTimer() {
       if (this.timerId) clearTimeout(this.timerId)
+
       this.timerId = null
     },
 
     resetTimer() {
       this.clearTimer()
+
       if (this.isTimerEnabled)
         this.timerId = setTimeout(() => {
           Promise.resolve()
@@ -39,6 +41,6 @@ export default {
         }, this.timerInterval)
     },
 
-    timerCallback() {}
+    async timerCallback() {}
   }
 }

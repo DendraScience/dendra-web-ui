@@ -1,29 +1,23 @@
 <template>
-  <v-layout v-if="instance && org" column>
-    <v-flex>
-      <v-container grid-list-xl>
-        <v-layout v-if="!editing">
-          <v-flex>
-            <h4 class="display-1 font-weight-light my-3">Station details</h4>
-          </v-flex>
-        </v-layout>
+  <v-container v-if="instance && org">
+    <v-row v-if="!editing">
+      <v-col>
+        <h2 class="display-1 font-weight-regular">
+          Station details
+        </h2>
+      </v-col>
+    </v-row>
 
-        <v-layout column>
-          <v-flex>
-            <ValidationObserver ref="observer">
-              <station-detail
-                v-model="instance"
-                :editing="editing"
-                :org="org"
-              />
-            </ValidationObserver>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+    <v-row>
+      <v-col>
+        <ValidationObserver ref="observer">
+          <station-detail v-model="instance" :editing="editing" :org="org" />
+        </ValidationObserver>
+      </v-col>
+    </v-row>
 
     <v-btn
-      v-if="!editing && $can('patch', instance)"
+      v-show="!editing && $canPatch('stations', instance)"
       color="primary"
       dark
       fab
@@ -33,9 +27,9 @@
       top
       @click="edit"
     >
-      <v-icon>edit</v-icon>
+      <v-icon>{{ mdiPencil }}</v-icon>
     </v-btn>
-  </v-layout>
+  </v-container>
 </template>
 
 <script>

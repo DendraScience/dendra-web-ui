@@ -93,7 +93,7 @@ export default {
       const { value } = this
       const data = attributeData(commit)
 
-      if (data) this.$set(value.attributes, commit.key, data)
+      if (data !== undefined) this.$set(value.attributes, commit.key, data)
 
       this.attribute.dialog = false
     },

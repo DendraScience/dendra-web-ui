@@ -1,12 +1,14 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot>Geo coordinates</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot>Geo coordinates</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout v-if="value.geo" wrap>
-        <v-flex xs12 md6>
+      <v-row v-if="value.geo">
+        <v-col cols="12" md="6">
           <ValidationProvider
             v-slot="{ errors }"
             name="latitude"
@@ -47,10 +49,11 @@
               label="Elevation"
             ></v-text-field>
           </ValidationProvider>
-        </v-flex>
+        </v-col>
 
-        <v-flex xs12 md6>
+        <v-col cols="12" md="6">
           <google-map
+            :icons="icons"
             :map-options="{}"
             auto-fit
             auto-pan
@@ -58,27 +61,28 @@
             :lat-lng-literal="latLngLiteral"
             style="width: 100%; height: 300px;"
           />
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
-      <v-layout v-else>
-        <v-flex class="grey--text">No coordinates defined</v-flex>
-      </v-layout>
+      <v-row v-else>
+        <v-col class="grey--text">No coordinates defined</v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-btn v-if="value.geo" color="primary" @click="remove">
-        <v-icon>remove</v-icon>
+        <v-icon>{{ mdiMinus }}</v-icon>
       </v-btn>
 
       <v-btn v-else color="primary" @click="add">
-        <v-icon>add</v-icon>
+        <v-icon>{{ mdiPlus }}</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import vuetifyColors from 'vuetify/lib/util/colors'
 import _debounce from 'lodash/debounce'
 import { ValidationProvider } from 'vee-validate'
 import GoogleMap from '@/components/GoogleMap'
@@ -103,6 +107,23 @@ export default {
       lng: 0
     }
   }),
+
+  computed: {
+    icons() {
+      return {
+        default: {
+          anchor: { x: 8, y: 20 },
+          fillColor: vuetifyColors.blueGrey.darken2,
+          fillOpacity: 1,
+          path: this.mdiMapMarker,
+          scale: 2,
+          strokeColor: 'white',
+          strokeOpacity: 0.5,
+          strokeWeight: 1
+        }
+      }
+    }
+  },
 
   watch: {
     'value.geoCoordinates': {

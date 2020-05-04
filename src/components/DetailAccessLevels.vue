@@ -1,22 +1,25 @@
 <template>
   <v-card>
-    <v-card-title class="headline">
-      <slot v-if="editing">Access level overrides</slot>
-      <slot v-else>Access levels</slot>
-    </v-card-title>
+    <v-container fluid>
+      <v-row dense>
+        <v-col class="headline">
+          <slot v-if="editing">Access level overrides</slot>
+          <slot v-else>Access levels</slot>
+        </v-col>
+      </v-row>
 
-    <v-container fluid pt-0 px-4>
-      <v-layout v-if="!editing">
-        <v-flex>
+      <v-row v-if="!editing" dense>
+        <v-col>
           <v-tabs v-model="tabIndex">
             <v-tab>Resolved</v-tab>
             <v-tab>Overrides</v-tab>
           </v-tabs>
-        </v-flex>
-      </v-layout>
+          <v-divider />
+        </v-col>
+      </v-row>
 
-      <v-layout>
-        <v-flex>
+      <v-row dense>
+        <v-col>
           <v-data-table
             :headers="headers"
             :hide-default-header="$vuetify.breakpoint.xsOnly"
@@ -32,24 +35,24 @@
 
             <template v-slot:item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
-                <v-icon color="tertiary" class="mr-2" @click="edit(item)"
-                  >edit</v-icon
-                >
-                <v-icon color="tertiary" @click="remove(item)"
-                  >mdi-minus-circle</v-icon
-                >
+                <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
+                  mdiPencil
+                }}</v-icon>
+                <v-icon color="tertiary" @click="remove(item)">{{
+                  mdiMinusCircle
+                }}</v-icon>
               </span>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-container>
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
           <v-btn color="primary" v-on="on">
-            <v-icon>add</v-icon>
+            <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
         </template>
 
@@ -77,6 +80,7 @@
 <script>
 import { accessLevelTexts } from '@/lib/access-level'
 import itemEditing from '@/mixins/item-editing'
+import { mdiAccountMultiple, mdiGlobeModel } from '@mdi/js'
 
 export default {
   mixins: [itemEditing],
@@ -89,14 +93,14 @@ export default {
   data: () => ({
     addItems: [
       {
-        icon: 'mdi-account-multiple',
+        icon: mdiAccountMultiple,
         key: 'member_level',
         subtitle: 'Specify data visibility for organization members.',
         target: 'member',
         title: 'Member access level'
       },
       {
-        icon: 'mdi-globe-model',
+        icon: mdiGlobeModel,
         key: 'public_level',
         subtitle: 'Specify data visibility for the public.',
         target: 'public',
@@ -139,7 +143,7 @@ export default {
       if (accessLevels.member_level !== undefined)
         items.push({
           description: accessLevelTexts.member[accessLevels.member_level],
-          icon: 'mdi-account-multiple',
+          icon: mdiAccountMultiple,
           key: 'member_level',
           target: 'member'
         })
@@ -147,7 +151,7 @@ export default {
       if (accessLevels.public_level !== undefined)
         items.push({
           description: accessLevelTexts.public[accessLevels.public_level],
-          icon: 'mdi-globe-model',
+          icon: mdiGlobeModel,
           key: 'public_level',
           target: 'public'
         })

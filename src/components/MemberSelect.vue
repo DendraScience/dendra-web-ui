@@ -1,12 +1,12 @@
 <template>
-  <ValidationProvider v-slot="{ errors }" name="person" rules="required">
+  <ValidationProvider name="person" rules="required">
     <v-select
       v-model="value.personId"
       :disabled="disabled"
-      :error-messages="errors"
       :items="items"
+      :prepend-inner-icon="mdiAccountBox"
+      hide-details
       label="Member"
-      prepend-inner-icon="mdi-account-box"
       solo
     ></v-select>
   </ValidationProvider>
