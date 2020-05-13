@@ -12,6 +12,7 @@
               <v-col>
                 <v-img
                   :src="require('@/assets/dendra-logo.svg')"
+                  aspect-ratio="4"
                   max-width="460"
                   width="100%"
                 />

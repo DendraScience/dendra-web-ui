@@ -192,6 +192,7 @@ export default {
         const { series } = data
         const options = Object.assign(
           {
+            boostThreshold: 20,
             step: true,
             zIndex: series.index
           },

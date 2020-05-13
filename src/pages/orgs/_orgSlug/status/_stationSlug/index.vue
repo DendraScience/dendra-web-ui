@@ -200,7 +200,12 @@
                               tile
                               @click="toggle"
                             >
-                              <v-img :src="photo.sizes.small.url" width="80" />
+                              <v-img
+                                :src="
+                                  $options.filters.https(photo.sizes.small.url)
+                                "
+                                width="80"
+                              />
                             </v-card>
                           </template>
                         </v-slide-item>
