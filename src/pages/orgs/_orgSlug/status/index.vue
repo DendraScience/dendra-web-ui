@@ -177,7 +177,11 @@
                           cols="auto"
                         >
                           <v-img
-                            :src="station.media[0].sizes.small.url"
+                            :src="
+                              $options.filters.https(
+                                station.media[0].sizes.small.url
+                              )
+                            "
                             width="90"
                           />
                         </v-col>
