@@ -74,6 +74,13 @@ async function processFetch({ id, fetchSpec }) {
       datastream.general_config.station_dashboard_priority !== undefined
         ? -datastream.general_config.station_dashboard_priority
         : -1
+    datastream.__sort = !datastream.attributes
+      ? 0
+      : datastream.attributes.depth
+      ? datastream.attributes.depth.value
+      : datastream.attributes.height
+      ? datastream.attributes.height.value
+      : 1
   })
 
   // Filter and sort
@@ -81,13 +88,12 @@ async function processFetch({ id, fetchSpec }) {
     datastream =>
       (datastream.terms.ds || datastream.terms.dw) && datastream.__rank < 0
   )
-  datastreams = _sortBy(datastreams, ['__rank', '_id'])
+  datastreams = _sortBy(datastreams, ['__rank', '__sort', '_id'])
 
   // Cherry-pick
   const datastreamsByKey = {
     airSpeedAverage: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.ds &&
         datastream.terms.ds.Aggregate === 'Average' &&
         datastream.terms.ds.Medium === 'Air' &&
@@ -96,7 +102,6 @@ async function processFetch({ id, fetchSpec }) {
 
     airSpeedMaximum: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.ds &&
         datastream.terms.ds.Aggregate === 'Maximum' &&
         datastream.terms.ds.Medium === 'Air' &&
@@ -106,7 +111,6 @@ async function processFetch({ id, fetchSpec }) {
     airTemperature: selectDatastreamsByAggregate(
       datastreams.filter(
         datastream =>
-          !datastream.attributes &&
           datastream.terms.ds &&
           datastream.terms.ds.Medium === 'Air' &&
           datastream.terms.ds.Variable === 'Temperature'
@@ -131,7 +135,6 @@ async function processFetch({ id, fetchSpec }) {
     barometricPressure: selectDatastreamsByAggregate(
       datastreams.filter(
         datastream =>
-          !datastream.attributes &&
           datastream.terms.ds &&
           datastream.terms.ds.Medium === 'Air' &&
           datastream.terms.ds.Variable === 'BarometricPressure'
@@ -140,7 +143,6 @@ async function processFetch({ id, fetchSpec }) {
 
     batteryVoltage: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.ds &&
         datastream.terms.ds.Function === 'Status' &&
         datastream.terms.ds.Medium === 'Battery' &&
@@ -149,7 +151,6 @@ async function processFetch({ id, fetchSpec }) {
 
     cumulativePrecipitation: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.ds &&
         datastream.terms.ds.Aggregate === 'Cumulative' &&
         datastream.terms.ds.Medium === 'Water' &&
@@ -159,7 +160,6 @@ async function processFetch({ id, fetchSpec }) {
     par: selectDatastreamsByAggregate(
       datastreams.filter(
         datastream =>
-          !datastream.attributes &&
           datastream.terms.ds &&
           datastream.terms.ds.Medium === 'Solar' &&
           datastream.terms.ds.Variable ===
@@ -172,7 +172,6 @@ async function processFetch({ id, fetchSpec }) {
     relativeHumidity: selectDatastreamsByAggregate(
       datastreams.filter(
         datastream =>
-          !datastream.attributes &&
           datastream.terms.ds &&
           datastream.terms.ds.Medium === 'Air' &&
           datastream.terms.ds.Variable === 'RelativeHumidity' &&
@@ -199,7 +198,6 @@ async function processFetch({ id, fetchSpec }) {
     solarRadiation: selectDatastreamsByAggregate(
       datastreams.filter(
         datastream =>
-          !datastream.attributes &&
           datastream.terms.ds &&
           datastream.terms.ds.Medium === 'Solar' &&
           datastream.terms.ds.Variable === 'Radiation' &&
@@ -210,7 +208,6 @@ async function processFetch({ id, fetchSpec }) {
 
     nwsConditionsIcon: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.dw &&
         datastream.terms.dw.ConditionsIconType === 'ForecastNWS' &&
         datastream.terms.dw.Parameter === 'ConditionsIcon' &&
@@ -220,7 +217,6 @@ async function processFetch({ id, fetchSpec }) {
 
     nwsTemperatureMaximum: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.dw &&
         datastream.terms.dw.Parameter === 'Temperature' &&
         datastream.terms.dw.SummarizedDays === '7Day' &&
@@ -232,7 +228,6 @@ async function processFetch({ id, fetchSpec }) {
 
     nwsTemperatureMinimum: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.dw &&
         datastream.terms.dw.Parameter === 'Temperature' &&
         datastream.terms.dw.SummarizedDays === '7Day' &&
@@ -244,7 +239,6 @@ async function processFetch({ id, fetchSpec }) {
 
     nwsWeather: datastreams.find(
       datastream =>
-        !datastream.attributes &&
         datastream.terms.dw &&
         datastream.terms.dw.Parameter === 'Weather' &&
         datastream.terms.dw.SummarizedDays === '7Day' &&

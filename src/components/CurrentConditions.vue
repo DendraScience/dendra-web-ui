@@ -6,7 +6,7 @@
           <slot>Current conditions</slot>
         </v-col>
 
-        <v-col align="end" cols="12" sm="4"><slot name="util"/></v-col>
+        <v-col align="end" cols="12" sm="4"><slot name="util" /></v-col>
       </v-row>
 
       <v-row dense>

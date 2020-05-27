@@ -12,11 +12,7 @@
       <v-col>
         <v-card outlined>
           <v-card-subtitle>
-            <h4
-              v-if="queryIsEnabled === true"
-              class="subtitle-2
-                "
-            >
+            <h4 v-if="queryIsEnabled === true" class="subtitle-2">
               <v-icon class="mr-2" small>{{ mdiEngine }}</v-icon
               >Enabled
             </h4>

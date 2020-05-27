@@ -1,4 +1,4 @@
-export default async function({ app, store }) {
+export default async function ({ app, store }) {
   try {
     if (store.getters['soms/find']().data.length) return
 

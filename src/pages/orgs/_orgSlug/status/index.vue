@@ -87,15 +87,15 @@
                         <a
                           v-if="
                             linksToOldDashboard &&
-                              station.general_config_resolved &&
-                              station.general_config_resolved
-                                .station_status_links_to_old_dashboard
+                            station.general_config_resolved &&
+                            station.general_config_resolved
+                              .station_status_links_to_old_dashboard
                           "
                           :href="
                             'https://' +
-                              org.slug +
-                              '.dendra.science/#/stations/' +
-                              station.slug
+                            org.slug +
+                            '.dendra.science/#/stations/' +
+                            station.slug
                           "
                           class="black--text station-link"
                           target="_blank"
@@ -330,10 +330,7 @@ export default {
     },
 
     startTime() {
-      return moment
-        .utc(this.getTime('utc').now)
-        .subtract(48, 'h')
-        .valueOf()
+      return moment.utc(this.getTime('utc').now).subtract(48, 'h').valueOf()
     },
 
     stationsFetchQuery() {

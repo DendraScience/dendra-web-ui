@@ -24,11 +24,11 @@
                           :key="index"
                           :disabled="
                             !selectedStations.includes(index) &&
-                              !(
-                                facetCounts &&
-                                facetCounts.Station &&
-                                facetCounts.Station[item._id] > 0
-                              )
+                            !(
+                              facetCounts &&
+                              facetCounts.Station &&
+                              facetCounts.Station[item._id] > 0
+                            )
                           "
                         >
                           <template v-slot:default="{ active, toggle }">
@@ -78,11 +78,11 @@
                               selectedTerms[vocabulary._id] &&
                               selectedTerms[vocabulary._id].includes(index)
                             ) &&
-                              !(
-                                facetCounts &&
-                                facetCounts[vocabulary.label] &&
-                                facetCounts[vocabulary.label][item.label] > 0
-                              )
+                            !(
+                              facetCounts &&
+                              facetCounts[vocabulary.label] &&
+                              facetCounts[vocabulary.label][item.label] > 0
+                            )
                           "
                         >
                           <template v-slot:default="{ active, toggle }">
@@ -166,13 +166,13 @@
                       >
                         {{
                           item.extent &&
-                            item.extent.begins_at
-                              | dateTimeFormatExtra(
-                                undefined,
-                                undefined,
-                                item.station_lookup.utc_offset,
-                                item.station_lookup.time_zone
-                              )
+                          item.extent.begins_at
+                            | dateTimeFormatExtra(
+                              undefined,
+                              undefined,
+                              item.station_lookup.utc_offset,
+                              item.station_lookup.time_zone
+                            )
                         }}
                       </template>
 
@@ -183,13 +183,13 @@
                       >
                         {{
                           item.extent &&
-                            item.extent.ends_before
-                              | dateTimeFormatExtra(
-                                undefined,
-                                undefined,
-                                item.station_lookup.utc_offset,
-                                item.station_lookup.time_zone
-                              )
+                          item.extent.ends_before
+                            | dateTimeFormatExtra(
+                              undefined,
+                              undefined,
+                              item.station_lookup.utc_offset,
+                              item.station_lookup.time_zone
+                            )
                         }}
                       </template>
 

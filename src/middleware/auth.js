@@ -1,4 +1,4 @@
-export default async function({ app, redirect, store }) {
+export default async function ({ app, redirect, store }) {
   const { auth } = store.state
   const { accessToken } = auth
 

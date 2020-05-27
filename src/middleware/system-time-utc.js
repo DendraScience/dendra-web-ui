@@ -1,4 +1,4 @@
-export default async function({ app, store }) {
+export default async function ({ app, store }) {
   try {
     await store.dispatch('getSystemTimeUTC')
   } catch (err) {

@@ -254,9 +254,7 @@
         <forecast-conditions :units="units" :value="forecast">
           <template v-slot:util>
             <a
-              :href="
-                `http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`
-              "
+              :href="`http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`"
               target="_blank"
               >Visit NWS site</a
             >
@@ -354,41 +352,30 @@ export default {
       return this.media.filter(media => media.type === 'photo')
     },
 
+    stationTime() {
+      return this.currentTime + this.station.utc_offset * 1000
+    },
+
     today() {
-      const { time } = this.station
+      const { stationTime: time } = this
 
       return {
-        startTime: moment
-          .utc(time)
-          .startOf('d')
-          .valueOf(),
-        untilTime: moment
-          .utc(time)
-          .startOf('d')
-          .add(1, 'd')
-          .valueOf()
+        startTime: moment.utc(time).startOf('d').valueOf(),
+        untilTime: moment.utc(time).startOf('d').add(1, 'd').valueOf()
       }
     },
 
     twoWeeks() {
-      const { time } = this.station
+      const { stationTime: time } = this
 
       return {
-        startTime: moment
-          .utc(time)
-          .startOf('d')
-          .subtract(14, 'd')
-          .valueOf(),
-        untilTime: moment
-          .utc(time)
-          .startOf('d')
-          .add(1, 'd')
-          .valueOf()
+        startTime: moment.utc(time).startOf('d').subtract(14, 'd').valueOf(),
+        untilTime: moment.utc(time).startOf('d').add(1, 'd').valueOf()
       }
     },
 
     waterYear() {
-      const { time } = this.station
+      const { stationTime: time } = this
 
       return {
         startTime: moment
@@ -410,18 +397,11 @@ export default {
     },
 
     yesterday() {
-      const { time } = this.station
+      const { stationTime: time } = this
 
       return {
-        startTime: moment
-          .utc(time)
-          .startOf('d')
-          .subtract(1, 'd')
-          .valueOf(),
-        untilTime: moment
-          .utc(time)
-          .startOf('d')
-          .valueOf()
+        startTime: moment.utc(time).startOf('d').subtract(1, 'd').valueOf(),
+        untilTime: moment.utc(time).startOf('d').valueOf()
       }
     }
   },

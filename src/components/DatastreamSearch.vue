@@ -49,10 +49,10 @@
       <v-col
         v-if="
           isEnabled === null &&
-            isHidden === null &&
-            showDisabled &&
-            showHidden &&
-            showOptions
+          isHidden === null &&
+          showDisabled &&
+          showHidden &&
+          showOptions
         "
         cols="12"
         md="6"
@@ -181,13 +181,13 @@
             >
               {{
                 item.extent &&
-                  item.extent.begins_at
-                    | dateTimeFormatExtra(
-                      undefined,
-                      undefined,
-                      item.station_lookup.utc_offset,
-                      item.station_lookup.time_zone
-                    )
+                item.extent.begins_at
+                  | dateTimeFormatExtra(
+                    undefined,
+                    undefined,
+                    item.station_lookup.utc_offset,
+                    item.station_lookup.time_zone
+                  )
               }}
             </template>
 
@@ -198,13 +198,13 @@
             >
               {{
                 item.extent &&
-                  item.extent.ends_before
-                    | dateTimeFormatExtra(
-                      undefined,
-                      undefined,
-                      item.station_lookup.utc_offset,
-                      item.station_lookup.time_zone
-                    )
+                item.extent.ends_before
+                  | dateTimeFormatExtra(
+                    undefined,
+                    undefined,
+                    item.station_lookup.utc_offset,
+                    item.station_lookup.time_zone
+                  )
               }}
             </template>
 

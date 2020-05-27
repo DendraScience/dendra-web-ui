@@ -9,7 +9,7 @@
                 NOAA forecast
               </v-col>
 
-              <v-col align="end" cols="12" sm="4"><slot name="util"/></v-col>
+              <v-col align="end" cols="12" sm="4"><slot name="util" /></v-col>
             </v-row>
 
             <v-row dense>
@@ -28,11 +28,11 @@
                       <v-col
                         v-if="
                           item.day &&
-                            item.day.conditionsIcon &&
-                            item.day.conditionsIcon.url &&
-                            item.day.weather &&
-                            item.day.weather.summary &&
-                            item.day.temperatureMaximum !== undefined
+                          item.day.conditionsIcon &&
+                          item.day.conditionsIcon.url &&
+                          item.day.weather &&
+                          item.day.weather.summary &&
+                          item.day.temperatureMaximum !== undefined
                         "
                         align="center"
                       >
@@ -56,11 +56,11 @@
                       <v-col
                         v-if="
                           item.night &&
-                            item.night.conditionsIcon &&
-                            item.night.conditionsIcon.url &&
-                            item.night.weather &&
-                            item.night.weather.summary &&
-                            item.night.temperatureMinimum !== undefined
+                          item.night.conditionsIcon &&
+                          item.night.conditionsIcon.url &&
+                          item.night.weather &&
+                          item.night.weather.summary &&
+                          item.night.temperatureMinimum !== undefined
                         "
                         align="center"
                       >

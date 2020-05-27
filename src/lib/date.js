@@ -123,9 +123,7 @@ export function resolveDateRange(dateRange) {
 
     if (from.isValid()) {
       resolved.from = from.toISOString()
-      resolved.utcFrom = moment(from)
-        .add(-utcOffset, 's')
-        .toISOString()
+      resolved.utcFrom = moment(from).add(-utcOffset, 's').toISOString()
     } else resolved.valid = false
   }
 
@@ -138,9 +136,7 @@ export function resolveDateRange(dateRange) {
 
     if (to.isValid()) {
       resolved.to = to.toISOString()
-      resolved.utcTo = moment(to)
-        .add(-utcOffset, 's')
-        .toISOString()
+      resolved.utcTo = moment(to).add(-utcOffset, 's').toISOString()
     } else resolved.valid = false
   }
 

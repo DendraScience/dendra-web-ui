@@ -415,9 +415,7 @@ export default {
       .startOf('d')
       .subtract(14, 'd')
       .format(dateFormats.y4md)
-    dateRange.to = moment()
-      .endOf('d')
-      .format(dateFormats.y4md)
+    dateRange.to = moment().endOf('d').format(dateFormats.y4md)
   },
 
   methods: {

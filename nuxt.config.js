@@ -189,7 +189,7 @@ module.exports = {
    */
   plugins: [
     { src: '~/plugins/logger', ssr: false },
-    { src: '~/plugins/tracker.js', ssr: false },
+    { src: '~/plugins/tracker', ssr: false },
     { src: '~/plugins/route', ssr: false },
     { src: '~/plugins/vee-validate', ssr: false },
     { src: '~/plugins/ability', ssr: false },

@@ -1,4 +1,4 @@
-export default async function({ error, query, store }) {
+export default async function ({ error, query, store }) {
   const { orgId } = store.getters
   const { stationId } = query
 

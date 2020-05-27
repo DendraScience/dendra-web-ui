@@ -20,8 +20,8 @@
                 v-if="previousExportIndex > -1"
                 :disabled="
                   !chart.isReady ||
-                    (exportItems[previousExportIndex].download &&
-                      !chart.canDownload)
+                  (exportItems[previousExportIndex].download &&
+                    !chart.canDownload)
                 "
                 @click="exportChart(chart, previousExportIndex)"
               >

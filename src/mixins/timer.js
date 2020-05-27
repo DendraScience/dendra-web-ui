@@ -35,9 +35,7 @@ export default {
 
       if (this.isTimerEnabled)
         this.timerId = setTimeout(() => {
-          Promise.resolve()
-            .then(this.timerCallback)
-            .finally(this.resetTimer)
+          Promise.resolve().then(this.timerCallback).finally(this.resetTimer)
         }, this.timerInterval)
     },
 

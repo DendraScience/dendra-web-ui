@@ -54,7 +54,7 @@ export function syncExtremes(e) {
 
   // Prevent feedback loop
   if (e.trigger !== 'syncExtremes') {
-    Highcharts.charts.forEach(function(chart) {
+    Highcharts.charts.forEach(function (chart) {
       if (chart && chart !== thisChart && chart.__group === thisChart.__group) {
         if (chart.xAxis[0].setExtremes) {
           // It is null while updating

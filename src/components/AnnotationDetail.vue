@@ -26,7 +26,7 @@
                   :items="stateItems"
                   :readonly="
                     !editing ||
-                      $cannotAssign('annotations', value, '$set.state')
+                    $cannotAssign('annotations', value, '$set.state')
                   "
                   label="State"
                 ></v-select>

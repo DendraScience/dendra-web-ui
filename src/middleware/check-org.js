@@ -1,4 +1,4 @@
-export default async function({ error, params, store }) {
+export default async function ({ error, params, store }) {
   const { orgId, orgSlug } = params
 
   try {

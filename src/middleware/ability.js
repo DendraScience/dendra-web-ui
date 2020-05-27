@@ -1,6 +1,6 @@
 const CURRENT = 'current'
 
-export default async function({ app, store }) {
+export default async function ({ app, store }) {
   try {
     if (store.getters['ability/get'](CURRENT)) return
 

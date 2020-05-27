@@ -1,6 +1,6 @@
 const ID = 'dt-unit'
 
-export default async function({ app, store }) {
+export default async function ({ app, store }) {
   try {
     if (store.getters['vocabularies/get'](ID)) return
 

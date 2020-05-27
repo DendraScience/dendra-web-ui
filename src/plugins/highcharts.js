@@ -15,7 +15,7 @@ Highcharts.setOptions({
   }
 })
 
-Highcharts.wrap(Highcharts.Pointer.prototype, 'reset', function(
+Highcharts.wrap(Highcharts.Pointer.prototype, 'reset', function (
   p,
   allowMove,
   delay
