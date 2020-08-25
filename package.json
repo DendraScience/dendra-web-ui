@@ -30,7 +30,7 @@
     "feathers-hooks-common": "^3.10.0",
     "feathers-socketio": "^2.0.1",
     "feathers-vuex": "^1.1.4",
-    "highcharts": "^6.1.0",
+    "highcharts": "^7.2.2",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.10",
     "moment": "^2.22.1",
