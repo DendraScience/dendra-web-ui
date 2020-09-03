@@ -42,7 +42,7 @@ export default ({ store }, inject) => {
     store.getters.isAbilityUpdated
       ? ability.can(
           'create',
-          as(name, Object.assign({ organization_id: org._id }, obj))
+          as(name, org ? Object.assign({ organization_id: org._id }, obj) : {})
         )
       : false
   )

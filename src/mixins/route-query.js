@@ -12,8 +12,10 @@ export default {
 
       return (
         query.annotationId ||
+        query.companyId ||
         query.datastreamId ||
         query.stationId ||
+        query.thingTypeId ||
         query.isEnabled !== undefined ||
         query.isHidden !== undefined
       )
@@ -21,6 +23,10 @@ export default {
 
     queryAnnotationId() {
       return this.$route.query.annotationId
+    },
+
+    queryCompanyId() {
+      return this.$route.query.companyId
     },
 
     queryDatastreamId() {
@@ -45,6 +51,10 @@ export default {
 
     queryStationId() {
       return this.$route.query.stationId
+    },
+
+    queryThingTypeId() {
+      return this.$route.query.thingTypeId
     }
   }
 }

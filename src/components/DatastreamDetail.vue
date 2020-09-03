@@ -105,7 +105,7 @@
               dark
               nuxt
               ><v-icon left>{{ mdiNature }}</v-icon
-              >Station details</v-btn
+              >Station Details</v-btn
             >
           </v-card-actions>
         </v-card>
@@ -321,9 +321,9 @@
           :params-resolved="configParamsResolved"
           :path-items="configPathItems"
         >
-          <template v-slot:expression="{ value }">
+          <template v-slot:expression="expressionProps">
             <evaluate-action-fields
-              v-model="value"
+              v-model="expressionProps.value"
               :attributes-resolved="configAttributesResolved"
               :datapoint-resolved="configDatapointResolved"
               :expr-resolved="configExprResolved"

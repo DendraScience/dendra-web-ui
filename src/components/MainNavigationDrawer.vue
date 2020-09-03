@@ -54,10 +54,18 @@
 import { mapGetters, mapState } from 'vuex'
 import {
   mdiHome,
+  mdiChartMultiple,
   mdiChartTimelineVariant,
   mdiCheckCircle,
+  mdiEmail,
+  mdiFileTree,
+  mdiFormatPaint,
+  mdiHexagonSlice6,
+  mdiLoginVariant,
   mdiNature,
   mdiNoteOutline,
+  mdiTag,
+  mdiOfficeBuilding,
   mdiViewGrid
 } from '@mdi/js'
 
@@ -74,23 +82,51 @@ export default {
             },
             {
               can: ['read', 'organizations'],
+              icon: mdiFileTree,
               title: 'Organization list',
               to: '/orgs'
             },
-            // TODO: Implement later
-            // {
-            //   can: ['read', 'stations'],
-            //   title: 'Stations',
-            //   to: '/stations'
-            // },
             {
+              icon: mdiTag,
+              org: false,
               title: 'Vocabulary',
               to: '/vocabulary'
             },
             {
               hidden: process.env.NODE_ENV === 'production',
+              icon: mdiFormatPaint,
+              org: false,
               title: 'Theme',
               to: '/theme'
+            },
+            {
+              icon: mdiEmail,
+              org: false,
+              title: 'Contact',
+              to: '/contact'
+            },
+            {
+              auth: false,
+              icon: mdiLoginVariant,
+              title: 'Log in',
+              to: '/login'
+            }
+          ]
+        },
+        {
+          header: 'Equipment Library',
+          items: [
+            {
+              can: ['read', 'companies'],
+              icon: mdiOfficeBuilding,
+              title: 'Companies',
+              to: '/companies'
+            },
+            {
+              can: ['read', 'thing-types'],
+              icon: mdiHexagonSlice6,
+              title: 'Equipments',
+              to: '/equipments'
             }
           ]
         },
@@ -110,7 +146,7 @@ export default {
               title: 'Station status'
             },
             {
-              icon: mdiChartTimelineVariant,
+              icon: mdiChartMultiple,
               org: true,
               name: 'orgs-orgSlug-datastreams',
               query: {
@@ -140,38 +176,25 @@ export default {
               org: true,
               name: 'orgs-orgSlug-annotations',
               title: 'Annotations'
-            },
-            {
-              org: true,
-              disabled: true,
-              name: 'orgs-orgSlug-equipment',
-              title: 'Equipment'
-            },
-            {
-              org: true,
-              disabled: true,
-              name: 'orgs-orgSlug-people',
-              title: 'People'
             }
+            // {
+            //   org: true,
+            //   disabled: true,
+            //   name: 'orgs-orgSlug-equipment',
+            //   title: 'Equipment'
+            // },
+            // {
+            //   org: true,
+            //   disabled: true,
+            //   name: 'orgs-orgSlug-people',
+            //   title: 'People'
+            // }
             // {
             //   org: true,
             //   disabled: true,
             //   name: 'orgs-orgSlug-teams',
             //   title: 'Teams'
             // }
-          ]
-        },
-        {
-          items: [
-            {
-              title: 'Contact',
-              to: '/contact'
-            },
-            {
-              auth: false,
-              title: 'Log in',
-              to: '/login'
-            }
           ]
         }
       ],

@@ -1,5 +1,5 @@
 <template>
-  <v-app light>
+  <v-app>
     <main-navigation-drawer />
     <main-toolbar />
 
@@ -27,13 +27,13 @@
       </v-toolbar-items>
     </v-app-bar>
 
-    <v-content>
+    <v-main>
       <status-bar v-model="status" />
 
       <div :style="editing ? { marginTop: '48px' } : { marginTop: '16px' }">
         <nuxt />
       </div>
-    </v-content>
+    </v-main>
 
     <v-dialog v-model="cancelDialog" dark max-width="500" persistent>
       <v-card>

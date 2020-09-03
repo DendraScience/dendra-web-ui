@@ -89,12 +89,6 @@ export default {
       })
     },
 
-    edit() {
-      this.setEditorDirty(0)
-      this.setEditorTitle('Edit station')
-      this.setEditing(true)
-    },
-
     initInstance() {
       this.instance = {
         access_levels: {},

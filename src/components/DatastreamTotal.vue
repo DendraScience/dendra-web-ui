@@ -10,6 +10,9 @@
           <v-icon class="mr-2" dark>{{ mdiChartTimelineVariant }}</v-icon
           >Datastreams
         </v-card-title>
+        <v-card-subtitle v-if="showOrg" class="subtitle-1">
+          {{ org.name }}
+        </v-card-subtitle>
 
         <v-card-text class="display-1 text-truncate">
           {{ pagination | get('total', 0) }}
@@ -39,7 +42,9 @@ export default {
     org: { default: null, type: Object },
     showDisabled: { default: false, type: Boolean },
     showHidden: { default: false, type: Boolean },
+    showOrg: { default: false, type: Boolean },
     stationId: { default: '', type: String },
+    thingTypeId: { default: '', type: String },
     totalLabel: { default: 'total', type: String }
   },
 
@@ -57,6 +62,8 @@ export default {
       else if (!this.showHidden) query.is_hidden = false
 
       if (this.stationId) query.station_id = this.stationId
+
+      if (this.thingTypeId) query.thing_type_id = this.thingTypeId
 
       if (this.annotation)
         query.$or = [
@@ -98,6 +105,8 @@ export default {
       if (this.isEnabled !== null) to.query.isEnabled = this.isEnabled
 
       if (this.stationId) to.query.stationId = this.stationId
+
+      if (this.thingTypeId) to.query.thingTypeId = this.thingTypeId
 
       if (this.annotation) to.query.annotationId = this.annotation._id
 

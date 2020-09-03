@@ -1,9 +1,9 @@
 <template>
-  <v-container v-if="instance && org">
+  <v-container v-if="instance">
     <v-row>
       <v-col>
         <ValidationObserver ref="observer">
-          <datastream-detail v-model="instance" :editing="editing" :org="org" />
+          <thing-type-detail v-model="instance" :editing="editing" />
         </ValidationObserver>
       </v-col>
     </v-row>
@@ -14,24 +14,24 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import { createData } from '@/lib/edit'
-import DatastreamDetail from '@/components/DatastreamDetail'
+import ThingTypeDetail from '@/components/ThingTypeDetail'
 
 export default {
   components: {
-    DatastreamDetail,
+    ThingTypeDetail,
     ValidationObserver
   },
 
   layout: 'editor',
 
-  middleware: ['no-auth-redirect-home', 'check-org', 'reset-editing'],
+  middleware: ['no-org', 'no-auth-redirect-home', 'reset-editing'],
 
   data: () => ({
     instance: null
   }),
 
   computed: {
-    ...mapGetters(['org', 'datastream']),
+    ...mapGetters(['thingType']),
 
     ...mapState(['auth']),
     ...mapState('ux', ['editing'])
@@ -52,7 +52,7 @@ export default {
 
     this.setEditorColor('secondary')
     this.setEditorDirty(-1)
-    this.setEditorTitle('New datastream')
+    this.setEditorTitle('New equipment')
     this.setEditing(true)
     this.initInstance()
   },
@@ -68,7 +68,7 @@ export default {
 
   methods: {
     ...mapActions({
-      create: 'datastreams/create'
+      create: 'thing-types/create'
     }),
 
     ...mapMutations({
@@ -83,35 +83,17 @@ export default {
       this.setEditing(false)
       this.setEditorDirty(-1)
       this.$router.push({
-        name: 'orgs-orgSlug-datastreams',
-        params: { orgSlug: this.org.slug }
+        name: 'equipments'
       })
     },
 
     initInstance() {
       this.instance = {
-        access_levels: {},
-        attributes: {},
-        datapoints_config: [],
-        derived_from_datastream_ids: [],
         description: '',
-        general_config: null,
-        geo: null,
-        geoCoordinates: {
-          ele: null,
-          lat: 0,
-          lng: 0
-        },
-        involved_parties: [],
+        external_links: [],
         is_enabled: true,
-        is_geo_protected: false,
-        is_hidden: false,
-        name: '',
-        organization_id: this.org._id,
-        source_type: 'sensor',
-        state: 'ready',
-        station_id: null,
-        terms: {}
+        model: '',
+        name: ''
       }
     },
 
@@ -121,8 +103,6 @@ export default {
       const { instance } = this
       const data = createData(instance)
 
-      data.organization_id = instance.organization_id
-
       try {
         const res = await this.create([data, {}])
 
@@ -130,13 +110,13 @@ export default {
         this.setEditorDirty(-1)
         this.$router.push(
           {
-            name: 'orgs-orgSlug-datastreams-datastreamId',
-            params: { orgSlug: this.org.slug, datastreamId: res._id }
+            name: 'equipments-thingTypeId',
+            params: { thingTypeId: res._id }
           },
           () => {
             this.$bus.$emit('edit-status', {
               type: 'success',
-              message: 'Datastream created.' // TODO: Localize
+              message: 'Equipment created.' // TODO: Localize
             })
           }
         )

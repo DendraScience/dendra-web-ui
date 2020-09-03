@@ -8,7 +8,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="hasQuery && org" dense>
+    <v-row v-if="hasQuery" dense>
       <v-col>
         <v-card outlined>
           <v-card-subtitle>
@@ -28,7 +28,35 @@
               <v-icon class="mr-2" small>{{ mdiEye }}</v-icon
               >Visible
             </h4>
-            <h4 v-if="queryStationId" class="subtitle-2">
+            <h4 v-if="queryCompanyId" class="subtitle-2">
+              <v-icon class="mr-2" small>{{ mdiOfficeBuilding }}</v-icon
+              >Company:
+              <nuxt-link
+                :to="{
+                  name: 'companies-companyId',
+                  params: {
+                    companyId: queryCompanyId
+                  }
+                }"
+                class="font-weight-regular"
+                >{{ getCompany(queryCompanyId) | companyName }}</nuxt-link
+              >
+            </h4>
+            <h4 v-if="queryThingTypeId" class="subtitle-2">
+              <v-icon class="mr-2" small>{{ mdiHexagonSlice6 }}</v-icon
+              >Equipment:
+              <nuxt-link
+                :to="{
+                  name: 'equipments-thingTypeId',
+                  params: {
+                    thingTypeId: queryThingTypeId
+                  }
+                }"
+                class="font-weight-regular"
+                >{{ getThingType(queryThingTypeId) | thingTypeName }}</nuxt-link
+              >
+            </h4>
+            <h4 v-if="queryStationId && org" class="subtitle-2">
               <v-icon class="mr-2" small>{{ mdiNoteOutline }}</v-icon
               >Station:
               <nuxt-link
@@ -43,7 +71,7 @@
                 >{{ getStation(queryStationId).name }}</nuxt-link
               >
             </h4>
-            <h4 v-if="queryDatastreamId" class="subtitle-2">
+            <h4 v-if="queryDatastreamId && org" class="subtitle-2">
               <v-icon class="mr-2" small>{{ mdiChartTimelineVariant }}</v-icon
               >Datastream:
               <nuxt-link
@@ -58,7 +86,7 @@
                 >{{ getDatastream(queryDatastreamId).name }}</nuxt-link
               >
             </h4>
-            <h4 v-if="queryAnnotationId" class="subtitle-2">
+            <h4 v-if="queryAnnotationId && org" class="subtitle-2">
               <v-icon class="mr-2" small>{{ mdiNoteOutline }}</v-icon
               >Annotation:
               <nuxt-link
@@ -77,6 +105,7 @@
 
           <v-card-actions>
             <v-btn
+              v-if="org"
               :to="{
                 name: `orgs-orgSlug-${name}`,
                 params: {
@@ -87,8 +116,18 @@
               text
               x-small
               >Show all <slot>Items</slot></v-btn
-            ></v-card-actions
-          >
+            >
+            <v-btn
+              v-else
+              :to="{
+                name
+              }"
+              exact
+              text
+              x-small
+              >Show all <slot>Items</slot></v-btn
+            >
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -110,8 +149,10 @@ export default {
   computed: {
     ...mapGetters({
       getAnnotation: 'annotations/get',
+      getCompany: 'companies/get',
       getDatastream: 'datastreams/get',
-      getStation: 'stations/get'
+      getStation: 'stations/get',
+      getThingType: 'thing-types/get'
     })
   }
 }

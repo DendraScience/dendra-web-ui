@@ -228,10 +228,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-progress-circular
-            indeterminate
-            color="white"
-          ></v-progress-circular>
+          <v-progress-linear indeterminate color="white"></v-progress-linear>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -273,6 +270,7 @@ export default {
   middleware: [
     'check-org',
     'dt-unit-vocabulary',
+    'fetch-thing-type',
     'fetch-station',
     'fetch-annotation'
   ],

@@ -88,12 +88,6 @@ export default {
       })
     },
 
-    edit() {
-      this.setEditorDirty(0)
-      this.setEditorTitle('Edit annotation')
-      this.setEditing(true)
-    },
-
     initInstance() {
       this.instance = {
         actions: [],

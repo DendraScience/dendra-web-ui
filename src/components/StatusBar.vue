@@ -7,9 +7,12 @@
     :timeout="status.type === 'error' ? 10000 : 3000"
   >
     {{ status.message }}
-    <v-btn dark text @click="snackbar = null">
-      Close
-    </v-btn>
+
+    <template v-slot:action="{ attrs }">
+      <v-btn v-bind="attrs" dark text @click="snackbar = null">
+        Close
+      </v-btn>
+    </template>
   </v-snackbar>
 </template>
 

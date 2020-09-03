@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    :color="$route.name === 'index' ? 'secondary' : 'grey darken-4'"
+    :color="isHome ? 'secondary' : 'grey darken-4'"
     app
     dark
     fixed
@@ -22,6 +22,10 @@
       >
         {{ orgName }}
       </nuxt-link>
+
+      <span v-else>
+        Dendra.Science
+      </span>
     </v-toolbar-title>
     <v-spacer />
     <!-- TODO: Deprecate -->
@@ -85,7 +89,11 @@ export default {
       orgSlug: 'orgSlug'
     }),
 
-    ...mapState(['auth'])
+    ...mapState(['auth']),
+
+    isHome() {
+      return this.$route.name === 'index'
+    }
   },
 
   methods: {

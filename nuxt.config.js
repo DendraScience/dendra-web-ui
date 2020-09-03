@@ -203,12 +203,20 @@ module.exports = {
     { src: '~/plugins/web-workers', ssr: false }
   ],
 
+  /**
+   * Nuxt.js misc
+   */
+  mode: 'spa',
+
   router: {
     middleware: ['auth', 'ability']
   },
 
   srcDir: 'src',
 
+  /**
+   * Vuetify
+   */
   vuetify: {
     icons: {
       iconfont: 'mdiSvg'

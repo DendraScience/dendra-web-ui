@@ -1,5 +1,8 @@
 import Highcharts from 'highcharts'
 
+export const GROUP_KEY = '___group'
+export const TOUCH_EVENTS = ['mousemove', 'touchmove', 'touchstart']
+
 export function defaultOptions(title = '', subtitle = '') {
   return {
     chart: {
@@ -55,7 +58,11 @@ export function syncExtremes(e) {
   // Prevent feedback loop
   if (e.trigger !== 'syncExtremes') {
     Highcharts.charts.forEach(function (chart) {
-      if (chart && chart !== thisChart && chart.__group === thisChart.__group) {
+      if (
+        chart &&
+        chart !== thisChart &&
+        chart[GROUP_KEY] === thisChart[GROUP_KEY]
+      ) {
         if (chart.xAxis[0].setExtremes) {
           // It is null while updating
           chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, {

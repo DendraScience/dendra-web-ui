@@ -10,7 +10,13 @@
 
             <v-expansion-panel-content>
               <v-container fluid px-0>
-                <v-row no-gutters>
+                <v-row v-if="!indexer">
+                  <v-col>
+                    <v-progress-linear indeterminate></v-progress-linear>
+                  </v-col>
+                </v-row>
+
+                <v-row v-else no-gutters>
                   <v-col v-if="!stationId && stations" cols="12" md="3" sm="6">
                     <v-list dense>
                       <v-subheader>Stations</v-subheader>
@@ -31,12 +37,11 @@
                             )
                           "
                         >
-                          <template v-slot:default="{ active, toggle }">
+                          <template v-slot:default="{ active }">
                             <v-list-item-action>
                               <v-checkbox
-                                v-model="active"
+                                :input-value="active"
                                 color="primary"
-                                @click="toggle"
                               ></v-checkbox>
                             </v-list-item-action>
 
@@ -85,12 +90,11 @@
                             )
                           "
                         >
-                          <template v-slot:default="{ active, toggle }">
+                          <template v-slot:default="{ active }">
                             <v-list-item-action>
                               <v-checkbox
-                                v-model="active"
+                                :input-value="active"
                                 color="primary"
-                                @click="toggle"
                               ></v-checkbox>
                             </v-list-item-action>
 

@@ -33,18 +33,18 @@ export default {
 
   middleware: ['no-org', 'no-auth-redirect-login'],
 
+  async fetch({ store }) {
+    const { auth } = store.state
+
+    await store.dispatch('users/get', auth.user._id)
+  },
+
   computed: {
     ...mapGetters({
       getUser: 'users/get'
     }),
 
     ...mapState(['auth'])
-  },
-
-  async fetch({ store }) {
-    const { auth } = store.state
-
-    await store.dispatch('users/get', auth.user._id)
   },
 
   methods: {

@@ -15,6 +15,11 @@ import {
   utcOffsetHours
 } from '@/lib/date'
 import math from '@/lib/math'
+import { companyName, thingTypeName } from '@/lib/moniker'
+
+Vue.filter('companyName', value => {
+  return companyName(value)
+})
 
 Vue.filter('dateFormat', (value, defaultValue = '', ...args) => {
   return value === undefined || value === null
@@ -80,6 +85,10 @@ Vue.filter('round', (value, defaultValue = '', n = 0) => {
   return value === undefined || value === null
     ? defaultValue
     : math.round(value, n)
+})
+
+Vue.filter('thingTypeName', value => {
+  return thingTypeName(value)
 })
 
 Vue.filter('timeFormat', (value, defaultValue = '', ...args) => {

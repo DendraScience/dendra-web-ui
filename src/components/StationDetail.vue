@@ -112,7 +112,7 @@
               }"
               dark
               nuxt
-              ><v-icon left flat>{{ mdiCheckCircle }}</v-icon
+              ><v-icon left flat>{{ mdiViewDashboard }}</v-icon
               >Station Dashboard</v-btn
             >
           </v-card-actions>
@@ -163,6 +163,12 @@
           hide-actions
           total-label="disabled"
         />
+      </v-col>
+    </v-row>
+
+    <v-row v-if="mediaImages.length && !editing">
+      <v-col>
+        <detail-images :items="mediaImages" />
       </v-col>
     </v-row>
 
@@ -299,6 +305,7 @@ import DetailExternalLinks from '@/components/DetailExternalLinks'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailGeneralConfig from '@/components/DetailGeneralConfig'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
+import DetailImages from '@/components/DetailImages'
 import DetailMembers from '@/components/DetailMembers'
 import ExternalLinkFields from '@/components/ExternalLinkFields'
 import GeneralConfigFields from '@/components/GeneralConfigFields'
@@ -318,6 +325,7 @@ export default {
     DetailExternalRefs,
     DetailGeneralConfig,
     DetailGeoPoint,
+    DetailImages,
     DetailMembers,
     ExternalLinkFields,
     GeneralConfigFields,
@@ -357,6 +365,16 @@ export default {
   }),
 
   computed: {
+    media() {
+      return this.value.media || []
+    },
+
+    mediaImages() {
+      return this.media
+        .filter(media => media.type === 'photo')
+        .map(media => ({ url: media.sizes.medium.url }))
+    },
+
     utcOffset() {
       return this.editing
         ? timeZoneOffsets[this.value.time_zone]

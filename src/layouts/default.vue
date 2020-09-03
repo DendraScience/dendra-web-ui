@@ -1,15 +1,15 @@
 <template>
-  <v-app light>
+  <v-app>
     <main-navigation-drawer />
     <main-toolbar />
 
-    <v-content>
+    <v-main>
       <status-bar v-model="status" />
 
       <div>
         <nuxt />
       </div>
-    </v-content>
+    </v-main>
 
     <session-expired-dialog @status="status = $event" />
   </v-app>

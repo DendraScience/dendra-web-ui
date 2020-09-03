@@ -5,8 +5,7 @@
 <script>
 import Highcharts from 'highcharts'
 import _debounce from 'lodash/debounce'
-
-const TOUCH_EVENTS = ['mousemove', 'touchmove', 'touchstart']
+import { GROUP_KEY, TOUCH_EVENTS } from '@/lib/chart'
 
 export default {
   props: {
@@ -74,55 +73,17 @@ export default {
       WOOT: Far improved way of sync charts!!!
       Don't use: https://www.highcharts.com/demo/synchronized-charts
      */
-    this.debouncedTouch = _debounce(e => {
-      const { chart: thisChart } = this
-
-      // Find coordinates within the chart
-      const event = thisChart.pointer.normalize(e)
-      if (!event) return
-
-      let point
-
-      for (let i = 0; i < thisChart.series.length; i++) {
-        const series = thisChart.series[i]
-        if (series.visible) {
-          point = series.searchPoint(event, true)
-          if (point) break
-        }
-      }
-
-      if (!point) return
-
-      for (let i = 0; i < Highcharts.charts.length; i++) {
-        const chart = Highcharts.charts[i]
-
-        if (!chart || chart === thisChart) continue
-
-        for (let j = 0; j < chart.series.length; j++) {
-          const series = chart.series[j]
-          if (series.visible) {
-            const index = series.processedXData.indexOf(point.x)
-
-            if (index > -1) {
-              const foundPoint = series.points[index]
-              foundPoint.onMouseOver()
-              chart.xAxis[0].drawCrosshair(null, foundPoint)
-              break
-            }
-          }
-        }
-      }
-    }, 200)
+    this.debouncedTouchHandler = _debounce(this.touchHandler, 100)
   },
 
   mounted() {
     const chartRef = this.$refs.chart
     this.chart = Highcharts.chart(chartRef, this.options)
-    this.chart.__group = this.group
+    this.chart[GROUP_KEY] = this.group
 
     if (this.syncCrosshairs)
       TOUCH_EVENTS.forEach(eventType =>
-        chartRef.addEventListener(eventType, this.debouncedTouch)
+        chartRef.addEventListener(eventType, this.debouncedTouchHandler)
       )
 
     if (this.bus) {
@@ -135,11 +96,11 @@ export default {
     const chartRef = this.$refs.chart
     if (chartRef)
       TOUCH_EVENTS.forEach(eventType =>
-        chartRef.removeEventListener(eventType, this.debouncedTouch)
+        chartRef.removeEventListener(eventType, this.debouncedTouchHandler)
       )
 
-    this.debouncedTouch.cancel()
-    this.debouncedTouch = null
+    this.debouncedTouchHandler.cancel()
+    this.debouncedTouchHandler = null
 
     this.chart.destroy()
     this.chart = null
@@ -175,6 +136,55 @@ export default {
 
       while (chart.series.length > 0) {
         chart.series[0].remove()
+      }
+    },
+
+    touchHandler(e) {
+      const { chart: thisChart } = this
+
+      // Find coordinates within the chart
+      const event = thisChart.pointer.normalize(e)
+      if (!event) return
+
+      let point
+
+      for (let i = 0; i < thisChart.series.length; i++) {
+        const series = thisChart.series[i]
+        if (series.visible) {
+          point = series.searchPoint(event, true)
+          if (point) break
+        }
+      }
+
+      if (!point) return
+
+      for (let i = 0; i < Highcharts.charts.length; i++) {
+        const chart = Highcharts.charts[i]
+
+        if (
+          chart &&
+          chart !== thisChart &&
+          chart[GROUP_KEY] === thisChart[GROUP_KEY]
+        ) {
+          for (let j = 0; j < chart.series.length; j++) {
+            const series = chart.series[j]
+
+            if (series.visible) {
+              const otherPoint = series.searchPoint(
+                {
+                  chartX: chart.xAxis[0].toPixels(point.x, false),
+                  chartY: event.chartY
+                },
+                true
+              )
+              if (otherPoint) {
+                otherPoint.onMouseOver()
+                chart.xAxis[0].drawCrosshair(null, otherPoint)
+                break
+              }
+            }
+          }
+        }
       }
     },
 

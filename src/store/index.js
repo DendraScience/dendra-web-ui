@@ -17,6 +17,9 @@ export const plugins = [
   service('annotations', {
     paginate: true
   }),
+  service('companies', {
+    paginate: true
+  }),
   service('datastreams', {
     paginate: true
   }),
@@ -32,6 +35,9 @@ export const plugins = [
   service('system/schemas'),
   service('system/time'),
   service('system/timezones'),
+  service('thing-types', {
+    paginate: true
+  }),
   service('uoms'),
   service('users'),
   service('vocabularies'),
@@ -79,6 +85,20 @@ export const getters = {
     }
   },
 
+  company(state, { 'companies/get': get }) {
+    return state.companyId && get(state.companyId)
+  },
+  companyId(state) {
+    return state.companyId
+  },
+
+  thingType(state, { 'thing-types/get': get }) {
+    return state.thingTypeId && get(state.thingTypeId)
+  },
+  thingTypeId(state) {
+    return state.thingTypeId
+  },
+
   org(state, { 'organizations/get': get }) {
     return state.orgId && get(state.orgId)
   },
@@ -115,6 +135,12 @@ export const getters = {
 }
 
 export const mutations = {
+  clearCompany(state) {
+    state.companyId = null
+  },
+  clearThingType(state) {
+    state.thingTypeId = null
+  },
   clearOrg(state) {
     state.orgId = null
   },
@@ -132,6 +158,12 @@ export const mutations = {
     state.abilityUpdateTime = value
   },
 
+  setCompany(state, value) {
+    state.companyId = value && value._id
+  },
+  setThingType(state, value) {
+    state.thingTypeId = value && value._id
+  },
   setOrg(state, value) {
     state.orgId = value && value._id
   },

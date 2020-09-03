@@ -7,6 +7,7 @@ import {
   mdiAsterisk,
   mdiCalculator,
   mdiCalendar,
+  mdiChartMultiple,
   mdiChartTimelineVariant,
   mdiCheckboxBlankOutline,
   mdiCheckboxMarked,
@@ -22,6 +23,7 @@ import {
   mdiEye,
   mdiEyeOff,
   mdiHelpRhombusOutline,
+  mdiHexagonSlice6,
   mdiMagnify,
   mdiMapClock,
   mdiMapMarker,
@@ -33,11 +35,13 @@ import {
   mdiNature,
   mdiNoteOutline,
   mdiNoteText,
+  mdiOfficeBuilding,
   mdiOpenInApp,
   mdiOpenInNew,
   mdiPencil,
   mdiPlus,
   mdiViewAgenda,
+  mdiViewDashboard,
   mdiViewList
 } from '@mdi/js'
 
@@ -50,6 +54,7 @@ Vue.mixin({
     mdiAsterisk,
     mdiCalculator,
     mdiCalendar,
+    mdiChartMultiple,
     mdiChartTimelineVariant,
     mdiCheckboxBlankOutline,
     mdiCheckboxMarked,
@@ -65,6 +70,7 @@ Vue.mixin({
     mdiEye,
     mdiEyeOff,
     mdiHelpRhombusOutline,
+    mdiHexagonSlice6,
     mdiMagnify,
     mdiMapClock,
     mdiMapMarker,
@@ -76,11 +82,13 @@ Vue.mixin({
     mdiNature,
     mdiNoteOutline,
     mdiNoteText,
+    mdiOfficeBuilding,
     mdiOpenInApp,
     mdiOpenInNew,
     mdiPencil,
     mdiPlus,
     mdiViewAgenda,
+    mdiViewDashboard,
     mdiViewList
   })
 })

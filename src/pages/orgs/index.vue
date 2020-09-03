@@ -71,9 +71,7 @@
                 nuxt
               >
                 <v-list-item-action
-                  ><v-icon>{{
-                    mdiChartTimelineVariant
-                  }}</v-icon></v-list-item-action
+                  ><v-icon>{{ mdiChartMultiple }}</v-icon></v-list-item-action
                 >
                 <v-list-item-content>
                   <v-list-item-title>Data query</v-list-item-title>

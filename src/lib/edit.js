@@ -12,6 +12,7 @@ const arrays = [
   'station_ids'
 ]
 const fields = [
+  'company_type',
   'derivation_description',
   'derivation_method',
   'description',
@@ -21,13 +22,18 @@ const fields = [
   'is_geo_protected',
   'is_hidden',
   'is_stationary',
+  'model',
   'name',
+  'oem_company_id',
+  'reseller_company_id',
   'slug',
   'source_type',
   'state',
   'station_id',
+  'thing_type_id',
   'time_zone',
-  'title'
+  'title',
+  'url'
 ]
 const objects = [
   'access_levels',

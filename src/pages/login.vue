@@ -13,7 +13,7 @@
 
     <v-row>
       <v-col cols="12" md="6">
-        <ValidationObserver ref="observer" v-slot="{ valid }">
+        <ValidationObserver ref="observer">
           <form @submit.prevent="submit">
             <ValidationProvider
               v-slot="{ errors }"
