@@ -240,6 +240,30 @@ export default {
     stationId: { default: null, type: String }
   },
 
+  fetch() {
+    this.fetchStations({
+      paginate: false,
+      query: this.stationsQuery
+    }).then(res => (this.stations = res.data)) // Keep a stable-ordered local copy
+
+    this.fetchVocabularies({ paginate: false, query: this.vocabulariesQuery })
+
+    const fetchSpec = {
+      orgId: this.org._id,
+      schemeId: this.schemeId
+    }
+
+    if (this.isEnabled !== null) fetchSpec.isEnabled = this.isEnabled
+    else if (!this.showDisabled) fetchSpec.isEnabled = true
+
+    if (this.stationId) fetchSpec.stationId = this.stationId
+
+    this.datastreamFacetWorker.postMessage({
+      id: 0,
+      fetchSpec
+    })
+  },
+
   data: () => ({
     headers: [
       {
@@ -443,8 +467,6 @@ export default {
     if (!this.$scopedSlots.actions) headers = headers.slice(0, -1)
 
     this.headers = headers
-
-    this.fetch()
   },
 
   methods: {
@@ -491,30 +513,6 @@ export default {
       })
 
       this.facetQuery = query
-    },
-
-    fetch() {
-      this.fetchStations({
-        paginate: false,
-        query: this.stationsQuery
-      }).then(res => (this.stations = res.data)) // Keep a stable-ordered local copy
-
-      this.fetchVocabularies({ paginate: false, query: this.vocabulariesQuery })
-
-      const fetchSpec = {
-        orgId: this.org._id,
-        schemeId: this.schemeId
-      }
-
-      if (this.isEnabled !== null) fetchSpec.isEnabled = this.isEnabled
-      else if (!this.showDisabled) fetchSpec.isEnabled = true
-
-      if (this.stationId) fetchSpec.stationId = this.stationId
-
-      this.datastreamFacetWorker.postMessage({
-        id: 0,
-        fetchSpec
-      })
     },
 
     workerMessageHandler(event) {

@@ -83,7 +83,7 @@
             <standard-identifier :value="value" />
           </v-container>
 
-          <v-card-actions v-if="!editing" class="flex-wrap">
+          <v-card-actions v-if="!editing">
             <v-btn v-if="value.url" :href="value.url" dark target="_blank"
               ><v-icon left>{{ mdiOpenInApp }}</v-icon>
               Visit Website

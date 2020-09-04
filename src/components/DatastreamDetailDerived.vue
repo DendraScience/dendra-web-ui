@@ -107,6 +107,36 @@ export default {
     value: { type: Object, required: true }
   },
 
+  async fetch() {
+    const datastreamIds = this.datastreamIds
+    const stationIds = []
+
+    // Fetch referenced datastreams
+    if (datastreamIds.length) {
+      const res = await this.fetchDatastreams({
+        query: {
+          _id: { $in: datastreamIds },
+          $limit: 2000,
+          $select: ['_id', 'name', 'station_id']
+        }
+      })
+
+      if (res && res.data && res.data.length)
+        res.data.forEach(item => stationIds.push(item.station_id))
+    }
+
+    // Fetch referenced stations
+    if (stationIds.length) {
+      await this.fetchStations({
+        query: {
+          _id: { $in: _uniq(stationIds) },
+          $limit: 2000,
+          $select: ['_id', 'name']
+        }
+      })
+    }
+  },
+
   data: () => ({
     headers: [
       {
@@ -160,45 +190,11 @@ export default {
     }
   },
 
-  mounted() {
-    this.fetch()
-  },
-
   methods: {
     ...mapActions({
       fetchDatastreams: 'datastreams/find',
       fetchStations: 'stations/find'
-    }),
-
-    async fetch() {
-      const datastreamIds = this.datastreamIds
-      const stationIds = []
-
-      // Fetch referenced datastreams
-      if (datastreamIds.length) {
-        const res = await this.fetchDatastreams({
-          query: {
-            _id: { $in: datastreamIds },
-            $limit: 2000,
-            $select: ['_id', 'name', 'station_id']
-          }
-        })
-
-        if (res && res.data && res.data.length)
-          res.data.forEach(item => stationIds.push(item.station_id))
-      }
-
-      // Fetch referenced stations
-      if (stationIds.length) {
-        await this.fetchStations({
-          query: {
-            _id: { $in: _uniq(stationIds) },
-            $limit: 2000,
-            $select: ['_id', 'name']
-          }
-        })
-      }
-    }
+    })
   }
 }
 </script>

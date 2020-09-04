@@ -69,6 +69,26 @@ export default {
     value: { type: Object, required: true }
   },
 
+  async fetch() {
+    const personIds = this.involvedParties
+      .filter(party => party.person_id)
+      .map(party => party.person_id)
+
+    // HACK: Always include the current user
+    personIds.push(this.auth.user.person_id)
+
+    // Fetch referenced persons
+    if (personIds.length) {
+      await this.fetchPersons({
+        query: {
+          _id: { $in: personIds },
+          $limit: 2000,
+          $select: ['_id', 'email', 'full_name', 'name']
+        }
+      })
+    }
+  },
+
   data: () => ({
     headers: [
       {
@@ -131,34 +151,10 @@ export default {
     }
   },
 
-  mounted() {
-    this.fetch()
-  },
-
   methods: {
     ...mapActions({
       fetchPersons: 'persons/find'
-    }),
-
-    async fetch() {
-      const personIds = this.involvedParties
-        .filter(party => party.person_id)
-        .map(party => party.person_id)
-
-      // HACK: Always include the current user
-      personIds.push(this.auth.user.person_id)
-
-      // Fetch referenced persons
-      if (personIds.length) {
-        await this.fetchPersons({
-          query: {
-            _id: { $in: personIds },
-            $limit: 2000,
-            $select: ['_id', 'email', 'full_name', 'name']
-          }
-        })
-      }
-    }
+    })
   }
 }
 </script>

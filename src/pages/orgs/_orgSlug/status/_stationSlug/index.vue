@@ -307,6 +307,17 @@ export default {
 
   mixins: [timer],
 
+  fetch() {
+    const fetchSpec = {
+      stationId: this.station._id
+    }
+
+    this.stationDashboardWorker.postMessage({
+      id: 0,
+      fetchSpec
+    })
+  },
+
   data: () => ({
     charts: [],
     current: newCurrent(),
@@ -465,9 +476,9 @@ export default {
     this.stationDashboardWorker = null
   },
 
-  mounted() {
-    this.fetch()
-  },
+  // mounted() {
+  //   this.fetch()
+  // },
 
   methods: {
     addCumulativeRainfallChart(
@@ -943,17 +954,6 @@ export default {
           sync: true
         })
       }
-    },
-
-    fetch() {
-      const fetchSpec = {
-        stationId: this.station._id
-      }
-
-      this.stationDashboardWorker.postMessage({
-        id: 0,
-        fetchSpec
-      })
     },
 
     fetchBarometricPressure(

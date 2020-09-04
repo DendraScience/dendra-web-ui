@@ -20,7 +20,7 @@
                 <v-tab>
                   Chart
                 </v-tab>
-                <v-tab disabled>
+                <v-tab>
                   Download
                 </v-tab>
 
@@ -66,6 +66,7 @@
                       :show-hidden="showOutliers"
                       :show-options="showOutliers"
                       :station-id="queryStationId"
+                      :thing-type-id="queryThingTypeId"
                       show-link
                       @current-items="currentItems = $event"
                     >
@@ -103,9 +104,9 @@
 
                 <v-tab-item>
                   <v-card v-if="cartCount || !charts.length" tile>
-                    <query-header>
+                    <content-header>
                       Selected datastreams
-                    </query-header>
+                    </content-header>
 
                     <chart-datastream-cart :datastreams="selectedDatastreams" />
 
@@ -159,9 +160,61 @@
 
                 <v-tab-item>
                   <v-card tile>
-                    <query-header>
-                      Coming soon!
-                    </query-header>
+                    <content-header>
+                      How To Download
+                      <template v-slot:content>
+                        <v-row>
+                          <v-col class="body-1" cols="12" md="6">
+                            <p>
+                              Dendra’s primary download function is nearing
+                              completion. Until it is ready, there is a simple
+                              workaround to get your data.
+                            </p>
+
+                            <ol>
+                              <li>
+                                Go back to the previous tab,
+                                <strong>Chart</strong>.
+                              </li>
+                              <li>
+                                If you haven’t already, please set your target
+                                time period and graph all the datastreams that
+                                you would like to download.
+                              </li>
+                              <li>
+                                Once the graph is complete, there will be a menu
+                                in the top right corner of the plot represented
+                                by three vertical dots (<v-icon>{{
+                                  mdiDotsVertical
+                                }}</v-icon
+                                >).
+                              </li>
+                              <li>
+                                Select from the menu,
+                                <strong>Export as…</strong> (see image)
+                              </li>
+                              <li>
+                                Choose <strong>CSV file</strong> (other options
+                                will save the plot as an image).
+                              </li>
+                              <li>Click <strong>Export</strong>.</li>
+                              <li>
+                                Your data will be saved under the title of the
+                                graph, e.g.
+                                <code>data-i-want-to-download.csv</code>.
+                              </li>
+                            </ol>
+                          </v-col>
+                          <v-col cols="12" md="6">
+                            <v-img
+                              :src="
+                                require('@/assets/download-data-from-graph.jpg')
+                              "
+                            />
+                          </v-col>
+                        </v-row>
+                      </template>
+                    </content-header>
                   </v-card>
                 </v-tab-item>
               </v-tabs>
@@ -249,6 +302,7 @@ import { dateFormats } from '@/lib/date'
 import { idRandom } from '@/lib/utils'
 import routeQuery from '@/mixins/route-query'
 import ChartDatastreamCart from '@/components/ChartDatastreamCart'
+import ContentHeader from '@/components/ContentHeader'
 import DatastreamCharts from '@/components/DatastreamCharts'
 import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
 import DatastreamSearch from '@/components/DatastreamSearch'
@@ -258,6 +312,7 @@ import QueryHeader from '@/components/QueryHeader'
 export default {
   components: {
     ChartDatastreamCart,
+    ContentHeader,
     DatastreamCharts,
     DatastreamFacetSearch,
     DatastreamSearch,

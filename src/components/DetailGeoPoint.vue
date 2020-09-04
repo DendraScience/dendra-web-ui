@@ -65,7 +65,7 @@
       </v-row>
 
       <v-row v-else>
-        <v-col class="grey--text">No coordinates defined</v-col>
+        <v-col><v-subheader>No coordinates defined</v-subheader></v-col>
       </v-row>
     </v-container>
 

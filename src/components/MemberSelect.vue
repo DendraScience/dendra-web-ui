@@ -28,6 +28,48 @@ export default {
     value: { default: null, type: Object }
   },
 
+  async fetch() {
+    let items = []
+
+    const res = await this.fetchMemberships({
+      query: {
+        organization_id: this.org._id,
+        $limit: 2000,
+        $select: ['_id', 'person_id']
+      }
+    })
+
+    if (res && res.data && res.data.length) {
+      const memberships = res.data
+      const personIds = memberships.map(membership => membership.person_id)
+
+      // Fetch referenced persons
+      if (personIds.length) {
+        await this.fetchPersons({
+          query: {
+            _id: { $in: personIds },
+            $limit: 2000,
+            $select: ['_id', 'email', 'full_name', 'name']
+          }
+        })
+      }
+
+      items = _sortBy(
+        memberships.map(membership => {
+          const id = membership.person_id
+          const person = this.getPerson(membership.person_id)
+          return {
+            text: person ? person.full_name || person.name : id,
+            value: id
+          }
+        }),
+        ['text']
+      )
+    }
+
+    this.items = items
+  },
+
   data: () => ({
     items: []
   }),
@@ -38,57 +80,11 @@ export default {
     })
   },
 
-  mounted() {
-    this.fetch()
-  },
-
   methods: {
     ...mapActions({
       fetchMemberships: 'memberships/find',
       fetchPersons: 'persons/find'
-    }),
-
-    async fetch() {
-      let items = []
-
-      const res = await this.fetchMemberships({
-        query: {
-          organization_id: this.org._id,
-          $limit: 2000,
-          $select: ['_id', 'person_id']
-        }
-      })
-
-      if (res && res.data && res.data.length) {
-        const memberships = res.data
-        const personIds = memberships.map(membership => membership.person_id)
-
-        // Fetch referenced persons
-        if (personIds.length) {
-          await this.fetchPersons({
-            query: {
-              _id: { $in: personIds },
-              $limit: 2000,
-              $select: ['_id', 'email', 'full_name', 'name']
-            }
-          })
-        }
-
-        items = _sortBy(
-          memberships.map(membership => {
-            const id = membership.person_id
-            const person = this.getPerson(membership.person_id)
-            return {
-              text: person ? person.full_name || person.name : id,
-              value: id
-            }
-          }),
-          ['text']
-        )
-      }
-
-      this.items = items
-    }
+    })
   }
 }
 </script>

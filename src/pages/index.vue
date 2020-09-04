@@ -4,6 +4,7 @@
       <v-col>
         <v-img
           :src="require('@/assets/angelo-reserve.jpg')"
+          gradient="to top right, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2)"
           max-height="300"
           position="top"
         >

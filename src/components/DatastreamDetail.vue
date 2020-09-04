@@ -92,7 +92,7 @@
             <standard-identifier :value="value" />
           </v-container>
 
-          <v-card-actions v-if="!editing" class="flex-wrap">
+          <v-card-actions v-if="!editing">
             <v-btn
               :to="{
                 name: 'orgs-orgSlug-stations-stationId',
@@ -133,6 +133,12 @@
           hide-actions
           total-label="disabled"
         />
+      </v-col>
+    </v-row>
+
+    <v-row v-if="!editing && value.thing_type_id">
+      <v-col>
+        <detail-thing-type :value="value" />
       </v-col>
     </v-row>
 
@@ -402,6 +408,7 @@ import DetailGeneralConfig from '@/components/DetailGeneralConfig'
 import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailMembers from '@/components/DetailMembers'
 import DetailTerms from '@/components/DetailTerms'
+import DetailThingType from '@/components/DetailThingType'
 import EvaluateActionFields from '@/components/EvaluateActionFields'
 import GeneralConfigFields from '@/components/GeneralConfigFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
@@ -428,6 +435,7 @@ export default {
     DetailGeoPoint,
     DetailMembers,
     DetailTerms,
+    DetailThingType,
     EvaluateActionFields,
     GeneralConfigFields,
     MemberRoleFields,

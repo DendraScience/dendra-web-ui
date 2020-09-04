@@ -1,13 +1,13 @@
 <template>
   <v-card>
     <v-container fluid>
-      <v-row v-if="!!this.$slots.default" dense>
+      <v-row v-if="!!this.$scopedSlots.default" dense>
         <v-col class="headline">
           <slot>Images</slot>
         </v-col>
       </v-row>
 
-      <v-row dense>
+      <v-row>
         <v-col
           v-for="(item, index) in slicedItems"
           :key="index"
@@ -20,8 +20,8 @@
       </v-row>
     </v-container>
 
-    <v-card-actions>
-      <v-btn v-if="hasMore" @click="isAllShown = true">Show All</v-btn>
+    <v-card-actions v-if="hasMore">
+      <v-btn @click="isAllShown = true">Show All</v-btn>
     </v-card-actions>
   </v-card>
 </template>

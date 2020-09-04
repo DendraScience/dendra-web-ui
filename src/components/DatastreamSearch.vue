@@ -258,7 +258,8 @@ export default {
     showHidden: { default: false, type: Boolean },
     showOptions: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean },
-    stationId: { default: null, type: String }
+    stationId: { default: null, type: String },
+    thingTypeId: { default: null, type: String }
   },
 
   data: () => ({
@@ -355,7 +356,8 @@ export default {
           'organization_id',
           'station_id',
           'station_lookup',
-          'terms'
+          'terms',
+          'thing_type_id'
         ],
         $sort: { name: 1, _id: 1 }
       }
@@ -394,6 +396,8 @@ export default {
       } else if (selectedStationIds && selectedStationIds.length) {
         ands.push({ station_id: { $in: selectedStationIds } })
       }
+
+      if (this.thingTypeId) ands.push({ thing_type_id: this.thingTypeId })
 
       if (this.annotation)
         ands.push({

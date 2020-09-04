@@ -99,7 +99,7 @@
             <standard-identifier :value="value" />
           </v-container>
 
-          <v-card-actions v-if="!editing" class="flex-wrap">
+          <v-card-actions v-if="!editing">
             <v-btn
               v-if="value.oem_company_id"
               :to="{
@@ -133,7 +133,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="externalImages.length && !editing">
+    <v-row v-if="!editing && externalImages.length">
       <v-col>
         <detail-images :items="externalImages">
           {{ value | thingTypeName }} {{ value.model }}

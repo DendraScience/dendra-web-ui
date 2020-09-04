@@ -26,6 +26,24 @@ export default {
     value: { type: Object, required: true }
   },
 
+  async fetch() {
+    const userIds = []
+
+    if (this.value.created_by) userIds.push(this.value.created_by)
+    if (this.value.updated_by) userIds.push(this.value.updated_by)
+
+    // Fetch referenced users
+    if (userIds.length) {
+      await this.fetchUsers({
+        query: {
+          _id: { $in: userIds },
+          $limit: 2000,
+          $select: ['_id', 'full_name', 'name']
+        }
+      })
+    }
+  },
+
   computed: {
     ...mapGetters({
       getUser: 'users/get'
@@ -42,32 +60,10 @@ export default {
     }
   },
 
-  mounted() {
-    this.fetch()
-  },
-
   methods: {
     ...mapActions({
       fetchUsers: 'users/find'
-    }),
-
-    async fetch() {
-      const userIds = []
-
-      if (this.value.created_by) userIds.push(this.value.created_by)
-      if (this.value.updated_by) userIds.push(this.value.updated_by)
-
-      // Fetch referenced users
-      if (userIds.length) {
-        await this.fetchUsers({
-          query: {
-            _id: { $in: userIds },
-            $limit: 2000,
-            $select: ['_id', 'full_name', 'name']
-          }
-        })
-      }
-    }
+    })
   }
 }
 </script>

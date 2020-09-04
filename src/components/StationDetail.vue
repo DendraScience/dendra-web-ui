@@ -101,7 +101,7 @@
             <standard-identifier :value="value" />
           </v-container>
 
-          <v-card-actions v-if="!editing" class="flex-wrap">
+          <v-card-actions v-if="!editing">
             <v-btn
               :to="{
                 name: 'orgs-orgSlug-status-stationSlug',
@@ -166,9 +166,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="mediaImages.length && !editing">
+    <v-row v-if="!editing && mediaImages.length">
       <v-col>
-        <detail-images :items="mediaImages" />
+        <detail-images :items="mediaImages">{{
+          value.full_name || value.name
+        }}</detail-images>
       </v-col>
     </v-row>
 
