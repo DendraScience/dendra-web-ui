@@ -13,7 +13,8 @@
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
-import { createData } from '@/lib/edit'
+import _merge from 'lodash/merge'
+import { createData, defaultAnnotation } from '@/lib/edit'
 import AnnotationDetail from '@/components/AnnotationDetail'
 
 export default {
@@ -89,21 +90,14 @@ export default {
     },
 
     initInstance() {
-      this.instance = {
-        actions: [],
-        datastream_ids: [],
-        description: '',
-        intervals: [],
+      this.instance = _merge(defaultAnnotation(this.org), {
         involved_parties: [
           {
             person_id: this.auth.user.person_id,
             roles: ['contact', 'reporter']
           }
-        ],
-        organization_id: this.org._id,
-        station_ids: [],
-        title: ''
-      }
+        ]
+      })
     },
 
     async save() {

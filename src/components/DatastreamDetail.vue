@@ -136,9 +136,14 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="!editing && value.thing_type_id">
+    <v-row>
       <v-col>
-        <detail-thing-type :value="value" />
+        <detail-thing-type
+          :editing="editing"
+          :value="value"
+          @add="addThingType"
+          @remove="removeThingType"
+        />
       </v-col>
     </v-row>
 
@@ -303,6 +308,46 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="thingTypeDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar dark color="primary">
+          <v-btn icon dark @click="thingTypeDialog = false">
+            <v-icon>{{ mdiClose }}</v-icon>
+          </v-btn>
+          <v-toolbar-title>Select equipment</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn dark text @click="thingTypeDialogCommit">OK</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <thing-type-search show-disabled>
+          <template v-slot:select="{ item }">
+            <v-icon
+              color="primary"
+              @click="
+                resetCart()
+                incrementQuantity({
+                  id: item._id,
+                  max: 1
+                })
+              "
+              >{{
+                getQuantity(item._id)
+                  ? mdiCheckboxMarked
+                  : mdiCheckboxBlankOutline
+              }}</v-icon
+            >
+          </template>
+        </thing-type-search>
+      </v-card>
+    </v-dialog>
+
     <detail-dialog ref="termsDialog" v-model="terms" @commit="commitTerms">
       <template v-slot:title>Specify terms</template>
       <template>
@@ -416,6 +461,7 @@ import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 import TermsFields from '@/components/TermsFields'
+import ThingTypeSearch from '@/components/ThingTypeSearch'
 import TimeZonePicker from '@/components/TimeZonePicker'
 
 export default {
@@ -443,6 +489,7 @@ export default {
     StandardIdentifier,
     StandardOptions,
     TermsFields,
+    ThingTypeSearch,
     TimeZonePicker,
     ValidationProvider
   },
@@ -467,6 +514,7 @@ export default {
     const { org } = this
     return {
       datastreamDialog: false,
+      thingTypeDialog: false,
 
       member: {
         roles: [
@@ -572,6 +620,12 @@ export default {
       this.datastreamDialog = true
     },
 
+    addThingType(item) {
+      this.resetCart()
+
+      this.thingTypeDialog = true
+    },
+
     removeDerived(item) {
       const key = 'derived_from_datastream_ids'
       const ids = this.value[key]
@@ -583,6 +637,10 @@ export default {
       )
     },
 
+    removeThingType(item) {
+      this.value.thing_type_id = null
+    },
+
     datastreamDialogCommit() {
       this.$set(
         this.value,
@@ -591,6 +649,12 @@ export default {
       )
 
       this.datastreamDialog = false
+    },
+
+    thingTypeDialogCommit() {
+      if (this.cartIds.length) this.value.thing_type_id = this.cartIds[0]
+
+      this.thingTypeDialog = false
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    :color="isHome ? 'secondary' : 'grey darken-4'"
+    :color="isHome ? 'green' : 'grey darken-4'"
     app
     dark
     fixed

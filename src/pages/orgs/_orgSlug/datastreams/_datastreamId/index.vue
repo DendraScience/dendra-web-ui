@@ -36,7 +36,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import { patchData } from '@/lib/edit'
+import { defaultDatastream, patchData } from '@/lib/edit'
 import DatastreamDetail from '@/components/DatastreamDetail'
 
 export default {
@@ -107,27 +107,22 @@ export default {
     },
 
     initInstance() {
-      const coordinates = this.datastream.geo
-        ? this.datastream.geo.coordinates
-        : [0, 0, null]
+      const { datastream } = this
+      const coordinates =
+        datastream && datastream.geo
+          ? this.datastream.geo.coordinates
+          : [0, 0, null]
 
       this.instance = _merge(
+        defaultDatastream(this.org),
         {
-          access_levels: {},
-          attributes: {},
-          datapoints_config: [],
-          derived_from_datastream_ids: [],
-          general_config: null,
-          geo: null,
           geoCoordinates: {
             ele: coordinates[2],
             lat: coordinates[1],
             lng: coordinates[0]
-          },
-          involved_parties: [],
-          terms: {}
+          }
         },
-        this.datastream
+        datastream
       )
     },
 
@@ -159,6 +154,11 @@ export default {
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
+
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('datastreams/removeItem', instance._id)
+
+        await this.fetchDatastreams({ query: { _id: instance._id } })
       }
     }
   }

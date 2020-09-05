@@ -13,7 +13,7 @@
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
-import { createData } from '@/lib/edit'
+import { createData, defaultStation } from '@/lib/edit'
 import { timeZoneOffsets } from '@/lib/time-zone'
 import StationDetail from '@/components/StationDetail'
 
@@ -90,30 +90,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = {
-        access_levels: {},
-        description: '',
-        external_links: [],
-        full_name: '',
-        general_config: null,
-        geo: null,
-        geoCoordinates: {
-          ele: null,
-          lat: 0,
-          lng: 0
-        },
-        involved_parties: [],
-        is_active: true,
-        is_enabled: true,
-        is_geo_protected: false,
-        is_hidden: false,
-        is_stationary: true,
-        name: '',
-        organization_id: this.org._id,
-        slug: 'new-station',
-        state: 'ready',
-        time_zone: 'PST'
-      }
+      this.instance = defaultStation(this.org)
     },
 
     async save() {

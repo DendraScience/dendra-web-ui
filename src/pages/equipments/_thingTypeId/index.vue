@@ -36,7 +36,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import { patchData } from '@/lib/edit'
+import { defaultThingType, patchData } from '@/lib/edit'
 import ThingTypeDetail from '@/components/ThingTypeDetail'
 
 export default {
@@ -107,12 +107,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = _merge(
-        {
-          external_links: []
-        },
-        this.thingType
-      )
+      this.instance = _merge(defaultThingType(), this.thingType)
     },
 
     onCancel() {
@@ -143,6 +138,11 @@ export default {
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
+
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('thing-types/removeItem', instance._id)
+
+        await this.fetchThingTypes({ query: { _id: instance._id } })
       }
     }
   }

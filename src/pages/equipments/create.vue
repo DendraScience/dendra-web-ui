@@ -13,7 +13,7 @@
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
-import { createData } from '@/lib/edit'
+import { createData, defaultThingType } from '@/lib/edit'
 import ThingTypeDetail from '@/components/ThingTypeDetail'
 
 export default {
@@ -88,13 +88,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = {
-        description: '',
-        external_links: [],
-        is_enabled: true,
-        model: '',
-        name: ''
-      }
+      this.instance = defaultThingType()
     },
 
     async save() {

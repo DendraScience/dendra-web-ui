@@ -36,7 +36,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import { patchData } from '@/lib/edit'
+import { defaultStation, patchData } from '@/lib/edit'
 import { timeZoneOffsets } from '@/lib/time-zone'
 import StationDetail from '@/components/StationDetail'
 
@@ -108,24 +108,20 @@ export default {
     },
 
     initInstance() {
-      const coordinates = this.station.geo
-        ? this.station.geo.coordinates
-        : [0, 0, null]
+      const { station } = this
+      const coordinates =
+        station && station.geo ? this.station.geo.coordinates : [0, 0, null]
 
       this.instance = _merge(
+        defaultStation(this.org),
         {
-          access_levels: {},
-          external_links: [],
-          general_config: null,
-          geo: null,
           geoCoordinates: {
             ele: coordinates[2],
             lat: coordinates[1],
             lng: coordinates[0]
-          },
-          involved_parties: []
+          }
         },
-        this.station
+        station
       )
     },
 
@@ -159,6 +155,11 @@ export default {
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
+
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('stations/removeItem', instance._id)
+
+        await this.fetchStations({ query: { _id: instance._id } })
       }
     }
   }

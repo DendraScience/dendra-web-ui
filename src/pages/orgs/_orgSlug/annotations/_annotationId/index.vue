@@ -36,7 +36,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import { patchData } from '@/lib/edit'
+import { defaultAnnotation, patchData } from '@/lib/edit'
 import AnnotationDetail from '@/components/AnnotationDetail'
 
 export default {
@@ -107,16 +107,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = _merge(
-        {
-          actions: [],
-          datastream_ids: [],
-          intervals: [],
-          involved_parties: [],
-          station_ids: []
-        },
-        this.annotation
-      )
+      this.instance = _merge(defaultAnnotation(this.org), this.annotation)
     },
 
     onCancel() {
@@ -147,6 +138,11 @@ export default {
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
+
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('annotations/removeItem', instance._id)
+
+        await this.fetchAnnotations({ query: { _id: instance._id } })
       }
     }
   }

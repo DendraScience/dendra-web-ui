@@ -4,7 +4,7 @@
       <v-col>
         <v-img
           :src="require('@/assets/angelo-reserve.jpg')"
-          gradient="to top right, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2)"
+          gradient="to top right, rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)"
           max-height="300"
           position="top"
         >
@@ -30,7 +30,7 @@
           </v-container>
         </v-img>
 
-        <v-row class="secondary" dense>
+        <v-row class="green" dense>
           <v-col>
             <v-container>
               <v-row dense>

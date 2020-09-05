@@ -13,7 +13,7 @@
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
-import { createData } from '@/lib/edit'
+import { createData, defaultCompany } from '@/lib/edit'
 import CompanyDetail from '@/components/CompanyDetail'
 
 export default {
@@ -88,13 +88,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = {
-        company_type: 'corporation',
-        description: '',
-        full_name: '',
-        name: '',
-        url: ''
-      }
+      this.instance = defaultCompany()
     },
 
     async save() {

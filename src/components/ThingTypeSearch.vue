@@ -217,9 +217,12 @@ export default {
         $skip: (page - 1) * itemsPerPage,
         $select: [
           '_id',
-          'model',
+          'external_links',
           'name',
+          'model',
+          'oem_company_id',
           'oem_company_lookup',
+          'reseller_company_id',
           'reseller_company_lookup'
         ],
         $sort: { name: 1, _id: 1 }

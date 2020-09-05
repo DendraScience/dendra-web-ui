@@ -4,6 +4,7 @@
       <v-row dense>
         <v-col class="headline">
           <slot>Geo coordinates</slot>
+          <v-subheader v-if="!value.geo">No coordinates defined</v-subheader>
         </v-col>
       </v-row>
 
@@ -62,10 +63,6 @@
             style="width: 100%; height: 300px;"
           />
         </v-col>
-      </v-row>
-
-      <v-row v-else>
-        <v-col><v-subheader>No coordinates defined</v-subheader></v-col>
       </v-row>
     </v-container>
 

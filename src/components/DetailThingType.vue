@@ -1,16 +1,16 @@
 <template>
-  <v-card v-if="thingType">
+  <v-card>
     <v-container fluid>
       <v-row dense>
         <v-col class="headline">
           <slot>Equipment</slot>
-          <v-subheader
+          <v-subheader v-if="thingType"
             >{{ thingType | thingTypeName }} {{ thingType.model }}</v-subheader
-          >
+          ><v-subheader v-else>No equipment defined</v-subheader>
         </v-col>
       </v-row>
 
-      <v-row v-if="externalImages.length">
+      <v-row v-if="thingType && externalImages.length">
         <v-col
           v-for="(item, index) in externalImages"
           :key="index"
@@ -24,7 +24,16 @@
     </v-container>
 
     <v-card-actions>
+      <v-btn v-if="editing && thingTypeId" color="primary" @click="remove">
+        <v-icon>{{ mdiMinus }}</v-icon>
+      </v-btn>
+
+      <v-btn v-if="editing && !thingTypeId" color="primary" @click="add">
+        <v-icon>{{ mdiPlus }}</v-icon>
+      </v-btn>
+
       <v-btn
+        v-if="!editing && thingTypeId"
         :to="{
           name: 'equipments-thingTypeId',
           params: {
@@ -43,9 +52,13 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
+  mixins: [itemEditing],
+
   props: {
+    editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
   },
 

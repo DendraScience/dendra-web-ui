@@ -13,7 +13,7 @@
 <script>
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
-import { createData } from '@/lib/edit'
+import { createData, defaultDatastream } from '@/lib/edit'
 import DatastreamDetail from '@/components/DatastreamDetail'
 
 export default {
@@ -89,30 +89,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = {
-        access_levels: {},
-        attributes: {},
-        datapoints_config: [],
-        derived_from_datastream_ids: [],
-        description: '',
-        general_config: null,
-        geo: null,
-        geoCoordinates: {
-          ele: null,
-          lat: 0,
-          lng: 0
-        },
-        involved_parties: [],
-        is_enabled: true,
-        is_geo_protected: false,
-        is_hidden: false,
-        name: '',
-        organization_id: this.org._id,
-        source_type: 'sensor',
-        state: 'ready',
-        station_id: null,
-        terms: {}
-      }
+      this.instance = defaultDatastream(this.org)
     },
 
     async save() {

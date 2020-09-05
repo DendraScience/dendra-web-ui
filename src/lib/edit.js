@@ -11,17 +11,19 @@ const arrays = [
   'involved_parties',
   'station_ids'
 ]
+const booleans = [
+  'is_active',
+  'is_enabled',
+  'is_geo_protected',
+  'is_hidden',
+  'is_stationary'
+]
 const fields = [
   'company_type',
   'derivation_description',
   'derivation_method',
   'description',
   'full_name',
-  'is_active',
-  'is_enabled',
-  'is_geo_protected',
-  'is_hidden',
-  'is_stationary',
   'model',
   'name',
   'oem_company_id',
@@ -43,12 +45,101 @@ const objects = [
   'terms'
 ]
 
+export function defaultAnnotation(org) {
+  return {
+    actions: [],
+    datastream_ids: [],
+    description: '',
+    intervals: [],
+    involved_parties: [],
+    organization_id: org._id,
+    station_ids: [],
+    title: ''
+  }
+}
+
+export function defaultCompany() {
+  return {
+    company_type: 'corporation',
+    description: '',
+    full_name: '',
+    name: '',
+    url: ''
+  }
+}
+
+export function defaultDatastream(org) {
+  return {
+    access_levels: {},
+    attributes: {},
+    datapoints_config: [],
+    derived_from_datastream_ids: [],
+    description: '',
+    general_config: null,
+    geo: null,
+    geoCoordinates: {
+      ele: null,
+      lat: 0,
+      lng: 0
+    },
+    involved_parties: [],
+    is_enabled: true,
+    is_geo_protected: false,
+    is_hidden: false,
+    name: '',
+    organization_id: org._id,
+    source_type: 'sensor',
+    state: 'ready',
+    station_id: null,
+    terms: {},
+    thing_type_id: null
+  }
+}
+
+export function defaultStation(org) {
+  return {
+    access_levels: {},
+    description: '',
+    external_links: [],
+    full_name: '',
+    general_config: null,
+    geo: null,
+    geoCoordinates: {
+      ele: null,
+      lat: 0,
+      lng: 0
+    },
+    involved_parties: [],
+    is_active: true,
+    is_enabled: true,
+    is_geo_protected: false,
+    is_hidden: false,
+    is_stationary: true,
+    name: '',
+    organization_id: org._id,
+    slug: 'new-station',
+    state: 'ready',
+    time_zone: 'PST'
+  }
+}
+
+export function defaultThingType() {
+  return {
+    description: '',
+    external_links: [],
+    is_enabled: true,
+    model: '',
+    name: ''
+  }
+}
+
 export function setData(instance) {
   const data = _pickBy(instance, (value, key) => {
     return (
       (arrays.includes(key) && value && value.length) ||
-      (objects.includes(key) && value && Object.keys(value).length) ||
-      fields.includes(key)
+      booleans.includes(key) ||
+      (fields.includes(key) && !!value) ||
+      (objects.includes(key) && value && Object.keys(value).length)
     )
   })
   if (data.geo) {
@@ -69,8 +160,9 @@ export function unsetData(instance) {
     instance,
     (result, value, key) => {
       if (
-        (arrays.includes(key) && (!value || value.length === 0)) ||
-        (objects.includes(key) && (!value || Object.keys(value).length === 0))
+        (arrays.includes(key) && !(value && value.length)) ||
+        (fields.includes(key) && !value) ||
+        (objects.includes(key) && !(value && Object.keys(value).length))
       )
         result[key] = ''
       return result
@@ -84,5 +176,8 @@ export function createData(instance) {
 }
 
 export function patchData(instance) {
-  return { $set: setData(instance), $unset: unsetData(instance) }
+  const patch = { $set: setData(instance), $unset: unsetData(instance) }
+  /* eslint-disable-next-line no-console */
+  console.log('patch', patch)
+  return patch
 }

@@ -36,7 +36,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
-import { patchData } from '@/lib/edit'
+import { defaultCompany, patchData } from '@/lib/edit'
 import CompanyDetail from '@/components/CompanyDetail'
 
 export default {
@@ -107,7 +107,7 @@ export default {
     },
 
     initInstance() {
-      this.instance = _merge({}, this.company)
+      this.instance = _merge(defaultCompany(), this.company)
     },
 
     onCancel() {
@@ -138,6 +138,11 @@ export default {
         })
       } catch (err) {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
+
+        // HACK: Ensure that we have a fresh model afterwards
+        this.$store.commit('companies/removeItem', instance._id)
+
+        await this.fetchCompanies({ query: { _id: instance._id } })
       }
     }
   }
