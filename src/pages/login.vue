@@ -6,7 +6,7 @@
 
         <h3 class="subtitle-1 mb-4">
           Don’t have an account?
-          <nuxt-link to="/contact">Contact us</nuxt-link>
+          <nuxt-link to="/about">Contact us</nuxt-link>
         </h3>
       </v-col>
     </v-row>

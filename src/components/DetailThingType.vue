@@ -18,7 +18,11 @@
           sm="6"
           md="3"
         >
-          <v-img :src="item.url" contain max-height="320" />
+          <v-img
+            :src="$options.filters.https(item.url)"
+            contain
+            max-height="320"
+          />
         </v-col>
       </v-row>
     </v-container>

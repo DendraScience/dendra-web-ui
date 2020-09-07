@@ -57,7 +57,7 @@ import {
   mdiChartMultiple,
   mdiChartTimelineVariant,
   mdiCheckCircle,
-  mdiEmail,
+  mdiInformation,
   mdiFileTree,
   mdiFormatPaint,
   mdiHexagonSlice6,
@@ -100,10 +100,10 @@ export default {
               to: '/theme'
             },
             {
-              icon: mdiEmail,
+              icon: mdiInformation,
               org: false,
-              title: 'Contact',
-              to: '/contact'
+              title: 'About',
+              to: '/about'
             },
             {
               auth: false,
