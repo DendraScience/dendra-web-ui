@@ -1,42 +1,25 @@
-export default function ({error, params, store}) {
-  // TODO: Don't fetch everytime! Check the store first.
-  store.commit('dashboards/clearAll')
-  store.commit('organizations/clearCurrent')
+export default async function ({ error, params, store }) {
+  const { orgId, orgSlug } = params
 
-  return store.dispatch('organizations/find', {
-    query: {
-      slug: params.orgSlug,
-      $limit: 1
-    }
-  }).then(res => {
-    if (!(res && res.data && res.data.length > 0)) {
+  try {
+    const query = { $limit: 1 }
+    if (orgId) query._id = orgId
+    if (orgSlug) query.slug = orgSlug
+
+    const res = await store.dispatch('organizations/find', { query })
+
+    if (!(res && res.data && res.data.length)) {
       return error({
         statusCode: 404,
         message: 'Organization not found.'
       })
     }
 
-    return res.data[0]
-  }).then(organization => {
-    store.commit('organizations/setCurrent', organization)
-
-    return store.dispatch('dashboards/find', {
-      query: {
-        // NOTE: Should this relationship be inverted?
-        // _id: {
-        //   $in: organization.dashboard_ids
-        // }
-        organization_id: organization._id,
-        enabled: true,
-        slug: {$exists: 1},
-        $limit: 200,
-        $sort: {sort_value: 1, name: 1}
-      }
-    })
-  }).catch(err => {
+    store.commit('setOrg', res.data[0])
+  } catch (err) {
     error({
       statusCode: err.statusCode || 500,
       message: err.message
     })
-  })
+  }
 }

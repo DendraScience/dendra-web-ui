@@ -1,4 +1,6 @@
-export default function ({store}) {
-  store.commit('dashboards/clearCurrent')
-  store.commit('organizations/clearCurrent')
+export default function ({ store }) {
+  store.commit('clearAnnotation')
+  store.commit('clearDatastream')
+  store.commit('clearStation')
+  store.commit('clearOrg')
 }

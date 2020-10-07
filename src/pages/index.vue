@@ -1,131 +1,160 @@
 <template>
-  <div class="pt-header">
-    <div class="bg-gradient-main">
-      <section class="container py-4">
-        <div class="row">
-          <div class="col-12 col-sm-10 offset-sm-1 text-white text-center">
-            <img class="img-fluid mb-4" style="max-height: 90px;" src="~assets/images/Dendra_web_logo_1080_270.png" />
+  <v-container fluid pa-0>
+    <v-row no-gutters>
+      <v-col>
+        <v-img
+          :src="require('@/assets/angelo-reserve.jpg')"
+          gradient="to top right, rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)"
+          max-height="300"
+          position="top"
+        >
+          <v-container>
+            <v-row>
+              <v-col>
+                <v-img
+                  :src="require('@/assets/dendra-logo.svg')"
+                  aspect-ratio="4"
+                  max-width="460"
+                  width="100%"
+                />
+              </v-col>
+            </v-row>
 
-            <h4>Sensor Observatory Curation</h4>
+            <v-row dense>
+              <v-col>
+                <h4 class="display-1 white--text">
+                  Sensor Observatory Curation
+                </h4>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-img>
 
-            <p class="body-copy">
-              Dendra is a cyberinfrastructure project for real-time sensor data storage, retrieval, management, and curation.
-              It is a cloud-based, multi-organizational system, designed to support massive permanent monitoring efforts.
-              The name is derived from dendritic networks, such as river networks or tree roots.
-              Environmental monitoring performs in a similar manner, pulling data from the earth’s surface to a single location.
-            </p>
+        <v-row class="green" dense>
+          <v-col>
+            <v-container>
+              <v-row dense>
+                <v-col class="subtitle-1 white--text" cols="12">
+                  Dendra is a cyberinfrastructure project for real-time sensor
+                  data storage, retrieval, management, and curation. It is a
+                  cloud-based, multi-organizational system, designed to support
+                  massive permanent monitoring efforts. The name is derived from
+                  dendritic networks, such as river networks or tree roots.
+                  Environmental monitoring performs in a similar manner, pulling
+                  data from the earth’s surface to a single location.
+                </v-col>
+              </v-row>
 
-            <div class="alert alert-success" role="alert">
-              <strong>We’ve been busy!</strong> Check out our new <a href="https://edge.dendra.science/" class="alert-link" target="_blank">beta website <i class="fa fa-external-link-square" aria-hidden="true"></i></a>.
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+              <v-row dense>
+                <v-col class="caption white--text ml-auto" cols="auto">
+                  Hosted on
+                  <a href="https://www.xsede.org/" target="_blank">
+                    <v-img
+                      width="100"
+                      :src="require('@/assets/xsede-logo.png')"
+                    />
+                  </a>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
+        </v-row>
 
-    <div>
-      <section class="container py-4">
-        <div class="row">
-          <div class="col-12 text-center py-2">
-            <span class="lead">Data hosted on Dendra</span>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 col-md-6 d-flex py-2"
-            :key="organization._id"
-            v-for="organization in findOrganizations({$sort: {name: 1}}).data">
+        <v-row dense>
+          <v-col>
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <h5 class="headline mb-2">Community</h5>
 
-            <div class="card w-100">
-              <div class="card-block">
-                <h4 class="card-title">{{ organization.name }}</h4>
-                <p class="card-text" v-if="organization.description">{{ organization.description }}</p>
-              </div>
+                  <p class="body-2">
+                    Dendra is an open source project. All code can be found on
+                    <a href="https://github.com/DendraScience" target="_blank"
+                      >GitHub</a
+                    >. Please feel free to report any bugs, feature requests, or
+                    issues in the
+                    <a
+                      href="https://github.com/DendraScience/issues/issues"
+                      target="_blank"
+                      >Issues repository</a
+                    >.
+                  </p>
 
-              <div class="card-footer text-muted text-truncate">
-                <!-- <router-link class="card-link" :to="{name: 'orgSlug', params: {orgSlug: organization.slug}}">Info</router-link> -->
+                  <p class="body-2">
+                    We have a full API for querying and downloading data with
+                    <a
+                      href="https://dendrascience.github.io/dendra-json-schema/"
+                      target="_blank"
+                      >API documentation available</a
+                    >.
+                  </p>
+                </v-col>
 
-                <!-- TODO: Only show if dashboards exist? -->
-                <router-link class="card-link" :to="{name: 'orgSlug-dashboards', params: {orgSlug: organization.slug}}">
-                  Dashboards
-                </router-link>
+                <v-col cols="12" md="4">
+                  <h5 class="headline mb-2">Maintenance</h5>
 
-                <!-- TODO: Only show if stations exist? -->
-                <a class="card-link" :href="`http://${organization.slug}.dendra.science`">
-                  Stations
-                </a>
+                  <p class="body-2">
+                    During our rollout, we may need to take Dendra offline for
+                    software upgrades and testing. Our regularly scheduled
+                    maintenance window is from 8 PM to 10 PM PST daily.
+                  </p>
+                </v-col>
 
-                <a class="card-link" :href="organization.url" target="_blank" v-if="organization.url">
-                  <i class="fa fa-fw fa-external-link-square" aria-hidden="true"></i> Visit Website
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+                <v-col cols="12" md="4">
+                  <h5 class="headline mb-2">Funding</h5>
 
-    <div>
-      <section class="container py-2">
-        <div class="row">
-          <div class="col-12 col-md-4 py-2">
-            <h4 class="text-uppercase text-success">Community</h4>
+                  <p class="body-2">
+                    This project has been funded in collaboration by the
+                    National Science Foundation funded Eel River CZO, State
+                    funded UCNRS, and Moore Foundation funded California
+                    Heartbeat Initiative.
+                  </p>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-col>
+        </v-row>
 
-            <p class="body-copy">
-              Dendra is an open source project.
-              All code can be found on <a href="http://github.com/dendrascience" target="_blank">GitHub</a>.
-              Please feel free to report any bugs, feature requests, or issues in the <a href="https://github.com/DendraScience/issues/issues" target="_blank">Issues repository</a>.
-            </p>
+        <v-divider />
 
-            <p class="body-copy">
-              We have a full API for querying and downloading data with <a href="https://dendrascience.github.io/dendra-json-schema/" target="_blank">API documentation available</a>.
-            </p>
-          </div>
+        <v-row dense>
+          <v-col>
+            <v-container>
+              <v-row>
+                <v-col><h5 class="headline">Organizations on Dendra</h5></v-col>
+              </v-row>
 
-          <div class="col-12 col-md-4 py-2">
-            <h4 class="text-uppercase text-warning">Maintenance</h4>
-
-            <p class="body-copy">
-              During our rollout, we may need to take Dendra offline for software upgrades and testing.
-              Our regularly scheduled maintenance window is from 8&nbsp;PM to 10&nbsp;PM PST daily.
-            </p>
-          </div>
-
-          <div class="col-12 col-md-4 py-2">
-            <h4 class="text-uppercase text-muted">Funding</h4>
-
-            <p class="body-copy">
-              This project has been funded in collaboration by the National Science Foundation funded Eel River CZO, State funded UCNRS, and Moore Foundation funded California Heartbeat Initiative.
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+              <feathers-vuex-find
+                v-slot="{ items: organizations }"
+                :query="{ is_enabled: true, $sort: { sort_value: 1, name: 1 } }"
+                service="organizations"
+              >
+                <v-row>
+                  <v-col
+                    v-for="organization in organizations"
+                    :key="organization._id"
+                    cols="auto"
+                  >
+                    <v-btn
+                      :to="{
+                        name: 'orgs-orgSlug',
+                        params: { orgSlug: organization.slug }
+                      }"
+                      >{{ organization.name }}</v-btn
+                    >
+                  </v-col>
+                </v-row>
+              </feathers-vuex-find>
+            </v-container>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import {mapGetters, mapState} from 'vuex'
-
 export default {
-  middleware: 'no-org',
-
-  fetch ({store}) {
-    return store.dispatch('organizations/find', {
-      query: {
-        slug: {$exists: true},
-        $limit: 2000
-      }
-    })
-  },
-
-  computed: {
-    ...mapGetters({
-      findOrganizations: 'organizations/find'
-    }),
-
-    ...mapState([
-      'organizations'
-    ])
-  }
+  middleware: ['no-org']
 }
 </script>

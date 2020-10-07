@@ -1,40 +1,49 @@
 <template>
-  <div class="d-flex flex-column justify-content-between" :class="isMenuOpen ? 'drawer-left-open' : ''" style="min-height: 100vh;">
-    <main-menu class="drawer-left drawer-left-shadow-inset" />
-    <main-nav-header class="drawer-left-indent" />
-    <nuxt class="drawer-left-translate" />
-    <email-footer class="drawer-left-translate" />
-  </div>
+  <v-app>
+    <main-navigation-drawer />
+    <main-toolbar />
+
+    <v-main>
+      <status-bar v-model="status" />
+
+      <div>
+        <nuxt />
+      </div>
+    </v-main>
+
+    <session-expired-dialog @status="status = $event" />
+  </v-app>
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
-import MainMenu from '../components/MainMenu'
-import MainNavHeader from '../components/MainNavHeader'
-import EmailFooter from '../components/EmailFooter'
+import MainNavigationDrawer from '@/components/MainNavigationDrawer'
+import MainToolbar from '@/components/MainToolbar'
+import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
+import StatusBar from '@/components/StatusBar'
 
 export default {
   components: {
-    MainMenu,
-    MainNavHeader,
-    EmailFooter
+    MainNavigationDrawer,
+    MainToolbar,
+    SessionExpiredDialog,
+    StatusBar
   },
 
-  computed: {
-    ...mapGetters({
-      isMenuOpen: 'isMenuOpen'
-    })
+  data: () => ({
+    status: null
+  }),
+
+  mounted() {
+    this.$bus.$on('status', this.onStatus)
+  },
+
+  beforeDestroy() {
+    this.$bus.$off('status', this.onStatus)
   },
 
   methods: {
-    ...mapMutations({
-      setIsMenuOpen: 'setIsMenuOpen'
-    })
-  },
-
-  watch: {
-    '$route': function (newRoute) {
-      this.setIsMenuOpen(false)
+    onStatus(value) {
+      this.status = value
     }
   }
 }

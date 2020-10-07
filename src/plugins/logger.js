@@ -1,10 +1,7 @@
 import logger from '@dendra-science/console-logger'
-import {configure} from '@dendra-science/task-machine'
 
-export default ({app, isDev}) => {
+export default ({ isDev }, inject) => {
   logger.enabled = isDev
 
-  app.$logger = logger
-
-  configure({logger})
+  inject('logger', logger)
 }

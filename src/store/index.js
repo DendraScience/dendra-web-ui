@@ -1,37 +1,179 @@
+import Vue from 'vue'
 import feathersVuex from 'feathers-vuex'
-import feathersClient from '@/lib/feathersClient'
+import feathersClient from '@/lib/feathers-client'
+import helpersVuex from '@/lib/helpers-vuex'
 
-const {service, auth} = feathersVuex(feathersClient, {
-  idField: '_id'
+const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
+  idField: '_id',
+  replaceItems: true,
+  whitelist: ['$in', '$and']
 })
+const { passport, session } = helpersVuex(feathersClient)
+
+Vue.use(FeathersVuex)
 
 export const plugins = [
-  service('dashboards'),
-  service('organizations'),
-  service('/system/time', {
-    namespace: 'systemTime',
-    enableEvents: false
+  service('ability'),
+  service('annotations', {
+    paginate: true
   }),
+  service('companies', {
+    paginate: true
+  }),
+  service('datastreams', {
+    paginate: true
+  }),
+  service('memberships'),
+  service('organizations'),
+  service('persons'),
+  service('places'),
+  service('schemes'),
+  service('soms'),
+  service('stations', {
+    paginate: true
+  }),
+  service('system/schemas'),
+  service('system/time'),
+  service('system/timezones'),
+  service('thing-types', {
+    paginate: true
+  }),
+  service('uoms'),
+  service('users'),
+  service('vocabularies'),
 
-  auth()
+  auth({ userService: 'users' }),
+
+  passport(),
+  session()
 ]
 
+export const strict = process.env.NODE_ENV !== 'production'
+
 export const state = () => ({
-  isMenuOpen: false
+  abilityUpdateTime: 0,
+
+  orgId: null,
+  stationId: null,
+  datastreamId: null,
+  annotationId: null
 })
 
+export const actions = {
+  getSystemTimeUTC({ dispatch }) {
+    return dispatch('time/get', 'utc')
+  }
+}
+
 export const getters = {
-  isMenuOpen (state) {
-    return state.isMenuOpen
+  abilityUpdateTime(state) {
+    return state.abilityUpdateTime
+  },
+  isAbilityUpdated(state) {
+    return state.abilityUpdateTime > 0
+  },
+
+  getUnitText(state, { 'vocabularies/get': get }) {
+    const vocabulary = get('dt-unit')
+
+    return unit => {
+      const term =
+        vocabulary && vocabulary.terms
+          ? vocabulary.terms.find(term => term.label === unit)
+          : null
+      return term && term.abbreviation ? term.abbreviation : unit
+    }
+  },
+
+  company(state, { 'companies/get': get }) {
+    return state.companyId && get(state.companyId)
+  },
+  companyId(state) {
+    return state.companyId
+  },
+
+  thingType(state, { 'thing-types/get': get }) {
+    return state.thingTypeId && get(state.thingTypeId)
+  },
+  thingTypeId(state) {
+    return state.thingTypeId
+  },
+
+  org(state, { 'organizations/get': get }) {
+    return state.orgId && get(state.orgId)
+  },
+  orgId(state) {
+    return state.orgId
+  },
+  orgName(state, { org }) {
+    return org && org.name
+  },
+  orgSlug(state, { org }) {
+    return org && org.slug
+  },
+
+  station(state, { 'stations/get': get }) {
+    return state.stationId && get(state.stationId)
+  },
+  stationId(state) {
+    return state.stationId
+  },
+
+  datastream(state, { 'datastreams/get': get }) {
+    return state.datastreamId && get(state.datastreamId)
+  },
+  datastreamId(state) {
+    return state.datastreamId
+  },
+
+  annotation(state, { 'annotations/get': get }) {
+    return state.annotationId && get(state.annotationId)
+  },
+  annotationId(state) {
+    return state.annotationId
   }
 }
 
 export const mutations = {
-  setIsMenuOpen (state, flag) {
-    state.isMenuOpen = flag
+  clearCompany(state) {
+    state.companyId = null
+  },
+  clearThingType(state) {
+    state.thingTypeId = null
+  },
+  clearOrg(state) {
+    state.orgId = null
+  },
+  clearStation(state) {
+    state.stationId = null
+  },
+  clearDatastream(state) {
+    state.datastreamId = null
+  },
+  clearAnnotation(state) {
+    state.annotationId = null
   },
 
-  toggleMenu (state) {
-    state.isMenuOpen = !state.isMenuOpen
+  setAbilityUpdateTime(state, value) {
+    state.abilityUpdateTime = value
+  },
+
+  setCompany(state, value) {
+    state.companyId = value && value._id
+  },
+  setThingType(state, value) {
+    state.thingTypeId = value && value._id
+  },
+  setOrg(state, value) {
+    state.orgId = value && value._id
+  },
+  setStation(state, value) {
+    state.stationId = value && value._id
+  },
+  setDatastream(state, value) {
+    state.datastreamId = value && value._id
+  },
+  setAnnotation(state, value) {
+    state.annotationId = value && value._id
   }
 }
