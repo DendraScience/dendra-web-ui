@@ -1,6 +1,7 @@
 <template>
   <v-app-bar
-    :color="isHome ? 'green' : 'grey darken-4'"
+    :color="isHome && top ? 'transparent' : 'grey darken-4'"
+    :flat="isHome && top"
     app
     dark
     fixed
@@ -23,22 +24,18 @@
         {{ orgName }}
       </nuxt-link>
 
-      <span v-else>
-        Dendra.Science
-      </span>
+      <span v-else> Dendra.Science </span>
     </v-toolbar-title>
+
     <v-spacer />
-    <!-- TODO: Deprecate -->
-    <!--
-    <v-btn icon>
-      <v-icon>search</v-icon>
-    </v-btn>
- -->
+
     <v-menu v-if="auth.payload" offset-y left>
       <template v-slot:activator="{ on }">
-        <v-btn dark icon v-on="on">
-          <v-icon>{{ mdiAccount }}</v-icon>
-        </v-btn>
+        <div>
+          <v-btn dark icon v-on="on">
+            <v-icon>{{ mdiAccount }}</v-icon>
+          </v-btn>
+        </div>
       </template>
 
       <v-card>
@@ -89,7 +86,7 @@ export default {
       orgSlug: 'orgSlug'
     }),
 
-    ...mapState(['auth']),
+    ...mapState(['auth', 'top']),
 
     isHome() {
       return this.$route.name === 'index'

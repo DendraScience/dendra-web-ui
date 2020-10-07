@@ -3,9 +3,7 @@
     <v-row dense>
       <v-col>
         <v-tabs v-model="tabIndex" grow>
-          <v-tab>
-            View
-          </v-tab>
+          <v-tab> View </v-tab>
 
           <v-tab-item>
             <v-card tile>
@@ -49,7 +47,7 @@
       fixed
       nuxt
       right
-      style="top: 80px;"
+      style="top: 80px"
       top
     >
       <v-icon>{{ mdiPlus }}</v-icon>

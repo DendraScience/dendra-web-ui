@@ -56,7 +56,9 @@ export const state = () => ({
   orgId: null,
   stationId: null,
   datastreamId: null,
-  annotationId: null
+  annotationId: null,
+
+  top: true
 })
 
 export const actions = {
@@ -163,6 +165,9 @@ export const mutations = {
   },
   setThingType(state, value) {
     state.thingTypeId = value && value._id
+  },
+  setTop(state, value) {
+    state.top = value
   },
   setOrg(state, value) {
     state.orgId = value && value._id

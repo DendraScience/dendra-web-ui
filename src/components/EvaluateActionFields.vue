@@ -35,12 +35,8 @@
         <v-row dense>
           <v-col>
             <v-tabs v-model="tabIndex">
-              <v-tab>
-                Datapoint
-              </v-tab>
-              <v-tab>
-                Attributes
-              </v-tab>
+              <v-tab> Datapoint </v-tab>
+              <v-tab> Attributes </v-tab>
 
               <v-tab-item>
                 <ValidationProvider
@@ -90,9 +86,7 @@
 
           <v-col>
             <v-tabs :value="0">
-              <v-tab>
-                Datapoint
-              </v-tab>
+              <v-tab> Datapoint </v-tab>
 
               <v-tab-item>
                 <ValidationProvider

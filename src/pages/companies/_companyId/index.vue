@@ -2,9 +2,7 @@
   <v-container v-if="instance">
     <v-row v-if="!editing">
       <v-col>
-        <h2 class="display-1 font-weight-regular">
-          Company details
-        </h2>
+        <h2 class="display-1 font-weight-regular">Company details</h2>
       </v-col>
     </v-row>
 
@@ -23,7 +21,7 @@
       fab
       fixed
       right
-      style="top: 80px;"
+      style="top: 80px"
       top
       @click="edit"
     >

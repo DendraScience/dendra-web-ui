@@ -3,15 +3,11 @@
     <v-row dense>
       <v-col>
         <v-tabs v-model="tabIndex" grow>
-          <v-tab>
-            View
-          </v-tab>
+          <v-tab> View </v-tab>
 
           <v-tab-item>
             <v-card tile>
-              <query-header name="equipments">
-                Equipments
-              </query-header>
+              <query-header name="equipment"> Equipment </query-header>
 
               <thing-type-search
                 :company-id="queryCompanyId"
@@ -35,7 +31,7 @@
     <v-btn
       v-show="$canCreate('thing-types')"
       :to="{
-        name: 'equipments-create'
+        name: 'equipment-create'
       }"
       color="secondary"
       dark
@@ -44,7 +40,7 @@
       fixed
       nuxt
       right
-      style="top: 80px;"
+      style="top: 80px"
       top
     >
       <v-icon>{{ mdiPlus }}</v-icon>
@@ -81,7 +77,7 @@ export default {
     open(thingTypeId) {
       window.open(
         this.$router.resolve({
-          name: 'equipments-thingTypeId',
+          name: 'equipment-thingTypeId',
           params: {
             thingTypeId
           }

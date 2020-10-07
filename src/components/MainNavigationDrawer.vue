@@ -125,8 +125,8 @@ export default {
             {
               can: ['read', 'thing-types'],
               icon: mdiHexagonSlice6,
-              title: 'Equipments',
-              to: '/equipments'
+              title: 'Equipment',
+              to: '/equipment'
             }
           ]
         },

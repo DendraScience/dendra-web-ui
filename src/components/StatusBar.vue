@@ -9,9 +9,7 @@
     {{ status.message }}
 
     <template v-slot:action="{ attrs }">
-      <v-btn v-bind="attrs" dark text @click="snackbar = null">
-        Close
-      </v-btn>
+      <v-btn v-bind="attrs" dark text @click="snackbar = null"> Close </v-btn>
     </template>
   </v-snackbar>
 </template>

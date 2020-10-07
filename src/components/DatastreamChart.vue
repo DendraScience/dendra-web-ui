@@ -14,7 +14,7 @@
       </v-row>
     </v-container>
 
-    <div class="pt-2" style="position: relative;">
+    <div class="pt-2" style="position: relative">
       <worker-fetch
         :id="value.id"
         :fetch-spec="Object.freeze(value.fetchSpec)"

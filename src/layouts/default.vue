@@ -1,9 +1,9 @@
 <template>
-  <v-app>
+  <v-app v-scroll="onScroll">
     <main-navigation-drawer />
     <main-toolbar />
 
-    <v-main>
+    <v-main app>
       <status-bar v-model="status" />
 
       <div>
@@ -20,6 +20,7 @@ import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
 import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
 import StatusBar from '@/components/StatusBar'
+import { mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -42,6 +43,12 @@ export default {
   },
 
   methods: {
+    ...mapMutations(['setTop']),
+
+    onScroll(e) {
+      this.setTop(e.target.documentElement.scrollTop < 64)
+    },
+
     onStatus(value) {
       this.status = value
     }

@@ -5,9 +5,7 @@
         <v-card>
           <v-container fluid>
             <v-row dense>
-              <v-col class="headline">
-                NOAA forecast
-              </v-col>
+              <v-col class="headline"> NOAA forecast </v-col>
 
               <v-col align="end" cols="12" sm="4"><slot name="util" /></v-col>
             </v-row>
@@ -24,7 +22,7 @@
                       </v-col>
                     </v-row>
 
-                    <v-row style="height: 180px;">
+                    <v-row style="height: 180px">
                       <v-col
                         v-if="
                           item.day &&
@@ -52,7 +50,7 @@
                       </v-col>
                     </v-row>
 
-                    <v-row style="height: 180px;">
+                    <v-row style="height: 180px">
                       <v-col
                         v-if="
                           item.night &&

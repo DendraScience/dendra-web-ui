@@ -60,7 +60,7 @@
             auto-pan
             auto-zoom
             :lat-lng-literal="latLngLiteral"
-            style="width: 100%; height: 300px;"
+            style="width: 100%; height: 300px"
           />
         </v-col>
       </v-row>

@@ -22,7 +22,7 @@
               <a
                 v-if="item.url"
                 :href="item.url"
-                style="word-break: break-all;"
+                style="word-break: break-all"
                 target="_blank"
                 >{{ item.url | truncate({ length: 50 }) }}</a
               >

@@ -7,15 +7,9 @@
           background-color="grey lighten-2"
           fixed-tabs
         >
-          <v-tab>
-            Parameters
-          </v-tab>
-          <v-tab>
-            Timeframe
-          </v-tab>
-          <v-tab>
-            Expression
-          </v-tab>
+          <v-tab> Parameters </v-tab>
+          <v-tab> Timeframe </v-tab>
+          <v-tab> Expression </v-tab>
 
           <v-tab-item>
             <v-card flat>

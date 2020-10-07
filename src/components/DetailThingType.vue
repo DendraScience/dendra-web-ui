@@ -39,7 +39,7 @@
       <v-btn
         v-if="!editing && thingTypeId"
         :to="{
-          name: 'equipments-thingTypeId',
+          name: 'equipment-thingTypeId',
           params: {
             thingTypeId
           }

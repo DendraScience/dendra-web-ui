@@ -58,7 +58,7 @@
           :append-icon="mdiMagnify"
           filled
           flat
-          label="Filter equipments"
+          label="Filter equipment"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -100,7 +100,7 @@
               <nuxt-link
                 v-if="showLink"
                 :to="{
-                  name: 'equipments-thingTypeId',
+                  name: 'equipment-thingTypeId',
                   params: {
                     thingTypeId: item._id
                   }

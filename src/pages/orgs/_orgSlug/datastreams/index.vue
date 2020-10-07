@@ -14,15 +14,9 @@
               </v-alert>
 
               <v-tabs v-model="tabIndex" grow>
-                <v-tab>
-                  View
-                </v-tab>
-                <v-tab>
-                  Chart
-                </v-tab>
-                <v-tab>
-                  Download
-                </v-tab>
+                <v-tab> View </v-tab>
+                <v-tab> Chart </v-tab>
+                <v-tab> Download </v-tab>
 
                 <v-tab-item>
                   <v-card tile>
@@ -104,9 +98,7 @@
 
                 <v-tab-item>
                   <v-card v-if="cartCount || !charts.length" tile>
-                    <content-header>
-                      Selected datastreams
-                    </content-header>
+                    <content-header> Selected datastreams </content-header>
 
                     <chart-datastream-cart :datastreams="selectedDatastreams" />
 
@@ -249,7 +241,7 @@
       fixed
       nuxt
       right
-      style="top: 80px;"
+      style="top: 80px"
       top
     >
       <v-icon>{{ mdiPlus }}</v-icon>
@@ -257,9 +249,7 @@
 
     <v-dialog v-model="leaveDialog" dark max-width="500" persistent>
       <v-card>
-        <v-card-title class="headline">
-          Charts exist
-        </v-card-title>
+        <v-card-title class="headline"> Charts exist </v-card-title>
 
         <v-card-text>
           You have one or more charts. Do you really want to leave this page?
@@ -276,9 +266,7 @@
 
     <v-dialog v-model="selecting" dark hide-overlay persistent width="300">
       <v-card>
-        <v-card-title class="title">
-          Selecting items...
-        </v-card-title>
+        <v-card-title class="title"> Selecting items... </v-card-title>
 
         <v-card-text>
           <v-progress-linear indeterminate color="white"></v-progress-linear>

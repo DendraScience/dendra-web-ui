@@ -9,7 +9,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="name"
-                  rules="required|min:5|max:100"
+                  rules="required|min:1|max:100"
                 >
                   <v-text-field
                     v-model.trim="value.name"
@@ -23,7 +23,7 @@
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="full name"
-                  rules="min:5|max:100"
+                  rules="min:1|max:100"
                 >
                   <v-text-field
                     v-model.trim="value.full_name"
@@ -39,7 +39,7 @@
                   :rules="{
                     regex: /^[a-z][a-z0-9-]{2,}[a-z0-9]$/,
                     required: true,
-                    min: 5,
+                    min: 1,
                     max: 50
                   }"
                 >

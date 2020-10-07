@@ -215,9 +215,7 @@
                 </v-container>
               </v-card>
 
-              <v-alert v-else type="info">
-                Sorry, no photos.
-              </v-alert>
+              <v-alert v-else type="info"> Sorry, no photos. </v-alert>
             </v-col>
           </v-row>
 

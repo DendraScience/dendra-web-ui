@@ -10,7 +10,7 @@
       dark
       dense
       fixed
-      style="margin-top: 64px;"
+      style="margin-top: 64px"
     >
       <v-toolbar-title>{{ editorTitle }}</v-toolbar-title>
 
@@ -27,7 +27,7 @@
       </v-toolbar-items>
     </v-app-bar>
 
-    <v-main>
+    <v-main app>
       <status-bar v-model="status" />
 
       <div :style="editing ? { marginTop: '48px' } : { marginTop: '16px' }">
@@ -37,9 +37,7 @@
 
     <v-dialog v-model="cancelDialog" dark max-width="500" persistent>
       <v-card>
-        <v-card-title class="headline">
-          Unsaved changes
-        </v-card-title>
+        <v-card-title class="headline"> Unsaved changes </v-card-title>
 
         <v-card-text>
           You have unsaved changes. Do you really want to discard them?
@@ -56,9 +54,7 @@
 
     <v-dialog v-model="leaveDialog" dark max-width="500" persistent>
       <v-card>
-        <v-card-title class="headline">
-          Unsaved changes
-        </v-card-title>
+        <v-card-title class="headline"> Unsaved changes </v-card-title>
 
         <v-card-text>
           You have unsaved changes. Do you really want to leave this page?

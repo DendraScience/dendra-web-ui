@@ -2,9 +2,7 @@
   <v-card>
     <ValidationObserver ref="observer">
       <form @submit.prevent="submit">
-        <v-card-title class="headline">
-          Account
-        </v-card-title>
+        <v-card-title class="headline"> Account </v-card-title>
 
         <v-card-text>
           <ValidationProvider

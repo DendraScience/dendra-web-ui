@@ -8,7 +8,7 @@
       <v-card :to="viewTo" color="transparent" flat nuxt>
         <v-card-title class="title">
           <v-icon class="mr-2" dark>{{ mdiHexagonSlice6 }}</v-icon
-          >Equipments
+          >Equipment
         </v-card-title>
 
         <v-card-text class="display-1 text-truncate">
@@ -58,7 +58,7 @@ export default {
 
     viewTo() {
       const to = {
-        name: 'equipments',
+        name: 'equipment',
         query: {}
       }
 

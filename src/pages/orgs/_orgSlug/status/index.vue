@@ -1,11 +1,11 @@
 <template>
   <div
     v-if="org"
-    style="position: relative; height: calc(100vh - 64px); overflow: hidden;"
+    style="position: relative; height: calc(100vh - 64px); overflow: hidden"
   >
     <div
       class="pa-2"
-      style="position: absolute; top: 0; width: 380px; z-index: 2;"
+      style="position: absolute; top: 0; width: 380px; z-index: 2"
     >
       <v-card raised>
         <v-text-field
@@ -40,19 +40,19 @@
       service="stations"
     >
       <template v-slot="{ items: stations }">
-        <div style="width: 100%; height: 100%;">
+        <div style="width: 100%; height: 100%">
           <v-navigation-drawer
             :value="viewToggle !== 2"
             class="elevation-2"
             stateless
-            style="position: absolute; top: 0; z-index: 1;"
+            style="position: absolute; top: 0; z-index: 1"
             width="380"
           >
             <v-expansion-panels
               v-model="stationsPanel"
               :multiple="stationsMultiple"
               accordion
-              style="margin-top: 120px;"
+              style="margin-top: 120px"
             >
               <worker-fetch
                 v-for="station in stations"
@@ -207,7 +207,7 @@
             location-lat="geo.coordinates[1]"
             location-lng="geo.coordinates[0]"
             location-title="name"
-            style="width: 100%; height: 100%;"
+            style="width: 100%; height: 100%"
             @select-marker="selectMarker"
           />
         </div>

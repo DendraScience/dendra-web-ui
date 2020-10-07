@@ -47,7 +47,7 @@
               >Equipment:
               <nuxt-link
                 :to="{
-                  name: 'equipments-thingTypeId',
+                  name: 'equipment-thingTypeId',
                   params: {
                     thingTypeId: queryThingTypeId
                   }

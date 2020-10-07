@@ -83,7 +83,7 @@ export default {
       this.setEditing(false)
       this.setEditorDirty(-1)
       this.$router.push({
-        name: 'equipments'
+        name: 'equipment'
       })
     },
 
@@ -104,7 +104,7 @@ export default {
         this.setEditorDirty(-1)
         this.$router.push(
           {
-            name: 'equipments-thingTypeId',
+            name: 'equipment-thingTypeId',
             params: { thingTypeId: res._id }
           },
           () => {
