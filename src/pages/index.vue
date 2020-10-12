@@ -3,10 +3,10 @@
     <v-row no-gutters>
       <v-col>
         <v-img
+          :max-height="$vuetify.breakpoint.mdAndUp ? 480 : 540"
           :src="require('@/assets/angelo-reserve.jpg')"
           class="fill-height d-flex align-end"
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
-          max-height="520"
           position="top"
         >
           <v-container class="px-md-6" style="margin-top: 64px">
@@ -51,7 +51,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row class="grey lighten-4">
       <v-col>
         <v-container class="px-md-6">
           <v-row>
@@ -104,8 +104,6 @@
         </v-container>
       </v-col>
     </v-row>
-
-    <v-divider />
 
     <v-row>
       <v-col>

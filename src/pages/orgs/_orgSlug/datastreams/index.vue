@@ -474,12 +474,11 @@ export default {
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
-        startTime: moment(
-          this.dateRange.from,
-          dateFormats.y4md,
-          true
-        ).valueOf(),
-        untilTime: moment(this.dateRange.to, dateFormats.y4md, true)
+        startTime: moment
+          .utc(this.dateRange.from, dateFormats.y4md, true)
+          .valueOf(),
+        untilTime: moment
+          .utc(this.dateRange.to, dateFormats.y4md, true)
           .startOf('d')
           .add(1, 'd')
           .valueOf()
