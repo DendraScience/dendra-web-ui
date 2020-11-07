@@ -278,7 +278,6 @@ import Vue from 'vue'
 import vuetifyColors from 'vuetify/lib/util/colors'
 import { mapGetters, mapState } from 'vuex'
 import moment from 'moment'
-import timer from '@/mixins/timer'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
 import { defaultOptions } from '@/lib/chart'
@@ -302,8 +301,6 @@ export default {
     'soms',
     'system-time-utc'
   ],
-
-  mixins: [timer],
 
   fetch() {
     const fetchSpec = {
@@ -331,8 +328,6 @@ export default {
 
     seriesFetchWorker: null,
     stationDashboardWorker: null,
-
-    timerInterval: 300000,
 
     units: null
   }),
@@ -473,10 +468,6 @@ export default {
     this.stationDashboardWorker.terminate()
     this.stationDashboardWorker = null
   },
-
-  // mounted() {
-  //   this.fetch()
-  // },
 
   methods: {
     addCumulativeRainfallChart(

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import UserAccountEdit from '@/components/UserAccountEdit'
 import UserPasswordEdit from '@/components/UserPasswordEdit'
 
@@ -45,10 +45,6 @@ export default {
     }),
 
     ...mapState(['auth'])
-  },
-
-  methods: {
-    ...mapActions('auth', ['authenticate'])
   }
 }
 </script>

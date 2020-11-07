@@ -180,12 +180,6 @@ export default {
             // {
             //   org: true,
             //   disabled: true,
-            //   name: 'orgs-orgSlug-equipment',
-            //   title: 'Equipment'
-            // },
-            // {
-            //   org: true,
-            //   disabled: true,
             //   name: 'orgs-orgSlug-people',
             //   title: 'People'
             // }
@@ -197,8 +191,7 @@ export default {
             // }
           ]
         }
-      ],
-      title: 'Vuetify.js'
+      ]
     }
   },
 
@@ -211,10 +204,10 @@ export default {
 
     drawer: {
       set(value) {
-        this.$store.commit('ux/setDrawer', value)
+        this.$store.commit('ux/setMainDrawer', value)
       },
       get() {
-        return this.$store.state.ux.drawer
+        return this.$store.state.ux.mainDrawer
       }
     },
 
@@ -242,8 +235,8 @@ export default {
   },
 
   created() {
-    if (this.$store.state.ux.drawer === null)
-      this.$store.commit('ux/setDrawer', this.$vuetify.breakpoint.lgAndUp)
+    if (this.$store.state.ux.mainDrawer === null)
+      this.$store.commit('ux/setMainDrawer', this.$vuetify.breakpoint.lgAndUp)
   }
 }
 </script>

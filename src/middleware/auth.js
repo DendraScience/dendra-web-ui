@@ -14,7 +14,7 @@ export default async function ({ app, redirect, store }) {
   } catch (err) {
     app.$logger.error('middleware/auth', err)
 
-    // FIX: Bad token causes infinie loop?
+    // FIX: Bad token causes infinite loop?
     // return redirect('/')
   }
 }

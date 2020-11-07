@@ -91,7 +91,9 @@
                       <v-btn :disabled="!cartCount" @click="goToChartTab"
                         >Chart</v-btn
                       >
-                      <v-btn disabled>Download</v-btn>
+                      <v-btn :disabled="!cartCount" @click="goToDownloadTab"
+                        >Download</v-btn
+                      >
                     </v-card-actions>
                   </v-card>
                 </v-tab-item>
@@ -153,60 +155,99 @@
                 <v-tab-item>
                   <v-card tile>
                     <content-header>
-                      How To Download
+                      Download datastreams
                       <template v-slot:content>
-                        <v-row>
-                          <v-col class="body-1" cols="12" md="6">
-                            <p>
-                              Dendra’s primary download function is nearing
-                              completion. Until it is ready, there is a simple
-                              workaround to get your data.
-                            </p>
+                        <v-row dense>
+                          <v-col v-if="downloadSubmitDate">
+                            <v-card color="grey lighten-4" outlined>
+                              <v-card-title
+                                >Good news! Your download has been queued for
+                                processing.</v-card-title
+                              >
 
-                            <ol>
-                              <li>
-                                Go back to the previous tab,
-                                <strong>Chart</strong>.
-                              </li>
-                              <li>
-                                If you haven’t already, please set your target
-                                time period and graph all the datastreams that
-                                you would like to download.
-                              </li>
-                              <li>
-                                Once the graph is complete, there will be a menu
-                                in the top right corner of the plot represented
-                                by three vertical dots (<v-icon>{{
-                                  mdiDotsVertical
-                                }}</v-icon
-                                >).
-                              </li>
-                              <li>
-                                Select from the menu,
-                                <strong>Export as…</strong> (see image)
-                              </li>
-                              <li>
-                                Choose <strong>CSV file</strong> (other options
-                                will save the plot as an image).
-                              </li>
-                              <li>Click <strong>Export</strong>.</li>
-                              <li>
-                                Your data will be saved under the title of the
-                                graph, e.g.
-                                <code>data-i-want-to-download.csv</code>.
-                              </li>
-                            </ol>
+                              <v-card-actions>
+                                <v-btn
+                                  text
+                                  x-small
+                                  @click="downloadSubmitDate = null"
+                                  >Prepare Another Download</v-btn
+                                >
+                              </v-card-actions>
+                            </v-card>
                           </v-col>
-                          <v-col cols="12" md="6">
-                            <v-img
-                              :src="
-                                require('@/assets/download-data-from-graph.jpg')
-                              "
-                            />
+                          <v-col v-else>
+                            <v-card outlined>
+                              <v-card-subtitle>
+                                <h4 class="subtitle-2">
+                                  <v-icon class="mr-2" small>{{
+                                    mdiChartTimelineVariant
+                                  }}</v-icon
+                                  >Datastreams: {{ cartCount }} selected
+                                </h4>
+                                <h4 class="subtitle-2">
+                                  <v-icon class="mr-2" small>{{
+                                    mdiFileDownload
+                                  }}</v-icon
+                                  >Format: CSV
+                                </h4>
+                              </v-card-subtitle>
+                            </v-card>
                           </v-col>
                         </v-row>
                       </template>
                     </content-header>
+
+                    <ValidationObserver v-slot="{ valid }">
+                      <v-container v-if="!downloadSubmitDate" fluid>
+                        <v-row dense>
+                          <v-col>
+                            <date-range-fields
+                              v-model="dateRange"
+                              class="pa-0"
+                            />
+                          </v-col>
+                        </v-row>
+
+                        <v-row dense>
+                          <v-col v-if="cartCount || !charts.length">
+                            <ValidationProvider
+                              v-slot="{ errors }"
+                              name="download comment"
+                              rules="required|max:100"
+                            >
+                              <v-text-field
+                                v-model="downloadComment"
+                                :error-messages="errors"
+                                clearable
+                                filled
+                                flat
+                                hint="Be detailed. This will help you find your download when it's ready."
+                                label="Download comment"
+                                required
+                              ></v-text-field>
+                            </ValidationProvider>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+
+                      <v-card-actions>
+                        <v-btn
+                          v-if="!downloadSubmitDate"
+                          :disabled="!(cartCount && valid)"
+                          color="primary"
+                          large
+                          @click="submitDownload"
+                          >Create Download
+                        </v-btn>
+
+                        <v-spacer />
+
+                        <v-btn large @click="setDownloadDrawer(true)"
+                          >View Past Downloads
+                          <v-icon class="ml-2">{{ mdiArrowRight }}</v-icon>
+                        </v-btn>
+                      </v-card-actions>
+                    </ValidationObserver>
                   </v-card>
                 </v-tab-item>
               </v-tabs>
@@ -328,6 +369,9 @@ export default {
 
     // HACK: For faceted search
     datastreams: [],
+
+    downloadComment: 'Enter Download Comment Here',
+    downloadSubmitDate: null,
 
     tabIndex: 0,
 
@@ -464,6 +508,7 @@ export default {
       addDatastream: 'datastreams/addItem',
       incrementQuantity: 'cart/incrementQuantity',
       resetCart: 'cart/reset',
+      setDownloadDrawer: 'ux/setDownloadDrawer',
       setQuantity: 'cart/setQuantity'
     }),
 
@@ -553,9 +598,65 @@ export default {
       })
     },
 
+    async submitDownload() {
+      this.downloadSubmitDate = new Date()
+
+      const data = {
+        spec: {
+          comment: this.downloadComment,
+          method: 'csv',
+          options: {
+            begins_at: moment
+              .utc(this.dateRange.from, dateFormats.y4md, true)
+              .valueOf(),
+            concurrency: 4,
+            datastream_ids: this.cartIds,
+            ends_before: moment
+              .utc(this.dateRange.to, dateFormats.y4md, true)
+              .startOf('d')
+              .add(1, 'd')
+              .valueOf()
+          }
+        },
+        spec_type: 'file/export',
+        storage: {
+          method: 'minio'
+        }
+      }
+
+      try {
+        // HACK: Use fetch as the API cannot exchange the user token via websockets
+        const response = await fetch(
+          new URL(`${this.$api.uri}${this.$api.path}/downloads`),
+          {
+            method: 'POST',
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+              Authorization: this.auth.accessToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }
+        )
+        if (!response.ok)
+          throw new Error(`Non-success status code ${response.status}`)
+      } catch (err) {
+        this.$logger.error('submitDownload', err)
+      }
+
+      this.setDownloadDrawer(true)
+    },
+
     goToChartTab() {
       this.$vuetify.goTo(0, { duration: 0 }).then(() => {
         this.tabIndex = 1
+      })
+    },
+
+    goToDownloadTab() {
+      this.$vuetify.goTo(0, { duration: 0 }).then(() => {
+        this.tabIndex = 2
       })
     },
 

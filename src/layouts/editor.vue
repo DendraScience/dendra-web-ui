@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <download-navigation-drawer />
     <main-navigation-drawer />
     <main-toolbar />
 
@@ -75,6 +76,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import DownloadNavigationDrawer from '@/components/DownloadNavigationDrawer'
 import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
 import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
@@ -82,6 +84,7 @@ import StatusBar from '@/components/StatusBar'
 
 export default {
   components: {
+    DownloadNavigationDrawer,
     MainNavigationDrawer,
     MainToolbar,
     SessionExpiredDialog,

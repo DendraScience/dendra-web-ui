@@ -249,8 +249,6 @@ export default {
     return {
       bus: new Vue(),
 
-      drawer: true,
-
       infoContent: null,
       infoOpen: null,
 

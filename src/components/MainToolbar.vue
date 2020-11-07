@@ -7,7 +7,7 @@
     fixed
     height="64"
   >
-    <v-app-bar-nav-icon @click="toggleDrawer" />
+    <v-app-bar-nav-icon @click="toggleMainDrawer" />
 
     <v-toolbar-title>
       <nuxt-link
@@ -32,6 +32,24 @@
     <v-menu v-if="auth.payload" offset-y left>
       <template v-slot:activator="{ on }">
         <div>
+          <v-badge
+            :color="
+              pendingDownloads.length
+                ? 'warning'
+                : readyDownloads.length
+                ? 'info'
+                : 'transparent'
+            "
+            :content="pendingDownloads.length || readyDownloads.length || ''"
+            left
+            offset-x="20"
+            offset-y="20"
+          >
+            <v-btn dark icon @click="toggleDownloadDrawer">
+              <v-icon>{{ mdiDownload }}</v-icon>
+            </v-btn>
+          </v-badge>
+
           <v-btn dark icon v-on="on">
             <v-icon>{{ mdiAccount }}</v-icon>
           </v-btn>
@@ -78,8 +96,11 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import downloads from '@/mixins/downloads'
 
 export default {
+  mixins: [downloads],
+
   computed: {
     ...mapGetters({
       orgName: 'orgName',
@@ -97,7 +118,8 @@ export default {
     ...mapActions('auth', ['logout']),
 
     ...mapMutations({
-      toggleDrawer: 'ux/toggleDrawer'
+      toggleDownloadDrawer: 'ux/toggleDownloadDrawer',
+      toggleMainDrawer: 'ux/toggleMainDrawer'
     }),
 
     logoutRedirect() {

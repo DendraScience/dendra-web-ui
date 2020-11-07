@@ -1,7 +1,8 @@
 export const strict = false
 
 export const state = () => ({
-  drawer: undefined,
+  downloadDrawer: undefined,
+  mainDrawer: undefined,
   editing: false,
   editorColor: 'primary',
   editorDirty: 0,
@@ -13,11 +14,18 @@ export const actions = {}
 export const getters = {}
 
 export const mutations = {
-  setDrawer(state, value) {
-    state.drawer = value
+  setDownloadDrawer(state, value) {
+    state.downloadDrawer = value
   },
-  toggleDrawer(state) {
-    state.drawer = !state.drawer
+  toggleDownloadDrawer(state) {
+    state.downloadDrawer = !state.downloadDrawer
+  },
+
+  setMainDrawer(state, value) {
+    state.mainDrawer = value
+  },
+  toggleMainDrawer(state) {
+    state.mainDrawer = !state.mainDrawer
   },
 
   setEditing(state, value) {

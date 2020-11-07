@@ -142,8 +142,8 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <v-card>
-        <v-toolbar dark color="primary">
+      <v-card tile>
+        <v-toolbar color="primary" dark flat>
           <v-btn icon dark @click="datastreamDialog = false">
             <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>
@@ -370,8 +370,8 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <v-card>
-        <v-toolbar dark color="primary">
+      <v-card tile>
+        <v-toolbar color="primary" dark flat>
           <v-btn icon dark @click="stationDialog = false">
             <v-icon>{{ mdiClose }}</v-icon>
           </v-btn>

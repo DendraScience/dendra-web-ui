@@ -1,5 +1,6 @@
 <template>
   <v-app v-scroll="onScroll">
+    <download-navigation-drawer />
     <main-navigation-drawer />
     <main-toolbar />
 
@@ -16,6 +17,7 @@
 </template>
 
 <script>
+import DownloadNavigationDrawer from '@/components/DownloadNavigationDrawer'
 import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
 import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
@@ -24,6 +26,7 @@ import { mapMutations } from 'vuex'
 
 export default {
   components: {
+    DownloadNavigationDrawer,
     MainNavigationDrawer,
     MainToolbar,
     SessionExpiredDialog,

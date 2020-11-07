@@ -3,13 +3,14 @@
     <v-row no-gutters>
       <v-col>
         <v-img
-          :max-height="$vuetify.breakpoint.mdAndUp ? 480 : 540"
+          :max-height="$vuetify.breakpoint.smAndUp ? 460 : undefined"
           :src="require('@/assets/angelo-reserve.jpg')"
+          aspect-ratio="1.5"
           class="fill-height d-flex align-end"
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
           position="top"
         >
-          <v-container class="px-md-6" style="margin-top: 64px">
+          <v-container class="px-md-6 pt-md-8" style="margin-top: 64px">
             <v-row>
               <v-col class="subtitle-1 white--text" cols="12" md="8">
                 <v-img

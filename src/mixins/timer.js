@@ -2,6 +2,7 @@ export default {
   data: () => ({
     isTimerEnabled: true,
     timerId: null,
+    timerFiredAt: null,
     timerInterval: 60000
   }),
 
@@ -26,17 +27,21 @@ export default {
   methods: {
     clearTimer() {
       if (this.timerId) clearTimeout(this.timerId)
-
       this.timerId = null
+    },
+
+    fireTimer(...args) {
+      this.clearTimer()
+      this.timerFiredAt = new Date()
+      return Promise.resolve()
+        .then(() => this.timerCallback(...args))
+        .finally(this.resetTimer)
     },
 
     resetTimer() {
       this.clearTimer()
-
       if (this.isTimerEnabled)
-        this.timerId = setTimeout(() => {
-          Promise.resolve().then(this.timerCallback).finally(this.resetTimer)
-        }, this.timerInterval)
+        this.timerId = setTimeout(() => this.fireTimer(), this.timerInterval)
     },
 
     async timerCallback() {}

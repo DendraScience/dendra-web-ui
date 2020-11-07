@@ -23,6 +23,7 @@ export const plugins = [
   service('datastreams', {
     paginate: true
   }),
+  service('downloads'),
   service('memberships'),
   service('organizations'),
   service('persons'),

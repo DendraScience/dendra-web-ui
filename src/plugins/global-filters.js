@@ -21,6 +21,14 @@ Vue.filter('companyName', value => {
   return companyName(value)
 })
 
+Vue.filter('counted', (value, singular, plural) => {
+  return value === undefined || value === null
+    ? ''
+    : value.toLocaleString() +
+        ' ' +
+        (value === 1 ? singular : plural || `${singular}s`)
+})
+
 Vue.filter('dateFormat', (value, defaultValue = '', ...args) => {
   return value === undefined || value === null
     ? defaultValue
