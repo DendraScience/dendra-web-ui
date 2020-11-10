@@ -2,7 +2,12 @@
   <v-container fluid>
     <v-row v-for="(chart, index) in value" :key="chart.id">
       <v-col cols="12">
-        <datastream-chart :value="chart" :worker="Object.freeze(worker)">
+        <datastream-chart
+          :value="chart"
+          :pin-tooltip.sync="pinTooltip"
+          :show-pin="showPin"
+          :worker="Object.freeze(worker)"
+        >
           <template v-slot:menu>
             <v-list>
               <v-list-item v-if="showRemove" @click="remove(index)">
@@ -95,6 +100,7 @@ export default {
   },
 
   props: {
+    showPin: { default: false, type: Boolean },
     showRemove: { default: true, type: Boolean },
     value: { type: Array, required: true },
     worker: { default: null, type: Worker }
@@ -103,6 +109,8 @@ export default {
   data: () => ({
     exportDialog: false,
     exportItems,
+
+    pinTooltip: false,
 
     previousExportIndex: -1,
     selectedExportIndex: 0,

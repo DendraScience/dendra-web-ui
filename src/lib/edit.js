@@ -177,7 +177,5 @@ export function createData(instance) {
 
 export function patchData(instance) {
   const patch = { $set: setData(instance), $unset: unsetData(instance) }
-  /* eslint-disable-next-line no-console */
-  console.log('patch', patch)
   return patch
 }

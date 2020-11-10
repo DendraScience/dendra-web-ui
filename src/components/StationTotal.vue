@@ -6,7 +6,7 @@
   >
     <v-card v-if="pagination" color="green" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
-        <v-card-title class="title">
+        <v-card-title>
           <v-icon class="mr-2" dark>{{ mdiNature }}</v-icon
           >Stations
         </v-card-title>

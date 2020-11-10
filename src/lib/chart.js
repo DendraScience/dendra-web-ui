@@ -1,6 +1,8 @@
 import Highcharts from 'highcharts'
 
+export const CONTAINER_KEY = '___container'
 export const GROUP_KEY = '___group'
+export const RENDERER_KEY = '___renderer'
 export const TOUCH_EVENTS = ['mousemove', 'touchmove', 'touchstart']
 
 export function defaultOptions(title = '', subtitle = '') {
@@ -20,6 +22,9 @@ export function defaultOptions(title = '', subtitle = '') {
       },
       fallbackToExportServer: false
     },
+    legend: {
+      enabled: true
+    },
     navigation: {
       buttonOptions: { enabled: false }
     },
@@ -38,6 +43,7 @@ export function defaultOptions(title = '', subtitle = '') {
     },
     tooltip: {
       shared: true,
+      // useHTML: true,
       xDateFormat: '%a %Y-%m-%d %H:%M'
     },
     xAxis: {

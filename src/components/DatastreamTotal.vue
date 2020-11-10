@@ -6,11 +6,11 @@
   >
     <v-card v-if="pagination" color="blue" dark hover>
       <v-card :to="viewTo" color="transparent" flat nuxt>
-        <v-card-title class="title">
+        <v-card-title>
           <v-icon class="mr-2" dark>{{ mdiChartTimelineVariant }}</v-icon
           >Datastreams
         </v-card-title>
-        <v-card-subtitle v-if="showOrg" class="subtitle-1">
+        <v-card-subtitle v-if="showOrg">
           {{ org.name }}
         </v-card-subtitle>
 

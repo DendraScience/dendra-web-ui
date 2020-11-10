@@ -5,7 +5,7 @@
 <script>
 import Highcharts from 'highcharts'
 import _debounce from 'lodash/debounce'
-import { GROUP_KEY, TOUCH_EVENTS } from '@/lib/chart'
+import { GROUP_KEY, RENDERER_KEY, TOUCH_EVENTS } from '@/lib/chart'
 
 export default {
   props: {
@@ -52,12 +52,16 @@ export default {
     },
     syncCrosshairs: { default: false, type: Boolean },
     syncExtremes: { default: false, type: Boolean },
+    tooltipContainerClass: { default: null, type: String },
     worker: { default: null, type: Worker }
   },
 
   watch: {
-    options(newValue) {
-      this.chart.update(newValue)
+    options: {
+      handler(newValue) {
+        this.chart.update(newValue)
+      },
+      deep: true
     }
   },
 
@@ -80,6 +84,21 @@ export default {
     const chartRef = this.$refs.chart
     this.chart = Highcharts.chart(chartRef, this.options)
     this.chart[GROUP_KEY] = this.group
+    const { tooltipContainerClass } = this
+
+    if (this.chart.tooltip && tooltipContainerClass) {
+      // HACK: Monkey patch Highcharts to style the tooltip
+      this.chart.tooltip[RENDERER_KEY] = this.chart.tooltip.renderer
+      Object.defineProperty(this.chart.tooltip, 'renderer', {
+        get() {
+          return this[RENDERER_KEY]
+        },
+        set(value) {
+          this.container.classList.add(tooltipContainerClass)
+          this[RENDERER_KEY] = value
+        }
+      })
+    }
 
     if (this.syncCrosshairs)
       TOUCH_EVENTS.forEach(eventType =>

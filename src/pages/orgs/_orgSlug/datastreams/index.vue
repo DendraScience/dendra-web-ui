@@ -153,24 +153,38 @@
                 </v-tab-item>
 
                 <v-tab-item>
-                  <v-card tile>
+                  <v-card v-if="auth.payload" tile>
                     <content-header>
-                      Download datastreams
+                      Download data
                       <template v-slot:content>
                         <v-row dense>
                           <v-col v-if="downloadSubmitDate">
                             <v-card color="grey lighten-4" outlined>
                               <v-card-title
-                                >Good news! Your download has been queued for
-                                processing.</v-card-title
-                              >
+                                >Your download has been submitted for
+                                processing.
+                              </v-card-title>
+                              <v-card-subtitle
+                                >You may check on the status of you download at
+                                any time by opening the
+                                <v-chip
+                                  color="primary"
+                                  label
+                                  small
+                                  @click="setDownloadDrawer(true)"
+                                >
+                                  <v-icon left small>{{ mdiDownload }}</v-icon>
+                                  Dowloads</v-chip
+                                >
+                                drawer.
+                              </v-card-subtitle>
 
                               <v-card-actions>
                                 <v-btn
                                   text
                                   x-small
                                   @click="downloadSubmitDate = null"
-                                  >Prepare Another Download</v-btn
+                                  >Create Another Download</v-btn
                                 >
                               </v-card-actions>
                             </v-card>
@@ -236,7 +250,7 @@
                           :disabled="!(cartCount && valid)"
                           color="primary"
                           large
-                          @click="submitDownload"
+                          @click="createDownload"
                           >Create Download
                         </v-btn>
 
@@ -249,6 +263,8 @@
                       </v-card-actions>
                     </ValidationObserver>
                   </v-card>
+
+                  <download-no-auth v-else />
                 </v-tab-item>
               </v-tabs>
             </v-col>
@@ -262,6 +278,7 @@
         <datastream-charts
           :value="charts"
           :worker="Object.freeze(seriesFetchWorker)"
+          show-pin
           @remove="charts.splice($event, 1)"
         />
       </v-col>
@@ -307,7 +324,7 @@
 
     <v-dialog v-model="selecting" dark hide-overlay persistent width="300">
       <v-card>
-        <v-card-title class="title"> Selecting items... </v-card-title>
+        <v-card-title> Selecting items... </v-card-title>
 
         <v-card-text>
           <v-progress-linear indeterminate color="white"></v-progress-linear>
@@ -336,6 +353,7 @@ import DatastreamCharts from '@/components/DatastreamCharts'
 import DatastreamFacetSearch from '@/components/DatastreamFacetSearch'
 import DatastreamSearch from '@/components/DatastreamSearch'
 import DateRangeFields from '@/components/DateRangeFields'
+import DownloadNoAuth from '@/components/DownloadNoAuth'
 import QueryHeader from '@/components/QueryHeader'
 
 export default {
@@ -346,6 +364,7 @@ export default {
     DatastreamFacetSearch,
     DatastreamSearch,
     DateRangeFields,
+    DownloadNoAuth,
     QueryHeader,
     ValidationObserver,
     ValidationProvider
@@ -541,7 +560,7 @@ export default {
         return {
           datastream,
           seriesName: `${datastream.station_lookup.name} ${datastream.name} ${unitText}`,
-          yAxisLabelFormat: `{value} ${unitText}`,
+          yAxisLabelFormat: `{value:.3f} ${unitText}`,
           yAxisOpposite: quantitiesById[datastream._id] === 2 // Based on cart quantity
         }
       })
@@ -598,7 +617,7 @@ export default {
       })
     },
 
-    async submitDownload() {
+    async createDownload() {
       this.downloadSubmitDate = new Date()
 
       const data = {
@@ -642,7 +661,7 @@ export default {
         if (!response.ok)
           throw new Error(`Non-success status code ${response.status}`)
       } catch (err) {
-        this.$logger.error('submitDownload', err)
+        this.$logger.error('createDownload', err)
       }
 
       this.setDownloadDrawer(true)

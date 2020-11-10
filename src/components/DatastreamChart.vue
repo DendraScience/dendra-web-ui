@@ -26,24 +26,36 @@
           :bus="value.bus"
           :export-chart-options="exportChartOptions"
           :group="value.group"
-          :options="Object.freeze(value.options)"
+          :options="value.options"
           :series-options="Object.freeze(value.seriesOptions)"
           :sync-crosshairs="value.sync"
           :sync-extremes="value.sync"
           :fetch-spec="Object.freeze(value.fetchSpec)"
           :worker="Object.freeze(worker)"
+          tooltip-container-class="datastream-chart-tooltip-container"
         />
       </worker-fetch>
 
-      <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn absolute icon right small text top v-on="on">
-            <v-icon>{{ mdiDotsVertical }}</v-icon>
-          </v-btn>
-        </template>
+      <div class="pa-2" style="position: absolute; top: 0; right: 0">
+        <v-btn
+          v-if="showPin"
+          class="mr-1"
+          icon
+          @click="$emit('update:pinTooltip', !pinTooltip)"
+        >
+          <v-icon>{{ pinTooltip ? mdiPinOff : mdiPin }}</v-icon>
+        </v-btn>
 
-        <slot name="menu" :value="value" />
-      </v-menu>
+        <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon>{{ mdiDotsVertical }}</v-icon>
+            </v-btn>
+          </template>
+
+          <slot name="menu" :value="value" />
+        </v-menu>
+      </div>
     </div>
   </v-card>
 </template>
@@ -52,6 +64,10 @@
 import HcTimeSeries from '@/components/HcTimeSeries'
 import WorkerFetch from '@/components/WorkerFetch'
 
+function fixedPositioner() {
+  return { x: 0, y: 0 }
+}
+
 export default {
   components: {
     HcTimeSeries,
@@ -59,6 +75,8 @@ export default {
   },
 
   props: {
+    pinTooltip: { default: false, type: Boolean },
+    showPin: { default: false, type: Boolean },
     value: { type: Object, required: true },
     worker: { default: null, type: Worker }
   },
@@ -73,6 +91,38 @@ export default {
         }
       }
     }
-  })
+  }),
+
+  watch: {
+    pinTooltip(newValue) {
+      this.configureTooltip(newValue)
+    }
+  },
+
+  mounted() {
+    this.configureTooltip(this.pinTooltip)
+  },
+
+  methods: {
+    configureTooltip(pin) {
+      this.value.options.legend.enabled = !pin
+      this.value.options.tooltip = Object.assign(
+        {},
+        this.value.options.tooltip,
+        {
+          outside: pin,
+          positioner: pin ? fixedPositioner : undefined,
+          shape: pin ? 'square' : 'callout'
+        }
+      )
+    }
+  }
 }
 </script>
+
+<style>
+.datastream-chart-tooltip-container {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+</style>
