@@ -36,9 +36,28 @@
         />
       </worker-fetch>
 
-      <div class="pa-2" style="position: absolute; top: 0; right: 0">
+      <div
+        class="pa-2"
+        style="
+          background-color: rgba(255, 255, 255, 0.8);
+          position: absolute;
+          top: 0;
+          right: 0;
+        "
+      >
         <v-btn
-          v-if="showPin"
+          v-if="showControls"
+          class="mr-1"
+          icon
+          @click="$emit('update:hideLegend', !hideLegend)"
+        >
+          <v-icon>{{
+            hideLegend ? mdiCardBulletedOutline : mdiCardBulletedOffOutline
+          }}</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="showControls"
           class="mr-1"
           icon
           @click="$emit('update:pinTooltip', !pinTooltip)"
@@ -75,8 +94,9 @@ export default {
   },
 
   props: {
+    hideLegend: { default: false, type: Boolean },
     pinTooltip: { default: false, type: Boolean },
-    showPin: { default: false, type: Boolean },
+    showControls: { default: false, type: Boolean },
     value: { type: Object, required: true },
     worker: { default: null, type: Worker }
   },
@@ -94,25 +114,32 @@ export default {
   }),
 
   watch: {
+    hideLegend(newValue) {
+      const { pinTooltip } = this
+      this.update({ hideLegend: newValue, pinTooltip })
+    },
+
     pinTooltip(newValue) {
-      this.configureTooltip(newValue)
+      const { hideLegend } = this
+      this.update({ hideLegend, pinTooltip: newValue })
     }
   },
 
   mounted() {
-    this.configureTooltip(this.pinTooltip)
+    const { hideLegend, pinTooltip } = this
+    this.update({ hideLegend, pinTooltip })
   },
 
   methods: {
-    configureTooltip(pin) {
-      this.value.options.legend.enabled = !pin
+    update({ hideLegend, pinTooltip }) {
+      this.value.options.legend.enabled = !hideLegend
       this.value.options.tooltip = Object.assign(
         {},
         this.value.options.tooltip,
         {
-          outside: pin,
-          positioner: pin ? fixedPositioner : undefined,
-          shape: pin ? 'square' : 'callout'
+          outside: pinTooltip,
+          positioner: pinTooltip ? fixedPositioner : undefined,
+          shape: pinTooltip ? 'square' : 'callout'
         }
       )
     }

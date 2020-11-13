@@ -4,8 +4,9 @@
       <v-col cols="12">
         <datastream-chart
           :value="chart"
+          :hide-legend.sync="hideLegend"
           :pin-tooltip.sync="pinTooltip"
-          :show-pin="showPin"
+          :show-controls="showControls"
           :worker="Object.freeze(worker)"
         >
           <template v-slot:menu>
@@ -100,7 +101,7 @@ export default {
   },
 
   props: {
-    showPin: { default: false, type: Boolean },
+    showControls: { default: false, type: Boolean },
     showRemove: { default: true, type: Boolean },
     value: { type: Array, required: true },
     worker: { default: null, type: Worker }
@@ -109,6 +110,8 @@ export default {
   data: () => ({
     exportDialog: false,
     exportItems,
+
+    hideLegend: false,
 
     pinTooltip: false,
 

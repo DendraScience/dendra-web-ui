@@ -278,7 +278,7 @@
         <datastream-charts
           :value="charts"
           :worker="Object.freeze(seriesFetchWorker)"
-          show-pin
+          show-controls
           @remove="charts.splice($event, 1)"
         />
       </v-col>
