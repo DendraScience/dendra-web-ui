@@ -66,11 +66,7 @@
     <v-row dense>
       <v-col>
         <feathers-vuex-find
-          v-slot="{
-            isFindPending: loading,
-            items: thingTypes,
-            pagination
-          }"
+          v-slot="{ isFindPending: loading, items: thingTypes, pagination }"
           :fetch-query="thingTypesFetchQuery"
           :query="thingTypesQuery"
           :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"

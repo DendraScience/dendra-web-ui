@@ -33,6 +33,7 @@
           :fetch-spec="Object.freeze(value.fetchSpec)"
           :worker="Object.freeze(worker)"
           tooltip-container-class="datastream-chart-tooltip-container"
+          @zoomed="zoomed"
         />
       </worker-fetch>
 
@@ -46,8 +47,14 @@
         "
       >
         <v-btn
+          v-if="isZoomed && showResetZoom"
+          icon
+          @click="value.bus.$emit('reset-zoom')"
+          ><v-icon>{{ mdiMagnifyClose }}</v-icon>
+        </v-btn>
+
+        <v-btn
           v-if="showControls"
-          class="mr-1"
           icon
           @click="$emit('update:hideLegend', !hideLegend)"
         >
@@ -58,7 +65,6 @@
 
         <v-btn
           v-if="showControls"
-          class="mr-1"
           icon
           @click="$emit('update:pinTooltip', !pinTooltip)"
         >
@@ -97,6 +103,7 @@ export default {
     hideLegend: { default: false, type: Boolean },
     pinTooltip: { default: false, type: Boolean },
     showControls: { default: false, type: Boolean },
+    showResetZoom: { default: false, type: Boolean },
     value: { type: Object, required: true },
     worker: { default: null, type: Worker }
   },
@@ -110,7 +117,9 @@ export default {
           }
         }
       }
-    }
+    },
+
+    isZoomed: false
   }),
 
   watch: {
@@ -142,6 +151,10 @@ export default {
           shape: pinTooltip ? 'square' : 'callout'
         }
       )
+    },
+
+    zoomed(state) {
+      this.isZoomed = state
     }
   }
 }

@@ -10,6 +10,11 @@ export function defaultOptions(title = '', subtitle = '') {
     chart: {
       height: 500,
       resetPointer: false,
+      resetZoomButton: {
+        theme: {
+          display: 'none'
+        }
+      },
       zoomType: 'x'
     },
     exporting: {

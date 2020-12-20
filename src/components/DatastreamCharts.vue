@@ -7,6 +7,7 @@
           :hide-legend.sync="hideLegend"
           :pin-tooltip.sync="pinTooltip"
           :show-controls="showControls"
+          :show-reset-zoom="showResetZoom"
           :worker="Object.freeze(worker)"
         >
           <template v-slot:menu>
@@ -102,7 +103,8 @@ export default {
 
   props: {
     showControls: { default: false, type: Boolean },
-    showRemove: { default: true, type: Boolean },
+    showRemove: { default: false, type: Boolean },
+    showResetZoom: { default: false, type: Boolean },
     value: { type: Array, required: true },
     worker: { default: null, type: Worker }
   },

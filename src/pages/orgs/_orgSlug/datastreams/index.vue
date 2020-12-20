@@ -279,6 +279,8 @@
           :value="charts"
           :worker="Object.freeze(seriesFetchWorker)"
           show-controls
+          show-remove
+          show-reset-zoom
           @remove="charts.splice($event, 1)"
         />
       </v-col>

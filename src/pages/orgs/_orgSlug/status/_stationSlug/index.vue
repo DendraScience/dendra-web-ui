@@ -264,9 +264,9 @@
     <v-row v-if="charts.length" no-gutters>
       <v-col>
         <datastream-charts
-          :show-remove="false"
           :value="charts"
           :worker="Object.freeze(seriesFetchWorker)"
+          show-reset-zoom
         />
       </v-col>
     </v-row>

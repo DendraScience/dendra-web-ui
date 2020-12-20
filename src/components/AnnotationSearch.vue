@@ -83,11 +83,7 @@
     <v-row dense>
       <v-col>
         <feathers-vuex-find
-          v-slot="{
-            isFindPending: loading,
-            items: annotations,
-            pagination
-          }"
+          v-slot="{ isFindPending: loading, items: annotations, pagination }"
           :fetch-query="annotationsFetchQuery"
           :query="annotationsQuery"
           :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"

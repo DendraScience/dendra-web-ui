@@ -15,11 +15,7 @@
     <v-row dense>
       <v-col>
         <feathers-vuex-find
-          v-slot="{
-            isFindPending: loading,
-            items: companies,
-            pagination
-          }"
+          v-slot="{ isFindPending: loading, items: companies, pagination }"
           :fetch-query="companiesFetchQuery"
           :query="companiesQuery"
           :watch="['fetchQuery.$and', 'fetchQuery.$limit', 'fetchQuery.$skip']"

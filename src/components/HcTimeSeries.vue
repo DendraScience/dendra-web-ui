@@ -5,6 +5,7 @@
 <script>
 import Highcharts from 'highcharts'
 import _debounce from 'lodash/debounce'
+import _merge from 'lodash/merge'
 import { GROUP_KEY, RENDERER_KEY, TOUCH_EVENTS } from '@/lib/chart'
 
 export default {
@@ -59,7 +60,7 @@ export default {
   watch: {
     options: {
       handler(newValue) {
-        this.chart.update(newValue)
+        this.chart.update(this.makeChartOptions(newValue))
       },
       deep: true
     }
@@ -82,7 +83,7 @@ export default {
 
   mounted() {
     const chartRef = this.$refs.chart
-    this.chart = Highcharts.chart(chartRef, this.options)
+    this.chart = Highcharts.chart(chartRef, this.makeChartOptions(this.options))
     this.chart[GROUP_KEY] = this.group
     const { tooltipContainerClass } = this
 
@@ -105,9 +106,13 @@ export default {
         chartRef.addEventListener(eventType, this.debouncedTouchHandler)
       )
 
+    /* eslint-disable-next-line no-console */
+    console.log('>>>', this.chart)
+
     if (this.bus) {
       this.bus.$on('download-csv', this.downloadCSV)
       this.bus.$on('export', this.export)
+      this.bus.$on('reset-zoom', this.resetZoom)
     }
   },
 
@@ -127,12 +132,17 @@ export default {
     if (this.bus) {
       this.bus.$off('download-csv', this.downloadCSV)
       this.bus.$off('export', this.export)
+      this.bus.$off('reset-zoom', this.resetZoom)
     }
 
     this.worker.removeEventListener('message', this.workerMessageHandler)
   },
 
   methods: {
+    afterSetExtremesHandler(e) {
+      this.$emit('zoomed', !!e.userMin)
+    },
+
     downloadCSV() {
       const { chart } = this
 
@@ -149,6 +159,21 @@ export default {
       })
     },
 
+    makeChartOptions(options) {
+      const xAxisOptions =
+        this.$listeners && this.$listeners.zoomed
+          ? {
+              xAxis: {
+                events: {
+                  afterSetExtremes: this.afterSetExtremesHandler
+                }
+              }
+            }
+          : null
+
+      return _merge({}, xAxisOptions, options)
+    },
+
     removeAllSeries() {
       const { chart } = this
       if (!chart) return
@@ -156,6 +181,14 @@ export default {
       while (chart.series.length > 0) {
         chart.series[0].remove()
       }
+    },
+
+    resetZoom() {
+      const { chart } = this
+
+      this.$nextTick(() => {
+        if (chart) chart.zoomOut()
+      })
     },
 
     touchHandler(e) {

@@ -163,11 +163,7 @@
                         <slot name="select" :item="item" />
                       </template>
 
-                      <template
-                        v-slot:item.extent.begins_at="{
-                          item
-                        }"
-                      >
+                      <template v-slot:item.extent.begins_at="{ item }">
                         {{
                           item.extent &&
                           item.extent.begins_at
@@ -180,11 +176,7 @@
                         }}
                       </template>
 
-                      <template
-                        v-slot:item.extent.ends_before="{
-                          item
-                        }"
-                      >
+                      <template v-slot:item.extent.ends_before="{ item }">
                         {{
                           item.extent &&
                           item.extent.ends_before
