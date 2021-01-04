@@ -29,7 +29,6 @@
           :options="value.options"
           :series-options="Object.freeze(value.seriesOptions)"
           :sync-crosshairs="value.sync"
-          :sync-extremes="value.sync"
           :fetch-spec="Object.freeze(value.fetchSpec)"
           :worker="Object.freeze(worker)"
           tooltip-container-class="datastream-chart-tooltip-container"

@@ -52,7 +52,8 @@ export default {
       type: Array
     },
     syncCrosshairs: { default: false, type: Boolean },
-    syncExtremes: { default: false, type: Boolean },
+    // NOTE: Not used
+    // syncExtremes: { default: false, type: Boolean },
     tooltipContainerClass: { default: null, type: String },
     worker: { default: null, type: Worker }
   },

@@ -115,8 +115,8 @@
                           </v-col>
                         </v-row>
 
-                        <v-row dense>
-                          <v-col v-if="cartCount || !charts.length">
+                        <v-row v-if="cartCount || !charts.length" dense>
+                          <v-col>
                             <ValidationProvider
                               v-slot="{ errors }"
                               name="chart title"
@@ -132,6 +132,14 @@
                                 required
                               ></v-text-field>
                             </ValidationProvider>
+                          </v-col>
+
+                          <v-col cols="auto">
+                            <v-checkbox
+                              v-model="chartSync"
+                              dense
+                              label="Sync zooming"
+                            ></v-checkbox>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -384,6 +392,7 @@ export default {
 
   data: () => ({
     charts: [],
+    chartSync: true,
     chartTitle: 'Enter Chart Title Here',
 
     currentItems: [],
@@ -607,15 +616,18 @@ export default {
       this.seriesFetchWorker.postMessage({
         accessToken: this.auth.accessToken
       })
+      const id = `datastreams-${new Date().getTime()}-${idRandom()}`
       this.charts.unshift({
         alert: null,
         bus: new Vue(),
         canDownload,
         fetchSpec,
-        id: `datastreams-${new Date().getTime()}-${idRandom()}`,
+        group: this.chartSync ? 1 : id,
+        id,
         isReady: false,
         options,
-        seriesOptions
+        seriesOptions,
+        sync: false
       })
     },
 
