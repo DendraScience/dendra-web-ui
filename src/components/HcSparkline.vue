@@ -114,7 +114,7 @@ export default {
         const options = Object.assign(
           {
             boostThreshold: 20,
-            step: true,
+            step: 'center',
             zIndex: series.index
           },
           this.seriesOptions[series.index],

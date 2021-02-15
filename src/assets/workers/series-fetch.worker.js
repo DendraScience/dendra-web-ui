@@ -13,6 +13,7 @@ async function processFetch({ id, fetchSpec }) {
   const {
     baseQuery,
     queries,
+    sampleInterval,
     seriesType,
     startTime,
     timeLocal = true,
@@ -24,9 +25,12 @@ async function processFetch({ id, fetchSpec }) {
     const query = queries[index]
     const data = []
     const toTime = Array.isArray(untilTime) ? untilTime[index] : untilTime
+    let currTime
     let fromTime = Array.isArray(startTime) ? startTime[index] : startTime
     let first
+    let nextTime
     let point
+    let prevTime
     let value
 
     while (processIds[id] !== undefined) {
@@ -104,7 +108,20 @@ async function processFetch({ id, fetchSpec }) {
 
           if (!first) first = { point, value }
 
-          data.push([point.lt, value])
+          currTime = point.lt
+
+          if (currTime - prevTime > sampleInterval) {
+            nextTime =
+              (Math.floor(prevTime / sampleInterval) + 1) * sampleInterval
+            while (nextTime < currTime) {
+              data.push([nextTime, null])
+              nextTime += sampleInterval
+            }
+          }
+
+          prevTime = currTime
+
+          data.push([currTime, value])
         }
       } else {
         // HACK: Handle data services that don't return 'lt' (e.g. NWS)

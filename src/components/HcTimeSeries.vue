@@ -107,9 +107,6 @@ export default {
         chartRef.addEventListener(eventType, this.debouncedTouchHandler)
       )
 
-    /* eslint-disable-next-line no-console */
-    console.log('>>>', this.chart)
-
     if (this.bus) {
       this.bus.$on('download-csv', this.downloadCSV)
       this.bus.$on('export', this.export)
@@ -256,7 +253,7 @@ export default {
         const options = Object.assign(
           {
             boostThreshold: 20,
-            step: true,
+            step: 'center',
             zIndex: series.index
           },
           this.seriesOptions[series.index],
@@ -276,3 +273,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.highcharts-reset-zoom {
+  display: none !important;
+}
+</style>

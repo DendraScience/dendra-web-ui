@@ -10,11 +10,6 @@ export function defaultOptions(title = '', subtitle = '') {
     chart: {
       height: 500,
       resetPointer: false,
-      resetZoomButton: {
-        theme: {
-          display: 'none'
-        }
-      },
       zoomType: 'x'
     },
     exporting: {
@@ -48,7 +43,6 @@ export function defaultOptions(title = '', subtitle = '') {
     },
     tooltip: {
       shared: true,
-      // useHTML: true,
       xDateFormat: '%a %Y-%m-%d %H:%M'
     },
     xAxis: {
