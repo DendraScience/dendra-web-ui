@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <h2 class="display-2 font-weight-light mb-2">Log in to Dendra</h2>
+        <h2 class="display-2 font-weight-light my-2">Log in to Dendra</h2>
 
         <h3 class="subtitle-1 mb-4">
           Don’t have an account?

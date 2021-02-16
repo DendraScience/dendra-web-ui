@@ -2,7 +2,7 @@
   <v-container v-if="org">
     <v-row>
       <v-col>
-        <h2 class="display-2 font-weight-light mb-2">{{ org.name }}</h2>
+        <h2 class="display-2 font-weight-light my-2">{{ org.name }}</h2>
 
         <h3 v-if="org.description" class="subtitle-1 mb-2">
           {{ org.description }}

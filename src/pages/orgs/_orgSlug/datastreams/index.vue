@@ -19,7 +19,7 @@
                 <v-tab> Download </v-tab>
 
                 <v-tab-item>
-                  <v-card tile>
+                  <v-card outlined tile>
                     <query-header name="datastreams" :org="org">
                       Datastreams
                     </query-header>
@@ -99,7 +99,7 @@
                 </v-tab-item>
 
                 <v-tab-item>
-                  <v-card v-if="cartCount || !charts.length" tile>
+                  <v-card v-if="cartCount || !charts.length" outlined tile>
                     <content-header> Selected datastreams </content-header>
 
                     <chart-datastream-cart :datastreams="selectedDatastreams" />
@@ -161,7 +161,7 @@
                 </v-tab-item>
 
                 <v-tab-item>
-                  <v-card v-if="auth.payload" tile>
+                  <v-card v-if="auth.payload" outlined tile>
                     <content-header>
                       Download data
                       <template v-slot:content>
@@ -609,7 +609,10 @@ export default {
             name: seriesName,
             yAxis: yAxisIndex
           })
-          fetchSpec.queries.push({ datastream_id: datastream._id })
+          fetchSpec.queries.push({
+            config: datastream.general_config_resolved,
+            datastream_id: datastream._id
+          })
         }
       )
 

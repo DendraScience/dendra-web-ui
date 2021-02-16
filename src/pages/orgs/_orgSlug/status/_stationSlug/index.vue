@@ -5,7 +5,7 @@
         <v-container>
           <v-row>
             <v-col>
-              <h2 class="display-2 font-weight-light mb-2">
+              <h2 class="display-2 font-weight-light my-2">
                 {{ station.name }}
               </h2>
 
@@ -611,22 +611,26 @@ export default {
           yAxis: 0
         })
         fetchSpec.queries.push({
+          config: airTemperature.general_config_resolved,
           datastream_id: airTemperature._id,
           uom_id: units.temperature.uomId
         })
       }
 
-      airTemperaturesAtHeight.forEach(({ _id, name }, i) => {
-        seriesOptions.push({
-          color: colors[i],
-          name: `${name} ${units.temperature.text}`,
-          yAxis: 0
-        })
-        fetchSpec.queries.push({
-          datastream_id: _id,
-          uom_id: units.temperature.uomId
-        })
-      })
+      airTemperaturesAtHeight.forEach(
+        ({ _id, general_config_resolved: config, name }, i) => {
+          seriesOptions.push({
+            color: colors[i],
+            name: `${name} ${units.temperature.text}`,
+            yAxis: 0
+          })
+          fetchSpec.queries.push({
+            config,
+            datastream_id: _id,
+            uom_id: units.temperature.uomId
+          })
+        }
+      )
 
       if (relativeHumidity) {
         seriesOptions.push({
@@ -635,6 +639,7 @@ export default {
           yAxis: 1
         })
         fetchSpec.queries.push({
+          config: relativeHumidity.general_config_resolved,
           datastream_id: relativeHumidity._id
         })
       }
@@ -694,6 +699,7 @@ export default {
           yAxis: 0
         })
         fetchSpec.queries.push({
+          config: batteryVoltage.general_config_resolved,
           datastream_id: batteryVoltage._id
         })
       }
@@ -760,17 +766,20 @@ export default {
         title
       })
 
-      soilTemperaturesAtDepth.forEach(({ _id, name }, i) => {
-        seriesOptions.push({
-          color: colors[i],
-          name: `${name} ${units.temperature.text}`,
-          yAxis: 0
-        })
-        fetchSpec.queries.push({
-          datastream_id: _id,
-          uom_id: units.temperature.uomId
-        })
-      })
+      soilTemperaturesAtDepth.forEach(
+        ({ _id, general_config_resolved: config, name }, i) => {
+          seriesOptions.push({
+            color: colors[i],
+            name: `${name} ${units.temperature.text}`,
+            yAxis: 0
+          })
+          fetchSpec.queries.push({
+            config,
+            datastream_id: _id,
+            uom_id: units.temperature.uomId
+          })
+        }
+      )
 
       if (seriesOptions.length) {
         this.charts.push({
@@ -834,6 +843,7 @@ export default {
           yAxis: 0
         })
         fetchSpec.queries.push({
+          config: solarRadiation.general_config_resolved,
           datastream_id: solarRadiation._id,
           uom_id: units.solarRadiation.uomId
         })
@@ -846,6 +856,7 @@ export default {
           yAxis: 1
         })
         fetchSpec.queries.push({
+          config: par.general_config_resolved,
           datastream_id: par._id,
           uom_id: units.par.uomId
         })
@@ -911,6 +922,7 @@ export default {
           zIndex: 2
         })
         fetchSpec.queries.push({
+          config: airSpeedAverage.general_config_resolved,
           datastream_id: airSpeedAverage._id,
           uom_id: units.speed.uomId
         })
@@ -924,6 +936,7 @@ export default {
           zIndex: 1
         })
         fetchSpec.queries.push({
+          config: airSpeedMaximum.general_config_resolved,
           datastream_id: airSpeedMaximum._id,
           uom_id: units.speed.uomId
         })
@@ -959,6 +972,7 @@ export default {
 
       if (barometricPressure) {
         fetchSpec.queries.push({
+          config: barometricPressure.general_config_resolved,
           datastream_id: barometricPressure._id,
           uom_id: units.barometricPressure.uomId
         })

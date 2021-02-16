@@ -12,13 +12,14 @@ self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
 async function processFetch({ id, fetchSpec }) {
   const {
     baseQuery,
+    config,
     queries,
-    sampleInterval,
     seriesType,
     startTime,
     timeLocal = true,
     untilTime
   } = fetchSpec
+  const sampleInterval = config && config.sample_interval
   let total = 0
 
   for (let index = 0; index < queries.length; index++) {

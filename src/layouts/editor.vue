@@ -31,7 +31,7 @@
     <v-main app>
       <status-bar v-model="status" />
 
-      <div :style="editing ? { marginTop: '48px' } : { marginTop: '16px' }">
+      <div :style="editing ? { marginTop: '48px' } : {}" class="pt-6">
         <nuxt />
       </div>
     </v-main>

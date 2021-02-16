@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <h2 class="display-2 font-weight-light mb-2">About</h2>
+        <h2 class="display-2 font-weight-light my-2">About</h2>
       </v-col>
     </v-row>
 

@@ -6,7 +6,7 @@
           <v-tab> View </v-tab>
 
           <v-tab-item>
-            <v-card tile>
+            <v-card outlined tile>
               <query-header name="stations" :org="org"> Stations </query-header>
 
               <station-search

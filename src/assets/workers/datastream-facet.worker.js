@@ -19,7 +19,7 @@ async function processFetch({ id, fetchSpec }) {
     '$select[access_levels_resolved]': 1,
     '$select[description]': 1,
     '$select[extent]': 1,
-    '$select[is_enabled]': 1,
+    '$select[general_config_resolved]': 1,
     '$select[is_hidden]': 1,
     '$select[name]': 1,
     '$select[organization_id]': 1,

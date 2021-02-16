@@ -51,8 +51,6 @@ module.exports = {
 
     datapointsMax: 288 * 365 * 10 * 4, // 10 years of 5 minute data for 4 datastreams
 
-    linksToOldDashboard: process.env.LINKS_TO_OLD_DASHBOARD === 'true',
-
     noaaNWSIcons:
       process.env.NOAA_NWS_ICONS_URL ||
       'https://dendrascience.github.io/noaa-nws-icons/jpg',
@@ -68,7 +66,11 @@ module.exports = {
     title,
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      {
+        name: 'viewport',
+        content:
+          'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui'
+      },
       {
         hid: 'description',
         name: 'description',

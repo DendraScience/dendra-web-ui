@@ -48,8 +48,9 @@ async function processFetch({ id, fetchSpec }) {
     '$select[0]': '_id',
     '$select[1]': 'attributes',
     '$select[2]': 'general_config',
-    '$select[3]': 'name',
-    '$select[4]': 'terms',
+    '$select[3]': 'general_config_resolved',
+    '$select[4]': 'name',
+    '$select[5]': 'terms',
     '$sort[_id]': 1
   }
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))

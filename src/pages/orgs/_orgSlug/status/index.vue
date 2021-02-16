@@ -84,26 +84,7 @@
                           class="mr-1"
                         />
 
-                        <a
-                          v-if="
-                            linksToOldDashboard &&
-                            station.general_config_resolved &&
-                            station.general_config_resolved
-                              .station_status_links_to_old_dashboard
-                          "
-                          :href="
-                            'https://' +
-                            org.slug +
-                            '.dendra.science/#/stations/' +
-                            station.slug
-                          "
-                          class="black--text station-link"
-                          target="_blank"
-                          @click="$event.stopImmediatePropagation()"
-                          >{{ station.name }}</a
-                        >
                         <nuxt-link
-                          v-else
                           :to="{
                             name: 'orgs-orgSlug-status-stationSlug',
                             params: {

@@ -338,6 +338,7 @@ export default {
           'access_levels_resolved',
           'description',
           'extent',
+          'general_config_resolved',
           'is_enabled',
           'is_hidden',
           'name',
