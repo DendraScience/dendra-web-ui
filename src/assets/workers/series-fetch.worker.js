@@ -12,26 +12,27 @@ self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
 async function processFetch({ id, fetchSpec }) {
   const {
     baseQuery,
-    config,
     queries,
     seriesType,
     startTime,
     timeLocal = true,
     untilTime
   } = fetchSpec
-  const sampleInterval = config && config.sample_interval
   let total = 0
 
   for (let index = 0; index < queries.length; index++) {
     const query = queries[index]
+    const { config } = query
+    const sampleInterval = config && config.sample_interval
+    delete query.config
     const data = []
     const toTime = Array.isArray(untilTime) ? untilTime[index] : untilTime
     let currTime
     let fromTime = Array.isArray(startTime) ? startTime[index] : startTime
-    let first
     let nextTime
-    let point
     let prevTime
+    let first
+    let point
     let value
 
     while (processIds[id] !== undefined) {

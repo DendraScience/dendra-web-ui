@@ -110,7 +110,9 @@ export default {
     if (this.bus) {
       this.bus.$on('download-csv', this.downloadCSV)
       this.bus.$on('export', this.export)
+      this.bus.$on('get-extremes', this.getExtremes)
       this.bus.$on('reset-zoom', this.resetZoom)
+      this.bus.$on('set-extremes', this.setExtremes)
     }
   },
 
@@ -130,7 +132,9 @@ export default {
     if (this.bus) {
       this.bus.$off('download-csv', this.downloadCSV)
       this.bus.$off('export', this.export)
+      this.bus.$off('get-extremes', this.getExtremes)
       this.bus.$off('reset-zoom', this.resetZoom)
+      this.bus.$off('set-extremes', this.setExtremes)
     }
 
     this.worker.removeEventListener('message', this.workerMessageHandler)
@@ -155,6 +159,11 @@ export default {
       this.$nextTick(() => {
         if (chart) chart.exportChartLocal(options, this.exportChartOptions)
       })
+    },
+
+    getExtremes(index) {
+      /* eslint-disable-next-line no-console */
+      console.log('xxx', this.chart.yAxis[index].getExtremes())
     },
 
     makeChartOptions(options) {
@@ -187,6 +196,13 @@ export default {
       this.$nextTick(() => {
         if (chart) chart.zoomOut()
       })
+    },
+
+    setExtremes(index) {
+      /* eslint-disable-next-line no-console */
+      console.log('>>>', this.chart.yAxis[index].getExtremes())
+
+      this.chart.yAxis[index].setExtremes(0, 10, true)
     },
 
     touchHandler(e) {

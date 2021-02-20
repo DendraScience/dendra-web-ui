@@ -47,6 +47,7 @@
       >
         <v-btn
           v-if="isZoomed && showResetZoom"
+          color="primary"
           icon
           @click="value.bus.$emit('reset-zoom')"
           ><v-icon>{{ mdiMagnifyClose }}</v-icon>
@@ -69,6 +70,32 @@
         >
           <v-icon>{{ pinTooltip ? mdiPinOff : mdiPin }}</v-icon>
         </v-btn>
+
+        <v-menu :close-on-content-click="false" bottom left offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon>{{ mdiArrowExpandVertical }}</v-icon>
+            </v-btn>
+          </template>
+
+          <v-card>
+            <v-container fluid>
+              <v-row>
+                <v-col>
+                  <v-text-field dense label="max" prefix="Y1"></v-text-field>
+                  <v-text-field dense label="min" prefix="Y1"></v-text-field>
+                  <v-btn block outlined small>Apply</v-btn>
+                </v-col>
+
+                <v-col>
+                  <v-text-field dense label="max" prefix="Y2"></v-text-field>
+                  <v-text-field dense label="min" prefix="Y2"></v-text-field>
+                  <v-btn block outlined small>Apply</v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-menu>
 
         <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
           <template v-slot:activator="{ on }">
@@ -139,6 +166,16 @@ export default {
   },
 
   methods: {
+    tryMe() {
+      this.value.bus.$emit('set-extremes', 0)
+
+      // this.$set(
+      //   this.value.options.yAxis,
+      //   0,
+      //   Object.assign({}, this.value.options.yAxis[0], { max: 10.5 })
+      // )
+    },
+
     update({ hideLegend, pinTooltip }) {
       this.value.options.legend.enabled = !hideLegend
       this.value.options.tooltip = Object.assign(
