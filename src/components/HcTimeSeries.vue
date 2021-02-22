@@ -110,9 +110,9 @@ export default {
     if (this.bus) {
       this.bus.$on('download-csv', this.downloadCSV)
       this.bus.$on('export', this.export)
-      this.bus.$on('get-extremes', this.getExtremes)
+      this.bus.$on('get-y-extremes', this.getYExtremes)
       this.bus.$on('reset-zoom', this.resetZoom)
-      this.bus.$on('set-extremes', this.setExtremes)
+      this.bus.$on('set-y-extremes', this.setYExtremes)
     }
   },
 
@@ -132,16 +132,16 @@ export default {
     if (this.bus) {
       this.bus.$off('download-csv', this.downloadCSV)
       this.bus.$off('export', this.export)
-      this.bus.$off('get-extremes', this.getExtremes)
+      this.bus.$off('get-y-extremes', this.getYExtremes)
       this.bus.$off('reset-zoom', this.resetZoom)
-      this.bus.$off('set-extremes', this.setExtremes)
+      this.bus.$off('set-y-extremes', this.setYExtremes)
     }
 
     this.worker.removeEventListener('message', this.workerMessageHandler)
   },
 
   methods: {
-    afterSetExtremesHandler(e) {
+    afterSetXExtremesHandler(e) {
       this.$emit('zoomed', !!e.userMin)
     },
 
@@ -161,9 +161,11 @@ export default {
       })
     },
 
-    getExtremes(index) {
-      /* eslint-disable-next-line no-console */
-      console.log('xxx', this.chart.yAxis[index].getExtremes())
+    getYExtremes(index) {
+      this.$emit('y-extremes', {
+        extremes: this.chart.yAxis[index].getExtremes(),
+        index
+      })
     },
 
     makeChartOptions(options) {
@@ -172,7 +174,7 @@ export default {
           ? {
               xAxis: {
                 events: {
-                  afterSetExtremes: this.afterSetExtremesHandler
+                  afterSetExtremes: this.afterSetXExtremesHandler
                 }
               }
             }
@@ -198,11 +200,14 @@ export default {
       })
     },
 
-    setExtremes(index) {
-      /* eslint-disable-next-line no-console */
-      console.log('>>>', this.chart.yAxis[index].getExtremes())
-
-      this.chart.yAxis[index].setExtremes(0, 10, true)
+    setYExtremes({ index, max, min }) {
+      const yAxis = this.chart.yAxis[index]
+      yAxis.setExtremes(
+        parseFloat(min) || undefined,
+        parseFloat(max) || undefined,
+        true
+      )
+      this.$emit('y-extremes', { extremes: yAxis.getExtremes(), index })
     },
 
     touchHandler(e) {
@@ -278,13 +283,9 @@ export default {
         this.chart.addSeries(options)
       }
 
-      if (data.total) {
-        this.chart.showLoading(`Loaded ${data.total} points...`)
-      }
+      if (data.total) this.chart.showLoading(`Loaded ${data.total} points...`)
 
-      if (data.isFetching === false) {
-        this.chart.hideLoading()
-      }
+      if (data.isFetching === false) this.chart.hideLoading()
     }
   }
 }

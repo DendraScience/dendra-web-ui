@@ -32,6 +32,7 @@
           :fetch-spec="Object.freeze(value.fetchSpec)"
           :worker="Object.freeze(worker)"
           tooltip-container-class="datastream-chart-tooltip-container"
+          @y-extremes="yExtremes"
           @zoomed="zoomed"
         />
       </worker-fetch>
@@ -47,6 +48,7 @@
       >
         <v-btn
           v-if="isZoomed && showResetZoom"
+          :disabled="!value.isReady"
           color="primary"
           icon
           @click="value.bus.$emit('reset-zoom')"
@@ -55,6 +57,7 @@
 
         <v-btn
           v-if="showControls"
+          :disabled="!value.isReady"
           icon
           @click="$emit('update:hideLegend', !hideLegend)"
         >
@@ -65,6 +68,7 @@
 
         <v-btn
           v-if="showControls"
+          :disabled="!value.isReady"
           icon
           @click="$emit('update:pinTooltip', !pinTooltip)"
         >
@@ -73,28 +77,16 @@
 
         <v-menu :close-on-content-click="false" bottom left offset-y>
           <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
+            <v-btn :disabled="!value.isReady" icon v-on="on">
               <v-icon>{{ mdiArrowExpandVertical }}</v-icon>
             </v-btn>
           </template>
 
-          <v-card>
-            <v-container fluid>
-              <v-row>
-                <v-col>
-                  <v-text-field dense label="max" prefix="Y1"></v-text-field>
-                  <v-text-field dense label="min" prefix="Y1"></v-text-field>
-                  <v-btn block outlined small>Apply</v-btn>
-                </v-col>
-
-                <v-col>
-                  <v-text-field dense label="max" prefix="Y2"></v-text-field>
-                  <v-text-field dense label="min" prefix="Y2"></v-text-field>
-                  <v-btn block outlined small>Apply</v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
+          <y-axis-settings
+            :chart-options="value.options"
+            :value="yAxisSettings"
+            @commit="value.bus.$emit('set-y-extremes', $event)"
+          />
         </v-menu>
 
         <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
@@ -114,6 +106,7 @@
 <script>
 import HcTimeSeries from '@/components/HcTimeSeries'
 import WorkerFetch from '@/components/WorkerFetch'
+import YAxisSettings from '@/components/YAxisSettings'
 
 function fixedPositioner() {
   return { x: 0, y: 0 }
@@ -122,7 +115,8 @@ function fixedPositioner() {
 export default {
   components: {
     HcTimeSeries,
-    WorkerFetch
+    WorkerFetch,
+    YAxisSettings
   },
 
   props: {
@@ -145,7 +139,13 @@ export default {
       }
     },
 
-    isZoomed: false
+    isZoomed: false,
+
+    yAxisSettings: {
+      index: null,
+      max: null,
+      min: null
+    }
   }),
 
   watch: {
@@ -157,6 +157,10 @@ export default {
     pinTooltip(newValue) {
       const { hideLegend } = this
       this.update({ hideLegend, pinTooltip: newValue })
+    },
+
+    'yAxisSettings.index'(newValue) {
+      this.value.bus.$emit('get-y-extremes', newValue)
     }
   },
 
@@ -166,16 +170,6 @@ export default {
   },
 
   methods: {
-    tryMe() {
-      this.value.bus.$emit('set-extremes', 0)
-
-      // this.$set(
-      //   this.value.options.yAxis,
-      //   0,
-      //   Object.assign({}, this.value.options.yAxis[0], { max: 10.5 })
-      // )
-    },
-
     update({ hideLegend, pinTooltip }) {
       this.value.options.legend.enabled = !hideLegend
       this.value.options.tooltip = Object.assign(
@@ -187,6 +181,11 @@ export default {
           shape: pinTooltip ? 'square' : 'callout'
         }
       )
+    },
+
+    yExtremes({ extremes }) {
+      this.yAxisSettings.max = extremes.max
+      this.yAxisSettings.min = extremes.min
     },
 
     zoomed(state) {

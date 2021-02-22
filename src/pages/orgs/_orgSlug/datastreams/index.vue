@@ -580,9 +580,14 @@ export default {
 
       _forEach(
         items,
-        ({ datastream, seriesName, yAxisLabelFormat, yAxisOpposite }) => {
+        (
+          { datastream, seriesName, yAxisLabelFormat, yAxisOpposite },
+          seriesIndex
+        ) => {
           if (this.$cannotDownload('datastreams', datastream))
             canDownload = false
+
+          const color = colors[seriesIndex % colors.length]
 
           let yAxisIndex = yAxis.findIndex(
             axis =>
@@ -595,7 +600,7 @@ export default {
               labels: {
                 format: yAxisLabelFormat,
                 style: {
-                  color: colors[yAxisIndex]
+                  color
                 }
               },
               opposite: yAxisOpposite,
@@ -606,6 +611,7 @@ export default {
           }
 
           seriesOptions.push({
+            color,
             name: seriesName,
             yAxis: yAxisIndex
           })
