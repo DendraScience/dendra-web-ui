@@ -8,6 +8,7 @@ export function newCurrent() {
     rainfallYesterday: null,
     relativeHumidity: null,
     solarRadiation: null,
+    windDirection: null,
     windSpeed: null,
     wyPrecipToDate: null
   }
@@ -31,6 +32,9 @@ export const unitsData = {
       },
       batteryVoltage: {
         text: getUnitText('Voltage')
+      },
+      direction: {
+        text: getUnitText('DegreeAngle')
       },
       par: {
         text: getUnitText('MicromolePerSquareFoot'),
@@ -66,6 +70,9 @@ export const unitsData = {
       },
       batteryVoltage: {
         text: getUnitText('Voltage')
+      },
+      direction: {
+        text: getUnitText('DegreeAngle')
       },
       par: {
         text: getUnitText('MicromolePerSquareMeter'),

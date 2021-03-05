@@ -958,6 +958,26 @@ export default {
       }
     },
 
+    fetchAirDirection(id, { startTime, untilTime }, { airDirectionAverage }) {
+      const fetchSpec = {
+        queries: [],
+        startTime,
+        untilTime
+      }
+
+      if (airDirectionAverage) {
+        fetchSpec.queries.push({
+          config: airDirectionAverage.general_config_resolved,
+          datastream_id: airDirectionAverage._id
+        })
+
+        this.seriesFetchWorker.postMessage({
+          id,
+          fetchSpec
+        })
+      }
+    },
+
     fetchBarometricPressure(
       id,
       { startTime, untilTime },
@@ -1100,6 +1120,7 @@ export default {
         datastreamsByKey
       )
 
+      this.fetchAirDirection(`${id}-windDirection`, today, datastreamsByKey)
       this.fetchBarometricPressure(
         `${id}-barometricPressure`,
         today,
@@ -1238,6 +1259,22 @@ export default {
         ) {
           current.solarRadiation = last
           return
+        }
+      }
+
+      if (id === `${this.id}-windDirection`) {
+        if (isFetching === true) {
+          current.windDirection = null
+          return
+        }
+
+        if (!last) return
+
+        if (
+          datastreamsByKey.airDirectionAverage &&
+          datastreamsByKey.airDirectionAverage._id === query.datastream_id
+        ) {
+          current.windDirection = last
         }
       }
 

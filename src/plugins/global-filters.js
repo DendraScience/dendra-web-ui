@@ -15,6 +15,7 @@ import {
   utcOffsetHours
 } from '@/lib/date'
 import math from '@/lib/math'
+import { directionAbbrs, degToIndex } from '@/lib/direction'
 import { companyName, thingTypeName } from '@/lib/moniker'
 
 Vue.filter('companyName', value => {
@@ -57,6 +58,12 @@ Vue.filter('dateTimeFormatLocal', (value, defaultValue = '', ...args) => {
   return value === undefined || value === null
     ? defaultValue
     : dateTimeFormatLocal(value, ...args)
+})
+
+Vue.filter('direction', (value, defaultValue = '') => {
+  return value === undefined || value === null
+    ? defaultValue
+    : directionAbbrs[degToIndex(value)]
 })
 
 Vue.filter('get', (...args) => {

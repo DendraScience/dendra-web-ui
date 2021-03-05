@@ -20,6 +20,13 @@
             hide-default-footer
             item-key="key"
           >
+            <template v-slot:item.value="{ item }">
+              <span v-if="item.unitKey === 'direction'"
+                >({{ item.value | direction }}) {{ item.value }}</span
+              >
+              <span v-else>{{ item.value }} </span>
+            </template>
+
             <template v-slot:item.lastSeenTime="{ item }">
               {{ item.lastSeenTime | dateTimeFormatLocal('(no data)') }}
             </template>
@@ -148,6 +155,12 @@ export default {
         name: 'Wind speed',
         unitKey: 'speed',
         valueKey: 'windSpeed'
+      },
+      {
+        datastreamKey: 'airDirectionAverage',
+        name: 'Wind direction',
+        unitKey: 'direction',
+        valueKey: 'windDirection'
       }
     ]
   }),

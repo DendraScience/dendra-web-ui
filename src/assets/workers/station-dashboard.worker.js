@@ -93,6 +93,14 @@ async function processFetch({ id, fetchSpec }) {
 
   // Cherry-pick
   const datastreamsByKey = {
+    airDirectionAverage: datastreams.find(
+      datastream =>
+        datastream.terms.ds &&
+        datastream.terms.ds.Aggregate === 'Average' &&
+        datastream.terms.ds.Medium === 'Air' &&
+        datastream.terms.ds.Variable === 'Direction'
+    ),
+
     airSpeedAverage: datastreams.find(
       datastream =>
         datastream.terms.ds &&

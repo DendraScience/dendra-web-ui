@@ -1,4 +1,4 @@
-import colors from 'vuetify/lib/util/colors'
+import path from 'path'
 
 const title = 'Dendra'
 const description =
@@ -37,9 +37,7 @@ module.exports = {
           options: { outputModule: 'es6' }
         })
       }
-    },
-
-    vendor: ['chroma-js', 'highcharts', 'lodash', 'mathjs', 'moment']
+    }
   },
 
   /**
@@ -64,6 +62,9 @@ module.exports = {
    */
   head: {
     title,
+    htmlAttrs: {
+      lang: 'en'
+    },
     meta: [
       { charset: 'utf-8' },
       {
@@ -149,12 +150,13 @@ module.exports = {
         href: '/favicon-128.png',
         sizes: '128x128'
       },
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
 
-      {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700'
-      }
+      // TODO: Do we need this?
+      // {
+      //   rel: 'stylesheet',
+      //   href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700'
+      // }
     ],
     script: [
       // For Global Site Tag (gtag.js) - Google Analytics
@@ -208,7 +210,7 @@ module.exports = {
   /**
    * Nuxt.js misc
    */
-  mode: 'spa',
+  ssr: false,
 
   router: {
     middleware: ['auth', 'ability']
@@ -220,34 +222,10 @@ module.exports = {
    * Vuetify
    */
   vuetify: {
-    icons: {
-      iconfont: 'mdiSvg'
+    defaultAssets: {
+      icons: false
     },
-
-    theme: {
-      themes: {
-        dark: {
-          primary: colors.blue,
-          secondary: colors.green,
-          tertiary: colors.blue.lighten2,
-          accent: colors.blueGrey.darken2,
-          info: colors.blue.darken2,
-          warning: colors.amber.darken3,
-          error: colors.deepOrange.darken3,
-          success: colors.green.darken1
-        },
-
-        light: {
-          primary: colors.blue,
-          secondary: colors.green,
-          tertiary: colors.blue.lighten2,
-          accent: colors.blueGrey.darken2,
-          info: colors.blue.darken2,
-          warning: colors.amber.darken3,
-          error: colors.deepOrange.darken3,
-          success: colors.green.darken1
-        }
-      }
-    }
+    optionsPath: path.resolve('./vuetify.options.js'),
+    treeShake: true
   }
 }
