@@ -17,17 +17,17 @@ module.exports = {
      */
     extend(config, ctx) {
       // Run ESLint on save
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
+      // if (ctx.isDev && ctx.isClient) {
+      //   config.module.rules.push({
+      //     enforce: 'pre',
+      //     test: /\.(js|vue)$/,
+      //     loader: 'eslint-loader',
+      //     exclude: /(node_modules)/
+      //   })
 
-        // SEE: https://github.com/nuxt/nuxt.js/pull/3480#issuecomment-404150387
-        config.output.globalObject = 'this'
-      }
+      //   // SEE: https://github.com/nuxt/nuxt.js/pull/3480#issuecomment-404150387
+      //   config.output.globalObject = 'this'
+      // }
 
       if (ctx.isClient) {
         config.module.rules.push({

@@ -142,8 +142,8 @@ export default {
 
   mounted() {
     this.latLngLiteral = {
-      lat: this.value.geoCoordinates.lat | 0,
-      lng: this.value.geoCoordinates.lng | 0
+      lat: parseFloat(this.value.geoCoordinates.lat),
+      lng: parseFloat(this.value.geoCoordinates.lng)
     }
   },
 

@@ -102,7 +102,8 @@
                 <p class="body-1">
                   This project has been funded in collaboration by the National
                   Science Foundation funded Eel River CZO, State funded UCNRS,
-                  and Moore Foundation funded California Heartbeat Initiative.
+                  and Gordon and Betty Moore Foundation funded California
+                  Heartbeat Initiative.
                 </p>
               </v-col>
             </v-row>

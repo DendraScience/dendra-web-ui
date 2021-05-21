@@ -1,15 +1,13 @@
-import { Ability } from '@casl/ability'
+import { Ability, createAliasResolver } from '@casl/ability'
 import { TYPE_KEY } from '@/lib/ability'
 
-Ability.addAlias('read', ['get', 'find'])
-Ability.addAlias('delete', 'remove')
+const resolveAction = createAliasResolver({
+  delete: 'remove',
+  read: ['get', 'find']
+})
 
-function subjectName(subject) {
-  if (!subject || typeof subject === 'string') {
-    return subject
-  }
-
-  return subject[TYPE_KEY]
+function detectSubjectType(object) {
+  return object[TYPE_KEY]
 }
 
 function as(name, obj) {
@@ -22,7 +20,7 @@ function as(name, obj) {
 }
 
 export default ({ store }, inject) => {
-  const ability = new Ability([], { subjectName })
+  const ability = new Ability([], { detectSubjectType, resolveAction })
 
   ability.on('update', () => {
     store.commit('setAbilityUpdateTime', Date.now())
