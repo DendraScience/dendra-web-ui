@@ -28,14 +28,6 @@
                         <v-list-item
                           v-for="(item, index) in stations"
                           :key="index"
-                          :disabled="
-                            !selectedStations.includes(index) &&
-                            !(
-                              facetCounts &&
-                              facetCounts.Station &&
-                              facetCounts.Station[item._id] > 0
-                            )
-                          "
                         >
                           <template v-slot:default="{ active }">
                             <v-list-item-action>
@@ -47,6 +39,16 @@
 
                             <v-list-item-content>
                               <v-list-item-title
+                                :class="
+                                  !selectedStations.includes(index) &&
+                                  !(
+                                    facetCounts &&
+                                    facetCounts.Station &&
+                                    facetCounts.Station[item._id] > 0
+                                  )
+                                    ? 'grey--text'
+                                    : 'dark--text'
+                                "
                                 >{{ item.name }}
                                 <span class="secondary--text"
                                   >({{
@@ -78,17 +80,6 @@
                         <v-list-item
                           v-for="(item, index) in vocabulary.terms"
                           :key="item.label"
-                          :disabled="
-                            !(
-                              selectedTerms[vocabulary._id] &&
-                              selectedTerms[vocabulary._id].includes(index)
-                            ) &&
-                            !(
-                              facetCounts &&
-                              facetCounts[vocabulary.label] &&
-                              facetCounts[vocabulary.label][item.label] > 0
-                            )
-                          "
                         >
                           <template v-slot:default="{ active }">
                             <v-list-item-action>
@@ -100,6 +91,22 @@
 
                             <v-list-item-content>
                               <v-list-item-title
+                                :class="
+                                  !(
+                                    selectedTerms[vocabulary._id] &&
+                                    selectedTerms[vocabulary._id].includes(
+                                      index
+                                    )
+                                  ) &&
+                                  !(
+                                    facetCounts &&
+                                    facetCounts[vocabulary.label] &&
+                                    facetCounts[vocabulary.label][item.label] >
+                                      0
+                                  )
+                                    ? 'grey--text'
+                                    : 'dark--text'
+                                "
                                 >{{ item.name || item.label }}
                                 <span class="secondary--text"
                                   >({{
@@ -227,6 +234,7 @@ export default {
     isEnabled: { default: null, type: [Boolean, String] },
     org: { default: null, type: Object },
     schemeId: { default: 'ds', type: String },
+    selectStationId: { default: null, type: String },
     showDisabled: { default: false, type: Boolean },
     showLink: { default: false, type: Boolean },
     stationId: { default: null, type: String }
@@ -414,6 +422,16 @@ export default {
         this.buildFacetQuery()
       },
       deep: true
+    },
+
+    stations(value) {
+      const { selectStationId } = this
+      if (selectStationId && value) {
+        const index = value.findIndex(
+          station => station._id === selectStationId
+        )
+        if (index > 0) this.selectedStations.push(index)
+      }
     }
   },
 

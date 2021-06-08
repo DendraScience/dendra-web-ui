@@ -66,7 +66,11 @@
                             | unit('', 'm', somId === 'imp' ? 'ft' : 'm')
                             | round('', 4)
                         }}
-                        m</v-list-item-title
+                        {{
+                          somId === 'imp'
+                            ? getUnitText('Foot')
+                            : getUnitText('Meter')
+                        }}</v-list-item-title
                       >
                     </v-list-item-content>
                   </v-list-item>
@@ -109,6 +113,28 @@
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title>Station details</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+
+                  <v-list-item
+                    :to="{
+                      name: 'orgs-orgSlug-datastreams',
+                      params: {
+                        orgSlug: org.slug
+                      },
+                      query: {
+                        faceted: true,
+                        scheme: 'dq',
+                        selectStationId: station._id
+                      }
+                    }"
+                    nuxt
+                  >
+                    <v-list-item-icon>
+                      <v-icon>{{ mdiChartMultiple }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Data query</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
 

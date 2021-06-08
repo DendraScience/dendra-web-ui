@@ -75,7 +75,7 @@ export default {
       .map(party => party.person_id)
 
     // HACK: Always include the current user
-    personIds.push(this.auth.user.person_id)
+    if (this.auth.user) personIds.push(this.auth.user.person_id)
 
     // Fetch referenced persons
     if (personIds.length) {

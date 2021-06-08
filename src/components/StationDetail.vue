@@ -115,6 +115,23 @@
               ><v-icon left flat>{{ mdiViewDashboard }}</v-icon
               >Station Dashboard</v-btn
             >
+            <v-btn
+              :to="{
+                name: 'orgs-orgSlug-datastreams',
+                params: {
+                  orgSlug: org.slug
+                },
+                query: {
+                  faceted: true,
+                  scheme: 'dq',
+                  selectStationId: value._id
+                }
+              }"
+              dark
+              nuxt
+              ><v-icon left flat>{{ mdiChartMultiple }}</v-icon
+              >Data Query</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
