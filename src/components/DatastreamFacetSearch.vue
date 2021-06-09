@@ -430,7 +430,7 @@ export default {
         const index = value.findIndex(
           station => station._id === selectStationId
         )
-        if (index > 0) this.selectedStations.push(index)
+        if (index > -1) this.selectedStations.push(index)
       }
     }
   },
