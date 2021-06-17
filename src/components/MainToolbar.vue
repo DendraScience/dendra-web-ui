@@ -1,8 +1,8 @@
 <template>
   <v-app-bar
-    :color="isHome && top ? 'transparent' : 'grey darken-4'"
     :flat="isHome && top"
     app
+    color="grey darken-4"
     dark
     fixed
     height="64"
@@ -18,20 +18,22 @@
             orgSlug
           }
         }"
-        class="title-link white--text"
+        class="text-decoration-none white--text"
         exact
       >
         {{ orgName }}
       </nuxt-link>
 
-      <span v-else> Dendra.Science </span>
+      <nuxt-link v-else to="/" class="text-decoration-none white--text" exact>
+        Dendra.Science</nuxt-link
+      >
     </v-toolbar-title>
 
     <v-spacer />
 
     <v-menu v-if="auth.payload" offset-y left>
       <template v-slot:activator="{ on }">
-        <div>
+        <div class="d-flex flex-nowrap flex-row">
           <v-badge
             :color="
               pendingDownloads.length
@@ -103,6 +105,7 @@ export default {
 
   computed: {
     ...mapGetters({
+      orgColor: 'orgColor',
       orgName: 'orgName',
       orgSlug: 'orgSlug'
     }),
@@ -129,12 +132,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.title-link {
-  text-decoration: none;
-}
-.title-link:hover {
-  text-decoration: underline;
-}
-</style>

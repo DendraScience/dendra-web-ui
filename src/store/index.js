@@ -105,6 +105,13 @@ export const getters = {
   org(state, { 'organizations/get': get }) {
     return state.orgId && get(state.orgId)
   },
+  orgColor(state, { org }) {
+    return org &&
+      org.general_config_resolved &&
+      org.general_config_resolved.brand_color
+      ? `#${org.general_config_resolved.brand_color}`
+      : 'blue-grey darken-2'
+  },
   orgId(state) {
     return state.orgId
   },

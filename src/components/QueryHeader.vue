@@ -8,7 +8,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="hasQuery" dense>
+    <v-row v-if="hasQuery">
       <v-col>
         <v-card outlined>
           <v-card-subtitle>

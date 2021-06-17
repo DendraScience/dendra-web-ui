@@ -42,7 +42,7 @@
       service="vocabularies"
       watch="query"
     >
-      <v-row no-gutters>
+      <v-row>
         <v-col>
           <v-row v-for="vocabulary in vocabularies" :key="vocabulary._id">
             <v-col>

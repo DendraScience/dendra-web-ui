@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card>
-          <v-container fluid pt-0>
+          <v-container fluid>
             <v-row>
               <v-col>
                 <ValidationProvider

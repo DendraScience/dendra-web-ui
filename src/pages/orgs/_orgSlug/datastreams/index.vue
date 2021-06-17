@@ -166,7 +166,7 @@
                     <content-header>
                       Download data
                       <template v-slot:content>
-                        <v-row dense>
+                        <v-row>
                           <v-col v-if="downloadSubmitDate">
                             <v-card color="grey lighten-4" outlined>
                               <v-card-title
@@ -282,7 +282,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="charts.length" v-show="tabIndex === 1">
+    <v-row v-if="charts.length" v-show="tabIndex === 1" no-gutters>
       <v-col>
         <datastream-charts
           :value="charts"

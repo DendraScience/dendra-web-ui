@@ -49,7 +49,7 @@ export default {
     ...mapMutations(['setTop']),
 
     onScroll(e) {
-      this.setTop(e.target.documentElement.scrollTop < 64)
+      this.setTop(e.target.documentElement.scrollTop < 48)
     },
 
     onStatus(value) {

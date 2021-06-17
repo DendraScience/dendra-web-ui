@@ -8,7 +8,6 @@
               <h2 class="display-2 font-weight-light my-2">
                 {{ station.name }}
               </h2>
-
               <h3 v-if="station.description" class="subtitle-2 mb-2">
                 {{ station.description }}
               </h3>
@@ -1112,7 +1111,8 @@ export default {
     },
 
     loadSeries() {
-      const id = (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
+      const id =
+        (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
       const { datastreamsByKey, today, twoWeeks, waterYear, yesterday } = this
 
       this.units = unitsData[this.somId](this.getUnitText)

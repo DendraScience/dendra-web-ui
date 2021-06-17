@@ -405,10 +405,12 @@ export default {
   watch: {
     facetQuery: {
       handler(value) {
-        const result = this.indexer.query(value)
+        if (this.indexer) {
+          const result = this.indexer.query(value)
 
-        this.facetCounts = result.counts()
-        this.facetKeys = result.keys()
+          this.facetCounts = result.counts()
+          this.facetKeys = result.keys()
+        }
       },
       deep: true
     },

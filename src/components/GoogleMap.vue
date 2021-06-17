@@ -27,6 +27,7 @@ export default {
     autoZoom: { default: false, type: Boolean },
     defaultIcon: { default: 'default', type: String },
     dataIcon: { default: 'icon', type: String },
+    extendBounds: { default: null, type: Function },
     filterKeys: { default: null, type: Array },
     hideMarker: { default: false, type: Boolean },
     icons: { default: null, type: Object },
@@ -48,6 +49,7 @@ export default {
     mapOptions: { default: null, type: Object },
     mapTypeControlPosition: { default: 'BOTTOM_CENTER', type: String },
     mapTypeControlStyle: { default: 'HORIZONTAL_BAR', type: String },
+    markerOptions: { default: null, type: [Function, Object] },
     markerTitle: { default: '', type: String }
   },
 
@@ -102,7 +104,7 @@ export default {
         const marker = markers[key]
         const data = newValue[key]
 
-        setMarkerIcon(marker, _get(data, dataIcon, defaultIcon))
+        setMarkerIcon(marker, _get(data, dataIcon, defaultIcon), data)
       })
     },
 
@@ -261,14 +263,14 @@ export default {
       this.$emit('select-marker', location)
     },
 
-    setMarkerIcon(marker, icon) {
+    setMarkerIcon(marker, icon, data) {
       const { icons, maps } = this
 
       if (!icons) return
 
       icon = icons[icon]
       if (icon) {
-        icon = Object.assign({}, icon)
+        icon = Object.assign({}, typeof icon === 'function' ? icon(data) : icon)
         const { anchor } = icon
 
         if (anchor) icon.anchor = new maps.Point(anchor.x, anchor.y)
@@ -280,8 +282,10 @@ export default {
     updateMarkers(locations) {
       const {
         defaultIcon,
+        extendBounds,
         map,
         maps,
+        markerOptions,
         markers,
         selectMarker,
         setMarkerIcon
@@ -312,18 +316,25 @@ export default {
           marker.setMap(map)
         } else if (lat && lng) {
           const position = new maps.LatLng({ lat, lng })
-          const markerOpts = {
-            map,
-            position
-          }
+          const markerOpts = Object.assign(
+            {},
+            typeof markerOptions === 'function'
+              ? markerOptions(location)
+              : markerOptions,
+            {
+              map,
+              position
+            }
+          )
           if (title > '') markerOpts.title = title
 
           marker = markers[key] = new maps.Marker(markerOpts)
           marker.addListener('click', selectMarker.bind(this, location))
-          setMarkerIcon(marker, defaultIcon)
+          setMarkerIcon(marker, defaultIcon, location)
         }
 
-        if (marker) bounds.extend(marker.getPosition())
+        if (marker && (!extendBounds || extendBounds(location)))
+          bounds.extend(marker.getPosition())
       })
 
       if (this.autoFit) this.fitToBounds()

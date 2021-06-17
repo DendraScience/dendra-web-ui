@@ -27,8 +27,8 @@ import {
   mdiEngineOff,
   mdiEye,
   mdiEyeOff,
-  mdiFileClock,
   mdiFileAlert,
+  mdiFileClock,
   mdiFileDownload,
   mdiHelpRhombusOutline,
   mdiHexagonSlice6,
@@ -53,6 +53,7 @@ import {
   mdiPin,
   mdiPinOff,
   mdiPlus,
+  mdiSquareRounded,
   mdiViewAgenda,
   mdiViewDashboard,
   mdiViewList
@@ -113,6 +114,7 @@ Vue.mixin({
     mdiPin,
     mdiPinOff,
     mdiPlus,
+    mdiSquareRounded,
     mdiViewAgenda,
     mdiViewDashboard,
     mdiViewList

@@ -1,12 +1,11 @@
 <template>
   <v-container fluid>
-    <v-row no-gutters>
-      <v-col cols="12">
+    <v-row>
+      <v-col>
         <v-card>
           <v-container fluid>
             <v-row dense>
               <v-col class="headline"> NOAA forecast </v-col>
-
               <v-col align="end" cols="12" sm="4"><slot name="util" /></v-col>
             </v-row>
 
@@ -14,7 +13,7 @@
               <v-col v-for="(item, index) in items" :key="index" cols="12" sm>
                 <v-card outlined>
                   <v-container fluid>
-                    <v-row no-gutters>
+                    <v-row>
                       <v-col align="center">
                         <h5 class="subtitle-2 mb-2">
                           {{ item.name }}
