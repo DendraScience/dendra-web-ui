@@ -290,9 +290,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.highcharts-reset-zoom {
-  display: none !important;
-}
-</style>

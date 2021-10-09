@@ -29,7 +29,7 @@
                       :is-enabled="queryIsEnabled"
                       :org="org"
                       :scheme-id="queryScheme"
-                      :select-station-id="this.$route.query.selectStationId"
+                      :select-station-id="$route.query.selectStationId"
                       :show-disabled="showOutliers"
                       :station-id="queryStationId"
                       show-link

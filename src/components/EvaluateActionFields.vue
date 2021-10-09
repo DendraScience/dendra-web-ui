@@ -139,11 +139,3 @@ export default {
   })
 }
 </script>
-
-<style>
-#textarea1571758315461,
-#textarea1571758329826,
-#textarea1572143364122 {
-  font-family: monospace !important;
-}
-</style>

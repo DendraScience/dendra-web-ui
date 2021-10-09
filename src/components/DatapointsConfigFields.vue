@@ -194,9 +194,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#textarea1571758369645 {
-  font-family: monospace !important;
-}
-</style>

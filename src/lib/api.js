@@ -1,7 +1,7 @@
 const apiPath = process.env.apiPath
 const apiUri = process.env.apiUri
-
-const parts = window.location.hostname.split('.')
+const isIpv4 = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(location.hostname)
+const parts = location.hostname.split('.')
 
 // Reasonable defaults for development
 const api = {
@@ -10,11 +10,7 @@ const api = {
 }
 
 // Production build automatic overrides
-if (
-  process.env.NODE_ENV === 'production' &&
-  !/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(location.hostname) &&
-  parts.length >= 2
-) {
+if (process.env.NODE_ENV === 'production' && !isIpv4 && parts.length >= 2) {
   if (parts.length > 3) parts.shift()
 
   parts.unshift('api')

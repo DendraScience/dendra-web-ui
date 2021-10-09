@@ -2,6 +2,7 @@ export function newCurrent() {
   return {
     airTemperature: null,
     barometricPressure: null,
+    batteryVoltage: null,
     meanSeaLevelPressure: null,
     par: null,
     rainfallToday: null,

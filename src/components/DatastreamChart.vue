@@ -194,10 +194,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.datastream-chart-tooltip-container {
-  position: fixed !important;
-  z-index: 9999 !important;
-}
-</style>

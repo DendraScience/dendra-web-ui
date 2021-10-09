@@ -12,6 +12,21 @@ module.exports = {
    * Build configuration
    */
   build: {
+    // analyze: true,
+    extractCSS: {
+      ignoreOrder: true
+    },
+
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+        automaticNameDelimiter: '.',
+        name: undefined,
+        cacheGroups: {},
+        maxSize: 256000
+      }
+    },
+
     /**
      * You can extend webpack config here
      */
@@ -40,6 +55,8 @@ module.exports = {
     }
   },
 
+  css: ['~/assets/main'],
+
   /**
    * Environment variables
    */
@@ -56,6 +73,16 @@ module.exports = {
     googleMapsAPIKey,
     googleTrackingId
   },
+
+  /**
+   * Generate configuration
+   */
+  // generate: {
+  //   exclude:
+  //     process.env.WIDGETS_ONLY === 'true'
+  //       ? [/^\/(?!widgets).*$/]
+  //       : [/^\/widgets.*$/]
+  // },
 
   /**
    * Headers of the page
@@ -176,6 +203,16 @@ module.exports = {
       // }
     ]
   },
+
+  ignore:
+    process.env.WIDGETS_ONLY === 'true'
+      ? [
+          '/pages/*.vue',
+          '/pages/companies/**',
+          '/pages/equipment/**',
+          '/pages/orgs/**'
+        ]
+      : ['/pages/widgets/**'],
 
   /**
    * Customize the progress-bar color

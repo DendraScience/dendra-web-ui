@@ -15,6 +15,7 @@ export const dateFormats = {
 
 export const dateTimeFormats = {
   m3dy_hm24: 'MMM D, Y HH:mm',
+  y2md_hm24: 'YY-MM-DD HH:mm',
   y4md_hm24: 'YYYY-MM-DD HH:mm'
 }
 

@@ -10,8 +10,14 @@ self.addEventListener('message', fetcher.messageHandler.bind(fetcher))
 // TODO: Verify indicies for status and dashboard
 
 function selectDatastreamsByAggregate(datastreams) {
-  // Average
+  // Status
   let filtered = datastreams.filter(
+    datastream => datastream.terms.ds.Function === 'Status'
+  )
+  if (filtered.length) return filtered
+
+  // Average
+  filtered = datastreams.filter(
     datastream => datastream.terms.ds.Aggregate === 'Average'
   )
   if (filtered.length) return filtered
@@ -93,21 +99,23 @@ async function processFetch({ id, fetchSpec }) {
 
   // Cherry-pick
   const datastreamsByKey = {
-    airDirectionAverage: datastreams.find(
-      datastream =>
-        datastream.terms.ds &&
-        datastream.terms.ds.Aggregate === 'Average' &&
-        datastream.terms.ds.Medium === 'Air' &&
-        datastream.terms.ds.Variable === 'Direction'
-    ),
+    airDirection: selectDatastreamsByAggregate(
+      datastreams.filter(
+        datastream =>
+          datastream.terms.ds &&
+          datastream.terms.ds.Medium === 'Air' &&
+          datastream.terms.ds.Variable === 'Direction'
+      )
+    )[0],
 
-    airSpeedAverage: datastreams.find(
-      datastream =>
-        datastream.terms.ds &&
-        datastream.terms.ds.Aggregate === 'Average' &&
-        datastream.terms.ds.Medium === 'Air' &&
-        datastream.terms.ds.Variable === 'Speed'
-    ),
+    airSpeed: selectDatastreamsByAggregate(
+      datastreams.filter(
+        datastream =>
+          datastream.terms.ds &&
+          datastream.terms.ds.Medium === 'Air' &&
+          datastream.terms.ds.Variable === 'Speed'
+      )
+    )[0],
 
     airSpeedMaximum: datastreams.find(
       datastream =>
