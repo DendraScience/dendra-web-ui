@@ -20,18 +20,18 @@
             hide-default-footer
             item-key="valueKey"
           >
-            <template v-slot:item.value="{ item }">
+            <template #item.value="{ item }">
               <span v-if="item.unitKey === 'direction'"
                 >({{ item.value | direction }}) {{ item.value }}</span
               >
               <span v-else>{{ item.value }} </span>
             </template>
 
-            <template v-slot:item.lastSeenTime="{ item }">
+            <template #item.lastSeenTime="{ item }">
               {{ item.lastSeenTime | dateTimeFormatLocal('(no data)') }}
             </template>
 
-            <template v-slot:item.datastream.name="{ item }">
+            <template #item.datastream.name="{ item }">
               <nuxt-link
                 v-if="item.datastream"
                 :to="{

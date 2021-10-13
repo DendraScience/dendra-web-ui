@@ -69,7 +69,7 @@
                     @click="selectMarker(viewToggle === 0 ? station : null)"
                   >
                     <v-expansion-panel-header>
-                      <template v-slot:actions>
+                      <template #actions>
                         <hc-sparkline
                           :id="station._id"
                           :series-options="Object.freeze(seriesOptions)"

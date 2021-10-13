@@ -81,7 +81,7 @@
                 }"
               >
                 <date-range-picker v-model="value.dateRange" optional show-time>
-                  <template v-slot:footer>
+                  <template #footer>
                     <div class="text-center">
                       <span class="font-weight-medium">
                         <span v-if="!dateRangeResolved.valid">

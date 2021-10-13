@@ -18,11 +18,11 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+            <template #item.type="{ item }" class="text-no-wrap px-0">
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+            <template #item.icons="{ item }" class="text-no-wrap">
               <v-icon
                 v-if="editing && !item.custom"
                 color="tertiary"

@@ -255,7 +255,7 @@
       v-model="attribute"
       @commit="commitAttribute"
     >
-      <template v-slot:title>Specify attribute</template>
+      <template #title>Specify attribute</template>
       <template>
         <attribute-fields
           v-model="attribute"
@@ -288,7 +288,7 @@
           show-disabled
           show-hidden
         >
-          <template v-slot:select="{ item }">
+          <template #select="{ item }">
             <v-icon
               color="primary"
               @click="
@@ -327,7 +327,7 @@
         </v-toolbar>
 
         <thing-type-search show-disabled>
-          <template v-slot:select="{ item }">
+          <template #select="{ item }">
             <v-icon
               color="primary"
               @click="
@@ -349,7 +349,7 @@
     </v-dialog>
 
     <detail-dialog ref="termsDialog" v-model="terms" @commit="commitTerms">
-      <template v-slot:title>Specify terms</template>
+      <template #title>Specify terms</template>
       <template>
         <terms-fields v-model="terms" />
       </template>
@@ -361,7 +361,7 @@
       max-width="800"
       @commit="commitDatapointsConfig"
     >
-      <template v-slot:title
+      <template #title
         >{{ timeZoneAccepted ? 'Specify configuration' : 'Confirm time zone' }}
       </template>
       <template>
@@ -372,7 +372,7 @@
           :params-resolved="configParamsResolved"
           :path-items="configPathItems"
         >
-          <template v-slot:expression="expressionProps">
+          <template #expression="expressionProps">
             <evaluate-action-fields
               v-model="expressionProps.value"
               :attributes-resolved="configAttributesResolved"
@@ -394,7 +394,7 @@
       max-width="800"
       @commit="commitGeneralConfig"
     >
-      <template v-slot:title>Specify configuration</template>
+      <template #title>Specify configuration</template>
       <template>
         <general-config-fields
           v-model="generalConfig"
@@ -408,14 +408,14 @@
       v-model="accessLevel"
       @commit="commitAccessLevel"
     >
-      <template v-slot:title>Specify access level</template>
+      <template #title>Specify access level</template>
       <template>
         <access-level-fields v-model="accessLevel" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title>Specify member</template>
+      <template #title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"

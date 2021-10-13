@@ -10,7 +10,7 @@
           :show-reset-zoom="showResetZoom"
           :worker="Object.freeze(worker)"
         >
-          <template v-slot:menu>
+          <template #menu>
             <v-list>
               <v-list-item v-if="showRemove" @click="remove(index)">
                 <v-list-item-title>Remove</v-list-item-title>

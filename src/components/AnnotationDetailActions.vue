@@ -18,11 +18,11 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+            <template #item.type="{ item }" class="text-no-wrap px-0">
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.value="{ item }">
+            <template #item.value="{ item }">
               <v-chip
                 v-for="val in item.values"
                 :key="val"
@@ -33,7 +33,7 @@
               <pre-block :value="item.code" />
             </template>
 
-            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+            <template #item.icons="{ item }" class="text-no-wrap">
               <v-icon
                 v-if="editing && !item.custom"
                 color="tertiary"
@@ -48,7 +48,7 @@
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn color="primary" v-on="on">
             <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>

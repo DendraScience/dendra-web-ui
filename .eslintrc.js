@@ -5,8 +5,25 @@ module.exports = {
     node: true
   },
   parserOptions: {},
-  extends: ['@nuxtjs', 'plugin:prettier/recommended', 'prettier/vue'],
+  extends: [
+    '@nuxtjs',
+    'plugin:prettier/recommended',
+    'prettier'
+    // 'prettier/vue',
+    // 'plugin:nuxt/recommended'
+  ],
   plugins: ['prettier'],
   // add your custom rules here
-  rules: {}
+  rules: {
+    // 'vue/v-slot-style': [
+    //   'off',
+    //   {
+    //     atComponent: 'v-slot',
+    //     default: 'shorthand',
+    //     named: 'shorthand'
+    //   }
+    // ]
+    'vue/valid-v-slot': ['error', { allowModifiers: true }],
+    'vue/no-mutating-props': 0
+  }
 }

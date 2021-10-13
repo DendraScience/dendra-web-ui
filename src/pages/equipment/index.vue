@@ -16,7 +16,7 @@
                 :show-options="showOutliers"
                 show-link
               >
-                <template v-slot:actions="{ item }">
+                <template #actions="{ item }">
                   <v-icon color="tertiary" @click="open(item._id)">{{
                     mdiOpenInNew
                   }}</v-icon>

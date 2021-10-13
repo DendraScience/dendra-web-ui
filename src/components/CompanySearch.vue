@@ -35,13 +35,13 @@
           >
             <template
               v-if="$scopedSlots.select"
-              v-slot:item.select="{ item }"
+              #item.select="{ item }"
               class="text-no-wrap px-0"
             >
               <slot name="select" :item="item" />
             </template>
 
-            <template v-slot:item.full_name="{ item }">
+            <template #item.full_name="{ item }">
               <nuxt-link
                 v-if="showLink"
                 :to="{
@@ -54,15 +54,15 @@
               ><span v-else>{{ item.full_name }}</span>
             </template>
 
-            <template v-slot:item.description="{ item }">
+            <template #item.description="{ item }">
               {{ item.description | truncate({ length: 200 }) }}
             </template>
 
-            <template v-slot:item.indicators="{ item }">
+            <template #item.indicators="{ item }">
               <indicator-cell :value="item" hide-description />
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template #item.icons="{ item }">
               <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
               </span>

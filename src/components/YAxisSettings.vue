@@ -10,7 +10,7 @@
               :color="item.color"
               :value="item.value"
             >
-              <template v-slot:label>
+              <template #label>
                 <span :style="{ color: item.color }">{{ item.text }}</span>
               </template>
             </v-radio>

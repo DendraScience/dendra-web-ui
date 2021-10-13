@@ -192,7 +192,7 @@
       v-model="externalLink"
       @commit="commitExternalLink"
     >
-      <template v-slot:title>Specify external link</template>
+      <template #title>Specify external link</template>
       <template>
         <external-link-fields v-model="externalLink" />
       </template>

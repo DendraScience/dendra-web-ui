@@ -1,15 +1,16 @@
 <template>
   <v-card
     v-resize="resized"
-    :dark="options.includes('dark')"
+    :dark="flags.dark"
     :height="innerHeight"
     :width="innerWidth"
-    :outlined="options.includes('outlined')"
+    :outlined="flags.outlined"
     tile
   >
     <v-img
       :height="imageHeight"
       :src="
+        flags.photoBackground &&
         photos.length &&
         photos[0].sizes.large &&
         $options.filters.https(photos[0].sizes.large.url)
@@ -18,16 +19,17 @@
       class="align-end"
       width="100%"
     >
-      <template v-slot:placeholder>
-        <v-sheet color="green darken-4" height="100%" width="100%"></v-sheet>
+      <template #placeholder>
+        <v-sheet color="grey" height="100%" width="100%"></v-sheet>
       </template>
 
-      <v-card v-if="!imageDrawer" color="rgba(0, 0, 0, 0.5)" dark tile>
+      <v-card v-if="!photoDrawer" color="rgba(0, 0, 0, 0.5)" dark tile>
         <v-card-title>{{ station.name }}</v-card-title>
 
         <station-time-geo-list
-          :currentTime="currentTime"
-          :getUnitText="getUnitText"
+          v-if="flags.timeGeo"
+          :current-time="currentTime"
+          :get-unit-text="getUnitText"
           :som-id="somId"
           :value="station"
           color="transparent"
@@ -36,7 +38,7 @@
     </v-img>
 
     <v-btn
-      v-if="photos.length"
+      v-if="flags.photoBackground && flags.photoDrawer && photos.length"
       color="grey darken-1"
       dark
       fab
@@ -44,32 +46,55 @@
       right
       small
       top
-      @click="imageDrawer = !imageDrawer"
+      @click="photoDrawer = !photoDrawer"
     >
-      <v-icon>{{ imageDrawer ? mdiChevronUp : mdiChevronDown }}</v-icon>
+      <v-icon>{{ photoDrawer ? mdiChevronUp : mdiChevronDown }}</v-icon>
     </v-btn>
 
+    <v-card-text v-if="!includedDisplayItems[displayIndex]">
+      Nothing to show
+    </v-card-text>
+
     <current-conditions
+      v-else-if="includedDisplayItems[displayIndex].key === 'current'"
       :datastreams-by-key="datastreamsByKey"
       :height="tableHeight"
       :org="org"
-      :show-last-seen="options.includes('lastSeen')"
+      :show-last-seen="flags.lastSeen"
       :units="units"
       :value="current"
     />
 
+    <forecast-conditions
+      v-else-if="includedDisplayItems[displayIndex].key === 'forecast'"
+      :height="tableHeight"
+      :units="units"
+      :value="forecast"
+    >
+      <template #util>
+        <a
+          :href="`http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`"
+          class="font-weight-regular"
+          target="_blank"
+          >Visit NWS site</a
+        >
+      </template>
+    </forecast-conditions>
+
     <v-divider />
 
     <v-card-actions>
-      <v-btn small> Forecast</v-btn>
-      <!-- <v-btn small text> 2 Week</v-btn> -->
-      <v-spacer />
-
-      <v-btn class="mr-1" outlined small text>Explore Data</v-btn>
-
+      <v-btn
+        v-if="flags.exploreData"
+        :href="datastreamsURL"
+        class="mr-1"
+        small
+        target="_blank"
+        >Explore Data</v-btn
+      >
       <v-menu>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn outlined small text v-bind="attrs" v-on="on">Units</v-btn>
+        <template #activator="{ on, attrs }">
+          <v-btn small v-bind="attrs" v-on="on">Units</v-btn>
         </template>
         <v-list>
           <v-list-item
@@ -81,63 +106,134 @@
           </v-list-item>
         </v-list>
       </v-menu>
+
+      <v-spacer />
+
+      <v-btn
+        v-if="includedDisplayItems.length > 1"
+        small
+        @click="
+          displayIndex = ++displayIndex % includedDisplayItems.length
+          photoDrawer = false
+        "
+        >{{
+          includedDisplayItems[(displayIndex + 1) % includedDisplayItems.length]
+            .action
+        }}</v-btn
+      >
     </v-card-actions>
 
-    <v-card-text class="py-1 caption grey">
-      <a
-        class="font-weight-medium white--text"
-        href="https://dendra.science/"
-        target="_blank"
-        >Data hosted on Dendra.Science</a
-      >
-    </v-card-text>
+    <v-chip
+      :href="statusURL"
+      class="ml-2 font-weight-medium"
+      color="grey darken-1"
+      dark
+      target="_blank"
+      x-small
+      >Data hosted on Dendra.Science
+    </v-chip>
   </v-card>
 </template>
 
 <script>
-import { pressure } from '@/lib/barometric'
-import { newCurrent, newForecast, unitsData } from '@/lib/dashboard'
-import { idRandom } from '@/lib/utils'
+import { newCurrent, unitsData } from '@/lib/dashboard'
+import { idRandom, queryIs } from '@/lib/utils'
 import routeQuery from '@/mixins/route-query'
 import stationDashboard from '@/mixins/station-dashboard'
 import CurrentConditions from '@/components/WidgetCurrentConditions'
+import ForecastConditions from '@/components/WidgetForecastConditions'
 import StationTimeGeoList from '@/components/StationTimeGeoList'
 
 export default {
   components: {
     CurrentConditions,
+    ForecastConditions,
     StationTimeGeoList
   },
 
-  layout: 'widget',
-
   mixins: [routeQuery, stationDashboard],
 
+  layout: 'widget',
+
   data: () => ({
-    actionsHeight: 75,
-    cardHeight: null,
-    imageDrawer: false,
+    defaultFlags: {
+      dark: false,
+      exploreData: true,
+      lastSeen: false,
+      outlined: true,
+      photoBackground: true,
+      photoDrawer: true,
+      timeGeo: true,
+      track: true
+    },
+
+    displayIndex: 0,
+    displayItems: [
+      { action: 'View Current', default: true, key: 'current' },
+      { action: 'View Forecast', default: true, key: 'forecast' }
+    ],
+
+    footerHeight: 80,
     innerHeight: null,
-    innerWidth: null
+    innerWidth: null,
+
+    photoDrawer: false
   }),
 
   computed: {
-    imageHeight() {
-      return this.imageDrawer
-        ? Math.min(this.innerWidth, this.innerHeight * 0.6)
-        : 200
+    datastreamsURL() {
+      return `${process.env.webSiteURL}/orgs/${this.org.slug}/datastreams?faceted=true&scheme=dq&selectStationId=${this.station._id}`
     },
 
-    options() {
-      return `${this.$route.query.options}`.split(',')
+    flags() {
+      const { defaultFlags } = this
+      const { query } = this.$route
+
+      return Object.keys(defaultFlags).reduce((accum, key) => {
+        const defaultValue = defaultFlags[key]
+        const queryValue = queryIs(query[key])
+        accum[key] = queryValue === null ? defaultValue : queryValue
+        return accum
+      }, {})
+    },
+
+    imageHeight() {
+      return this.photoDrawer
+        ? Math.min(this.innerWidth, this.innerHeight * 0.6)
+        : this.flags.timeGeo
+        ? 200
+        : 64
+    },
+
+    includedDisplayItems() {
+      const { displayItems } = this
+      const { query } = this.$route
+      const keys =
+        typeof query.include === 'string' ? query.include.split(',') : []
+      const items = displayItems.filter(item => keys.includes(item.key))
+
+      return items.length ? items : displayItems.filter(item => item.default)
+    },
+
+    statusURL() {
+      return `${process.env.webSiteURL}/orgs/${this.org.slug}/status/${this.station.slug}`
     },
 
     tableHeight() {
-      return this.innerHeight - this.imageHeight - this.actionsHeight
+      return this.innerHeight - this.imageHeight - this.footerHeight
     }
   },
 
-  mounted() {},
+  mounted() {
+    const route = this.$route
+    let path = route.path
+
+    // Follow SPA best practices -- virtual pageviews
+    // SEE: https://developers.google.com/analytics/devguides/collection/gtagjs/single-page-applications
+    path = `${path}/orgs/${this.org.slug}/stations/${this.station.slug}`
+
+    if (this.flags.track) this.$tracker.pageView({ name: route.name, path })
+  },
 
   methods: {
     fetchAirSpeed(id, { startTime, untilTime }, { airSpeed }) {

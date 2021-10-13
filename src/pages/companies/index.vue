@@ -10,7 +10,7 @@
               <query-header name="companies"> Companies </query-header>
 
               <company-search show-link>
-                <template v-slot:actions="{ item }">
+                <template #actions="{ item }">
                   <v-icon
                     color="tertiary"
                     class="mr-2"

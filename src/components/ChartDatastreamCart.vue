@@ -10,7 +10,7 @@
           hide-default-footer
           item-key="_id"
         >
-          <template v-slot:item.yAxis="{ item }" class="text-no-wrap px-0">
+          <template #item.yAxis="{ item }" class="text-no-wrap px-0">
             <v-btn-toggle
               :value="getQuantity(item._id)"
               mandatory
@@ -26,7 +26,7 @@
             </v-btn-toggle>
           </template>
 
-          <template v-slot:item.icons="{ item }" class="text-no-wrap">
+          <template #item.icons="{ item }" class="text-no-wrap">
             <v-icon
               color="tertiary"
               @click="

@@ -17,7 +17,7 @@
                 :show-hidden="showOutliers"
                 show-link
               >
-                <template v-slot:actions="{ item }">
+                <template #actions="{ item }">
                   <v-icon
                     color="tertiary"
                     class="mr-2"

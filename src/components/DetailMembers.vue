@@ -18,11 +18,11 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+            <template #item.type="{ item }" class="text-no-wrap px-0">
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.roles="{ item }" class="py-4">
+            <template #item.roles="{ item }" class="py-4">
               <v-chip
                 v-for="role in item.roles"
                 :key="role"
@@ -32,7 +32,7 @@
               >
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template #item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
                   mdiPencil

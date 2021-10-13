@@ -36,7 +36,7 @@
                       @current-items="currentItems = $event"
                       @datastreams="datastreams = $event"
                     >
-                      <template v-slot:select="{ item }">
+                      <template #select="{ item }">
                         <v-icon color="primary" @click="selectItem(item)">{{
                           getQuantity(item._id)
                             ? mdiCheckboxMarked
@@ -44,7 +44,7 @@
                         }}</v-icon>
                       </template>
 
-                      <template v-slot:actions="{ item }">
+                      <template #actions="{ item }">
                         <v-icon color="tertiary" @click="open(item._id)">{{
                           mdiOpenInNew
                         }}</v-icon>
@@ -65,7 +65,7 @@
                       show-link
                       @current-items="currentItems = $event"
                     >
-                      <template v-slot:select="{ item }">
+                      <template #select="{ item }">
                         <v-icon color="primary" @click="selectItem(item)">{{
                           getQuantity(item._id)
                             ? mdiCheckboxMarked
@@ -73,7 +73,7 @@
                         }}</v-icon>
                       </template>
 
-                      <template v-slot:actions="{ item }">
+                      <template #actions="{ item }">
                         <v-icon color="tertiary" @click="open(item._id)">{{
                           mdiOpenInNew
                         }}</v-icon>
@@ -165,7 +165,7 @@
                   <v-card v-if="auth.payload" outlined tile>
                     <content-header>
                       Download data
-                      <template v-slot:content>
+                      <template #content>
                         <v-row>
                           <v-col v-if="downloadSubmitDate">
                             <v-card color="grey lighten-4" outlined>
@@ -381,6 +381,20 @@ export default {
     ValidationProvider
   },
 
+  mixins: [routeQuery],
+
+  beforeRouteLeave(to, from, next) {
+    if (this.leaveNext) {
+      this.leaveNext(false)
+      this.leaveNext = next
+    } else if (this.charts.length) {
+      this.leaveDialog = true
+      this.leaveNext = next
+    } else {
+      next()
+    }
+  },
+
   middleware: [
     'check-org',
     'dt-unit-vocabulary',
@@ -388,8 +402,6 @@ export default {
     'fetch-station',
     'fetch-annotation'
   ],
-
-  mixins: [routeQuery],
 
   data: () => ({
     charts: [],
@@ -474,6 +486,7 @@ export default {
       if (route.query.faceted) path = `${path}/faceted`
       if (newValue === 0) path = `${path}/view`
       else if (newValue === 1) path = `${path}/chart`
+      else if (newValue === 2) path = `${path}/download`
 
       this.$tracker.pageView({ name: route.name, path })
     }
@@ -510,18 +523,6 @@ export default {
     )
     this.seriesFetchWorker.terminate()
     this.seriesFetchWorker = null
-  },
-
-  beforeRouteLeave(to, from, next) {
-    if (this.leaveNext) {
-      this.leaveNext(false)
-      this.leaveNext = next
-    } else if (this.charts.length) {
-      this.leaveDialog = true
-      this.leaveNext = next
-    } else {
-      next()
-    }
   },
 
   mounted() {
@@ -639,6 +640,11 @@ export default {
         seriesOptions,
         sync: false
       })
+
+      this.$tracker.event('chartDatastreams', {
+        chartsCount: this.charts.length,
+        seriesCount: seriesOptions.length
+      })
     },
 
     async createDownload() {
@@ -684,8 +690,13 @@ export default {
         )
         if (!response.ok)
           throw new Error(`Non-success status code ${response.status}`)
+
+        this.$tracker.event('createDownloadSuccess')
       } catch (err) {
         this.$logger.error('createDownload', err)
+        this.$tracker.event('createDownloadError', {
+          message: err.message
+        })
       }
 
       this.setDownloadDrawer(true)

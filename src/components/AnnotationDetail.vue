@@ -155,7 +155,7 @@
         </v-toolbar>
 
         <datastream-search :org="org" show-hidden show-disabled show-options>
-          <template v-slot:select="{ item }">
+          <template #select="{ item }">
             <v-icon
               color="primary"
               @click="
@@ -180,7 +180,7 @@
       v-model="attribAction"
       @commit="commitAttribAction"
     >
-      <template v-slot:title>Specify attribute</template>
+      <template #title>Specify attribute</template>
       <template>
         <attrib-action-fields v-model="attribAction" />
       </template>
@@ -192,7 +192,7 @@
       max-width="800"
       @commit="commitEvaluateAction"
     >
-      <template v-slot:title>Specify expression</template>
+      <template #title>Specify expression</template>
       <template>
         <evaluate-action-fields
           v-model="evaluateAction"
@@ -209,14 +209,14 @@
       v-model="flagAction"
       @commit="commitFlagAction"
     >
-      <template v-slot:title>Specify flag</template>
+      <template #title>Specify flag</template>
       <template>
         <flag-action-fields v-model="flagAction" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title>Specify member</template>
+      <template #title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"
@@ -232,7 +232,7 @@
       max-width="380"
       @commit="commitMomentInterval"
     >
-      <template v-slot:title>{{
+      <template #title>{{
         timeZoneAccepted ? 'Specify moment' : 'Confirm time zone'
       }}</template>
       <template>
@@ -247,7 +247,7 @@
             hide-to
             show-time
           >
-            <template v-slot:footer>
+            <template #footer>
               <div class="text-center">
                 <span class="font-weight-medium">
                   <span v-if="!momentIntervalResolved.valid">
@@ -279,7 +279,7 @@
       v-model="rangeInterval"
       @commit="commitRangeInterval"
     >
-      <template v-slot:title
+      <template #title
         >{{ timeZoneAccepted ? 'Specify range' : 'Confirm time zone' }}
       </template>
       <template>
@@ -294,7 +294,7 @@
             optional
             show-time
           >
-            <template v-slot:footer>
+            <template #footer>
               <div class="text-center">
                 <span class="font-weight-medium">
                   <span v-if="!rangeIntervalResolved.valid">
@@ -383,7 +383,7 @@
         </v-toolbar>
 
         <station-search :org="org" show-hidden show-disabled>
-          <template v-slot:select="{ item }">
+          <template #select="{ item }">
             <v-icon
               color="primary"
               @click="

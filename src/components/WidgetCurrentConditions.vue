@@ -13,14 +13,14 @@
       <tbody>
         <tr v-for="item in items" :key="item.valueKey">
           <th>{{ item.name }}</th>
-          <td class="text-right">
+          <td class="body-2 text-right">
             <span v-if="item.unitKey === 'direction'"
               >({{ item.value | direction }}) {{ item.value }}</span
             >
             <span v-else>{{ item.value }} </span>
           </td>
-          <td>{{ item.unit && item.unit.text }}</td>
-          <td v-if="showLastSeen">
+          <td class="body-2">{{ item.unit && item.unit.text }}</td>
+          <td v-if="showLastSeen" class="body-2">
             {{ item.lastSeenTime | dateTimeFormatLocal('(no data)') }}
           </td>
         </tr>

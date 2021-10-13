@@ -263,7 +263,7 @@
       max-width="800"
       @commit="commitGeneralConfig"
     >
-      <template v-slot:title>Specify configuration</template>
+      <template #title>Specify configuration</template>
       <template>
         <general-config-fields
           v-model="generalConfig"
@@ -277,14 +277,14 @@
       v-model="accessLevel"
       @commit="commitAccessLevel"
     >
-      <template v-slot:title>Specify access level</template>
+      <template #title>Specify access level</template>
       <template>
         <access-level-fields v-model="accessLevel" />
       </template>
     </detail-dialog>
 
     <detail-dialog ref="memberDialog" v-model="member" @commit="commitMember">
-      <template v-slot:title>Specify member</template>
+      <template #title>Specify member</template>
       <template>
         <member-role-fields
           v-model="member"
@@ -299,7 +299,7 @@
       v-model="externalLink"
       @commit="commitExternalLink"
     >
-      <template v-slot:title>Specify external link</template>
+      <template #title>Specify external link</template>
       <template>
         <external-link-fields v-model="externalLink" />
       </template>

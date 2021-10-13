@@ -18,7 +18,7 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.url="{ item }">
+            <template #item.url="{ item }">
               <a
                 v-if="item.url"
                 :href="item.url"
@@ -28,7 +28,7 @@
               >
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template #item.icons="{ item }">
               <span v-if="editing" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
                   mdiPencil

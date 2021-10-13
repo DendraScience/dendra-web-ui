@@ -1,15 +1,22 @@
 import path from 'path'
 
+const domain = 'dendra.science'
+const hostname = `https://${domain}/`
 const title = 'Dendra'
 const description =
   'Dendra is a cyberinfrastructure project for real-time sensor data storage, retrieval, management, and curation.'
 
 const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
 const googleTrackingId = process.env.GOOGLE_TRACKING_ID
+const plausableEnabled = true
+
+const webSiteURL = process.env.WEB_SITE_URL || 'https://dendra.science'
+const widgetsOnly = process.env.WIDGETS_ONLY === 'true'
 
 module.exports = {
-  /**
-   * Build configuration
+  /*
+   ** Build configuration
+   ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {
     // analyze: true,
@@ -27,23 +34,7 @@ module.exports = {
       }
     },
 
-    /**
-     * You can extend webpack config here
-     */
     extend(config, ctx) {
-      // Run ESLint on save
-      // if (ctx.isDev && ctx.isClient) {
-      //   config.module.rules.push({
-      //     enforce: 'pre',
-      //     test: /\.(js|vue)$/,
-      //     loader: 'eslint-loader',
-      //     exclude: /(node_modules)/
-      //   })
-
-      //   // SEE: https://github.com/nuxt/nuxt.js/pull/3480#issuecomment-404150387
-      //   config.output.globalObject = 'this'
-      // }
-
       if (ctx.isClient) {
         config.module.rules.push({
           test: /\.worker\.js$/,
@@ -55,37 +46,41 @@ module.exports = {
     }
   },
 
+  /*
+   ** Nuxt.js dev-modules
+   */
+  buildModules: [
+    // Doc: https://github.com/nuxt-community/eslint-module
+    ['@nuxtjs/eslint-module', { cache: false }],
+    '@nuxtjs/vuetify'
+  ],
+
+  /*
+   ** Global CSS
+   */
   css: ['~/assets/main'],
 
-  /**
-   * Environment variables
+  /*
+   ** Environment variables
    */
   env: {
     apiPath: process.env.API_PATH,
-    apiUri: process.env.API_URI,
-
+    apiURI: process.env.API_URI,
     datapointsMax: 288 * 365 * 10 * 4, // 10 years of 5 minute data for 4 datastreams
-
+    domain,
+    googleMapsAPIKey,
+    googleTrackingId,
+    hostname,
     noaaNWSIcons:
       process.env.NOAA_NWS_ICONS_URL ||
       'https://dendrascience.github.io/noaa-nws-icons/jpg',
-
-    googleMapsAPIKey,
-    googleTrackingId
+    plausableEnabled,
+    webSiteURL
   },
 
-  /**
-   * Generate configuration
-   */
-  // generate: {
-  //   exclude:
-  //     process.env.WIDGETS_ONLY === 'true'
-  //       ? [/^\/(?!widgets).*$/]
-  //       : [/^\/widgets.*$/]
-  // },
-
-  /**
-   * Headers of the page
+  /*
+   ** Headers of the page
+   ** See https://nuxtjs.org/api/configuration-head
    */
   head: {
     title,
@@ -178,12 +173,6 @@ module.exports = {
         sizes: '128x128'
       },
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-
-      // TODO: Do we need this?
-      // {
-      //   rel: 'stylesheet',
-      //   href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700'
-      // }
     ],
     script: [
       // For Global Site Tag (gtag.js) - Google Analytics
@@ -204,28 +193,28 @@ module.exports = {
     ]
   },
 
-  ignore:
-    process.env.WIDGETS_ONLY === 'true'
-      ? [
-          '/pages/*.vue',
-          '/pages/companies/**',
-          '/pages/equipment/**',
-          '/pages/orgs/**'
-        ]
-      : ['/pages/widgets/**'],
+  ignore: widgetsOnly
+    ? [
+        '/pages/*.vue',
+        '/pages/companies/**',
+        '/pages/equipment/**',
+        '/pages/orgs/**'
+      ]
+    : ['/pages/widgets/**'],
 
-  /**
-   * Customize the progress-bar color
-   */
   loading: { color: '#fff' },
 
-  /**
-   * Nuxt.js modules
+  /*
+   ** Nuxt.js modules
    */
-  buildModules: ['@nuxtjs/vuetify'],
+  modules: [
+    // Doc: https: //github.com/robcresswell/nuxt-compress
+    'nuxt-compress'
+  ],
 
-  /**
-   * Plugins to load before mounting the App
+  /*
+   ** Plugins to load before mounting the App
+   ** https://nuxtjs.org/guide/plugins
    */
   plugins: [
     { src: '~/plugins/logger', ssr: false },
@@ -243,19 +232,33 @@ module.exports = {
     { src: '~/plugins/web-workers', ssr: false }
   ],
 
-  /**
-   * Nuxt.js misc
-   */
-  ssr: false,
-
   router: {
     middleware: ['auth', 'ability']
   },
 
+  /*
+   ** Nuxt application source directory
+   ** See https://nuxtjs.org/api/configuration-srcdir
+   */
   srcDir: 'src',
 
-  /**
-   * Vuetify
+  /*
+   ** Nuxt rendering mode
+   ** See https://nuxtjs.org/api/configuration-mode
+   */
+  ssr: false,
+
+  /*
+   ** Nuxt target
+   ** See https://nuxtjs.org/api/configuration-target
+   */
+  target: widgetsOnly ? 'static' : 'server',
+
+  telemetry: false,
+
+  /*
+   ** Vuetify module configuration
+   ** https://github.com/nuxt-community/vuetify-module
    */
   vuetify: {
     defaultAssets: {

@@ -32,11 +32,11 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.params="{ item }">
+            <template #item.params="{ item }">
               <pre-block :value="item.params" />
             </template>
 
-            <template v-slot:item.begins="{ item }" class="py-4">
+            <template #item.begins="{ item }" class="py-4">
               <span v-if="item.beginsLabel" class="mr-1">{{
                 item.beginsLabel
               }}</span>
@@ -50,7 +50,7 @@
               />
             </template>
 
-            <template v-slot:item.ends="{ item }" class="py-4">
+            <template #item.ends="{ item }" class="py-4">
               <span v-if="item.endsLabel" class="mr-1">{{
                 item.endsLabel
               }}</span>
@@ -64,7 +64,7 @@
               />
             </template>
 
-            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+            <template #item.icons="{ item }" class="text-no-wrap">
               <span v-if="editing && !item.connection" class="text-no-wrap">
                 <v-icon color="tertiary" class="mr-2" @click="edit(item)">{{
                   mdiPencil

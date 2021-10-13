@@ -13,3 +13,10 @@ export function idRandom() {
 export function jsonFormat(data) {
   return JSON.stringify(data, null, 2)
 }
+
+export function queryIs(is) {
+  if (is === true || is === 'true') return true
+  if (is === false || is === 'false') return false
+
+  return null
+}

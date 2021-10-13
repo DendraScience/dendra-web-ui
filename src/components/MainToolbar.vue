@@ -32,7 +32,7 @@
     <v-spacer />
 
     <v-menu v-if="auth.payload" offset-y left>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <div class="d-flex flex-nowrap flex-row">
           <v-badge
             :color="

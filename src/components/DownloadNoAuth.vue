@@ -2,7 +2,7 @@
   <v-card tile>
     <content-header>
       Download data
-      <template v-slot:content>
+      <template #content>
         <v-row>
           <v-col class="body-1" cols="12" md="6">
             <p>

@@ -148,13 +148,13 @@
           >
             <template
               v-if="$scopedSlots.select"
-              v-slot:item.select="{ item }"
+              #item.select="{ item }"
               class="text-no-wrap px-0"
             >
               <slot name="select" :item="item" />
             </template>
 
-            <template v-slot:item.station_lookup.name="{ item }">
+            <template #item.station_lookup.name="{ item }">
               <nuxt-link
                 v-if="showLink && item.station_id"
                 :to="{
@@ -170,7 +170,7 @@
               }}</span>
             </template>
 
-            <template v-slot:item.extent.begins_at="{ item }">
+            <template #item.extent.begins_at="{ item }">
               {{
                 item.extent &&
                 item.extent.begins_at
@@ -183,7 +183,7 @@
               }}
             </template>
 
-            <template v-slot:item.extent.ends_before="{ item }">
+            <template #item.extent.ends_before="{ item }">
               {{
                 item.extent &&
                 item.extent.ends_before
@@ -196,7 +196,7 @@
               }}
             </template>
 
-            <template v-slot:item.name="{ item }">
+            <template #item.name="{ item }">
               <nuxt-link
                 v-if="showLink"
                 :to="{
@@ -210,11 +210,11 @@
               ><span v-else>{{ item.name }}</span>
             </template>
 
-            <template v-slot:item.indicators="{ item }">
+            <template #item.indicators="{ item }">
               <indicator-cell :value="item" />
             </template>
 
-            <template v-slot:item.icons="{ item }">
+            <template #item.icons="{ item }">
               <span v-if="$scopedSlots.actions" class="text-no-wrap">
                 <slot name="actions" :item="item" />
               </span>

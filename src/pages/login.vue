@@ -103,10 +103,14 @@ export default {
       })
         .then(() => {
           this.$store.commit('ability/clearAll')
+          this.$tracker.event('loginSuccess')
           this.$router.push({ name: 'orgs' })
         })
         .catch(err => {
           this.$logger.error('submit', err)
+          this.$tracker.event('loginError', {
+            message: err.message
+          })
         })
     }
   }

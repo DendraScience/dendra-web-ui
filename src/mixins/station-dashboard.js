@@ -14,6 +14,9 @@ export default {
   ],
 
   fetch() {
+    const { somId } = this.$route.query
+    this.somId = somId || 'met'
+
     const fetchSpec = {
       stationId: this.station._id
     }
@@ -34,7 +37,7 @@ export default {
 
     photoIndex: 0,
 
-    somId: 'met',
+    somId: null,
 
     seriesFetchWorker: null,
     stationDashboardWorker: null,
@@ -121,8 +124,8 @@ export default {
   },
 
   watch: {
-    somId(newValue) {
-      this.loadSeries()
+    somId(newValue, oldValue) {
+      if (oldValue !== null) this.loadSeries()
     }
   },
 

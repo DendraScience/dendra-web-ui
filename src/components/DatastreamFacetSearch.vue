@@ -29,7 +29,7 @@
                           v-for="(item, index) in stations"
                           :key="index"
                         >
-                          <template v-slot:default="{ active }">
+                          <template #default="{ active }">
                             <v-list-item-action>
                               <v-checkbox
                                 :input-value="active"
@@ -81,7 +81,7 @@
                           v-for="(item, index) in vocabulary.terms"
                           :key="item.label"
                         >
-                          <template v-slot:default="{ active }">
+                          <template #default="{ active }">
                             <v-list-item-action>
                               <v-checkbox
                                 :input-value="active"
@@ -164,13 +164,13 @@
                     >
                       <template
                         v-if="$scopedSlots.select"
-                        v-slot:item.select="{ item }"
+                        #item.select="{ item }"
                         class="text-no-wrap px-0"
                       >
                         <slot name="select" :item="item" />
                       </template>
 
-                      <template v-slot:item.extent.begins_at="{ item }">
+                      <template #item.extent.begins_at="{ item }">
                         {{
                           item.extent &&
                           item.extent.begins_at
@@ -183,7 +183,7 @@
                         }}
                       </template>
 
-                      <template v-slot:item.extent.ends_before="{ item }">
+                      <template #item.extent.ends_before="{ item }">
                         {{
                           item.extent &&
                           item.extent.ends_before
@@ -196,11 +196,11 @@
                         }}
                       </template>
 
-                      <template v-slot:item.indicators="{ item }">
+                      <template #item.indicators="{ item }">
                         <indicator-cell :value="item" />
                       </template>
 
-                      <template v-slot:item.icons="{ item }">
+                      <template #item.icons="{ item }">
                         <span v-if="$scopedSlots.actions" class="text-no-wrap">
                           <slot name="actions" :item="item" />
                         </span>

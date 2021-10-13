@@ -18,8 +18,8 @@
             <v-col cols="12" md="6">
               <v-card>
                 <station-time-geo-list
-                  :currentTime="currentTime"
-                  :getUnitText="getUnitText"
+                  :current-time="currentTime"
+                  :get-unit-text="getUnitText"
                   :som-id="somId"
                   :value="station"
                 />
@@ -140,7 +140,7 @@
                         contain
                         height="320"
                       >
-                        <template v-slot:placeholder>
+                        <template #placeholder>
                           <v-row
                             align="center"
                             class="fill-height ma-0"
@@ -166,7 +166,7 @@
                           v-for="(photo, index) in photos"
                           :key="index"
                         >
-                          <template v-slot:default="{ active, toggle }">
+                          <template #default="{ active, toggle }">
                             <v-card
                               :style="{ opacity: active ? 1 : 0.6 }"
                               class="ma-1"
@@ -201,7 +201,7 @@
                 :units="units"
                 :value="current"
               >
-                <template v-slot:util>
+                <template #util>
                   <v-select
                     v-model="somId"
                     :items="findSOMs().data"
@@ -224,7 +224,7 @@
     <v-row v-if="station.geo" no-gutters>
       <v-col>
         <forecast-conditions :units="units" :value="forecast">
-          <template v-slot:util>
+          <template #util>
             <a
               :href="`http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`"
               target="_blank"
@@ -250,12 +250,9 @@
 <script>
 import Vue from 'vue'
 import vuetifyColors from 'vuetify/lib/util/colors'
-import { mapGetters, mapState } from 'vuex'
 import moment from 'moment'
-import math from '@/lib/math'
-import { pressure } from '@/lib/barometric'
 import { defaultOptions } from '@/lib/chart'
-import { newCurrent, newForecast, unitsData } from '@/lib/dashboard'
+import { newCurrent, unitsData } from '@/lib/dashboard'
 import { idRandom } from '@/lib/utils'
 import stationDashboard from '@/mixins/station-dashboard'
 import CurrentConditions from '@/components/CurrentConditions'
@@ -270,6 +267,8 @@ export default {
     ForecastConditions,
     StationTimeGeoList
   },
+
+  mixins: [stationDashboard],
 
   data: () => ({
     charts: []

@@ -18,11 +18,11 @@
             hide-default-footer
             item-key="key"
           >
-            <template v-slot:item.type="{ item }" class="text-no-wrap px-0">
+            <template #item.type="{ item }" class="text-no-wrap px-0">
               <v-icon>{{ item.icon }}</v-icon>
             </template>
 
-            <template v-slot:item.icons="{ item }" class="text-no-wrap">
+            <template #item.icons="{ item }" class="text-no-wrap">
               <v-icon
                 v-if="editing && !item.custom"
                 color="tertiary"
@@ -37,7 +37,7 @@
 
     <v-card-actions v-if="editing">
       <v-menu offset-y>
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn color="primary" v-on="on">
             <v-icon>{{ mdiPlus }}</v-icon>
           </v-btn>
@@ -76,36 +76,6 @@ export default {
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
-  },
-
-  async fetch() {
-    const datastreamIds = this.datastreamIds
-    const stationIds = this.stationIds.slice()
-
-    // Fetch referenced datastreams
-    if (datastreamIds.length) {
-      const res = await this.fetchDatastreams({
-        query: {
-          _id: { $in: datastreamIds },
-          $limit: 2000,
-          $select: ['_id', 'name', 'station_id']
-        }
-      })
-
-      if (res && res.data && res.data.length)
-        res.data.forEach(item => stationIds.push(item.station_id))
-    }
-
-    // Fetch referenced stations
-    if (stationIds.length) {
-      await this.fetchStations({
-        query: {
-          _id: { $in: _uniq(stationIds) },
-          $limit: 2000,
-          $select: ['_id', 'name']
-        }
-      })
-    }
   },
 
   data: () => ({
@@ -148,6 +118,36 @@ export default {
       }
     ]
   }),
+
+  async fetch() {
+    const datastreamIds = this.datastreamIds
+    const stationIds = this.stationIds.slice()
+
+    // Fetch referenced datastreams
+    if (datastreamIds.length) {
+      const res = await this.fetchDatastreams({
+        query: {
+          _id: { $in: datastreamIds },
+          $limit: 2000,
+          $select: ['_id', 'name', 'station_id']
+        }
+      })
+
+      if (res && res.data && res.data.length)
+        res.data.forEach(item => stationIds.push(item.station_id))
+    }
+
+    // Fetch referenced stations
+    if (stationIds.length) {
+      await this.fetchStations({
+        query: {
+          _id: { $in: _uniq(stationIds) },
+          $limit: 2000,
+          $select: ['_id', 'name']
+        }
+      })
+    }
+  },
 
   computed: {
     ...mapGetters({

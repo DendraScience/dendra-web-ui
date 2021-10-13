@@ -76,21 +76,21 @@
         </v-btn>
 
         <v-menu :close-on-content-click="false" bottom left offset-y>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn :disabled="!value.isReady" icon v-on="on">
               <v-icon>{{ mdiArrowExpandVertical }}</v-icon>
             </v-btn>
           </template>
 
           <y-axis-settings
+            v-model="yAxisSettings"
             :chart-options="value.options"
-            :value="yAxisSettings"
             @commit="value.bus.$emit('set-y-extremes', $event)"
           />
         </v-menu>
 
         <v-menu v-if="$scopedSlots.menu" bottom left offset-y>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn icon v-on="on">
               <v-icon>{{ mdiDotsVertical }}</v-icon>
             </v-btn>

@@ -1,9 +1,4 @@
-function queryIs(is) {
-  if (is === true || is === 'true') return true
-  if (is === false || is === 'false') return false
-
-  return null
-}
+import { queryIs } from '@/lib/utils'
 
 export default {
   computed: {
