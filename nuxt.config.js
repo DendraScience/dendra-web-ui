@@ -1,4 +1,4 @@
-import path from 'path'
+const path = require('path')
 
 const domain = 'dendra.science'
 const hostname = `https://${domain}/`
@@ -202,6 +202,9 @@ module.exports = {
       ]
     : ['/pages/widgets/**'],
 
+  /*
+   ** Customize the progress-bar color
+   */
   loading: { color: '#fff' },
 
   /*
