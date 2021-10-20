@@ -3,11 +3,11 @@
     <template #default>
       <thead>
         <tr>
-          <th v-if="items.length">Current conditions</th>
-          <th v-else>Sorry, no datastreams yet</th>
-          <th class="text-right">Value</th>
-          <th>Unit</th>
-          <th v-if="showLastSeen">Last seen</th>
+          <th v-if="items.length" :class="headerClass">Current conditions</th>
+          <th v-else :class="headerClass">Sorry, no datastreams yet</th>
+          <th :class="headerClass" class="text-right">Value</th>
+          <th :class="headerClass">Unit</th>
+          <th v-if="showLastSeen" :class="headerClass">Last seen</th>
         </tr>
       </thead>
       <tbody>
@@ -38,6 +38,10 @@ export default {
   props: {
     height: { default: 100, type: Number },
     showLastSeen: { default: false, type: Boolean }
-  }
+  },
+
+  data: () => ({
+    headerClass: 'grey darken-1 white--text'
+  })
 }
 </script>

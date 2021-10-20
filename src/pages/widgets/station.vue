@@ -20,10 +20,15 @@
       width="100%"
     >
       <template #placeholder>
-        <v-sheet color="grey" height="100%" width="100%"></v-sheet>
+        <v-sheet color="grey darken-1" height="100%" width="100%"></v-sheet>
       </template>
 
-      <v-card v-if="!photoDrawer" color="rgba(0, 0, 0, 0.5)" dark tile>
+      <v-card
+        v-if="!photoDrawer"
+        :color="flags.photoBackground ? 'rgba(0, 0, 0, 0.5)' : 'grey darken-1'"
+        dark
+        tile
+      >
         <v-card-title>{{ station.name }}</v-card-title>
 
         <station-time-geo-list
@@ -74,7 +79,7 @@
       <template #util>
         <a
           :href="`http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`"
-          class="font-weight-regular"
+          class="font-weight-regular white--text"
           target="_blank"
           >Visit NWS site</a
         >

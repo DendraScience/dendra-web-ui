@@ -3,9 +3,13 @@
     <template #default>
       <thead>
         <tr>
-          <th v-if="items.length" colspan="3">NOAA forecast</th>
-          <th v-else colspan="3">Sorry, no forecast data</th>
-          <th class="text-right" colspan="2">
+          <th v-if="items.length" :class="headerClass" colspan="3">
+            NOAA forecast
+          </th>
+          <th v-else :class="headerClass" colspan="3">
+            Sorry, no forecast data
+          </th>
+          <th :class="headerClass" class="text-right" colspan="2">
             <slot name="util" />
           </th>
         </tr>
@@ -61,6 +65,10 @@ export default {
 
   props: {
     height: { default: 100, type: Number }
-  }
+  },
+
+  data: () => ({
+    headerClass: 'grey darken-1 white--text'
+  })
 }
 </script>
