@@ -3,7 +3,12 @@
     <template #default>
       <thead>
         <tr>
-          <th v-if="items.length" :class="headerClass" colspan="3">
+          <th
+            v-if="items.length"
+            :class="headerClass"
+            class="text-uppercase"
+            colspan="3"
+          >
             NOAA forecast
           </th>
           <th v-else :class="headerClass" colspan="3">
@@ -64,11 +69,14 @@ export default {
   mixins: [forecastConditions],
 
   props: {
+    dark: { default: false, type: Boolean },
     height: { default: 100, type: Number }
   },
 
-  data: () => ({
-    headerClass: 'grey darken-1 white--text'
-  })
+  computed: {
+    headerClass() {
+      return this.dark ? 'grey darken-3 white--text' : 'grey lighten-3'
+    }
+  }
 }
 </script>

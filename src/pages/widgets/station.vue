@@ -5,6 +5,7 @@
     :height="innerHeight"
     :width="innerWidth"
     :outlined="flags.outlined"
+    flat
     tile
   >
     <v-img
@@ -27,6 +28,7 @@
         v-if="!photoDrawer"
         :color="flags.photoBackground ? 'rgba(0, 0, 0, 0.5)' : 'grey darken-1'"
         dark
+        flat
         tile
       >
         <v-card-title>{{ station.name }}</v-card-title>
@@ -62,6 +64,7 @@
 
     <current-conditions
       v-else-if="includedDisplayItems[displayIndex].key === 'current'"
+      :dark="flags.dark"
       :datastreams-by-key="datastreamsByKey"
       :height="tableHeight"
       :org="org"
@@ -72,6 +75,7 @@
 
     <forecast-conditions
       v-else-if="includedDisplayItems[displayIndex].key === 'forecast'"
+      :dark="flags.dark"
       :height="tableHeight"
       :units="units"
       :value="forecast"
@@ -79,7 +83,7 @@
       <template #util>
         <a
           :href="`http://forecast.weather.gov/MapClick.php?lat=${station.geo.coordinates[1]}&lon=${station.geo.coordinates[0]}`"
-          class="font-weight-regular white--text"
+          class="font-weight-regular"
           target="_blank"
           >Visit NWS site</a
         >

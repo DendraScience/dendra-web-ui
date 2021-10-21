@@ -3,7 +3,9 @@
     <template #default>
       <thead>
         <tr>
-          <th v-if="items.length" :class="headerClass">Current conditions</th>
+          <th v-if="items.length" :class="headerClass" class="text-uppercase">
+            Current conditions
+          </th>
           <th v-else :class="headerClass">Sorry, no datastreams yet</th>
           <th :class="headerClass" class="text-right">Value</th>
           <th :class="headerClass">Unit</th>
@@ -36,12 +38,15 @@ export default {
   mixins: [currentConditions],
 
   props: {
+    dark: { default: false, type: Boolean },
     height: { default: 100, type: Number },
     showLastSeen: { default: false, type: Boolean }
   },
 
-  data: () => ({
-    headerClass: 'grey darken-1 white--text'
-  })
+  computed: {
+    headerClass() {
+      return this.dark ? 'grey darken-3 white--text' : 'grey lighten-3'
+    }
+  }
 }
 </script>
