@@ -8,8 +8,12 @@ const description =
 
 const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
 const googleTrackingId = process.env.GOOGLE_TRACKING_ID
-const plausableEnabled = true
+const plausableEnabled = process.env.NODE_ENV === 'production'
 
+const githubURL = 'https://github.com/DendraScience'
+const infoEmail = 'metahuman@dendra.science'
+const slackURL = 'https://dendra-science.slack.com'
+const twitterURL = 'https://twitter.com/DendraScience'
 const webSiteURL = process.env.WEB_SITE_URL || 'https://dendra.science'
 const widgetsOnly = process.env.WIDGETS_ONLY === 'true'
 
@@ -68,13 +72,17 @@ module.exports = {
     apiURI: process.env.API_URI,
     datapointsMax: 288 * 365 * 10 * 4, // 10 years of 5 minute data for 4 datastreams
     domain,
+    githubURL,
     googleMapsAPIKey,
     googleTrackingId,
     hostname,
+    infoEmail,
     noaaNWSIcons:
       process.env.NOAA_NWS_ICONS_URL ||
       'https://dendrascience.github.io/noaa-nws-icons/jpg',
     plausableEnabled,
+    slackURL,
+    twitterURL,
     webSiteURL
   },
 

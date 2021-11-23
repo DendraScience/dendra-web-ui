@@ -11,7 +11,7 @@
         <h3 class="headline mb-2">What We Do</h3>
         <p class="body-1 mb-0">
           Dendra is a cyberinfrastructure project for real-time sensor data
-          storage, retrieval, management, and curation. It is a cloud-based,
+          storage, retrieval, management and curation. It is a cloud-based,
           multi-organizational system, designed to support massive permanent
           monitoring efforts. We merge the QA/QC process with field maintenance
           and system status alerting in a way which makes it easier to keep on
@@ -23,17 +23,15 @@
         <h4 class="title">How to Contact</h4>
         <p class="body-2">
           We love getting feedback! If you have any questions, please email us
-          at <a :href="`mailto:${email}`">{{ email }}</a
+          at
+          <a :href="`mailto:${infoEmail}?subject=Question`">{{ infoEmail }}</a
           >.
         </p>
 
         <h5 class="subtitle-1">Slack</h5>
         <p class="body-2">
-          We have a Slack channel for day-to-day operations, issues, and
-          questions:
-          <a href="https://dendra-science.slack.com" target="_blank"
-            >dendra-science.slack.com</a
-          >.
+          We have a <a :href="slackURL" target="_blank">Slack channel</a> for
+          day-to-day operations, issues and questions.
         </p>
       </v-col>
 
@@ -61,7 +59,8 @@
         <p class="body-2">
           Dendra is supported by inclusion in grants and by hourly recharge. If
           you are interested in having your organization’s monitoring hosted on
-          Dendra, please <a :href="`mailto:${email}`">contact us</a>.
+          Dendra, please
+          <a :href="`mailto:${infoEmail}?subject=Question`">contact us</a>.
         </p>
       </v-col>
 
@@ -165,9 +164,8 @@
                   — and while in school taught computer programming classes, and
                   also interned with the federal government. My enterprise work
                   experience ranges from tech startups, to F100, F500 and F1000
-                  companies. Other passions include vegan cooking, practicing
-                  martial arts, advocating for safe neighborhoods, and
-                  electronic music creation.
+                  companies. Other passions include vegan cooking, martial arts,
+                  and electronic music creation.
                 </div>
               </v-col>
             </v-row>
@@ -180,10 +178,6 @@
 
 <script>
 export default {
-  middleware: ['no-org'],
-
-  data: () => ({
-    email: 'metahuman@dendra.science'
-  })
+  middleware: ['no-org']
 }
 </script>

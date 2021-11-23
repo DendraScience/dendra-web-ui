@@ -32,6 +32,7 @@ import {
   mdiFileAlert,
   mdiFileClock,
   mdiFileDownload,
+  mdiGithub,
   mdiHelpRhombusOutline,
   mdiHexagonSlice6,
   mdiInformation,
@@ -55,7 +56,9 @@ import {
   mdiPin,
   mdiPinOff,
   mdiPlus,
+  mdiSlack,
   mdiSquareRounded,
+  mdiTwitter,
   mdiViewAgenda,
   mdiViewDashboard,
   mdiViewList
@@ -95,6 +98,7 @@ Vue.mixin({
     mdiFileClock,
     mdiFileAlert,
     mdiFileDownload,
+    mdiGithub,
     mdiHelpRhombusOutline,
     mdiHexagonSlice6,
     mdiInformation,
@@ -118,9 +122,16 @@ Vue.mixin({
     mdiPin,
     mdiPinOff,
     mdiPlus,
+    mdiSlack,
     mdiSquareRounded,
+    mdiTwitter,
     mdiViewAgenda,
     mdiViewDashboard,
-    mdiViewList
+    mdiViewList,
+
+    githubURL: process.env.githubURL,
+    infoEmail: process.env.infoEmail,
+    slackURL: process.env.slackURL,
+    twitterURL: process.env.twitterURL
   })
 })
