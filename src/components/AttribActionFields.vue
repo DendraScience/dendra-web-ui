@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import AttributeFields from '@/components/AttributeFields'
 import { mdiDice1, mdiDice2 } from '@mdi/js'
+import AttributeFields from '@/components/AttributeFields'
 
 export default {
   components: {

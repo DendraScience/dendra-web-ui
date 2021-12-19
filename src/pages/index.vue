@@ -10,21 +10,25 @@
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
           position="top"
         >
-          <v-container>
+          <v-container px-sm-8>
             <v-row>
-              <v-col class="subtitle-1 white--text" cols="12" md="8">
+              <v-col>
                 <v-img
-                  :max-width="$vuetify.breakpoint.smAndUp ? 360 : 252"
+                  :max-width="$vuetify.breakpoint.smAndUp ? 350 : 245"
                   :src="require('@/assets/dendra-logo.svg')"
                   aspect-ratio="4"
                   width="100%"
                 />
 
-                <h4 class="text-h5 text-sm-h4 white--text my-3">
+                <h4 class="text-h5 text-sm-h4 white--text mt-2">
                   Sensor Observatory Curation
                 </h4>
+              </v-col>
+            </v-row>
 
-                <div class="text-body-2 text-sm-body-1">
+            <v-row>
+              <v-col cols="12" lg="8">
+                <div class="text-body-2 text-sm-body-1 white--text">
                   Dendra is a cyber-infrastructure project for real-time sensor
                   data storage, retrieval, management, and curation. It is a
                   cloud-based, multi-organizational system, designed to support
@@ -34,9 +38,7 @@
                   data from the earth’s surface to a single&nbsp;location.
                 </div>
               </v-col>
-            </v-row>
 
-            <v-row>
               <v-col cols="auto">
                 <v-card color="rgba(0, 0, 0, 0.4)" dark flat tile>
                   <v-container fluid>
@@ -76,19 +78,20 @@
 
     <v-row>
       <v-col class="grey lighten-4">
-        <v-container>
+        <v-container px-sm-8>
+          <!-- TODO: Finish widget page -->
+          <!--
           <v-row>
-            <v-col cols="12" md="8">
+            <v-col cols="12">
               <v-card class="mb-6">
                 <v-card-title
-                  >Add our new Station Widget to your site!</v-card-title
+                  >New! Add our Station Widget to your site.</v-card-title
                 >
                 <v-card-text>
-                  Our new Station Widget is designed to display current and
-                  forecast conditions for any station on Dendra. It is
-                  customizable and easily embedded in any website by just
-                  pasting the provided code in any place you would like the
-                  widget to appear.
+                  Our Station Widget is designed to display current and forecast
+                  conditions for any station on Dendra. It is customizable and
+                  easily embedded in any website by just pasting the HTML in any
+                  place you would like the widget to appear.
                 </v-card-text>
 
                 <v-card-actions>
@@ -97,16 +100,16 @@
               </v-card>
             </v-col>
           </v-row>
-
+ -->
           <v-row>
             <v-col cols="12" md="4">
               <h5 class="headline mb-2">Community</h5>
 
               <p class="body-1">
                 Dendra is an open source project. All code can be found on
-                <a :href="gitHubURL" target="_blank">GitHub</a>. Please feel
+                <a :href="githubURL" target="_blank">GitHub</a>. Please feel
                 free to report any bugs, feature requests, or issues in the
-                <a :href="`${gitHubURL}/issues/issues`" target="_blank"
+                <a :href="`${githubURL}/issues/issues`" target="_blank"
                   >Issues repository</a
                 >.
               </p>
@@ -157,7 +160,7 @@
 
     <v-row>
       <v-col>
-        <v-container>
+        <v-container pa-sm-8>
           <v-row>
             <v-col
               ><h5 class="headline">
@@ -261,7 +264,7 @@
 
     <v-row>
       <v-col class="grey darken-4">
-        <v-container pt-6>
+        <v-container pa-sm-8>
           <v-row>
             <v-col cols="12" md="8">
               <h5 class="title white--text mb-2">Dendra.Science</h5>

@@ -110,10 +110,10 @@
 
 <script>
 import moment from 'moment'
+import { mdiAlert, mdiCalendarRange, mdiWatch } from '@mdi/js'
 import DateChip from '@/components/DateChip'
 import itemEditing from '@/mixins/item-editing'
 import { timeZoneItems, timeZoneOffsets } from '@/lib/time-zone'
-import { mdiAlert, mdiCalendarRange, mdiWatch } from '@mdi/js'
 
 export default {
   components: {

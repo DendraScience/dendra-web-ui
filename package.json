@@ -8,6 +8,7 @@
     "babel-workers": "babel src/workers -d src/static/workers --presets=@nuxt/babel-preset-app",
     "dev": "nuxt",
     "dev-edge": "cross-env API_PATH=/v2 API_URI=https://api.edge.dendra.science nuxt",
+    "dev-local": "cross-env API_URI=http://192.168.1.60:30080 nuxt",
     "dev-preview": "cross-env API_PATH=/v2 API_URI=http://api.preview.dendra.science nuxt",
     "dev2": "cross-env NODE_ENV=development nodemon src/server/index.js --watch src/server",
     "build": "nuxt build",
@@ -45,7 +46,7 @@
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
-    "@mdi/js": "^5.9.55",
+    "@mdi/js": "^6.5.95",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@vue/test-utils": "^1.3.0",
@@ -56,7 +57,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.4.1",
-    "sass": "~1.32.13",
+    "sass-loader": "^10",
     "worker-loader": "git+https://github.com/DendraScience/worker-loader.git#jss-hotfix"
   }
 }

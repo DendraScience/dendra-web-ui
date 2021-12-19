@@ -67,8 +67,8 @@
 <script>
 import _uniq from 'lodash/uniq'
 import { mapActions, mapGetters } from 'vuex'
-import itemEditing from '@/mixins/item-editing'
 import { mdiNature, mdiChartTimelineVariant } from '@mdi/js'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
   mixins: [itemEditing],

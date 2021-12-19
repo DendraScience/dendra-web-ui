@@ -1,10 +1,20 @@
 <template>
   <div class="d-inline">
-    <v-icon v-if="value && value.isOnline" color="success" small>{{
+    <v-icon
+      v-if="station.state === 'disconnected'"
+      color="yellow darken-2"
+      small
+      >{{ mdiCheckboxBlankOff }}</v-icon
+    >
+    <v-icon v-else-if="value && value.isOnline" color="green lighten-1" small>{{
       mdiCheckCircle
     }}</v-icon>
-    <v-icon v-else-if="value" color="error" small>{{ mdiAlert }}</v-icon>
-    <v-icon v-else color="accent" small>{{ mdiHelpRhombusOutline }}</v-icon>
+    <v-icon v-else-if="value" color="deep-orange darken-3" small>{{
+      mdiAlert
+    }}</v-icon>
+    <v-icon v-else color="blue-grey darken-2" small>{{
+      mdiHelpRhombusOutline
+    }}</v-icon>
   </div>
 </template>
 

@@ -18,17 +18,25 @@
           solo
         ></v-text-field>
 
-        <v-btn-toggle v-model="viewToggle" class="pa-2" mandatory>
-          <v-btn small text>
-            <v-icon small>{{ mdiViewList }}</v-icon>
-          </v-btn>
-          <v-btn small text>
-            <v-icon small>{{ mdiViewAgenda }}</v-icon>
-          </v-btn>
-          <v-btn small text>
-            <v-icon small>{{ mdiArrowExpandAll }}</v-icon>
-          </v-btn>
-        </v-btn-toggle>
+        <div class="d-flex flex-row pa-2">
+          <v-btn-toggle v-model="viewToggle" mandatory>
+            <v-btn small text>
+              <v-icon small>{{ mdiViewList }}</v-icon>
+            </v-btn>
+            <v-btn small text>
+              <v-icon small>{{ mdiViewAgenda }}</v-icon>
+            </v-btn>
+            <v-btn small text>
+              <v-icon small>{{ mdiArrowExpandAll }}</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+
+          <v-btn-toggle v-model="filterToggle" class="ml-auto">
+            <v-btn small text>
+              <v-icon small>{{ mdiExclamationThick }}</v-icon>
+            </v-btn>
+          </v-btn-toggle>
+        </div>
       </v-card>
     </div>
 
@@ -39,7 +47,7 @@
       qid="search"
       service="stations"
     >
-      <template v-slot="{ items: stations }">
+      <template #default="{ items: stations }">
         <div style="width: 100%; height: 100%">
           <v-navigation-drawer
             :value="viewToggle !== 2"
@@ -63,7 +71,7 @@
                 :worker="Object.freeze(stationStatusWorker)"
                 @data="stationStatusData"
               >
-                <template v-slot="{ result }">
+                <template #default="{ result }">
                   <v-expansion-panel
                     v-show="shownStationIds.includes(station._id)"
                     @click="selectMarker(viewToggle === 0 ? station : null)"
@@ -105,13 +113,21 @@
                           <v-card flat>
                             <v-card-subtitle>
                               <h4 class="subtitle-2">
-                                Last seen:
-                                <span class="font-weight-regular">
-                                  {{
-                                    result.lastSeenTime
-                                      | dateTimeFormatLocal('(no data)')
-                                  }}</span
-                                >
+                                <div v-if="station.state !== 'ready'">
+                                  State:
+                                  <span class="font-weight-regular">{{
+                                    station.state
+                                  }}</span>
+                                </div>
+                                <div>
+                                  Last seen:
+                                  <span class="font-weight-regular">
+                                    {{
+                                      result.lastSeenTime
+                                        | dateTimeFormatLocal('(no data)')
+                                    }}</span
+                                  >
+                                </div>
                               </h4>
                             </v-card-subtitle>
 
@@ -222,9 +238,9 @@ export default {
     WorkerFetch
   },
 
-  middleware: ['check-org', 'system-time-utc'],
-
   mixins: [timer],
+
+  middleware: ['check-org', 'system-time-utc'],
 
   data() {
     return {
@@ -242,8 +258,8 @@ export default {
       stationsSearchDebounce: null,
       stationStatusWorker: null,
 
+      foundStationIds: [],
       queryStationIds: [],
-      shownStationIds: [],
 
       // TODO: Implement later
       // selectedOrgIds: null,
@@ -259,6 +275,7 @@ export default {
 
       timerInterval: 300000,
 
+      filterToggle: [],
       viewToggle: 0
     }
   },
@@ -284,6 +301,17 @@ export default {
           strokeWeight: 1
         },
 
+        disconnected: {
+          anchor: { x: 8, y: 20 },
+          fillColor: vuetifyColors.yellow.darken2,
+          fillOpacity: 1,
+          path: this.mdiMapMarkerOff,
+          scale: 2,
+          strokeColor: 'white',
+          strokeOpacity: 0.5,
+          strokeWeight: 1
+        },
+
         offline: {
           anchor: { x: 8, y: 20 },
           fillColor: vuetifyColors.deepOrange.darken3,
@@ -297,7 +325,7 @@ export default {
 
         online: {
           anchor: { x: 8, y: 20 },
-          fillColor: vuetifyColors.green.darken1,
+          fillColor: vuetifyColors.green.lighten1,
           fillOpacity: 1,
           path: this.mdiMapMarkerCheck,
           scale: 2,
@@ -306,6 +334,16 @@ export default {
           strokeWeight: 1
         }
       }
+    },
+
+    shownStationIds() {
+      const { filterToggle, foundStationIds, statusById } = this
+
+      return foundStationIds && filterToggle === 0
+        ? foundStationIds.filter(
+            id => !(statusById[id] && statusById[id].isOnline)
+          )
+        : foundStationIds
     },
 
     startTime() {
@@ -332,7 +370,8 @@ export default {
           'media',
           'name',
           'organization_id',
-          'slug'
+          'slug',
+          'state'
         ],
         $sort: { name: 1, _id: 1 }
       }
@@ -390,7 +429,7 @@ export default {
         this.queryStationIds,
         newValue && newValue.ids
       )
-      this.shownStationIds = (newValue && newValue.ids) || []
+      this.foundStationIds = (newValue && newValue.ids) || []
     },
 
     // TODO:
@@ -462,6 +501,7 @@ export default {
       this.infoContent =
         `<h3 class="title">${station.name}</h3>` +
         `<div class="body-1">` +
+        (station.state !== 'ready' ? `State: ${station.state}<br />` : '') +
         (status
           ? `Last seen: ${dateTimeFormatLocal(status.lastSeenTime)}<br />`
           : '') +
@@ -487,7 +527,12 @@ export default {
       this.$set(this.statusById, id, {
         currentTime,
         lastSeenTime,
-        icon: isOnline ? 'online' : 'offline',
+        icon:
+          station.state === 'disconnected'
+            ? 'disconnected'
+            : isOnline
+            ? 'online'
+            : 'offline',
         isOnline
       })
     },

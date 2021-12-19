@@ -378,7 +378,7 @@ export default {
       ]
     },
 
-    stateItems: ['pending', 'ready'],
+    stateItems: ['pending', 'ready', 'disconnected'],
 
     timeZoneItems
   }),

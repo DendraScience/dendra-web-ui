@@ -28,6 +28,10 @@ export default {
     value: { default: null, type: Object }
   },
 
+  data: () => ({
+    items: []
+  }),
+
   async fetch() {
     let items = []
 
@@ -69,10 +73,6 @@ export default {
 
     this.items = items
   },
-
-  data: () => ({
-    items: []
-  }),
 
   computed: {
     ...mapGetters({

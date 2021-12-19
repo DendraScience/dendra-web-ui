@@ -87,6 +87,14 @@ export default {
 
   mixins: [downloads, timer],
 
+  data() {
+    return {
+      fetchDate: null,
+
+      timerInterval: 60000
+    }
+  },
+
   fetch() {
     this.fetchDate = new Date()
 
@@ -96,14 +104,6 @@ export default {
         $sort: { _id: -1 }
       }
     })
-  },
-
-  data() {
-    return {
-      fetchDate: null,
-
-      timerInterval: 60000
-    }
   },
 
   computed: {

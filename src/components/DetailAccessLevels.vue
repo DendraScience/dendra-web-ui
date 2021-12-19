@@ -78,9 +78,9 @@
 </template>
 
 <script>
+import { mdiAccountMultiple, mdiGlobeModel } from '@mdi/js'
 import { accessLevelTexts } from '@/lib/access-level'
 import itemEditing from '@/mixins/item-editing'
-import { mdiAccountMultiple, mdiGlobeModel } from '@mdi/js'
 
 export default {
   mixins: [itemEditing],

@@ -52,12 +52,16 @@ async function processFetch({ id, fetchSpec }) {
 
     if (stationId) indexer.add('Station', stationId, index)
 
-    if (terms[schemeId]) {
-      const keys = Object.keys(terms[schemeId])
-      keys.forEach(key => indexer.add(key, terms[schemeId][key], index))
-    }
+    if (terms) {
+      const schemeTerms = terms[schemeId]
+      if (schemeTerms) {
+        const keys = Object.keys(schemeTerms)
+        keys.forEach(key => indexer.add(key, schemeTerms[key], index))
+      }
 
-    if (terms.dt && terms.dt.Unit) indexer.add('Unit', terms.dt.Unit, index)
+      const dtTerms = terms.dt
+      if (dtTerms && dtTerms.Unit) indexer.add('Unit', dtTerms.Unit, index)
+    }
   })
 
   self.postMessage({ id, datastreams, indexer })

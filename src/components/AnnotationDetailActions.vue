@@ -76,9 +76,6 @@
 </template>
 
 <script>
-import PreBlock from '@/components/PreBlock'
-import itemEditing from '@/mixins/item-editing'
-import { jsonFormat } from '@/lib/utils'
 import {
   mdiCalculator,
   mdiCancel,
@@ -86,6 +83,9 @@ import {
   mdiDiceMultiple,
   mdiFlag
 } from '@mdi/js'
+import PreBlock from '@/components/PreBlock'
+import itemEditing from '@/mixins/item-editing'
+import { jsonFormat } from '@/lib/utils'
 
 export default {
   components: {

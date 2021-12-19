@@ -72,10 +72,10 @@
 
 <script>
 import _sortBy from 'lodash/sortBy'
+import { mdiDice1, mdiDice2 } from '@mdi/js'
 import PreBlock from '@/components/PreBlock'
 import itemEditing from '@/mixins/item-editing'
 import { jsonFormat } from '@/lib/utils'
-import { mdiDice1, mdiDice2 } from '@mdi/js'
 
 export default {
   components: {

@@ -58,6 +58,10 @@ export default {
   }),
 
   watch: {
+    filterKeys(newValue) {
+      this.updateMarkers(this.locations)
+    },
+
     infoContent(newValue) {
       const { infoWindow } = this
 

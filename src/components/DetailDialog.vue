@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="value.dialog" :max-width="maxWidth">
-    <v-card>
+    <v-card v-if="value.dialog">
       <ValidationObserver ref="observer" v-slot="{ invalid }">
         <v-card-title class="headline primary white--text"
           ><slot name="title"

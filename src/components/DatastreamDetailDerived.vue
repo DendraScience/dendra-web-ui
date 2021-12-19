@@ -92,8 +92,8 @@
 import { ValidationProvider } from 'vee-validate'
 import _uniq from 'lodash/uniq'
 import { mapActions, mapGetters } from 'vuex'
-import itemEditing from '@/mixins/item-editing'
 import { mdiChartTimelineVariant } from '@mdi/js'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
   components: {
@@ -106,6 +106,32 @@ export default {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
   },
+
+  data: () => ({
+    headers: [
+      {
+        align: 'center',
+        value: 'type',
+        width: '50px'
+      },
+      {
+        align: 'left',
+        text: 'Station',
+        value: 'station',
+        width: '20%'
+      },
+      {
+        align: 'left',
+        text: 'Datastream',
+        value: 'datastream',
+        width: '40%'
+      },
+      {
+        align: 'right',
+        value: 'icons'
+      }
+    ]
+  }),
 
   async fetch() {
     const datastreamIds = this.datastreamIds
@@ -136,32 +162,6 @@ export default {
       })
     }
   },
-
-  data: () => ({
-    headers: [
-      {
-        align: 'center',
-        value: 'type',
-        width: '50px'
-      },
-      {
-        align: 'left',
-        text: 'Station',
-        value: 'station',
-        width: '20%'
-      },
-      {
-        align: 'left',
-        text: 'Datastream',
-        value: 'datastream',
-        width: '40%'
-      },
-      {
-        align: 'right',
-        value: 'icons'
-      }
-    ]
-  }),
 
   computed: {
     ...mapGetters({

@@ -2,7 +2,7 @@ import { mapGetters, mapState } from 'vuex'
 import moment from 'moment'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
-import { newCurrent, newForecast, unitsData } from '@/lib/dashboard'
+import { newCurrent, newForecast } from '@/lib/dashboard'
 
 export default {
   middleware: [
@@ -12,20 +12,6 @@ export default {
     'soms',
     'system-time-utc'
   ],
-
-  fetch() {
-    const { somId } = this.$route.query
-    this.somId = somId || 'met'
-
-    const fetchSpec = {
-      stationId: this.station._id
-    }
-
-    this.stationDashboardWorker.postMessage({
-      id: 0,
-      fetchSpec
-    })
-  },
 
   data: () => ({
     current: newCurrent(),
@@ -44,6 +30,20 @@ export default {
 
     units: null
   }),
+
+  fetch() {
+    const { somId } = this.$route.query
+    this.somId = somId || 'met'
+
+    const fetchSpec = {
+      stationId: this.station._id
+    }
+
+    this.stationDashboardWorker.postMessage({
+      id: 0,
+      fetchSpec
+    })
+  },
 
   computed: {
     ...mapGetters(['getUnitText', 'org', 'station']),

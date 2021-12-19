@@ -58,8 +58,8 @@
 <script>
 import _sortBy from 'lodash/sortBy'
 import { mapActions, mapGetters, mapState } from 'vuex'
-import itemEditing from '@/mixins/item-editing'
 import { mdiAccountBox } from '@mdi/js'
+import itemEditing from '@/mixins/item-editing'
 
 export default {
   mixins: [itemEditing],
@@ -67,26 +67,6 @@ export default {
   props: {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true }
-  },
-
-  async fetch() {
-    const personIds = this.involvedParties
-      .filter(party => party.person_id)
-      .map(party => party.person_id)
-
-    // HACK: Always include the current user
-    if (this.auth.user) personIds.push(this.auth.user.person_id)
-
-    // Fetch referenced persons
-    if (personIds.length) {
-      await this.fetchPersons({
-        query: {
-          _id: { $in: personIds },
-          $limit: 2000,
-          $select: ['_id', 'email', 'full_name', 'name']
-        }
-      })
-    }
   },
 
   data: () => ({
@@ -119,6 +99,26 @@ export default {
       }
     ]
   }),
+
+  async fetch() {
+    const personIds = this.involvedParties
+      .filter(party => party.person_id)
+      .map(party => party.person_id)
+
+    // HACK: Always include the current user
+    if (this.auth.user) personIds.push(this.auth.user.person_id)
+
+    // Fetch referenced persons
+    if (personIds.length) {
+      await this.fetchPersons({
+        query: {
+          _id: { $in: personIds },
+          $limit: 2000,
+          $select: ['_id', 'email', 'full_name', 'name']
+        }
+      })
+    }
+  },
 
   computed: {
     ...mapGetters({

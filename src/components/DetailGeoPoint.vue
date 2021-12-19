@@ -47,7 +47,7 @@
               v-model.trim="value.geoCoordinates.ele"
               :error-messages="errors"
               :readonly="!editing"
-              label="Elevation"
+              label="Elevation (meters)"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
