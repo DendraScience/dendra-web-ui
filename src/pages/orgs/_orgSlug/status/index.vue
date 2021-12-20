@@ -275,7 +275,7 @@ export default {
 
       timerInterval: 300000,
 
-      filterToggle: [],
+      filterToggle: null,
       viewToggle: 0
     }
   },
@@ -341,7 +341,7 @@ export default {
 
       return foundStationIds && filterToggle === 0
         ? foundStationIds.filter(
-            id => !(statusById[id] && statusById[id].isOnline)
+            id => !(statusById[id] && statusById[id].icon === 'online')
           )
         : foundStationIds
     },

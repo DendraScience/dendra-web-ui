@@ -10,7 +10,7 @@
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
           position="top"
         >
-          <v-container px-sm-8>
+          <v-container pa-7>
             <v-row>
               <v-col>
                 <v-img
@@ -76,9 +76,9 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row no-gutters>
       <v-col class="grey lighten-4">
-        <v-container px-sm-8>
+        <v-container pa-7>
           <!-- TODO: Finish widget page -->
           <!--
           <v-row>
@@ -158,9 +158,9 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row no-gutters>
       <v-col>
-        <v-container pa-sm-8>
+        <v-container pa-7>
           <v-row>
             <v-col
               ><h5 class="headline">
@@ -262,9 +262,9 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row no-gutters>
       <v-col class="grey darken-4">
-        <v-container pa-sm-8>
+        <v-container pa-7>
           <v-row>
             <v-col cols="12" md="8">
               <h5 class="title white--text mb-2">Dendra.Science</h5>
@@ -306,7 +306,8 @@
               >
                 <v-icon>{{ mdiGithub }}</v-icon>
               </v-btn>
-
+              <!-- NOTE: Not public for now -->
+              <!--
               <v-btn
                 :href="slackURL"
                 class="mx-1"
@@ -318,6 +319,7 @@
               >
                 <v-icon>{{ mdiSlack }}</v-icon>
               </v-btn>
+ -->
             </v-col>
           </v-row>
         </v-container>
