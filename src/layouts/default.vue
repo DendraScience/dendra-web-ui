@@ -7,9 +7,9 @@
     <v-main app>
       <status-bar v-model="status" />
 
-      <div>
+      <section>
         <nuxt />
-      </div>
+      </section>
     </v-main>
 
     <session-expired-dialog @status="status = $event" />
@@ -17,12 +17,12 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import DownloadNavigationDrawer from '@/components/DownloadNavigationDrawer'
 import MainNavigationDrawer from '@/components/MainNavigationDrawer'
 import MainToolbar from '@/components/MainToolbar'
 import SessionExpiredDialog from '@/components/SessionExpiredDialog.vue'
 import StatusBar from '@/components/StatusBar'
-import { mapMutations } from 'vuex'
 
 export default {
   components: {

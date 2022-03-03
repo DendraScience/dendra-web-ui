@@ -117,13 +117,15 @@ async function processFetch({ id, fetchSpec }) {
       )
     )[0],
 
-    airSpeedMaximum: datastreams.find(
-      datastream =>
-        datastream.terms.ds &&
-        datastream.terms.ds.Aggregate === 'Maximum' &&
-        datastream.terms.ds.Medium === 'Air' &&
-        datastream.terms.ds.Variable === 'Speed'
-    ),
+    airSpeedMaximum: selectDatastreamsByAggregate(
+      datastreams.filter(
+        datastream =>
+          datastream.terms.ds &&
+          datastream.terms.ds.Aggregate === 'Maximum' &&
+          datastream.terms.ds.Medium === 'Air' &&
+          datastream.terms.ds.Variable === 'Speed'
+      )
+    )[0],
 
     airTemperature: selectDatastreamsByAggregate(
       datastreams.filter(

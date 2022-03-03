@@ -5,7 +5,7 @@
     <main-toolbar />
 
     <v-app-bar
-      v-show="editing"
+      v-if="editing"
       :color="editorColor"
       app
       dark
@@ -31,9 +31,9 @@
     <v-main app>
       <status-bar v-model="status" />
 
-      <div :style="editing ? { marginTop: '48px' } : {}" class="pt-6">
+      <section class="pt-2">
         <nuxt />
-      </div>
+      </section>
     </v-main>
 
     <v-dialog v-model="cancelDialog" dark max-width="500" persistent>
