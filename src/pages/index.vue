@@ -380,9 +380,6 @@ export default {
     selectMarker(station) {
       if (!station) return
 
-      /* eslint-disable-next-line no-console */
-      console.log('>>>', station)
-
       const coords = station.geo.coordinates
       const link = this.$router.resolve({
         name: 'orgs-orgSlug-status-stationSlug',
