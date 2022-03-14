@@ -594,6 +594,22 @@ export default {
           },
           text: 'Legacy datavalues-ucnrs',
           value: '/legacy/datavalues-ucnrs'
+        },
+        {
+          spec: {
+            required: ['query.location', 'query.variable', 'query.url'],
+            sample: {
+              query: {
+                location: 'network:SiteCode',
+                variable: 'vocabulary:VariableCode',
+                url: 'http://example.com/cuahsi_1_1.asmx',
+                time_adjust: -28800,
+                quality_control_level_code: '0'
+              }
+            }
+          },
+          text: 'WaterOneFlow values',
+          value: '/wof/values'
         }
       ],
       sourceTypeItems: ['deriver', 'sensor'],
