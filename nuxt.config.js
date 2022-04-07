@@ -263,7 +263,7 @@ module.exports = {
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
    */
-  target: widgetsOnly ? 'static' : 'server',
+  target: 'static',
 
   telemetry: false,
 
