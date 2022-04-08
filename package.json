@@ -35,7 +35,7 @@
     "load-google-maps-api": "^2.0.2",
     "lodash": "^4.17.21",
     "mathjs": "^6.6.5",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "nuxt": "^2.15.8",
     "nuxt-compress": "^5.0.0",
     "plausible-tracker": "^0.3.5",
