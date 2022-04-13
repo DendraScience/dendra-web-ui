@@ -69,7 +69,9 @@ export default {
       if (value) {
         const parts = value.split('/')
         if (parts.length > 0)
-          return `${process.env.noaaNWSIcons}/${parts[parts.length - 1]}`
+          return `${window.__env.noaaNWSIcons || process.env.noaaNWSIcons}/${
+            parts[parts.length - 1]
+          }`
       }
     }
   }

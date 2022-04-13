@@ -13,7 +13,7 @@ function getUser(store) {
 export class Tracker {
   constructor(options) {
     const { trackEvent, trackPageview } = Plausible({
-      domain: options.domain,
+      domain: options.plausableDomain,
       trackLocalhost: true
     })
 
@@ -58,11 +58,11 @@ export class Tracker {
       googleTrackingId,
       gtag,
       gtm,
-      hostname,
       logger,
       plausableEnabled,
       store,
-      trackPageview
+      trackPageview,
+      webSiteURL
     } = this
     const user = getUser(store)
 
@@ -71,7 +71,7 @@ export class Tracker {
 
     if (plausableEnabled) {
       const props = {
-        url: new URL(normalizedPath, hostname).toString(),
+        url: new URL(normalizedPath, webSiteURL).toString(),
         user
       }
       trackPageview(props)
@@ -86,7 +86,7 @@ export class Tracker {
           page_path: normalizedPath,
           user
         }
-        gtag('config', process.env.googleTrackingId, props)
+        gtag('config', googleTrackingId, props)
         logger.info('gtag "%s" %o', event, props)
       } else if (gtm) {
         const event = 'pageView'

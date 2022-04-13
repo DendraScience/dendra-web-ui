@@ -68,7 +68,7 @@ export default {
       if (this.annotation)
         query.$or = [
           { _id: { $in: this.annotation.datastream_ids || [] } },
-          { station_id: { $in: this.annotation.affected_station_ids || [] } }
+          { station_id: { $in: this.annotation.station_ids || [] } }
         ]
 
       return query

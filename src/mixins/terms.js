@@ -35,7 +35,14 @@ export default {
     commitTerms({ key, pairs }) {
       const { value } = this
 
-      if (Object.keys(pairs).length) this.$set(value.terms, key, pairs)
+      const cleanPairs = {}
+      Object.keys(pairs).forEach(key => {
+        const val = pairs[key]
+        if (val !== null && val !== '') cleanPairs[key] = val
+      })
+
+      if (Object.keys(cleanPairs).length)
+        this.$set(value.terms, key, cleanPairs)
       else this.$delete(value.terms, key)
 
       this.terms.dialog = false

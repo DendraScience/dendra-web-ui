@@ -1,37 +1,21 @@
-FROM node:12.14
+FROM caddy:latest
 
 MAINTAINER J. Scott Smith <scott@newleafsolutionsinc.com>
 
-#
-# Following Best Practices and guidelines at:
-# 	https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
-# 	https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
-#
+# Install envsubst command for replacing __env files
+RUN set -x \
+  && apk add gettext libintl
 
-RUN groupmod -g 2000 node \
-  && usermod -u 2000 -g 2000 node
+COPY docker-entrypoint.sh /usr/local/bin/
 
-WORKDIR /home/node/app
+# Copy config
+COPY caddy.docker.json /etc/caddy/caddy.json
 
-# Best practice: run with NODE_ENV set to production
-ENV NODE_ENV production
+# Copy source dist
+# NOTE: Must perform 'npm run generate' beforehand
+COPY dist /srv
 
-# Install dependencies
-COPY package.json /home/node/app
-COPY package-lock.json /home/node/app
-RUN npm install
-
-# Best practice: run as user 'node'
-USER node
 EXPOSE 8080
 
-# Copy source dist; relies on .dockerignore
-# NOTE: Must perform 'npm run build' beforehand
-COPY . /home/node/app
-
-# Nuxt deployment:
-#   https://nuxtjs.org/guide/commands
-#   https://nuxtjs.org/faq/host-port/
-ENV HOST 0.0.0.0
-ENV PORT 8080
-CMD [ "npm", "start" ]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["caddy", "run", "--config", "/etc/caddy/caddy.json"]

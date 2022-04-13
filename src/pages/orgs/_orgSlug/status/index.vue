@@ -249,8 +249,6 @@ export default {
       infoContent: null,
       infoOpen: null,
 
-      linksToOldDashboard: process.env.linksToOldDashboard,
-
       stationsMultiple: false,
       stationsPanel: [],
       stationsPanelOpen: [],

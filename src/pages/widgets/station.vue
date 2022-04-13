@@ -191,7 +191,9 @@ export default {
 
   computed: {
     datastreamsURL() {
-      return `${process.env.webSiteURL}/orgs/${this.org.slug}/datastreams?faceted=true&scheme=dq&selectStationId=${this.station._id}`
+      return `${window.__env.webSiteURL || process.env.webSiteURL}/orgs/${
+        this.org.slug
+      }/datastreams?faceted=true&scheme=dq&selectStationId=${this.station._id}`
     },
 
     flags() {
@@ -225,7 +227,9 @@ export default {
     },
 
     statusURL() {
-      return `${process.env.webSiteURL}/orgs/${this.org.slug}/status/${this.station.slug}`
+      return `${window.__env.webSiteURL || process.env.webSiteURL}/orgs/${
+        this.org.slug
+      }/status/${this.station.slug}`
     },
 
     tableHeight() {

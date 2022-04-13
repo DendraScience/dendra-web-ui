@@ -1,5 +1,5 @@
-const apiPath = process.env.apiPath
-const apiURI = process.env.apiURI
+const apiPath = window.__env.apiPath || process.env.apiPath
+const apiURI = window.__env.apiURI || process.env.apiURI
 const isIPv4 = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(location.hostname)
 const parts = location.hostname.split('.')
 

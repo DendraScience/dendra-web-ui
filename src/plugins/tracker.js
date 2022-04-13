@@ -1,22 +1,25 @@
 import logger from '@dendra-science/console-logger'
 import { Tracker } from '@/lib/tracker'
 
-const domain = process.env.domain
-const hostname = process.env.hostname
-const googleTrackingId = process.env.googleTrackingId
-const plausableEnabled = process.env.plausableEnabled
 const { gtag, gtm } = global
+const googleTrackingId =
+  window.__env.googleTrackingId || process.env.googleTrackingId
+const plausableDomain =
+  window.__env.plausableDomain || process.env.plausableDomain
+const plausableEnabled =
+  (window.__env.plausableEnabled || process.env.plausableEnabled) === 'true'
+const webSiteURL = window.__env.webSiteURL || process.env.webSiteURL
 
 export default ({ app, store }, inject) => {
   const tracker = new Tracker({
-    domain,
     googleTrackingId,
     gtag,
     gtm,
-    hostname,
     logger,
+    plausableDomain,
     plausableEnabled,
-    store
+    store,
+    webSiteURL
   })
 
   inject('tracker', tracker)

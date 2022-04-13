@@ -12,7 +12,7 @@
       watch="query"
     >
       <v-row dense>
-        <v-col>
+        <v-col class="mt-2">
           <v-row v-for="vocabulary in vocabularies" :key="vocabulary._id" dense>
             <v-col v-if="vocabulary.terms.length">
               <v-autocomplete
