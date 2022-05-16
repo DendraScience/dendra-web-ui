@@ -46,6 +46,8 @@
           right: 0;
         "
       >
+        <v-btn @click="value.bus.$emit('debug-action')">DBG</v-btn>
+
         <v-btn
           v-if="isZoomed && showResetZoom"
           :disabled="!value.isReady"

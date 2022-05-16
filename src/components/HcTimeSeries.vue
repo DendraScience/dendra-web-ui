@@ -88,6 +88,31 @@ export default {
     this.chart[GROUP_KEY] = this.group
     const { tooltipContainerClass } = this
 
+    this.observer = new MutationObserver(mutations => {
+      for (const mutation of mutations) {
+        if (mutation.addedNodes && mutation.addedNodes.length) {
+          /* eslint-disable-next-line no-console */
+          console.log('>>>', mutation)
+        }
+        // if (
+        //   this.loading &&
+        //   mutation.type === 'attributes' &&
+        //   mutation.attributeName === 'style'
+        // ) {
+        //   this.loading = false
+        //   break
+        // }
+      }
+    })
+
+    this.observer.observe(chartRef, {
+      // attributes: true,
+      // attributeOldValue: true,
+      // attributeFilter: ['href'],
+      childList: true,
+      subtree: true
+    })
+
     if (this.chart.tooltip && tooltipContainerClass) {
       // HACK: Monkey patch Highcharts to style the tooltip
       this.chart.tooltip[RENDERER_KEY] = this.chart.tooltip.renderer
@@ -113,11 +138,16 @@ export default {
       this.bus.$on('get-y-extremes', this.getYExtremes)
       this.bus.$on('reset-zoom', this.resetZoom)
       this.bus.$on('set-y-extremes', this.setYExtremes)
+      this.bus.$on('debug-action', this.debugAction)
     }
   },
 
   beforeDestroy() {
     const chartRef = this.$refs.chart
+
+    this.observer.disconnect()
+    this.observer = null
+
     if (chartRef)
       TOUCH_EVENTS.forEach(eventType =>
         chartRef.removeEventListener(eventType, this.debouncedTouchHandler)
@@ -135,6 +165,7 @@ export default {
       this.bus.$off('get-y-extremes', this.getYExtremes)
       this.bus.$off('reset-zoom', this.resetZoom)
       this.bus.$off('set-y-extremes', this.setYExtremes)
+      this.bus.$off('debug-action', this.debugAction)
     }
 
     this.worker.removeEventListener('message', this.workerMessageHandler)
@@ -143,6 +174,16 @@ export default {
   methods: {
     afterSetXExtremesHandler(e) {
       this.$emit('zoomed', !!e.userMin)
+    },
+
+    debugAction() {
+      const { chart: thisChart } = this
+
+      for (let i = 0; i < thisChart.series.length; i++) {
+        const series = thisChart.series[i]
+
+        series.render()
+      }
     },
 
     downloadCSV() {
