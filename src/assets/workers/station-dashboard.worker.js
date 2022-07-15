@@ -93,7 +93,9 @@ async function processFetch({ id, fetchSpec }) {
   // Filter and sort
   datastreams = datastreams.filter(
     datastream =>
-      (datastream.terms.ds || datastream.terms.dw) && datastream.__rank < 0
+      datastream.terms &&
+      (datastream.terms.ds || datastream.terms.dw) &&
+      datastream.__rank < 0
   )
   datastreams = _sortBy(datastreams, ['__rank', '__sort', '_id'])
 
