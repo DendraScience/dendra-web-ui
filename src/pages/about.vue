@@ -139,9 +139,7 @@
                   <v-col class="flex-grow-0 flex-shrink-1">
                     <v-avatar ref="avatar" size="140">
                       <img
-                        :src="
-                          require(`@/assets/scott-at-home-with-white-cap-2020.jpg`)
-                        "
+                        :src="require(`@/assets/scott-in-presidio-3-2022.jpg`)"
                       />
                     </v-avatar>
                   </v-col>

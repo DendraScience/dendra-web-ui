@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col>
         <v-img
-          :height="$vuetify.breakpoint.smAndUp ? 500 : undefined"
+          :max-height="$vuetify.breakpoint.smAndUp ? 540 : undefined"
           :src="require('@/assets/angelo-reserve.jpg')"
           aspect-ratio="1.5"
           class="d-flex align-center"
@@ -38,31 +38,37 @@
                   data from the earth’s surface to a single&nbsp;location.
                 </div>
               </v-col>
+            </v-row>
 
+            <v-row>
               <v-col cols="auto">
                 <v-card color="rgba(0, 0, 0, 0.4)" dark flat tile>
                   <v-container fluid>
                     <v-row>
-                      <v-col cols="auto">
-                        <span class="caption white--text">Hosted on</span>
-                        <a href="https://www.xsede.org/" target="_blank">
+                      <v-col>
+                        <div class="caption white--text">Hosted on</div>
+
+                        <a href="https://access-ci.org/" target="_blank">
                           <v-img
-                            width="100"
-                            :src="require('@/assets/xsede-logo.png')"
+                            :src="require('@/assets/access-logo.svg')"
+                            contain
+                            width="200"
                           />
                         </a>
                       </v-col>
 
-                      <v-col cols="auto">
-                        <span class="caption white--text"
-                          >NSF EarthCube funded</span
-                        >
+                      <v-col>
+                        <div class="caption white--text">
+                          NSF EarthCube funded
+                        </div>
+
                         <a href="https://www.earthcube.org/" target="_blank">
                           <v-img
-                            width="140"
                             :src="
                               require('@/assets/EarthCube-NewWhite-notag.webp')
                             "
+                            contain
+                            width="180"
                           />
                         </a>
                       </v-col>

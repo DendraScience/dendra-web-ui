@@ -81,7 +81,7 @@ async function processFetch({ id, fetchSpec }) {
 
       if (!(json && json.data && json.data.length)) break
 
-      const v = json.data[0].d ? 'd' : query.uom_id ? 'uv' : 'v'
+      const v = query.uom_id ? 'uv' : 'v'
 
       if (seriesType === 'waterYear') {
         for (let i = 0; i < json.data.length; i++) {

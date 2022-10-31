@@ -1,5 +1,5 @@
-import math from '@/lib/math'
 import moment from 'moment'
+import math from '@/lib/math'
 
 // Reasonable min and max dates to perform low-level querying
 // NOTE: Didn't use min/max integer since db date conversion could choke

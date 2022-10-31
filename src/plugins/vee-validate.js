@@ -10,8 +10,8 @@ import {
   required
 } from 'vee-validate/dist/rules'
 import moment from 'moment'
-import { dateFormats, timeFormats } from '@/lib/date'
 import isURL from 'validator/es/lib/isURL'
+import { dateFormats, timeFormats } from '@/lib/date'
 
 extend('alpha_num', alphaNum)
 extend('between', between)

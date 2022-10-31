@@ -106,14 +106,14 @@ export default {
     StationTotal
   },
 
+  middleware: ['check-org'],
+
   data() {
     return {
       infoContent: null,
       infoOpen: null
     }
   },
-
-  middleware: ['check-org'],
 
   computed: {
     ...mapGetters(['org']),
