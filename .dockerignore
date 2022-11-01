@@ -294,8 +294,8 @@
 ##
 # Docker extras
 ##
+Dockerfile
 **/.editorconfig
 **/.env.sample
 **/.git
-**/.gitignore
 **/README.md

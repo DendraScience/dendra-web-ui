@@ -44,7 +44,7 @@ COPY caddy.docker.json /etc/caddy/caddy.json
 
 # Copy source dist
 COPY --from=builder /home/node/app/.buildtime .buildtime
-COPY --from=builder dist /srv
+COPY --from=builder /home/node/app/dist /srv
 
 EXPOSE 8080
 
