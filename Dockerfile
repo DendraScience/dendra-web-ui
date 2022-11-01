@@ -18,7 +18,6 @@ FROM base AS linter
 ENV NODE_ENV development
 RUN npm install
 COPY . /home/node/app
-COPY .gitignore /home/node/app
 RUN npm run lint
 
 #
