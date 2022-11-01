@@ -1,7 +1,6 @@
 ##
 # FROM: https://github.com/github/gitignore/blob/main/Global/Diff.gitignore
 ##
-Dockerfile
 
 **/*.patch
 **/*.diff
@@ -295,6 +294,7 @@ Dockerfile
 ##
 # Docker extras
 ##
+Dockerfile
 **/.editorconfig
 **/.env.sample
 **/.git
