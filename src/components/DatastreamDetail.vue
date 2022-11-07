@@ -545,6 +545,28 @@ export default {
           text: 'Dendra datapoints',
           value: '/dendra/datapoints'
         },
+
+        {
+          spec: {
+            required: ['query.database'],
+            sample: {
+              query: {
+                fields: ['FieldName'],
+                tag_set: {
+                  TagKey: 'TagValue'
+                },
+                v_field: 'FieldName',
+                measurement: 'source_tenmin',
+                bucket: 'station_name',
+                database: 'org',
+                utc_offset: -28800,
+                coalesce: false
+              }
+            }
+          },
+          text: 'Influx Flux',
+          value: '/influx/flux'
+        },
         {
           spec: {
             required: [
@@ -560,7 +582,7 @@ export default {
                 api: 'org',
                 db: 'station_name',
                 fc: 'source_tenmin',
-                sc: '"time", "Field_Name"',
+                sc: '"time", "FieldName"',
                 utc_offset: -28800,
                 coalesce: false
               }

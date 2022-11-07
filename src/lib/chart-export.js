@@ -25,15 +25,16 @@ export const exportItems = [
     },
     title: 'SVG image'
   },
-  {
-    event: 'export',
-    options: {
-      sourceHeight: 450,
-      sourceWidth: 800,
-      type: 'application/pdf'
-    },
-    title: 'PDF document'
-  },
+  // NOTE: Disabled since Highcharts PDF export is broken
+  // {
+  //   event: 'export',
+  //   options: {
+  //     sourceHeight: 450,
+  //     sourceWidth: 800,
+  //     type: 'application/pdf'
+  //   },
+  //   title: 'PDF document'
+  // },
   {
     download: true,
     event: 'download-csv',

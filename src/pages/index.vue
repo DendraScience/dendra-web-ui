@@ -46,26 +46,26 @@
                   <v-container fluid>
                     <v-row>
                       <v-col>
-                        <div class="caption white--text">Hosted on</div>
+                        <div class="caption white--text mb-2">Hosted on</div>
 
                         <a href="https://access-ci.org/" target="_blank">
                           <v-img
-                            :src="require('@/assets/access-logo.svg')"
+                            :src="require('@/assets/access-logo.png')"
                             contain
-                            width="200"
+                            width="180"
                           />
                         </a>
                       </v-col>
 
                       <v-col>
-                        <div class="caption white--text">
+                        <div class="caption white--text mb-2">
                           NSF EarthCube funded
                         </div>
 
                         <a href="https://www.earthcube.org/" target="_blank">
                           <v-img
                             :src="
-                              require('@/assets/EarthCube-NewWhite-notag.webp')
+                              require('@/assets/EarthCube-NewWhite-notag.png')
                             "
                             contain
                             width="180"
