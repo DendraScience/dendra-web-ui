@@ -69,7 +69,7 @@
         <p class="body-2">
           Please see our
           <a
-            href="https://www.essoar.org/doi/abs/10.1002/essoar.10501341.1"
+            href="https://essopenarchive.org/doi/full/10.1002/essoar.10501341.1"
             target="_"
             >American Geophysical Union poster</a
           >
