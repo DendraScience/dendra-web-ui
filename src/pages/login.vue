@@ -45,7 +45,9 @@
               ></v-text-field>
             </ValidationProvider>
 
-            <v-btn color="primary" type="submit">Log In</v-btn>
+            <v-btn :loading="loading" color="primary" type="submit"
+              >Log In</v-btn
+            >
           </form>
         </ValidationObserver>
       </v-col>
@@ -67,6 +69,7 @@ export default {
 
   data: () => ({
     isPasswordShown: false,
+    loading: false,
 
     email: '',
     password: ''
@@ -96,6 +99,8 @@ export default {
     async submit() {
       if (!(await this.$refs.observer.validate())) return
 
+      this.loading = true
+
       return this.authenticate({
         strategy: 'local',
         email: this.email.toLowerCase(),
@@ -111,6 +116,9 @@ export default {
           this.$tracker.event('loginError', {
             message: err.message
           })
+        })
+        .finally(() => {
+          this.loading = false
         })
     }
   }

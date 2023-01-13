@@ -18,6 +18,6 @@ const feathersClient = feathers()
       timeout: 20000
     })
   )
-  .configure(auth({ storage: window.localStorage }))
+  .configure(auth({ storage: window.localStorage, timeout: 12000 }))
 
 export default feathersClient
