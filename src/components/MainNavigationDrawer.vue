@@ -66,7 +66,8 @@ import {
   mdiNoteOutline,
   mdiTag,
   mdiOfficeBuilding,
-  mdiViewGrid
+  mdiViewGrid,
+  mdiAccountGroup
 } from '@mdi/js'
 
 export default {
@@ -110,6 +111,13 @@ export default {
               icon: mdiLoginVariant,
               title: 'Log in',
               to: '/login'
+            },
+            {
+              icon: mdiAccountGroup,
+              org: false,
+              title: 'Users',
+              to: '/users',
+              auth: true
             }
           ]
         },

@@ -9,7 +9,8 @@ const arrays = [
   'external_links',
   'intervals',
   'involved_parties',
-  'station_ids'
+  'station_ids',
+  'roles'
 ]
 const booleans = [
   'is_active',
@@ -35,7 +36,10 @@ const fields = [
   'thing_type_id',
   'time_zone',
   'title',
-  'url'
+  'url',
+  'email',
+  'password',
+  'person_id'
 ]
 const objects = [
   'access_levels',
@@ -130,6 +134,15 @@ export function defaultThingType() {
     is_enabled: true,
     model: '',
     name: ''
+  }
+}
+
+export function defaultUser() {
+  return {
+    email: '',
+    full_name: '',
+    name: '',
+    roles: []
   }
 }
 

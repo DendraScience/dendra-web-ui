@@ -55,7 +55,11 @@ export default ({ store }, inject) => {
   inject('canPatch', (name, obj) =>
     store.getters.isAbilityUpdated ? ability.can('patch', as(name, obj)) : false
   )
-
+  inject('canRemove', (name, obj) =>
+    store.getters.isAbilityUpdated
+      ? ability.can('remove', as(name, obj))
+      : false
+  )
   inject('cannot', (...args) =>
     store.getters.isAbilityUpdated ? ability.cannot(...args) : true
   )
