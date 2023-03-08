@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import { createData, defaultUser } from '@/lib/edit'
 import UserDetail from '@/components/UserDetail.vue'
@@ -20,6 +20,10 @@ export default {
   components: {
     ValidationObserver,
     UserDetail
+  },
+
+  beforeRouteLeave(_to, _from, next) {
+    this.$bus.$emit('edit-leave', { next })
   },
 
   layout: 'editor',
@@ -31,8 +35,6 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['user']),
-
     ...mapState(['auth']),
     ...mapState('ux', ['editing'])
   },
@@ -60,10 +62,6 @@ export default {
   beforeDestroy() {
     this.$bus.$off('editor-cancel', this.cancel)
     this.$bus.$off('editor-save', this.save)
-  },
-
-  beforeRouteLeave(to, from, next) {
-    this.$bus.$emit('edit-leave', { next })
   },
 
   methods: {
@@ -157,7 +155,10 @@ export default {
           this.userCreate(personId)
         }
       } catch (err) {
-        console.log('err', err)
+        this.$bus.$emit('edit-status', {
+          type: 'error',
+          message: err.message
+        })
       }
     }
   }

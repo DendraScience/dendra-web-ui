@@ -42,6 +42,10 @@ export default {
     ValidationObserver
   },
 
+  beforeRouteLeave(_to, _from, next) {
+    this.$bus.$emit('edit-leave', { next })
+  },
+
   layout: 'editor',
 
   middleware: [
@@ -84,10 +88,6 @@ export default {
     this.$bus.$off('editor-save', this.onSave)
   },
 
-  beforeRouteLeave(_to, _from, next) {
-    this.$bus.$emit('edit-leave', { next })
-  },
-
   methods: {
     ...mapActions({
       fetchUsers: 'users/find',
@@ -124,15 +124,18 @@ export default {
     async onSave() {
       if (!(await this.$refs.observer.validate())) return
 
-      const { instance } = this
-      const data = patchData({ ...instance, roles: [instance.roles] })
+      const {
+        // eslint-disable-next-line camelcase
+        instance: { _id, email, full_name, name, roles }
+      } = this
+      const data = patchData({ email, full_name, name, roles: [roles] })
 
       try {
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('users/removeItem', instance._id)
+        this.$store.commit('users/removeItem', _id)
 
-        await this.patch([instance._id, data, {}])
-        await this.fetchUsers({ query: { _id: instance._id } })
+        await this.patch([_id, data, {}])
+        await this.fetchUsers({ query: { _id } })
 
         this.setEditing(false)
         this.setEditorDirty(-1)
@@ -142,13 +145,12 @@ export default {
           message: 'User saved.' // TODO: Localize
         })
       } catch (err) {
-        console.log('error', err)
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
 
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('users/removeItem', instance._id)
+        this.$store.commit('users/removeItem', _id)
 
-        await this.fetchUsers({ query: { _id: instance._id } })
+        await this.fetchUsers({ query: { _id } })
       }
     }
   }

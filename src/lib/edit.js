@@ -142,7 +142,9 @@ export function defaultUser() {
     email: '',
     full_name: '',
     name: '',
-    roles: []
+    roles: [],
+    is_enabled: true,
+    password: ''
   }
 }
 
