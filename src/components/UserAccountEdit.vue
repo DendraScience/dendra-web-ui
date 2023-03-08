@@ -7,13 +7,13 @@
         <v-card-text>
           <ValidationProvider
             v-slot="{ errors }"
-            name="name"
+            name="preferred name"
             rules="required|max:100"
           >
             <v-text-field
               v-model="name"
               :error-messages="errors"
-              label="Name"
+              label="Preferred Name"
               required
             ></v-text-field>
           </ValidationProvider>

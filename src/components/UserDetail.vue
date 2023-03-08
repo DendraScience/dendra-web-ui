@@ -52,14 +52,14 @@
 
                   <ValidationProvider
                     v-slot="{ errors }"
-                    name="name"
+                    name="preferred name"
                     rules="required|min:1|max:100"
                   >
                     <v-text-field
                       v-model.trim="value.name"
                       :error-messages="errors"
                       :readonly="!editing"
-                      label="Name"
+                      label="Preferred Name"
                       required
                     ></v-text-field>
                   </ValidationProvider>
