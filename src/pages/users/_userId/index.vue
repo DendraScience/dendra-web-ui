@@ -126,9 +126,15 @@ export default {
 
       const {
         // eslint-disable-next-line camelcase
-        instance: { _id, email, full_name, name, roles }
+        instance: { _id, email, full_name, is_enabled, name, roles }
       } = this
-      const data = patchData({ email, full_name, name, roles: [roles] })
+      const data = patchData({
+        email,
+        full_name,
+        is_enabled,
+        name,
+        roles: [roles]
+      })
 
       try {
         // HACK: Ensure that we have a fresh model afterwards

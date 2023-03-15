@@ -8,7 +8,7 @@
           <ValidationProvider
             v-slot="{ errors }"
             name="current password"
-            rules="required|min:6|max:100"
+            rules="required|min:10|max:100"
           >
             <v-text-field
               v-model="current_password"
@@ -22,7 +22,7 @@
           <ValidationProvider
             v-slot="{ errors }"
             name="new password"
-            rules="required|min:6|max:100"
+            rules="required|min:10|max:100"
             vid="new_password"
           >
             <v-text-field

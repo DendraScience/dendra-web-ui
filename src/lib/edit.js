@@ -24,10 +24,13 @@ const fields = [
   'derivation_description',
   'derivation_method',
   'description',
+  'email',
   'full_name',
   'model',
   'name',
   'oem_company_id',
+  'password',
+  'person_id',
   'reseller_company_id',
   'slug',
   'source_type',
@@ -36,10 +39,7 @@ const fields = [
   'thing_type_id',
   'time_zone',
   'title',
-  'url',
-  'email',
-  'password',
-  'person_id'
+  'url'
 ]
 const objects = [
   'access_levels',
