@@ -111,13 +111,6 @@ export default {
               icon: mdiLoginVariant,
               title: 'Log in',
               to: '/login'
-            },
-            {
-              icon: mdiAccountGroup,
-              org: false,
-              title: 'Users',
-              to: '/users',
-              auth: true
             }
           ]
         },
@@ -197,6 +190,17 @@ export default {
             //   name: 'orgs-orgSlug-teams',
             //   title: 'Teams'
             // }
+          ]
+        },
+        {
+          header: 'Admin section',
+          items: [
+            {
+              can: ['read', 'users'],
+              icon: mdiAccountGroup,
+              title: 'Users',
+              to: '/users'
+            }
           ]
         }
       ]

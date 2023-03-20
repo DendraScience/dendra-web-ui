@@ -34,6 +34,7 @@
 import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import { ValidationObserver } from 'vee-validate'
 import _merge from 'lodash/merge'
+import _omit from 'lodash/omit'
 import { defaultUser, patchData } from '@/lib/edit'
 import UserDetail from '@/components/UserDetail'
 export default {
@@ -124,24 +125,19 @@ export default {
     async onSave() {
       if (!(await this.$refs.observer.validate())) return
 
-      const {
-        // eslint-disable-next-line camelcase
-        instance: { _id, email, full_name, is_enabled, name, roles }
-      } = this
+      const { instance } = this
+      const value = _omit(instance, ['password'])
       const data = patchData({
-        email,
-        full_name,
-        is_enabled,
-        name,
-        roles: [roles]
+        ...value,
+        roles: [instance.roles]
       })
 
       try {
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('users/removeItem', _id)
+        this.$store.commit('users/removeItem', instance._id)
 
-        await this.patch([_id, data, {}])
-        await this.fetchUsers({ query: { _id } })
+        await this.patch([instance._id, data, {}])
+        await this.fetchUsers({ query: { _id: instance._id } })
 
         this.setEditing(false)
         this.setEditorDirty(-1)
@@ -154,9 +150,9 @@ export default {
         this.$bus.$emit('edit-status', { type: 'error', message: err.message })
 
         // HACK: Ensure that we have a fresh model afterwards
-        this.$store.commit('users/removeItem', _id)
+        this.$store.commit('users/removeItem', instance._id)
 
-        await this.fetchUsers({ query: { _id } })
+        await this.fetchUsers({ query: { _id: instance._id } })
       }
     }
   }

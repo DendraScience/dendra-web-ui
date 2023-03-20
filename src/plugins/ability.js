@@ -73,4 +73,9 @@ export default ({ store }, inject) => {
       ? ability.cannot('graph', as(name, obj))
       : true
   )
+  inject('cannotPatch', (name, obj) =>
+    store.getters.isAbilityUpdated
+      ? ability.cannot('patch', as(name, obj))
+      : true
+  )
 }

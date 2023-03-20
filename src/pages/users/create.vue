@@ -12,6 +12,7 @@
 
 <script>
 import { mapActions, mapState, mapMutations } from 'vuex'
+import _pick from 'lodash/pick'
 import { ValidationObserver } from 'vee-validate'
 import { createData, defaultUser } from '@/lib/edit'
 import UserDetail from '@/components/UserDetail.vue'
@@ -92,11 +93,9 @@ export default {
     },
 
     async personCreate() {
-      const {
-        // eslint-disable-next-line camelcase
-        instance: { email, full_name, name }
-      } = this
-      const data = createData({ email, full_name, name })
+      const { instance } = this
+      const value = _pick(instance, ['email', 'full_name', 'name'])
+      const data = createData(value)
       return await this.createPerson([data, {}])
     },
 

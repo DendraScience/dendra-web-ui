@@ -23,15 +23,24 @@
 
                   <ValidationProvider
                     v-slot="{ errors }"
-                    name="full_name"
+                    name="preferred name"
                     rules="required|min:1|max:100"
                   >
+                    <v-text-field
+                      v-model.trim="value.name"
+                      :error-messages="errors"
+                      :readonly="!editing"
+                      label="Preferred name"
+                      required
+                    ></v-text-field>
+                  </ValidationProvider>
+
+                  <ValidationProvider v-slot="{ errors }" name="full_name">
                     <v-text-field
                       v-model.trim="value.full_name"
                       :error-messages="errors"
                       :readonly="!editing"
-                      label="Full Name"
-                      required
+                      label="Full name"
                     ></v-text-field>
                   </ValidationProvider>
 
@@ -69,26 +78,13 @@
 
                   <ValidationProvider
                     v-slot="{ errors }"
-                    name="preferred name"
-                    rules="required|min:1|max:100"
-                  >
-                    <v-text-field
-                      v-model.trim="value.name"
-                      :error-messages="errors"
-                      :readonly="!editing"
-                      label="Preferred Name"
-                      required
-                    ></v-text-field>
-                  </ValidationProvider>
-
-                  <ValidationProvider
-                    v-slot="{ errors }"
                     name="roles"
                     rules="required"
                   >
                     <v-select
                       v-model="value.roles"
-                      :items="['user', 'manager']"
+                      class="pt-3"
+                      :items="roles"
                       :error-messages="errors"
                       chips
                       deletable-chips
@@ -106,6 +102,7 @@
               <standard-options :editing="editing" :value="value" as="users" />
 
               <standard-audit v-if="!editing" :value="value" />
+
               <standard-identifier v-if="!editing" :value="value" />
             </v-container>
           </v-card>
@@ -133,6 +130,21 @@ export default {
     editing: { default: false, type: Boolean },
     value: { type: Object, required: true },
     create: { default: false, type: Boolean }
+  },
+
+  computed: {
+    roles() {
+      const roles = ['user', 'manager']
+      if (
+        this.$cannotPatch('users', {
+          _id: this.value._id
+        })
+      ) {
+        return roles.filter(role => role === this.value.roles)
+      }
+
+      return roles
+    }
   }
 }
 </script>

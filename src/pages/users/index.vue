@@ -17,12 +17,9 @@
 
               <users-search show-link>
                 <template #actions="{ item }">
-                  <v-icon
-                    v-if="item.full_name"
-                    color="tertiary"
-                    @click="open(item._id)"
-                    >{{ mdiOpenInNew }}</v-icon
-                  >
+                  <v-icon color="tertiary" @click="open(item._id)">{{
+                    mdiOpenInNew
+                  }}</v-icon>
                 </template>
               </users-search>
             </v-card>
