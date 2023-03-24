@@ -14,7 +14,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="!editing">
+    <v-row v-if="!editing && $canPatch('users', instance)">
       <v-col>
         <user-password-edit
           :current-password-required="
