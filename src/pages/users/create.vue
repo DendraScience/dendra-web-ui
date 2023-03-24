@@ -77,7 +77,8 @@ export default {
       incEditorDirty: 'ux/incEditorDirty',
       setEditorColor: 'ux/setEditorColor',
       setEditorDirty: 'ux/setEditorDirty',
-      setEditorTitle: 'ux/setEditorTitle'
+      setEditorTitle: 'ux/setEditorTitle',
+      setIsLoading: 'ux/setIsLoading'
     }),
 
     cancel() {
@@ -128,6 +129,8 @@ export default {
           type: 'error',
           message: err.message
         })
+      } finally {
+        this.setIsLoading(false)
       }
     },
 
@@ -135,6 +138,8 @@ export default {
       if (!(await this.$refs.observer.validate())) return
 
       const { instance } = this
+
+      this.setIsLoading(true)
 
       try {
         const person = await this.fetchPersons({
@@ -158,6 +163,7 @@ export default {
           type: 'error',
           message: err.message
         })
+        this.setIsLoading(false)
       }
     }
   }

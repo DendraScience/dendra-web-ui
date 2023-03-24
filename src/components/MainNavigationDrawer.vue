@@ -193,13 +193,14 @@ export default {
           ]
         },
         {
-          header: 'Admin section',
+          header: 'Admin',
           items: [
             {
               can: ['read', 'users'],
               icon: mdiAccountGroup,
               title: 'Users',
-              to: '/users'
+              to: '/users',
+              org: false
             }
           ]
         }

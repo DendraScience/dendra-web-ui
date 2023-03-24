@@ -14,6 +14,18 @@
       </v-col>
     </v-row>
 
+    <v-row v-if="!editing">
+      <v-col>
+        <user-password-edit
+          :current-password-required="
+            $cannotPatch('users', { _id: instance._id })
+          "
+          :edit-status="!editing"
+          :user="instance"
+        />
+      </v-col>
+    </v-row>
+
     <v-btn
       v-show="!editing && $canPatch('users', instance)"
       color="primary"
@@ -37,9 +49,11 @@ import _merge from 'lodash/merge'
 import _omit from 'lodash/omit'
 import { defaultUser, patchData } from '@/lib/edit'
 import UserDetail from '@/components/UserDetail'
+import UserPasswordEdit from '@/components/UserPasswordEdit'
 export default {
   components: {
     UserDetail,
+    UserPasswordEdit,
     ValidationObserver
   },
 
@@ -100,7 +114,8 @@ export default {
       incEditorDirty: 'ux/incEditorDirty',
       setEditorColor: 'ux/setEditorColor',
       setEditorDirty: 'ux/setEditorDirty',
-      setEditorTitle: 'ux/setEditorTitle'
+      setEditorTitle: 'ux/setEditorTitle',
+      setIsLoading: 'ux/setIsLoading'
     }),
 
     edit() {
@@ -132,6 +147,8 @@ export default {
         roles: [instance.roles]
       })
 
+      this.setIsLoading(true)
+
       try {
         // HACK: Ensure that we have a fresh model afterwards
         this.$store.commit('users/removeItem', instance._id)
@@ -153,6 +170,8 @@ export default {
         this.$store.commit('users/removeItem', instance._id)
 
         await this.fetchUsers({ query: { _id: instance._id } })
+      } finally {
+        this.setIsLoading(false)
       }
     }
   }

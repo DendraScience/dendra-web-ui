@@ -28,6 +28,7 @@
           filled
           flat
           hide-details
+          multiple
           small-chips
         ></v-select>
       </v-col>
@@ -86,7 +87,7 @@
             </template>
 
             <template #item.indicators="{ item }">
-              <indicator-cell :value="item" />
+              <indicator-cell disable-label="Deactivated" :value="item" />
             </template>
 
             <template #item.icons="{ item }">
@@ -149,7 +150,7 @@ export default {
       }
     ],
 
-    optionItems: ['Deactivated'],
+    optionItems: ['Active', 'Deactivated'],
     rolesOption: ['manager', 'user'],
 
     queryUserIds: [],
@@ -182,8 +183,16 @@ export default {
 
       const ands = []
 
-      if (selectedOptions && selectedOptions.includes('Deactivated')) {
-        ands.push({ is_enabled: false })
+      if (
+        selectedOptions &&
+        selectedOptions.length &&
+        this.optionItems.length !== selectedOptions.length
+      ) {
+        ands.push({
+          is_enabled:
+            selectedOptions.includes('Active') &&
+            !selectedOptions.includes('Deactivated')
+        })
       }
 
       if (selectedRoles && selectedRoles.length) {

@@ -89,7 +89,7 @@
                       chips
                       deletable-chips
                       dense
-                      label="Roles"
+                      label="Role"
                       hide-details
                       small-chips
                       variant="solo"
@@ -127,9 +127,9 @@ export default {
   },
 
   props: {
+    create: { default: false, type: Boolean },
     editing: { default: false, type: Boolean },
-    value: { type: Object, required: true },
-    create: { default: false, type: Boolean }
+    value: { type: Object, required: true }
   },
 
   computed: {
