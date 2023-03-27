@@ -7,6 +7,7 @@ const arrays = [
   'datastream_ids',
   'derived_from_datastream_ids',
   'external_links',
+  'external_refs',
   'intervals',
   'involved_parties',
   'station_ids',
@@ -54,6 +55,7 @@ export function defaultAnnotation(org) {
     actions: [],
     datastream_ids: [],
     description: '',
+    external_refs: [],
     intervals: [],
     involved_parties: [],
     organization_id: org._id,
@@ -66,6 +68,7 @@ export function defaultCompany() {
   return {
     company_type: 'corporation',
     description: '',
+    external_refs: [],
     full_name: '',
     name: '',
     url: ''
@@ -79,6 +82,7 @@ export function defaultDatastream(org) {
     datapoints_config: [],
     derived_from_datastream_ids: [],
     description: '',
+    external_refs: [],
     general_config: null,
     geo: null,
     geoCoordinates: {
@@ -105,6 +109,7 @@ export function defaultStation(org) {
     access_levels: {},
     description: '',
     external_links: [],
+    external_refs: [],
     full_name: '',
     general_config: null,
     geo: null,

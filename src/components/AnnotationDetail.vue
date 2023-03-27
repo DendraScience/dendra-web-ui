@@ -131,9 +131,15 @@
       </v-row>
 
       <!-- TODO: Implement editing later! -->
-      <v-row v-if="!editing">
+      <v-row>
         <v-col>
-          <detail-external-refs :editing="editing" :value="value" />
+          <detail-external-refs
+            :editing="editing"
+            :value="value"
+            @add="addExternalReference"
+            @edit="editExternalReference"
+            @remove="removeExternalReference"
+          />
         </v-col>
       </v-row>
 
@@ -365,6 +371,20 @@
         </template>
       </detail-dialog>
 
+      <detail-dialog
+        ref="externalRefDialog"
+        v-model="externalReference"
+        @commit="commitExternalReference"
+      >
+        <template #title>Specify external reference</template>
+        <template #default>
+          <external-reference-fields
+            v-model="externalReference"
+            :type-resolved="externalRefTypeResolved"
+          />
+        </template>
+      </detail-dialog>
+
       <v-dialog
         v-model="stationDialog"
         fullscreen
@@ -412,6 +432,7 @@ import _union from 'lodash/union'
 import { mapGetters, mapMutations, mapState } from 'vuex'
 import { ValidationProvider } from 'vee-validate'
 import actions from '@/mixins/actions'
+import externalReference from '@/mixins/external-reference'
 import interval from '@/mixins/interval'
 import member from '@/mixins/member'
 import AnnotationDetailActions from '@/components/AnnotationDetailActions'
@@ -426,6 +447,7 @@ import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailIntervals from '@/components/DetailIntervals'
 import DetailMembers from '@/components/DetailMembers'
 import EvaluateActionFields from '@/components/EvaluateActionFields'
+import ExternalReferenceFields from '@/components/ExternalReferenceFields'
 import FlagActionFields from '@/components/FlagActionFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
@@ -449,6 +471,7 @@ export default {
     DetailIntervals,
     DetailMembers,
     EvaluateActionFields,
+    ExternalReferenceFields,
     FlagActionFields,
     MemberRoleFields,
     StandardAudit,
@@ -460,7 +483,7 @@ export default {
     ValidationProvider
   },
 
-  mixins: [actions, interval, member],
+  mixins: [actions, externalReference, interval, member],
 
   props: {
     editing: { default: false, type: Boolean },

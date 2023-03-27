@@ -256,9 +256,15 @@
       </v-row>
 
       <!-- TODO: Implement editing later! -->
-      <v-row v-if="!editing">
+      <v-row>
         <v-col>
-          <detail-external-refs :editing="editing" :value="value" />
+          <detail-external-refs
+            :editing="editing"
+            :value="value"
+            @add="addExternalReference"
+            @edit="editExternalReference"
+            @remove="removeExternalReference"
+          />
         </v-col>
       </v-row>
 
@@ -309,6 +315,20 @@
           <external-link-fields v-model="externalLink" />
         </template>
       </detail-dialog>
+
+      <detail-dialog
+        ref="externalRefDialog"
+        v-model="externalReference"
+        @commit="commitExternalReference"
+      >
+        <template #title>Specify external reference</template>
+        <template #default>
+          <external-reference-fields
+            v-model="externalReference"
+            :type-resolved="externalRefTypeResolved"
+          />
+        </template>
+      </detail-dialog>
     </v-col>
   </v-row>
 </template>
@@ -317,6 +337,7 @@
 import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import externalLink from '@/mixins/external-link'
+import externalReference from '@/mixins/external-reference'
 import generalConfig from '@/mixins/general-config'
 import geo from '@/mixins/geo'
 import member from '@/mixins/member'
@@ -333,6 +354,7 @@ import DetailGeoPoint from '@/components/DetailGeoPoint'
 import DetailImages from '@/components/DetailImages'
 import DetailMembers from '@/components/DetailMembers'
 import ExternalLinkFields from '@/components/ExternalLinkFields'
+import ExternalReferenceFields from '@/components/ExternalReferenceFields'
 import GeneralConfigFields from '@/components/GeneralConfigFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
@@ -353,6 +375,7 @@ export default {
     DetailImages,
     DetailMembers,
     ExternalLinkFields,
+    ExternalReferenceFields,
     GeneralConfigFields,
     MemberRoleFields,
     StandardAudit,
@@ -361,7 +384,14 @@ export default {
     ValidationProvider
   },
 
-  mixins: [accessLevel, externalLink, generalConfig, geo, member],
+  mixins: [
+    accessLevel,
+    externalLink,
+    externalReference,
+    generalConfig,
+    geo,
+    member
+  ],
 
   props: {
     editing: { default: false, type: Boolean },
