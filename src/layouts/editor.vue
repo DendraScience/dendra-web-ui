@@ -25,7 +25,7 @@
           @click="$bus.$emit('editor-save')"
           >Save</v-btn
         >
-        <v-btn text @click="cancel">Cancel</v-btn>
+        <v-btn text :disabled="isLoading" @click="cancel">Cancel</v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
