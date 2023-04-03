@@ -25,7 +25,7 @@
       </nuxt-link>
 
       <nuxt-link v-else to="/" class="text-decoration-none white--text" exact>
-        Dendra.Science</nuxt-link
+        {{ longSiteName || 'Dendra.Science' }}</nuxt-link
       >
     </v-toolbar-title>
 
@@ -107,7 +107,8 @@ export default {
     ...mapGetters({
       orgColor: 'orgColor',
       orgName: 'orgName',
-      orgSlug: 'orgSlug'
+      orgSlug: 'orgSlug',
+      toolBarPresentation: 'toolBarPresentation'
     }),
 
     ...mapState(['auth', 'top']),
