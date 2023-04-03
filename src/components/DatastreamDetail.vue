@@ -245,9 +245,15 @@
       </v-row>
 
       <!-- TODO: Implement editing later! -->
-      <v-row v-if="!editing">
+      <v-row>
         <v-col>
-          <detail-external-refs :editing="editing" :value="value" />
+          <detail-external-refs
+            :editing="editing"
+            :value="value"
+            @add="addExternalReference"
+            @edit="editExternalReference"
+            @remove="removeExternalReference"
+          />
         </v-col>
       </v-row>
 
@@ -427,6 +433,20 @@
           />
         </template>
       </detail-dialog>
+
+      <detail-dialog
+        ref="externalRefDialog"
+        v-model="externalReference"
+        @commit="commitExternalReference"
+      >
+        <template #title>Specify external reference</template>
+        <template #default>
+          <external-reference-fields
+            v-model="externalReference"
+            :type-resolved="externalRefTypeResolved"
+          />
+        </template>
+      </detail-dialog>
     </v-col>
   </v-row>
 </template>
@@ -438,6 +458,7 @@ import { ValidationProvider } from 'vee-validate'
 import accessLevel from '@/mixins/access-level'
 import attribute from '@/mixins/attribute'
 import datapointsConfig from '@/mixins/datapoints-config'
+import externalReference from '@/mixins/external-reference'
 import generalConfig from '@/mixins/general-config'
 import geo from '@/mixins/geo'
 import member from '@/mixins/member'
@@ -459,6 +480,7 @@ import DetailMembers from '@/components/DetailMembers'
 import DetailTerms from '@/components/DetailTerms'
 import DetailThingType from '@/components/DetailThingType'
 import EvaluateActionFields from '@/components/EvaluateActionFields'
+import ExternalReferenceFields from '@/components/ExternalReferenceFields'
 import GeneralConfigFields from '@/components/GeneralConfigFields'
 import MemberRoleFields from '@/components/MemberRoleFields'
 import StandardAudit from '@/components/StandardAudit'
@@ -487,6 +509,7 @@ export default {
     DetailTerms,
     DetailThingType,
     EvaluateActionFields,
+    ExternalReferenceFields,
     GeneralConfigFields,
     MemberRoleFields,
     StandardAudit,
@@ -502,6 +525,7 @@ export default {
     accessLevel,
     attribute,
     datapointsConfig,
+    externalReference,
     generalConfig,
     geo,
     member,

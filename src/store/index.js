@@ -141,6 +141,9 @@ export const getters = {
   },
   annotationId(state) {
     return state.annotationId
+  },
+  user(state, { 'users/get': get }) {
+    return state.userId && get(state.userId)
   }
 }
 
@@ -188,5 +191,8 @@ export const mutations = {
   },
   setAnnotation(state, value) {
     state.annotationId = value && value._id
+  },
+  setUser(state, value) {
+    state.userId = value && value._id
   }
 }

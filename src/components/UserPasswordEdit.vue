@@ -5,24 +5,26 @@
         <v-card-title class="headline"> Change password </v-card-title>
 
         <v-card-text>
-          <ValidationProvider
-            v-slot="{ errors }"
-            name="current password"
-            rules="required|min:6|max:100"
-          >
-            <v-text-field
-              v-model="current_password"
-              :error-messages="errors"
-              label="Current password"
-              required
-              type="password"
-            ></v-text-field>
-          </ValidationProvider>
+          <template v-if="currentPasswordRequired">
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="current password"
+              rules="required|min:10|max:100"
+            >
+              <v-text-field
+                v-model="current_password"
+                :error-messages="errors"
+                label="Current password"
+                required
+                type="password"
+              ></v-text-field>
+            </ValidationProvider>
+          </template>
 
           <ValidationProvider
             v-slot="{ errors }"
             name="new password"
-            rules="required|min:6|max:100"
+            rules="required|min:10|max:100"
             vid="new_password"
           >
             <v-text-field
@@ -75,6 +77,8 @@ export default {
   },
 
   props: {
+    currentPasswordRequired: { default: true, type: Boolean },
+    editStatus: { default: false, type: Boolean },
     user: { default: null, type: Object }
   },
 
@@ -105,13 +109,16 @@ export default {
 
       return this.patch([this.id, { $set }, {}])
         .then(() =>
-          this.$bus.$emit('status', {
+          this.$bus.$emit(this.editStatus ? 'edit-status' : 'status', {
             type: 'success',
             message: 'Password changed.' // TODO: Localize
           })
         )
         .catch(({ message }) =>
-          this.$bus.$emit('status', { type: 'error', message })
+          this.$bus.$emit(this.editStatus ? 'edit-status' : 'status', {
+            type: 'error',
+            message
+          })
         )
     }
   }

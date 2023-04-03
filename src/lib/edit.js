@@ -7,9 +7,11 @@ const arrays = [
   'datastream_ids',
   'derived_from_datastream_ids',
   'external_links',
+  'external_refs',
   'intervals',
   'involved_parties',
-  'station_ids'
+  'station_ids',
+  'roles'
 ]
 const booleans = [
   'is_active',
@@ -23,10 +25,13 @@ const fields = [
   'derivation_description',
   'derivation_method',
   'description',
+  'email',
   'full_name',
   'model',
   'name',
   'oem_company_id',
+  'password',
+  'person_id',
   'reseller_company_id',
   'slug',
   'source_type',
@@ -50,6 +55,7 @@ export function defaultAnnotation(org) {
     actions: [],
     datastream_ids: [],
     description: '',
+    external_refs: [],
     intervals: [],
     involved_parties: [],
     organization_id: org._id,
@@ -62,6 +68,7 @@ export function defaultCompany() {
   return {
     company_type: 'corporation',
     description: '',
+    external_refs: [],
     full_name: '',
     name: '',
     url: ''
@@ -75,6 +82,7 @@ export function defaultDatastream(org) {
     datapoints_config: [],
     derived_from_datastream_ids: [],
     description: '',
+    external_refs: [],
     general_config: null,
     geo: null,
     geoCoordinates: {
@@ -101,6 +109,7 @@ export function defaultStation(org) {
     access_levels: {},
     description: '',
     external_links: [],
+    external_refs: [],
     full_name: '',
     general_config: null,
     geo: null,
@@ -130,6 +139,17 @@ export function defaultThingType() {
     is_enabled: true,
     model: '',
     name: ''
+  }
+}
+
+export function defaultUser() {
+  return {
+    email: '',
+    full_name: '',
+    name: '',
+    roles: [],
+    is_enabled: true,
+    password: ''
   }
 }
 

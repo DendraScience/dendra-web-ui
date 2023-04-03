@@ -115,17 +115,40 @@
       </v-row>
 
       <!-- TODO: Implement editing later! -->
-      <v-row v-if="!editing">
+      <v-row>
         <v-col>
-          <detail-external-refs :editing="editing" :value="value" />
+          <detail-external-refs
+            :editing="editing"
+            :value="value"
+            @add="addExternalReference"
+            @edit="editExternalReference"
+            @remove="removeExternalReference"
+          />
         </v-col>
       </v-row>
+
+      <detail-dialog
+        ref="externalRefDialog"
+        v-model="externalReference"
+        @commit="commitExternalReference"
+      >
+        <template #title>Specify external reference</template>
+        <template #default>
+          <external-reference-fields
+            v-model="externalReference"
+            :type-resolved="externalRefTypeResolved"
+          />
+        </template>
+      </detail-dialog>
     </v-col>
   </v-row>
 </template>
 
 <script>
 import { ValidationProvider } from 'vee-validate'
+import externalReference from '@/mixins/external-reference'
+import DetailDialog from '@/components/DetailDialog'
+import ExternalReferenceFields from '@/components/ExternalReferenceFields'
 import ThingTypeTotal from '@/components/ThingTypeTotal'
 import DetailExternalRefs from '@/components/DetailExternalRefs'
 import StandardAudit from '@/components/StandardAudit'
@@ -134,6 +157,8 @@ import StandardOptions from '@/components/StandardOptions'
 
 export default {
   components: {
+    DetailDialog,
+    ExternalReferenceFields,
     ThingTypeTotal,
     DetailExternalRefs,
     StandardAudit,
@@ -141,6 +166,8 @@ export default {
     StandardOptions,
     ValidationProvider
   },
+
+  mixins: [externalReference],
 
   props: {
     editing: { default: false, type: Boolean },

@@ -66,7 +66,8 @@ import {
   mdiNoteOutline,
   mdiTag,
   mdiOfficeBuilding,
-  mdiViewGrid
+  mdiViewGrid,
+  mdiAccountGroup
 } from '@mdi/js'
 
 export default {
@@ -189,6 +190,18 @@ export default {
             //   name: 'orgs-orgSlug-teams',
             //   title: 'Teams'
             // }
+          ]
+        },
+        {
+          header: 'Admin',
+          items: [
+            {
+              can: ['read', 'users'],
+              icon: mdiAccountGroup,
+              title: 'Users',
+              to: '/users',
+              org: false
+            }
           ]
         }
       ]

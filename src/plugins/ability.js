@@ -55,7 +55,6 @@ export default ({ store }, inject) => {
   inject('canPatch', (name, obj) =>
     store.getters.isAbilityUpdated ? ability.can('patch', as(name, obj)) : false
   )
-
   inject('cannot', (...args) =>
     store.getters.isAbilityUpdated ? ability.cannot(...args) : true
   )
@@ -72,6 +71,11 @@ export default ({ store }, inject) => {
   inject('cannotGraph', (name, obj) =>
     store.getters.isAbilityUpdated
       ? ability.cannot('graph', as(name, obj))
+      : true
+  )
+  inject('cannotPatch', (name, obj) =>
+    store.getters.isAbilityUpdated
+      ? ability.cannot('patch', as(name, obj))
       : true
   )
 }
