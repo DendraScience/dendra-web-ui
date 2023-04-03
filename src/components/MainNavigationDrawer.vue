@@ -77,7 +77,7 @@ export default {
           items: [
             {
               icon: mdiHome,
-              title: 'Dendra home',
+              title: `${process.env.title || 'Dendra'} home`,
               to: '/'
             },
             {

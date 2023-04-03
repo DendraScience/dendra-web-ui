@@ -137,6 +137,7 @@ Vue.mixin({
 
     githubURL: process.env.githubURL,
     infoEmail: process.env.infoEmail,
+    longSiteName: process.env.longSiteName,
     slackURL: process.env.slackURL,
     twitterURL: process.env.twitterURL
   })
