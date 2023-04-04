@@ -196,7 +196,7 @@ export default {
           header: 'Admin',
           items: [
             {
-              can: ['read', 'users'],
+              can: ['create', 'users'],
               icon: mdiAccountGroup,
               title: 'Users',
               to: '/users',
