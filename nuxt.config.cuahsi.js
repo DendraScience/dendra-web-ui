@@ -67,7 +67,7 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: ['~/assets/main'],
+  css: ['~/assets/cuahsi/main'],
 
   /*
    ** Environment variables
@@ -260,6 +260,7 @@ module.exports = {
    */
   router: {
     middleware: ['auth', 'ability'],
+    // TODO: DRC clean this up and make it work for nested pages in addition to top level pages
     extendRoutes(routes, resolve) {
       if (presentation === 'dendra') return
 
@@ -294,8 +295,7 @@ module.exports = {
    ** See https://nuxtjs.org/api/configuration-dir
    */
   dir: {
-    // TODO:DRC consider a better way of asset/static management
-    // assets: 'assets/assets-cuahsi',
+    assets: 'assets/cuahsi',
     static: 'static/cuahsi'
   },
 

@@ -65,7 +65,7 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: ['~/assets/main'],
+  css: ['~/assets/dendra/main'],
 
   /*
    ** Environment variables
@@ -258,8 +258,7 @@ module.exports = {
    ** See https://nuxtjs.org/api/configuration-dir
    */
   dir: {
-    // TODO:DRC consider a better way of asset/static management
-    // assets: 'assets/assets-cuahsi',
+    assets: 'assets/dendra',
     static: 'static/dendra'
   },
 

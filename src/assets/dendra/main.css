@@ -1,0 +1,16 @@
+#textarea1571758315461,
+#textarea1571758329826,
+#textarea1571758369645,
+#textarea1572143364122,
+#textarea1578268528116 {
+  font-family: monospace !important;
+}
+
+.datastream-chart-tooltip-container {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+.highcharts-reset-zoom {
+  display: none !important;
+}

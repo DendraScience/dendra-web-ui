@@ -98,7 +98,7 @@
                     <v-avatar ref="avatar" size="140">
                       <img
                         :src="
-                          require(`@/assets/collin-with-brick-wall-smiling-2019.jpg`)
+                          require(`@/assets/dendra/collin-with-brick-wall-smiling-2019.jpg`)
                         "
                       />
                     </v-avatar>
@@ -139,7 +139,9 @@
                   <v-col class="flex-grow-0 flex-shrink-1">
                     <v-avatar ref="avatar" size="140">
                       <img
-                        :src="require(`@/assets/scott-in-presidio-3-2022.jpg`)"
+                        :src="
+                          require(`@/assets/dendra/scott-in-presidio-3-2022.jpg`)
+                        "
                       />
                     </v-avatar>
                   </v-col>
