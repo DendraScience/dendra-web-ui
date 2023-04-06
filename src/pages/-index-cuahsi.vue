@@ -20,7 +20,7 @@
                 />
 
                 <h4 class="text-h5 text-sm-h4 white--text mt-2">
-                  Hydrographic information system
+                  Hydrologic information system
                 </h4>
               </v-col>
             </v-row>
@@ -43,29 +43,14 @@
                   <v-container fluid>
                     <v-row>
                       <v-col>
-                        <div class="caption white--text mb-2">Hosted on</div>
+                        <div class="white--text mb-2">Powered by</div>
 
-                        <a href="https://access-ci.org/" target="_blank">
+                        <a href="https://dendra.science/" target="_blank">
                           <v-img
-                            :src="require('@/assets/access-logo.png')"
+                            :src="require('@/assets/dendra-logo.svg')"
                             contain
-                            width="180"
-                          />
-                        </a>
-                      </v-col>
-
-                      <v-col>
-                        <div class="caption white--text mb-2">
-                          NSF EarthCube funded
-                        </div>
-
-                        <a href="https://www.earthcube.org/" target="_blank">
-                          <v-img
-                            :src="
-                              require('@/assets/EarthCube-NewWhite-notag.png')
-                            "
-                            contain
-                            width="180"
+                            width="100"
+                            max-height="180"
                           />
                         </a>
                       </v-col>
@@ -172,46 +157,6 @@
               </h5></v-col
             >
           </v-row>
-
-          <feathers-vuex-find
-            v-slot="{ items: organizations }"
-            :query="{
-              is_enabled: true,
-              is_hidden: false,
-              $sort: { sort_value: 1, name: 1 }
-            }"
-            service="organizations"
-          >
-            <v-row>
-              <v-col
-                v-for="organization in organizations"
-                :key="organization._id"
-                cols="auto"
-              >
-                <v-btn
-                  :to="{
-                    name: 'orgs-orgSlug',
-                    params: { orgSlug: organization.slug }
-                  }"
-                  ><v-icon
-                    :color="
-                      organization.general_config_resolved &&
-                      organization.general_config_resolved.brand_color
-                        ? `#${organization.general_config_resolved.brand_color}`
-                        : 'blue-grey darken-2'
-                    "
-                    left
-                    >{{ mdiMapMarker }}</v-icon
-                  ><span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 260px"
-                    >{{ organization.name }}</span
-                  ></v-btn
-                >
-              </v-col>
-            </v-row>
-          </feathers-vuex-find>
-
           <v-row>
             <v-col>
               <v-lazy>
@@ -265,6 +210,45 @@
               </v-lazy>
             </v-col>
           </v-row>
+
+          <feathers-vuex-find
+            v-slot="{ items: organizations }"
+            :query="{
+              is_enabled: true,
+              is_hidden: false,
+              $sort: { sort_value: 1, name: 1 }
+            }"
+            service="organizations"
+          >
+            <v-row>
+              <v-col
+                v-for="organization in organizations"
+                :key="organization._id"
+                cols="auto"
+              >
+                <v-btn
+                  :to="{
+                    name: 'orgs-orgSlug',
+                    params: { orgSlug: organization.slug }
+                  }"
+                  ><v-icon
+                    :color="
+                      organization.general_config_resolved &&
+                      organization.general_config_resolved.brand_color
+                        ? `#${organization.general_config_resolved.brand_color}`
+                        : 'blue-grey darken-2'
+                    "
+                    left
+                    >{{ mdiMapMarker }}</v-icon
+                  ><span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 260px"
+                    >{{ organization.name }}</span
+                  ></v-btn
+                >
+              </v-col>
+            </v-row>
+          </feathers-vuex-find>
         </v-container>
       </v-col>
     </v-row>

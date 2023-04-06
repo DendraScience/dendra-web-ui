@@ -4,8 +4,7 @@ const { Nuxt, Builder } = require('nuxt')
 const app = express()
 
 // Import and Set Nuxt.js options
-const nuxtConfigFile = `../../nuxt.config${process.env.PRESENTATION || ''}.js`
-const config = require(nuxtConfigFile)
+const config = require('../../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
 
 async function start() {

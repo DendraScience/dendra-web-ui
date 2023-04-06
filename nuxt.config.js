@@ -255,6 +255,16 @@ module.exports = {
 
   /*
    ** Nuxt application source directory
+   ** See https://nuxtjs.org/api/configuration-dir
+   */
+  dir: {
+    // TODO:DRC consider a better way of asset/static management
+    // assets: 'assets/assets-cuahsi',
+    static: 'static/dendra'
+  },
+
+  /*
+   ** Nuxt application source directory
    ** See https://nuxtjs.org/api/configuration-srcdir
    */
   srcDir: 'src',
