@@ -4,7 +4,7 @@
       <v-col>
         <v-img
           :max-height="$vuetify.breakpoint.smAndUp ? 540 : undefined"
-          :src="require('@/assets/angelo-reserve.jpg')"
+          :src="require('@/assets/dendra/angelo-reserve.jpg')"
           aspect-ratio="1.5"
           class="d-flex align-center"
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
@@ -15,7 +15,7 @@
               <v-col>
                 <v-img
                   :max-width="$vuetify.breakpoint.smAndUp ? 350 : 245"
-                  :src="require('@/assets/dendra-logo.svg')"
+                  :src="require('@/assets/dendra/dendra-logo.svg')"
                   aspect-ratio="4"
                   width="100%"
                 />
@@ -50,7 +50,7 @@
 
                         <a href="https://access-ci.org/" target="_blank">
                           <v-img
-                            :src="require('@/assets/access-logo.png')"
+                            :src="require('@/assets/dendra/access-logo.png')"
                             contain
                             width="180"
                           />
@@ -65,7 +65,7 @@
                         <a href="https://www.earthcube.org/" target="_blank">
                           <v-img
                             :src="
-                              require('@/assets/EarthCube-NewWhite-notag.png')
+                              require('@/assets/dendra/EarthCube-NewWhite-notag.png')
                             "
                             contain
                             width="180"

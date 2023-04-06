@@ -44,6 +44,7 @@
           </v-col>
 
           <v-col cols="12" md="6">
+            <!-- TODO: DRC Check if this shared asset works for all presentations -->
             <v-img :src="require('@/assets/download-data-from-graph.jpg')" />
           </v-col>
         </v-row>
