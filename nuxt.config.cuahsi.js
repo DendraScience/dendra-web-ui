@@ -1,7 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 
-const presentation = process.env.PRESENTATION || 'cuahsi'
+const presentation = 'cuahsi'
 const title = 'HIS'
 const description = 'HIS'
 
@@ -296,7 +296,7 @@ module.exports = {
   dir: {
     // TODO:DRC consider a better way of asset/static management
     // assets: 'assets/assets-cuahsi',
-    static: 'static/static-cuahsi'
+    static: 'static/cuahsi'
   },
 
   /*

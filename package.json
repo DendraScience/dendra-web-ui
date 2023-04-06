@@ -7,7 +7,7 @@
   "scripts": {
     "babel-workers": "babel src/workers -d src/static/workers --presets=@nuxt/babel-preset-app",
     "dev": "nuxt",
-    "dev-cuahsi": "cross-env PRESENTATION=cuahsi nuxt --config-file nuxt.config.cuahsi.js",
+    "dev-cuahsi": "nuxt --config-file nuxt.config.cuahsi.js",
     "dev-edge": "cross-env API_PATH=/v2 API_URI=https://api.edge.dendra.science nuxt",
     "dev-local": "cross-env API_URI=http://192.168.1.60:30080 nuxt",
     "dev-preview": "cross-env API_PATH=/v2 API_URI=http://api.preview.dendra.science nuxt",
@@ -15,7 +15,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "generate-cuahsi": "PRESENTATION=cuahsi nuxt generate --config-file nuxt.config.cuahsi.js",
+    "generate-cuahsi": "nuxt generate --config-file nuxt.config.cuahsi.js",
     "serve": "nuxt serve",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint": "npm run lint:js",
