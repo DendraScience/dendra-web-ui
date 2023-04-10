@@ -94,7 +94,9 @@ export default {
     },
 
     items() {
-      return this.externalRefs
+      return this.externalRefs.map((item, key) => {
+        return Object.assign({ key }, item)
+      })
     }
   }
 }

@@ -7,6 +7,7 @@ const arrays = [
   'datastream_ids',
   'derived_from_datastream_ids',
   'external_links',
+  'external_refs',
   'intervals',
   'involved_parties',
   'station_ids',
@@ -97,6 +98,23 @@ export function defaultDatastream(org) {
     station_id: null,
     terms: {},
     thing_type_id: null
+  }
+}
+
+export function defaultOrganization() {
+  return {
+    access_levels: {},
+    description: '',
+    external_refs: [],
+    email: '',
+    full_name: '',
+    general_config: null,
+    involved_parties: [],
+    is_enabled: true,
+    is_hidden: false,
+    name: '',
+    slug: '',
+    url: ''
   }
 }
 
