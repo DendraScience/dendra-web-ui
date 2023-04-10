@@ -19,12 +19,13 @@
 
       <v-toolbar-items>
         <v-btn
-          :disabled="editorDirty < 1"
+          :disabled="editorDirty < 1 || isLoading"
           text
+          :loading="isLoading"
           @click="$bus.$emit('editor-save')"
           >Save</v-btn
         >
-        <v-btn text @click="cancel">Cancel</v-btn>
+        <v-btn text :disabled="isLoading" @click="cancel">Cancel</v-btn>
       </v-toolbar-items>
     </v-app-bar>
 
@@ -98,7 +99,13 @@ export default {
   }),
 
   computed: {
-    ...mapState('ux', ['editing', 'editorColor', 'editorDirty', 'editorTitle'])
+    ...mapState('ux', [
+      'editing',
+      'editorColor',
+      'editorDirty',
+      'editorTitle',
+      'isLoading'
+    ])
   },
 
   watch: {

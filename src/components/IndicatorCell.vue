@@ -5,7 +5,7 @@
         <v-icon class="mx-1" color="red" v-on="on">{{  mdiEngineOff,
         }}</v-icon>
       </template>
-      <span>Disabled</span>
+      <span>{{ disableLabel }}</span>
     </v-tooltip>
 
     <v-tooltip v-if="value.is_hidden === true" bottom>
@@ -27,6 +27,7 @@
 <script>
 export default {
   props: {
+    disableLabel: { default: 'Disabled', type: String },
     hideDescription: { default: false, type: Boolean },
     value: { type: Object, required: true }
   }

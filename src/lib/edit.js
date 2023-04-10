@@ -9,7 +9,8 @@ const arrays = [
   'external_links',
   'intervals',
   'involved_parties',
-  'station_ids'
+  'station_ids',
+  'roles'
 ]
 const booleans = [
   'is_active',
@@ -23,10 +24,13 @@ const fields = [
   'derivation_description',
   'derivation_method',
   'description',
+  'email',
   'full_name',
   'model',
   'name',
   'oem_company_id',
+  'password',
+  'person_id',
   'reseller_company_id',
   'slug',
   'source_type',
@@ -130,6 +134,17 @@ export function defaultThingType() {
     is_enabled: true,
     model: '',
     name: ''
+  }
+}
+
+export function defaultUser() {
+  return {
+    email: '',
+    full_name: '',
+    name: '',
+    roles: [],
+    is_enabled: true,
+    password: ''
   }
 }
 

@@ -6,7 +6,8 @@ export const state = () => ({
   editing: false,
   editorColor: 'primary',
   editorDirty: 0,
-  editorTitle: ''
+  editorTitle: '',
+  isLoading: false
 })
 
 export const actions = {}
@@ -43,5 +44,8 @@ export const mutations = {
   },
   setEditorTitle(state, value) {
     state.editorTitle = value
+  },
+  setIsLoading(state, value) {
+    state.isLoading = value
   }
 }
