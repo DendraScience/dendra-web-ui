@@ -15,7 +15,7 @@
               <v-col>
                 <v-img
                   :max-width="$vuetify.breakpoint.smAndUp ? 350 : 245"
-                  :src="require('@/assets/cuahsi/his-logo.gif')"
+                  :src="require('@/assets/cuahsi/his-logo.png')"
                   width="100%"
                 />
 
