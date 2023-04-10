@@ -1,8 +1,15 @@
-export default async function ({ error, params, query: q, store }) {
+export default async function ({ error, params, query: q, route, store }) {
   const { orgId, orgSlug } = params
 
   try {
-    const query = { is_enabled: true, $limit: 1 }
+    // manager can able to view both enabled and disabled
+    const authorization = route.meta.map(meta => {
+      if (meta && typeof meta.authority !== 'undefined') return true
+      return false
+    })
+    const query = { $limit: 1 }
+
+    if (authorization.includes(false)) query.is_enabled = true
     if (q.organizationId) query._id = q.organizationId
     else if (orgId) query._id = orgId
     else if (orgSlug) query.slug = orgSlug
