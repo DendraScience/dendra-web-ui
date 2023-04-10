@@ -15,7 +15,7 @@
               <v-col>
                 <v-img
                   :max-width="$vuetify.breakpoint.smAndUp ? 350 : 245"
-                  :src="require('@/assets/cuahsi/his-logo.gif')"
+                  :src="require('@/assets/cuahsi/his-logo.png')"
                   width="100%"
                 />
 
@@ -210,45 +210,6 @@
               </v-lazy>
             </v-col>
           </v-row>
-
-          <feathers-vuex-find
-            v-slot="{ items: organizations }"
-            :query="{
-              is_enabled: true,
-              is_hidden: false,
-              $sort: { sort_value: 1, name: 1 }
-            }"
-            service="organizations"
-          >
-            <v-row>
-              <v-col
-                v-for="organization in organizations"
-                :key="organization._id"
-                cols="auto"
-              >
-                <v-btn
-                  :to="{
-                    name: 'orgs-orgSlug',
-                    params: { orgSlug: organization.slug }
-                  }"
-                  ><v-icon
-                    :color="
-                      organization.general_config_resolved &&
-                      organization.general_config_resolved.brand_color
-                        ? `#${organization.general_config_resolved.brand_color}`
-                        : 'blue-grey darken-2'
-                    "
-                    left
-                    >{{ mdiMapMarker }}</v-icon
-                  ><span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 260px"
-                    >{{ organization.name }}</span
-                  ></v-btn
-                >
-              </v-col>
-            </v-row>
-          </feathers-vuex-find>
         </v-container>
       </v-col>
     </v-row>
