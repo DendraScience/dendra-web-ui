@@ -260,28 +260,45 @@ module.exports = {
    */
   router: {
     middleware: ['auth', 'ability'],
-    // TODO: DRC clean this up and make it work for nested pages in addition to top level pages
     extendRoutes(routes, resolve) {
       if (presentation === 'dendra') return
 
       // Find the Dendra default page for each alternate presentation page
       // example: "-about-cuahsi.vue" -> "about.vue". The "-" ensures that routes are hidden during default presentation
       const presentationRoutes = glob
-        .sync(`src/pages/-*${presentation}.vue`)
+        .sync(`src/pages/**/-*${presentation}.vue`)
         .map(fullPath => {
           return fullPath
-            .replace('src/pages/-', '/')
-            .replace(`-${presentation}.vue`, '')
+            .replace('src/pages/', '/')
+            .replace('-', '') // ignored pages in nuxt are prefixed with "-"
+            .replace('_', ':') // dynamic nuxt pages are prefixed with "_" but the routes are stored with ":"
+            .replace(`-${presentation}.vue`, '') // custom presentations are postfixed with the presentation name
         })
+      const presentationIndexRoutes = presentationRoutes.filter(route =>
+        route.includes('index')
+      )
 
       // Create Nuxt alias for each of the alternate presentations
       routes = routes.map(route => {
         if (presentationRoutes.includes(route.path)) {
-          route.alias = `/-${route.path.substring(1)}-${presentation}`
-          route.component = resolve(__dirname, `src/pages${route.alias}.vue`)
+          const dirs = route.path.split('/')
+          const pageName = dirs.pop()
+          const rest = dirs.join('/')
+          route.alias = `${rest}/-${pageName}-${presentation}`
+          const component = `src/pages/${route.alias}.vue`.replace(':', '_')
+          route.component = resolve(__dirname, component)
+        } else {
+          // Check if the route is an index
+          presentationIndexRoutes.forEach(presentationRoute => {
+            if (presentationRoute.replace('/index', '') === route.path) {
+              route.alias = `${route.path}/-index-${presentation}`
+              const component = `src/pages/${route.alias}.vue`.replace(':', '_')
+              route.component = resolve(__dirname, component)
+            }
+          })
         }
-        // index has to be handled separately
-        if (route.path === '/' && presentationRoutes.includes('/index')) {
+        // Check if the base index needs to be aliased
+        if (route.path === '/' && presentationIndexRoutes.includes('/index')) {
           route.alias = `/-index-${presentation}`
           route.component = resolve(__dirname, `src/pages${route.alias}.vue`)
         }
