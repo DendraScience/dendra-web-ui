@@ -16,6 +16,7 @@ const noaaNWSIcons =
 const plausableDomain = process.env.PLAUSABLE_DOMAIN || 'dendra.science'
 const plausableEnabled = process.env.PLAUSABLE_ENABLED
 const slackURL = 'https://dendra-science.slack.com'
+const systemStatusURL = 'https://status.dendra.science'
 const twitterURL = 'https://twitter.com/DendraScience'
 const webSiteURL = process.env.WEB_SITE_URL || 'https://dendra.science'
 const widgetsOnly = process.env.WIDGETS_ONLY === 'true'
@@ -82,6 +83,7 @@ module.exports = {
     plausableDomain,
     plausableEnabled,
     slackURL,
+    systemStatusURL,
     twitterURL,
     webSiteURL
   },
@@ -219,7 +221,12 @@ module.exports = {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#4caf50' },
+
+  messages: {
+    error_404: 'Page not found.',
+    server_error: 'Server error.'
+  },
 
   /*
    ** Nuxt.js modules
@@ -250,7 +257,7 @@ module.exports = {
   ],
 
   router: {
-    middleware: ['auth', 'ability']
+    middleware: ['check-system-status', 'auth', 'ability']
   },
 
   /*
