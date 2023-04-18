@@ -104,23 +104,6 @@ export function defaultDatastream(org) {
   }
 }
 
-export function defaultOrganization() {
-  return {
-    access_levels: {},
-    description: '',
-    external_refs: [],
-    email: '',
-    full_name: '',
-    general_config: null,
-    involved_parties: [],
-    is_enabled: true,
-    is_hidden: false,
-    name: '',
-    slug: '',
-    url: ''
-  }
-}
-
 export function defaultStation(org) {
   return {
     access_levels: {},

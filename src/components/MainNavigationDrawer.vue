@@ -201,12 +201,6 @@ export default {
               title: 'Users',
               to: '/users',
               org: false
-            },
-            {
-              can: ['create', 'organizations'],
-              icon: mdiAccountGroup,
-              title: 'Organizations',
-              to: '/organizations'
             }
           ]
         }

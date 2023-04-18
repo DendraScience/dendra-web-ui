@@ -60,10 +60,12 @@
 
 <script>
 import { ValidationProvider } from 'vee-validate'
+
 export default {
   components: {
     ValidationProvider
   },
+
   props: {
     value: { type: Object, required: true },
     typeResolved: { type: Object, required: true }
