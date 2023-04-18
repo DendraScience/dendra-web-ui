@@ -1,23 +1,25 @@
 const path = require('path')
+const glob = require('glob')
 
-const title = 'Dendra'
-const description =
-  'Dendra is a cyberinfrastructure project for real-time sensor data storage, retrieval, management, and curation.'
+const presentation = 'cuahsi'
+const title = 'HIS'
+const description = 'HIS'
 
 const apiPath = process.env.API_PATH
 const apiURI = process.env.API_URI
-const githubURL = 'https://github.com/DendraScience'
+const githubURL = 'https://github.com/CUAHSI'
 const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
 const googleTrackingId = process.env.GOOGLE_TRACKING_ID
-const infoEmail = 'metahuman@dendra.science'
+const infoEmail = 'help@cuahsi.org'
+const longSiteName = 'CUAHSI.HIS'
 const noaaNWSIcons =
   process.env.NOAA_NWS_ICONS_URL ||
   'https://dendrascience.github.io/noaa-nws-icons/jpg'
 const plausableDomain = process.env.PLAUSABLE_DOMAIN || 'dendra.science'
 const plausableEnabled = process.env.PLAUSABLE_ENABLED
-const slackURL = 'https://dendra-science.slack.com'
-const twitterURL = 'https://twitter.com/DendraScience'
-const webSiteURL = process.env.WEB_SITE_URL || 'https://dendra.science'
+const slackURL = 'https://cuahsicommunity.slack.com'
+const twitterURL = 'https://twitter.com/CUAHSI'
+const webSiteURL = process.env.WEB_SITE_URL || 'https://cuahsi.org'
 const widgetsOnly = process.env.WIDGETS_ONLY === 'true'
 
 module.exports = {
@@ -65,7 +67,7 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: ['~/assets/dendra/main'],
+  css: ['~/assets/cuahsi/main'],
 
   /*
    ** Environment variables
@@ -78,10 +80,13 @@ module.exports = {
     googleMapsAPIKey,
     googleTrackingId,
     infoEmail,
+    longSiteName,
     noaaNWSIcons,
     plausableDomain,
     plausableEnabled,
+    presentation,
     slackURL,
+    title,
     twitterURL,
     webSiteURL
   },
@@ -249,8 +254,57 @@ module.exports = {
     { src: '~/plugins/web-workers', ssr: false }
   ],
 
+  /*
+   ** Nuxt routes
+   ** See https://nuxtjs.org/api//configuration-router
+   */
   router: {
-    middleware: ['auth', 'ability']
+    middleware: ['auth', 'ability'],
+    extendRoutes(routes, resolve) {
+      if (presentation === 'dendra') return
+
+      // Find the Dendra default page for each alternate presentation page
+      // example: "-about-cuahsi.vue" -> "about.vue". The "-" ensures that routes are hidden during default presentation
+      const presentationRoutes = glob
+        .sync(`src/pages/**/-*${presentation}.vue`)
+        .map(fullPath => {
+          return fullPath
+            .replace('src/pages/', '/')
+            .replace('-', '') // ignored pages in nuxt are prefixed with "-"
+            .replace('_', ':') // dynamic nuxt pages are prefixed with "_" but the routes are stored with ":"
+            .replace(`-${presentation}.vue`, '') // custom presentations are postfixed with the presentation name
+        })
+      const presentationIndexRoutes = presentationRoutes.filter(route =>
+        route.includes('index')
+      )
+
+      // Create Nuxt alias for each of the alternate presentations
+      routes = routes.map(route => {
+        if (presentationRoutes.includes(route.path)) {
+          const dirs = route.path.split('/')
+          const pageName = dirs.pop()
+          const rest = dirs.join('/')
+          route.alias = `${rest}/-${pageName}-${presentation}`
+          const component = `src/pages/${route.alias}.vue`.replace(':', '_')
+          route.component = resolve(__dirname, component)
+        } else {
+          // Check if the route is an index
+          presentationIndexRoutes.forEach(presentationRoute => {
+            if (presentationRoute.replace('/index', '') === route.path) {
+              route.alias = `${route.path}/-index-${presentation}`
+              const component = `src/pages/${route.alias}.vue`.replace(':', '_')
+              route.component = resolve(__dirname, component)
+            }
+          })
+        }
+        // Check if the base index needs to be aliased
+        if (route.path === '/' && presentationIndexRoutes.includes('/index')) {
+          route.alias = `/-index-${presentation}`
+          route.component = resolve(__dirname, `src/pages${route.alias}.vue`)
+        }
+        return route
+      })
+    }
   },
 
   /*
@@ -258,8 +312,8 @@ module.exports = {
    ** See https://nuxtjs.org/api/configuration-dir
    */
   dir: {
-    assets: 'assets/dendra',
-    static: 'static/dendra'
+    assets: 'assets/cuahsi',
+    static: 'static/cuahsi'
   },
 
   /*

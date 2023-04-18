@@ -4,7 +4,7 @@
       <v-col>
         <v-img
           :max-height="$vuetify.breakpoint.smAndUp ? 540 : undefined"
-          :src="require('@/assets/dendra/angelo-reserve.jpg')"
+          :src="require('@/assets/cuahsi/water-drop.jpg')"
           aspect-ratio="1.5"
           class="d-flex align-center"
           gradient="to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.1)"
@@ -15,13 +15,12 @@
               <v-col>
                 <v-img
                   :max-width="$vuetify.breakpoint.smAndUp ? 350 : 245"
-                  :src="require('@/assets/dendra/dendra-logo.svg')"
-                  aspect-ratio="4"
+                  :src="require('@/assets/cuahsi/his-logo.png')"
                   width="100%"
                 />
 
                 <h4 class="text-h5 text-sm-h4 white--text mt-2">
-                  Sensor Observatory Curation
+                  Hydrologic information system
                 </h4>
               </v-col>
             </v-row>
@@ -29,13 +28,11 @@
             <v-row>
               <v-col cols="12" lg="8">
                 <div class="text-body-2 text-sm-body-1 white--text">
-                  Dendra is a cyber-infrastructure project for real-time sensor
-                  data storage, retrieval, management, and curation. It is a
-                  cloud-based, multi-organizational system, designed to support
-                  massive permanent monitoring efforts. The name is derived from
-                  dendritic networks, such as river networks or tree roots.
-                  Environmental monitoring performs in a similar manner, pulling
-                  data from the earth’s surface to a single&nbsp;location.
+                  The CUAHSI Hydrologic Information System (HIS) is an
+                  internet-based system for sharing hydrologic data. It is
+                  comprised of databases and servers, connected through web
+                  services, to client applications, allowing for the
+                  publication, discovery and access of data.
                 </div>
               </v-col>
             </v-row>
@@ -46,29 +43,14 @@
                   <v-container fluid>
                     <v-row>
                       <v-col>
-                        <div class="caption white--text mb-2">Hosted on</div>
+                        <div class="white--text mb-2">Powered by</div>
 
-                        <a href="https://access-ci.org/" target="_blank">
+                        <a href="https://dendra.science/" target="_blank">
                           <v-img
-                            :src="require('@/assets/dendra/access-logo.png')"
+                            :src="require('@/assets/cuahsi/dendra-logo.svg')"
                             contain
-                            width="180"
-                          />
-                        </a>
-                      </v-col>
-
-                      <v-col>
-                        <div class="caption white--text mb-2">
-                          NSF EarthCube funded
-                        </div>
-
-                        <a href="https://www.earthcube.org/" target="_blank">
-                          <v-img
-                            :src="
-                              require('@/assets/dendra/EarthCube-NewWhite-notag.png')
-                            "
-                            contain
-                            width="180"
+                            width="100"
+                            max-height="180"
                           />
                         </a>
                       </v-col>
@@ -95,7 +77,7 @@
                 >
                 <v-card-text>
                   Our Station Widget is designed to display current and forecast
-                  conditions for any station on Dendra. It is customizable and
+                  conditions for any station on HIS. It is customizable and
                   easily embedded in any website by just pasting the HTML in any
                   place you would like the widget to appear.
                 </v-card-text>
@@ -112,7 +94,7 @@
               <h5 class="headline mb-2">Community</h5>
 
               <p class="body-1">
-                Dendra is an open source project. All code can be found on
+                HIS is an open source project. All code can be found on
                 <a :href="githubURL" target="_blank">GitHub</a>. Please feel
                 free to report any bugs, feature requests, or issues in the
                 <a :href="`${githubURL}/issues/issues`" target="_blank"
@@ -154,7 +136,7 @@
               <h5 class="headline mb-2">Maintenance</h5>
 
               <p class="body-1">
-                We may need to take Dendra offline for software upgrades,
+                We may need to take HIS offline for software upgrades,
                 maintenance and testing. Our regularly scheduled maintenance
                 window is between 8 PM and 10 PM PST daily.
               </p>
@@ -170,51 +152,11 @@
           <v-row>
             <v-col
               ><h5 class="headline">
-                Organizations on Dendra
+                Organizations on HIS
                 <nuxt-link class="body-2 ml-2" to="/orgs">View list</nuxt-link>
               </h5></v-col
             >
           </v-row>
-
-          <feathers-vuex-find
-            v-slot="{ items: organizations }"
-            :query="{
-              is_enabled: true,
-              is_hidden: false,
-              $sort: { sort_value: 1, name: 1 }
-            }"
-            service="organizations"
-          >
-            <v-row>
-              <v-col
-                v-for="organization in organizations"
-                :key="organization._id"
-                cols="auto"
-              >
-                <v-btn
-                  :to="{
-                    name: 'orgs-orgSlug',
-                    params: { orgSlug: organization.slug }
-                  }"
-                  ><v-icon
-                    :color="
-                      organization.general_config_resolved &&
-                      organization.general_config_resolved.brand_color
-                        ? `#${organization.general_config_resolved.brand_color}`
-                        : 'blue-grey darken-2'
-                    "
-                    left
-                    >{{ mdiMapMarker }}</v-icon
-                  ><span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 260px"
-                    >{{ organization.name }}</span
-                  ></v-btn
-                >
-              </v-col>
-            </v-row>
-          </feathers-vuex-find>
-
           <v-row>
             <v-col>
               <v-lazy>
@@ -277,7 +219,7 @@
         <v-container pa-7>
           <v-row>
             <v-col cols="12" md="8">
-              <h5 class="title white--text mb-2">Dendra.Science</h5>
+              <h5 class="title white--text mb-2">CUAHSI.HIS</h5>
 
               <p class="body-1 white--text">
                 <a
@@ -288,7 +230,7 @@
               </p>
 
               <p class="text-body-2 white--text">
-                Copyright © 2016-{{ year }} Dendra.Science. All rights reserved.
+                Copyright © 2016-{{ year }} CUAHSI.HIS. All rights reserved.
               </p>
             </v-col>
 
