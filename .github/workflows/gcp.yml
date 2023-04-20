@@ -1,0 +1,75 @@
+name: Build and Push to GCR
+
+on:
+  push:
+    # tags:
+    #   - *
+    # TODO: run on tag publish
+    branches: [ dev-devin ]
+
+# Environment variables available to all jobs and steps in this workflow
+#  GKE_KEY: ${{ secrets.GKE_KEY }} 
+env:
+  GITHUB_SHA: ${{ github.sha }} 
+  GITHUB_REF: ${{ github.ref }} 
+  IMAGE: dendra-web-ui
+  REGISTRY_HOSTNAME: gcr.io
+  PROJECT_ID: dendra-dev-345520
+  HOST_REGION: us-east4-docker.pkg.dev
+  REPOSITORY: dendra-his-ui
+
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, and Publish
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GKE_KEY }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+
+    # Configure docker to use the gcloud command-line tool as a credential helper
+    - run: |
+        # Set up docker to authenticate
+        # via gcloud command-line tool.
+        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker us-east4-docker.pkg.dev
+
+    # Build the Docker image
+    - name: Build
+      run: |
+        export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+        echo $TAG
+        docker build -t $IMAGE:latest \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          -f Dockerfile-cuahsi .
+
+    # Push the Docker image to Google Container Registry
+    # - name: Publish
+    #   run: |
+    #     export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+    #     echo $TAG
+    #     docker tag $IMAGE:latest $REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:latest
+    #     docker tag $IMAGE:latest $REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:$TAG
+    #     docker push $REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:latest
+    #     docker push $REGISTRY_HOSTNAME/$PROJECT_ID/$IMAGE:$TAG
+    
+    # Push the Docker image to Google Artifact Registry
+    - name: Push Docker Image to Artifact Registry
+      run: |
+        export TAG=`echo $GITHUB_REF | awk -F/ '{print $NF}'`
+        echo $TAG
+        docker tag $IMAGE:latest $HOST_REGION/$PROJECT_ID/$REPOSITORY/$IMAGE:latest
+        docker tag $IMAGE:latest $HOST_REGION/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG
+        docker push $HOST_REGION/$PROJECT_ID/$REPOSITORY/$IMAGE:latest
+        docker push $HOST_REGION/$PROJECT_ID/$REPOSITORY/$IMAGE:$TAG
