@@ -67,7 +67,8 @@ import {
   mdiTag,
   mdiOfficeBuilding,
   mdiViewGrid,
-  mdiAccountGroup
+  mdiAccountGroup,
+  mdiWalletMembership
 } from '@mdi/js'
 
 export default {
@@ -207,6 +208,12 @@ export default {
               icon: mdiAccountGroup,
               title: 'Organizations',
               to: '/organizations'
+            },
+            {
+              can: ['create', 'memberships'],
+              icon: mdiWalletMembership,
+              title: 'Memberships',
+              to: '/memberships'
             }
           ]
         }
