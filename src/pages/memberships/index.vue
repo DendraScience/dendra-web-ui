@@ -31,7 +31,9 @@
                 :selected-organization="selectedOrganization"
                 :selected-person="selectedPerson"
                 :selected-roles="
-                  selectedRoles && selectedRoles.filter(e => e !== 'none')
+                  selectedRoles &&
+                  selectedRoles.length &&
+                  selectedRoles.filter(e => e !== 'none')
                 "
               />
             </v-card>
@@ -114,12 +116,14 @@ export default {
       this.selectedOrganization = null
       this.selectedPerson = person
     },
+
     handleorganization(org) {
       this.selectedPerson = null
       this.selectedOrganization = org
     },
+
     handleRoles(roles) {
-      this.selectedRoles = roles
+      this.selectedRoles = roles && roles.length ? roles : null
     }
   }
 }

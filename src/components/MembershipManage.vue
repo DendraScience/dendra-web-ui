@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="selectedOrganization || selectedPerson" fluid>
+  <v-container v-if="selectedOrganization || selectedPerson" fluid class="pt-0">
     <v-row dense>
       <v-col>
         <v-text-field
@@ -56,7 +56,8 @@
               </template>
               <v-list>
                 <v-list-item
-                  v-for="(role, index) in item.role
+                  v-for="(role, index) in item.role &&
+                  $canRemove('memberships', item.membership_id)
                     ? rolesOption
                     : rolesOption.filter(r => r !== 'none')"
                   :key="index"
@@ -85,7 +86,7 @@
       <v-row dense>
         <v-col>
           <v-alert type="info"
-            >Please select organization or person to memberships manage</v-alert
+            >Please select organization or person to manage memberships</v-alert
           >
         </v-col>
       </v-row>
@@ -158,12 +159,13 @@ export default {
     selectedOrganization: {
       handler() {
         if (this.selectedOrganization) {
-          this.membershipsOuterJoin()
+          this.membershipsOrgOuterJoin()
         }
       },
       immediate: true,
       deep: true
     },
+
     selectedPerson: {
       handler() {
         if (this.selectedPerson) {
@@ -173,15 +175,17 @@ export default {
       immediate: true,
       deep: true
     },
+
     selectedRoles: {
       handler() {
         if (this.selectedOrganization) {
-          this.membershipsOuterJoin()
+          this.membershipsOrgOuterJoin()
         } else {
           this.membershipsPersonOuterJoin()
         }
       }
     },
+
     searchDebounce(newValue) {
       this.debouncedSearch(newValue)
     }
@@ -206,7 +210,7 @@ export default {
       removeMemberships: 'memberships/remove'
     }),
 
-    async membershipsOuterJoin() {
+    async membershipsOrgOuterJoin() {
       const { personsList, selectedOrganization, selectedRoles } = this
       const membersArray = []
 
@@ -236,6 +240,7 @@ export default {
           ) {
             membersArray.push(data)
           }
+
           if (!person && selectedRoles.includes('none')) {
             membersArray.push(data)
           }
@@ -273,7 +278,7 @@ export default {
         if (this.selectedPerson) {
           this.membershipsPersonOuterJoin()
         } else {
-          this.membershipsOuterJoin()
+          this.membershipsOrgOuterJoin()
         }
       }
     },
@@ -307,6 +312,7 @@ export default {
           ) {
             membersArray.push(data)
           }
+
           if (!member && selectedRoles.includes('none')) {
             membersArray.push(data)
           }

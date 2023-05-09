@@ -84,5 +84,24 @@ export default {
       persons: 'persons/list'
     })
   }
+
+  // Feature for router query  eg: memberships?personId=63f6396b4c8684b9cea8f40f
+  // mounted() {
+  //   const { personId, organizationId, roles } = this.$route.query
+
+  //   if (organizationId) {
+  //     const organization = this.organizations.find(
+  //       org => org._id === organizationId
+  //     )
+  //     this.$emit('handleorganization', organization)
+  //   } else if (personId) {
+  //     const person = this.persons.find(per => per._id === personId)
+  //     this.$emit('handleperson', person)
+  //   }
+
+  //   if (roles) {
+  //     this.$emit('handleRoles', Array.isArray(roles) ? roles : [roles])
+  //   }
+  // }
 }
 </script>
