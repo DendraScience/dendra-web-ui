@@ -11,7 +11,7 @@
               <v-container fluid>
                 <v-row dense>
                   <v-col>
-                    <h2 class="headline">Memberships</h2>
+                    <h2 class="headline">All memberships</h2>
                   </v-col>
                 </v-row>
 
