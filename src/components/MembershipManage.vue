@@ -56,8 +56,7 @@
               </template>
               <v-list>
                 <v-list-item
-                  v-for="(role, index) in item.role &&
-                  $canRemove('memberships', item.membership_id)
+                  v-for="(role, index) in item.role
                     ? rolesOption
                     : rolesOption.filter(r => r !== 'none')"
                   :key="index"
@@ -329,6 +328,11 @@ export default {
     async handleRemove(item) {
       try {
         await this.removeMemberships([item.membership_id])
+        if (this.selectedOrganization) {
+          this.membershipsOrgOuterJoin()
+        } else {
+          this.membershipsPersonOuterJoin()
+        }
       } catch (err) {
         this.$bus.$emit('status', { type: 'error', message: err.message })
       }
