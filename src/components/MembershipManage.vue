@@ -284,23 +284,27 @@ export default {
 
     async membershipsPersonOuterJoin() {
       const { selectedPerson, organizationList, selectedRoles } = this
+
+      const ablityOrg = organizationList.filter(item =>
+        this.$canCreate('memberships', item)
+      )
       const membersArray = []
 
       const membersList = await this.fetchMemberships({
         query: { person_id: selectedPerson._id }
       })
 
-      for (let i = 0; i < organizationList.length; i++) {
+      for (let i = 0; i < ablityOrg.length; i++) {
         const member = membersList.data.find(
-          mem => mem.organization_id === organizationList[i]._id
+          mem => mem.organization_id === ablityOrg[i]._id
         )
 
         const data = {
           role: member && member.roles && member.roles[0],
           membership_id: member && member._id,
-          organization_id: organizationList[i] && organizationList[i]._id,
+          organization_id: ablityOrg[i] && ablityOrg[i]._id,
           person_id: selectedPerson._id,
-          ...organizationList[i]
+          ...ablityOrg[i]
         }
 
         if (selectedRoles && selectedRoles.length) {

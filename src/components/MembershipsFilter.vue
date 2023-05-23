@@ -10,7 +10,7 @@
               : `${organization.name} (disabled)`
         "
         label="Organizations"
-        :items="organizations"
+        :items="organizationList"
         chips
         deletable-chips
         dense
@@ -82,7 +82,13 @@ export default {
     ...mapGetters({
       organizations: 'organizations/list',
       persons: 'persons/list'
-    })
+    }),
+
+    organizationList() {
+      return this.organizations.filter(item =>
+        this.$canCreate('memberships', item)
+      )
+    }
   }
 
   // Feature for router query  eg: memberships?personId=63f6396b4c8684b9cea8f40f
