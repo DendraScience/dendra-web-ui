@@ -6,8 +6,8 @@
         :item-text="
           organization =>
             organization.is_enabled
-              ? organization.name
-              : `${organization.name} (disabled)`
+              ? organization.full_name
+              : `${organization.full_name} (disabled)`
         "
         label="Organizations"
         :items="organizationList"
