@@ -11,22 +11,22 @@
               <v-container fluid>
                 <v-row dense>
                   <v-col>
-                    <h2 class="headline">All memberships</h2>
+                    <h2 class="headline">Current memberships</h2>
                   </v-col>
                 </v-row>
 
-                <memberships-filter
+                <membership-filters
                   :selected-organization.sync="selectedOrganization"
                   :selected-person.sync="selectedPerson"
                   :selected-roles="selectedRoles"
                   :roles-option="rolesOption"
-                  @handleorganization="handleorganization"
-                  @handleperson="handleperson"
-                  @handleRoles="handleRoles"
+                  @handle-organization="handleOrganization"
+                  @handle-person="handlePerson"
+                  @handle-roles="handleRoles"
                 />
               </v-container>
 
-              <memberships-search
+              <membership-search
                 show-link
                 :selected-organization="selectedOrganization"
                 :selected-person="selectedPerson"
@@ -48,14 +48,14 @@
                   </v-col>
                 </v-row>
 
-                <memberships-filter
+                <membership-filters
                   :selected-organization.sync="selectedOrganization"
                   :selected-person.sync="selectedPerson"
                   :selected-roles="selectedRoles"
                   :roles-option="rolesOption"
-                  @handleorganization="handleorganization"
-                  @handleperson="handleperson"
-                  @handleRoles="handleRoles"
+                  @handle-organization="handleOrganization"
+                  @handle-person="handlePerson"
+                  @handle-roles="handleRoles"
                 />
               </v-container>
 
@@ -76,18 +76,26 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import MembershipsFilter from '@/components/MembershipsFilter'
-import MembershipsSearch from '@/components/MembershipsSearch'
+import routeQuery from '@/mixins/route-query'
+import MembershipFilters from '@/components/MembershipFilters'
+import MembershipSearch from '@/components/MembershipSearch'
 import MembershipManage from '@/components/MembershipManage'
 
 export default {
   components: {
-    MembershipsFilter,
-    MembershipsSearch,
+    MembershipFilters,
+    MembershipSearch,
     MembershipManage
   },
 
-  middleware: ['no-auth-redirect-home', 'fetch-organizations', 'fetch-persons'],
+  mixins: [routeQuery],
+
+  middleware: [
+    'no-org',
+    'no-auth-redirect-home',
+    'fetch-organizations',
+    'fetch-persons'
+  ],
 
   data: () => ({
     tabIndex: 0,
@@ -98,6 +106,8 @@ export default {
 
   computed: {
     ...mapGetters({
+      getOrganization: 'organizations/get',
+      getPerson: 'persons/get',
       organizations: 'organizations/list',
       persons: 'persons/list'
     }),
@@ -111,13 +121,25 @@ export default {
     }
   },
 
+  mounted() {
+    const { queryOrganizationId, queryPersonId } = this
+
+    if (queryOrganizationId) {
+      const organization = this.getOrganization(queryOrganizationId)
+      if (organization) this.selectedOrganization = organization
+    } else if (queryPersonId) {
+      const person = this.getPerson(queryPersonId)
+      if (person) this.selectedPerson = person
+    }
+  },
+
   methods: {
-    handleperson(person) {
+    handlePerson(person) {
       this.selectedOrganization = null
       this.selectedPerson = person
     },
 
-    handleorganization(org) {
+    handleOrganization(org) {
       this.selectedPerson = null
       this.selectedOrganization = org
     },

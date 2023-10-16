@@ -9,6 +9,8 @@ export default {
         query.annotationId ||
         query.companyId ||
         query.datastreamId ||
+        query.organizationId ||
+        query.personId ||
         query.stationId ||
         query.thingTypeId ||
         query.isEnabled !== undefined ||
@@ -38,6 +40,14 @@ export default {
 
     queryIsHidden() {
       return queryIs(this.$route.query.isHidden)
+    },
+
+    queryOrganizationId() {
+      return this.$route.query.organizationId
+    },
+
+    queryPersonId() {
+      return this.$route.query.personId
     },
 
     queryScheme() {

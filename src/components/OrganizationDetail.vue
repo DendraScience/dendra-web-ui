@@ -71,7 +71,7 @@
                       v-model.trim="value.url"
                       :error-messages="errors"
                       :readonly="!editing"
-                      label="Url"
+                      label="URL"
                       required
                     ></v-text-field>
                   </ValidationProvider>
@@ -89,6 +89,12 @@
               <standard-identifier v-if="!editing" :value="value" />
             </v-container>
           </v-card>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="!editing">
+        <v-col cols="12" md="6">
+          <membership-total :organization-id="value._id" hide-actions />
         </v-col>
       </v-row>
 
@@ -183,6 +189,7 @@ import DetailExternalRefs from '@/components/DetailExternalRefs'
 import DetailGeneralConfig from '@/components/DetailGeneralConfig'
 import ExternalReferenceFields from '@/components/ExternalReferenceFields'
 import GeneralConfigFields from '@/components/GeneralConfigFields'
+import MembershipTotal from '@/components/MembershipTotal'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
@@ -196,6 +203,7 @@ export default {
     DetailGeneralConfig,
     ExternalReferenceFields,
     GeneralConfigFields,
+    MembershipTotal,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,

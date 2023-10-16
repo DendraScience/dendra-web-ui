@@ -57,6 +57,7 @@ import {
   mdiChartMultiple,
   mdiChartTimelineVariant,
   mdiCheckCircle,
+  mdiDomain,
   mdiInformation,
   mdiFileTree,
   mdiFormatPaint,
@@ -194,18 +195,17 @@ export default {
           ]
         },
         {
-          header: 'Admin',
+          header: 'Management',
           items: [
             {
               can: ['create', 'users'],
               icon: mdiAccountGroup,
               title: 'Users',
-              to: '/users',
-              org: false
+              to: '/users'
             },
             {
               can: ['create', 'organizations'],
-              icon: mdiAccountGroup,
+              icon: mdiDomain,
               title: 'Organizations',
               to: '/organizations'
             },

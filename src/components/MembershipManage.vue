@@ -6,7 +6,7 @@
           v-model.trim="searchDebounce"
           :append-icon="mdiMagnify"
           :label="
-            selectedOrganization ? 'Filter persons' : 'Filter organization'
+            selectedOrganization ? 'Filter users' : 'Filter organizations'
           "
           filled
           flat
@@ -85,7 +85,8 @@
       <v-row dense>
         <v-col>
           <v-alert type="info"
-            >Please select organization or person to manage memberships</v-alert
+            >Please select an organization or user to manage
+            memberships.</v-alert
           >
         </v-col>
       </v-row>
@@ -135,7 +136,7 @@ export default {
             0,
             {
               align: 'left',
-              text: 'Person',
+              text: 'User',
               value: 'name'
             },
             {

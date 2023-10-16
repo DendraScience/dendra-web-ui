@@ -108,18 +108,26 @@
           </v-card>
         </v-col>
       </v-row>
+
+      <v-row v-if="!editing">
+        <v-col cols="12" md="6">
+          <membership-total :person-id="value.person_id" hide-actions />
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>
 
 <script>
 import { ValidationProvider } from 'vee-validate'
+import MembershipTotal from '@/components/MembershipTotal'
 import StandardAudit from '@/components/StandardAudit'
 import StandardIdentifier from '@/components/StandardIdentifier'
 import StandardOptions from '@/components/StandardOptions'
 
 export default {
   components: {
+    MembershipTotal,
     StandardAudit,
     StandardIdentifier,
     StandardOptions,

@@ -9,7 +9,7 @@
     <v-row>
       <v-col>
         <ValidationObserver ref="observer">
-          <organization-details v-model="instance" :editing="editing" />
+          <organization-detail v-model="instance" :editing="editing" />
         </ValidationObserver>
       </v-col>
     </v-row>
@@ -34,11 +34,11 @@ import { mapActions, mapGetters, mapState, mapMutations } from 'vuex'
 import _merge from 'lodash/merge'
 import { ValidationObserver } from 'vee-validate'
 import { defaultOrganization, patchData } from '@/lib/edit'
-import OrganizationDetails from '@/components/OrganizationDetails'
+import OrganizationDetail from '@/components/OrganizationDetail'
 
 export default {
   components: {
-    OrganizationDetails,
+    OrganizationDetail,
     ValidationObserver
   },
 

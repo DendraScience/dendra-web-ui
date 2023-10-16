@@ -20,7 +20,7 @@
         hide-no-data
         return-object
         small-chips
-        @change="$emit('handleorganization', $event)"
+        @change="$emit('handle-organization', $event)"
       ></v-autocomplete>
     </v-col>
 
@@ -33,7 +33,7 @@
               ? person.name + ' | ' + person.email
               : `${person.name} (disabled)`
         "
-        label="Persons"
+        label="Users"
         :items="persons"
         chips
         deletable-chips
@@ -44,7 +44,7 @@
         hide-no-data
         return-object
         small-chips
-        @change="$emit('handleperson', $event)"
+        @change="$emit('handle-person', $event)"
       >
       </v-autocomplete>
     </v-col>
@@ -62,7 +62,7 @@
         hide-details
         multiple
         small-chips
-        @change="$emit('handleRoles', $event)"
+        @change="$emit('handle-roles', $event)"
       ></v-select>
     </v-col>
   </v-row>
@@ -99,14 +99,14 @@ export default {
   //     const organization = this.organizations.find(
   //       org => org._id === organizationId
   //     )
-  //     this.$emit('handleorganization', organization)
+  //     this.$emit('handle-organization', organization)
   //   } else if (personId) {
   //     const person = this.persons.find(per => per._id === personId)
-  //     this.$emit('handleperson', person)
+  //     this.$emit('handle-person', person)
   //   }
 
   //   if (roles) {
-  //     this.$emit('handleRoles', Array.isArray(roles) ? roles : [roles])
+  //     this.$emit('handle-roles', Array.isArray(roles) ? roles : [roles])
   //   }
   // }
 }

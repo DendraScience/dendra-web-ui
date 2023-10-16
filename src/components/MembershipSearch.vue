@@ -84,7 +84,7 @@ export default {
       },
       {
         align: 'left',
-        text: 'Person',
+        text: 'User',
         value: 'person'
       },
       {

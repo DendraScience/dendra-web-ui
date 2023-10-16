@@ -65,7 +65,8 @@ import {
   mdiTwitter,
   mdiViewAgenda,
   mdiViewDashboard,
-  mdiViewList
+  mdiViewList,
+  mdiWalletMembership
 } from '@mdi/js'
 
 Vue.mixin({
@@ -136,6 +137,7 @@ Vue.mixin({
     mdiViewAgenda,
     mdiViewDashboard,
     mdiViewList,
+    mdiWalletMembership,
 
     githubURL: process.env.githubURL,
     infoEmail: process.env.infoEmail,
