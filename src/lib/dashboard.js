@@ -24,6 +24,17 @@ export function newForecast() {
   }
 }
 
+export function newRainfall() {
+  return {
+    today: null,
+    yesterday: null,
+    total7Days: null,
+    total14Days: null,
+    total30Days: null,
+    wyToDate: null
+  }
+}
+
 export const unitsData = {
   imp(getUnitText) {
     return {

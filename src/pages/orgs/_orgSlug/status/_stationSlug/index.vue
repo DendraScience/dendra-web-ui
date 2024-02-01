@@ -221,7 +221,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="station.geo" no-gutters>
+    <v-row no-gutters>
       <v-col>
         <forecast-conditions :units="units" :value="forecast">
           <template #util>
@@ -232,6 +232,12 @@
             >
           </template>
         </forecast-conditions>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="station.geo" no-gutters>
+      <v-col>
+        <rainfall-totals :units="units" :value="rainfall" />
       </v-col>
     </v-row>
 
@@ -258,6 +264,7 @@ import stationDashboard from '@/mixins/station-dashboard'
 import CurrentConditions from '@/components/CurrentConditions'
 import DatastreamCharts from '@/components/DatastreamCharts'
 import ForecastConditions from '@/components/ForecastConditions'
+import RainfallTotals from '@/components/RainfallTotals'
 import StationTimeGeoList from '@/components/StationTimeGeoList'
 
 export default {
@@ -265,6 +272,7 @@ export default {
     CurrentConditions,
     DatastreamCharts,
     ForecastConditions,
+    RainfallTotals,
     StationTimeGeoList
   },
 
@@ -766,7 +774,15 @@ export default {
     loadSeries() {
       const id =
         (this.id = `stationDashboard-${new Date().getTime()}-${idRandom()}`)
-      const { datastreamsByKey, today, twoWeeks, waterYear, yesterday } = this
+      const {
+        datastreamsByKey,
+        today,
+        oneWeek,
+        twoWeeks,
+        thirtyDays,
+        waterYear,
+        yesterday
+      } = this
 
       this.units = unitsData[this.somId](this.getUnitText)
       this.charts = []
@@ -813,6 +829,21 @@ export default {
       this.fetchCumulativeRainfall(
         `${id}-rainfallYesterday`,
         yesterday,
+        datastreamsByKey
+      )
+      this.fetchCumulativeRainfall(
+        `${id}-rainfallOneWeek`,
+        oneWeek,
+        datastreamsByKey
+      )
+      this.fetchCumulativeRainfall(
+        `${id}-rainfallTwoWeeks`,
+        twoWeeks,
+        datastreamsByKey
+      )
+      this.fetchCumulativeRainfall(
+        `${id}-rainfallThirtyDays`,
+        thirtyDays,
         datastreamsByKey
       )
       this.fetchForecast(`${id}-forecast`, today, datastreamsByKey)

@@ -2,7 +2,7 @@ import { mapGetters, mapState } from 'vuex'
 import moment from 'moment'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
-import { newCurrent, newForecast } from '@/lib/dashboard'
+import { newCurrent, newForecast, newRainfall } from '@/lib/dashboard'
 
 export default {
   middleware: [
@@ -16,6 +16,7 @@ export default {
   data: () => ({
     current: newCurrent(),
     forecast: newForecast(),
+    rainfall: newRainfall(),
 
     datastreamsByKey: null,
 
@@ -82,11 +83,29 @@ export default {
       }
     },
 
+    oneWeek() {
+      const { stationTime: time } = this
+
+      return {
+        startTime: moment.utc(time).startOf('d').subtract(7, 'd').valueOf(),
+        untilTime: moment.utc(time).startOf('d').add(1, 'd').valueOf()
+      }
+    },
+
     twoWeeks() {
       const { stationTime: time } = this
 
       return {
         startTime: moment.utc(time).startOf('d').subtract(14, 'd').valueOf(),
+        untilTime: moment.utc(time).startOf('d').add(1, 'd').valueOf()
+      }
+    },
+
+    thirtyDays() {
+      const { stationTime: time } = this
+
+      return {
+        startTime: moment.utc(time).startOf('d').subtract(30, 'd').valueOf(),
         untilTime: moment.utc(time).startOf('d').add(1, 'd').valueOf()
       }
     },
@@ -314,7 +333,7 @@ export default {
     seriesFetchWorkerMessageHandler(event) {
       const { data } = event
       const { first, id, isFetching, last, query, series } = data
-      const { current, datastreamsByKey, forecast, station } = this
+      const { current, datastreamsByKey, forecast, rainfall, station } = this
 
       if (id === `${this.id}-airTemperature`) {
         if (isFetching === true) {
@@ -390,6 +409,8 @@ export default {
         if (isFetching === true) {
           current.rainfallToday = null
           current.wyPrecipToDate = null
+          rainfall.today = null
+          rainfall.wyToDate = null
           return
         }
 
@@ -403,6 +424,8 @@ export default {
             value: math.round(last.value - first.value, 4)
           })
           current.wyPrecipToDate = last
+          rainfall.today = current.rainfallToday
+          rainfall.wyToDate = current.wyPrecipToDate
           return
         }
       }
@@ -410,6 +433,7 @@ export default {
       if (id === `${this.id}-rainfallYesterday`) {
         if (isFetching === true) {
           current.rainfallYesterday = null
+          rainfall.yesterday = null
           return
         }
 
@@ -420,6 +444,64 @@ export default {
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
           current.rainfallYesterday = Object.assign({}, last, {
+            value: math.round(last.value - first.value, 4)
+          })
+          rainfall.yesterday = current.rainfallYesterday
+          return
+        }
+      }
+
+      if (id === `${this.id}-rainfallOneWeek`) {
+        if (isFetching === true) {
+          rainfall.total7Days = null
+          return
+        }
+
+        if (!(first && last)) return
+
+        if (
+          datastreamsByKey.cumulativePrecipitation &&
+          datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
+        ) {
+          rainfall.total7Days = Object.assign({}, last, {
+            value: math.round(last.value - first.value, 4)
+          })
+          return
+        }
+      }
+
+      if (id === `${this.id}-rainfallTwoWeeks`) {
+        if (isFetching === true) {
+          rainfall.total14Days = null
+          return
+        }
+
+        if (!(first && last)) return
+
+        if (
+          datastreamsByKey.cumulativePrecipitation &&
+          datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
+        ) {
+          rainfall.total14Days = Object.assign({}, last, {
+            value: math.round(last.value - first.value, 4)
+          })
+          return
+        }
+      }
+
+      if (id === `${this.id}-rainfallThirtyDays`) {
+        if (isFetching === true) {
+          rainfall.total30Days = null
+          return
+        }
+
+        if (!(first && last)) return
+
+        if (
+          datastreamsByKey.cumulativePrecipitation &&
+          datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
+        ) {
+          rainfall.total30Days = Object.assign({}, last, {
             value: math.round(last.value - first.value, 4)
           })
           return
