@@ -12,12 +12,15 @@
             <v-row dense>
               <v-col v-for="(item, index) in items" :key="index" cols="12" sm>
                 <v-card class="fill-height" dark flat>
-                  <v-card-title>
+                  <v-card-title class="subtitle-2">
                     {{ item.name }}
                   </v-card-title>
 
                   <v-card-text class="text-h5">
-                    {{ item.value | round('', 4) }} {{ item.unit.text }}
+                    {{ item.value | round('', 0) }}
+                    <small class="font-weight-light">{{
+                      item.unit && item.unit.text
+                    }}</small>
                   </v-card-text>
                 </v-card>
               </v-col>
