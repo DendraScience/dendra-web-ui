@@ -111,7 +111,12 @@ export default {
           if (last.point !== undefined)
             newMeasurement.lastSeenTime = last.point.t
           if (last.value !== undefined)
-            newMeasurement.value = math.round(last.value, 4)
+            newMeasurement.value = math.round(
+              last.value,
+              typeof newMeasurement.unit?.round === 'number'
+                ? newMeasurement.unit.round
+                : 4
+            )
         }
 
         return newMeasurement

@@ -60,7 +60,12 @@ export default {
         if (value && value[valueKey]) {
           const last = value[valueKey]
           if (last.value !== undefined)
-            newMeasurement.value = math.round(last.value, 4)
+            newMeasurement.value = math.round(
+              last.value,
+              typeof newMeasurement.unit?.round === 'number'
+                ? newMeasurement.unit.round
+                : 4
+            )
         }
 
         return newMeasurement

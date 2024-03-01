@@ -53,6 +53,7 @@ export const unitsData = {
         uomId: 'micromole-per-square-foot'
       },
       precipitation: {
+        round: 1,
         text: getUnitText('Inch'),
         uomId: 'inch'
       },
@@ -91,6 +92,7 @@ export const unitsData = {
         uomId: 'micromole-per-square-meter'
       },
       precipitation: {
+        round: 0,
         text: getUnitText('Millimeter'),
         uomId: 'millimeter'
       },

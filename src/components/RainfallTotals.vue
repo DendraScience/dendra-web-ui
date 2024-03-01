@@ -17,7 +17,7 @@
                   </v-card-title>
 
                   <v-card-text class="text-h5">
-                    {{ item.value | round('', 0) }}
+                    {{ item.value }}
                     <small class="font-weight-light">{{
                       item.unit && item.unit.text
                     }}</small>
