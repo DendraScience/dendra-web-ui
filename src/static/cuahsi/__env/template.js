@@ -2,6 +2,7 @@ window.__env = {}
 function initEnv(e) {
   e.apiPath = '$API_PATH'
   e.apiURI = '$API_URI'
+  e.apiRPC = '$API_RPC'
   e.googleMapsAPIKey = '$GOOGLE_MAPS_API_KEY'
   e.googleTrackingId = '$GOOGLE_TRACKING_ID'
   e.noaaNWSIcons = '$NOAA_NWS_ICONS_URL'

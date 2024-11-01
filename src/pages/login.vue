@@ -50,13 +50,17 @@
             >
           </form>
         </ValidationObserver>
+
+        <v-btn :loading="loading" color="primary" @click="loginCanopy"
+          >Log In with Dendra Cloud</v-btn
+        >
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
@@ -95,19 +99,30 @@ export default {
 
   methods: {
     ...mapActions('auth', ['authenticate']),
+    ...mapActions('session', ['broadcastLogin']),
+    ...mapMutations({
+      clearAll: 'ability/clearAll',
+      setLocal: 'session/setLocal'
+    }),
+
+    loginCanopy() {
+      window.location.assign(this.canopyLoginURL)
+    },
 
     async submit() {
       if (!(await this.$refs.observer.validate())) return
 
       this.loading = true
 
+      this.setLocal(true)
       return this.authenticate({
         strategy: 'local',
         email: this.email.toLowerCase(),
         password: this.password
       })
         .then(() => {
-          this.$store.commit('ability/clearAll')
+          this.clearAll()
+          this.broadcastLogin()
           this.$tracker.event('loginSuccess')
           this.$router.push({ name: 'orgs' })
         })

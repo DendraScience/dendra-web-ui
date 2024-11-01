@@ -1,9 +1,11 @@
+import canopyPluginInit from './canopy-module'
 import passportPluginInit from './passport-module'
 import sessionPluginInit from './session-module'
 
-export default feathersClient => {
+export default (feathersClient, api) => {
   return {
-    passport: passportPluginInit(feathersClient),
-    session: sessionPluginInit(feathersClient)
+    canopy: canopyPluginInit(feathersClient, api),
+    passport: passportPluginInit(feathersClient, api),
+    session: sessionPluginInit(feathersClient, api)
   }
 }

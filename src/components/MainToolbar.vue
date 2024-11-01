@@ -122,13 +122,17 @@ export default {
     ...mapActions('auth', ['logout']),
 
     ...mapMutations({
+      setLocal: 'session/setLocal',
       toggleDownloadDrawer: 'ux/toggleDownloadDrawer',
       toggleMainDrawer: 'ux/toggleMainDrawer'
     }),
 
-    logoutRedirect() {
-      // Force Vuex reset with $router.go
-      this.logout().then(() => this.$router.go())
+    async logoutRedirect() {
+      // Native logout
+      this.setLocal(true)
+      await this.logout()
+
+      window.location.assign(this.canopyLogoutURL)
     }
   }
 }

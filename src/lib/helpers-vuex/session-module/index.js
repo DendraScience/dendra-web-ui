@@ -1,19 +1,21 @@
 import setupState from './state'
 // import setupGetters from './getters'
 import setupMutations from './mutations'
-// import setupActions from './actions'
+import setupActions from './actions'
 
 const defaults = {
   namespace: 'session',
   state: {}, // for custom state
   // getters: {}, // for custom getters
-  mutations: {} // for custom mutations
-  // actions: {} // for custom actions
+  mutations: {}, // for custom mutations
+  actions: {} // for custom actions
 }
 
 export default feathersClient => {
   if (!feathersClient || !feathersClient.service) {
-    throw new Error('You must pass a Feathers Client instance to helpers-vuex')
+    throw new Error(
+      'You must pass a Feathers Client instance to session module'
+    )
   }
 
   return function createPlugin(options) {
@@ -25,10 +27,12 @@ export default feathersClient => {
       )
     }
 
+    const sessionChannel = new BroadcastChannel('session')
+
     const defaultState = setupState(options)
     // const defaultGetters = setupGetters()
     const defaultMutations = setupMutations(feathersClient)
-    // const defaultActions = setupActions(feathersClient)
+    const defaultActions = setupActions(feathersClient, sessionChannel)
 
     return store => {
       const { namespace } = options
@@ -37,8 +41,8 @@ export default feathersClient => {
         namespaced: true,
         state: Object.assign({}, defaultState, options.state),
         // getters: Object.assign({}, defaultGetters, options.getters),
-        mutations: Object.assign({}, defaultMutations, options.mutations)
-        // actions: Object.assign({}, defaultActions, options.actions)
+        mutations: Object.assign({}, defaultMutations, options.mutations),
+        actions: Object.assign({}, defaultActions, options.actions)
       })
 
       feathersClient.on('authenticated', () =>
@@ -50,6 +54,10 @@ export default feathersClient => {
       feathersClient
         .service('users')
         .on('token-expired', () => store.commit(`${namespace}/setTokenExpired`))
+
+      sessionChannel.onmessage = ({ data }) => {
+        if (data === 'login' || data === 'logout') window.location.reload()
+      }
     }
   }
 }

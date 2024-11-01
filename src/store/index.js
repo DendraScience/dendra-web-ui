@@ -2,13 +2,14 @@ import Vue from 'vue'
 import feathersVuex from 'feathers-vuex'
 import feathersClient from '@/lib/feathers-client'
 import helpersVuex from '@/lib/helpers-vuex'
+import api from '@/lib/api'
 
 const { service, auth, FeathersVuex } = feathersVuex(feathersClient, {
   idField: '_id',
   replaceItems: true,
   whitelist: ['$in', '$and']
 })
-const { passport, session } = helpersVuex(feathersClient)
+const { canopy, passport, session } = helpersVuex(feathersClient, api)
 
 Vue.use(FeathersVuex)
 
@@ -45,6 +46,7 @@ export const plugins = [
 
   auth({ userService: 'users' }),
 
+  canopy(),
   passport(),
   session()
 ]

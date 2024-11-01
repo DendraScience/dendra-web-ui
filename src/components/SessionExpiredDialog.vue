@@ -63,7 +63,7 @@
 
 <script>
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -106,13 +106,22 @@ export default {
 
   methods: {
     ...mapActions('auth', ['authenticate', 'logout']),
+    ...mapMutations({
+      setLocal: 'session/setLocal'
+    }),
 
-    logoutRedirect() {
-      // Force Vuex reset with $router.go
-      this.logout().then(() => this.$router.go())
+    async logoutRedirect() {
+      // Native logout
+      this.setLocal(true)
+      await this.logout()
+
+      window.location.assign(this.canopyLogoutURL)
     },
 
     submit() {
+      // Maintain JWT in local storage
+      this.setLocal(true)
+
       return this.authenticate({
         strategy: 'local',
         email: this.auth.user.email,

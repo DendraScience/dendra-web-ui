@@ -6,6 +6,11 @@ const description =
 
 const apiPath = process.env.API_PATH
 const apiURI = process.env.API_URI
+const apiRPC = process.env.API_RPC
+const canopyLoginURL =
+  process.env.CANOPY_LOGIN_URL || 'http://localhost:8080/login'
+const canopyLogoutURL =
+  process.env.CANOPY_LOGOUT_URL || 'http://localhost:8080/logout'
 const githubURL = 'https://github.com/DendraScience'
 const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
 const googleTrackingId = process.env.GOOGLE_TRACKING_ID
@@ -74,6 +79,9 @@ module.exports = {
   env: {
     apiPath,
     apiURI,
+    apiRPC,
+    canopyLoginURL,
+    canopyLogoutURL,
     datapointsMax: 288 * 365 * 10 * 4, // 10 years of 5 minute data for 4 datastreams
     githubURL,
     googleMapsAPIKey,

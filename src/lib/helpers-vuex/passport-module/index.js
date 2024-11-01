@@ -1,19 +1,21 @@
 // import setupState from './state'
-// import setupGetters from './getters'
+import setupGetters from './getters'
 // import setupMutations from './mutations'
 import setupActions from './actions'
 
 const defaults = {
   namespace: 'passport',
   // state: {}, // for custom state
-  // getters: {}, // for custom getters
+  getters: {}, // for custom getters
   // mutations: {}, // for custom mutations
   actions: {} // for custom actions
 }
 
 export default feathersClient => {
   if (!feathersClient || !feathersClient.service) {
-    throw new Error('You must pass a Feathers Client instance to helpers-vuex')
+    throw new Error(
+      'You must pass a Feathers Client instance to passport module'
+    )
   }
 
   return function createPlugin(options) {
@@ -26,7 +28,7 @@ export default feathersClient => {
     }
 
     // const defaultState = setupState(options)
-    // const defaultGetters = setupGetters()
+    const defaultGetters = setupGetters(feathersClient)
     // const defaultMutations = setupMutations(feathersClient)
     const defaultActions = setupActions(feathersClient)
 
@@ -36,7 +38,7 @@ export default feathersClient => {
       store.registerModule(namespace, {
         namespaced: true,
         // state: Object.assign({}, defaultState, options.state),
-        // getters: Object.assign({}, defaultGetters, options.getters),
+        getters: Object.assign({}, defaultGetters, options.getters),
         // mutations: Object.assign({}, defaultMutations, options.mutations),
         actions: Object.assign({}, defaultActions, options.actions)
       })
