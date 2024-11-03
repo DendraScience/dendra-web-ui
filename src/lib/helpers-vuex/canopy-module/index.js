@@ -21,8 +21,8 @@ export default (feathersClient, api) => {
     options = Object.assign({}, defaults, options)
 
     const defaultState = setupState(options)
-    // const defaultGetters = setupGetters()
-    const defaultMutations = setupMutations()
+    // const defaultGetters = setupGetters(feathersClient, api)
+    const defaultMutations = setupMutations(feathersClient, api)
     const defaultActions = setupActions(feathersClient, api)
 
     return store => {

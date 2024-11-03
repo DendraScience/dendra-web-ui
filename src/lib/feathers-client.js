@@ -16,9 +16,9 @@ const socket = io(api.uri, {
 const feathersClient = feathers()
   .configure(
     socketio(socket, {
-      timeout: 20000
+      timeout: 30000
     })
   )
-  .configure(auth({ storage: hybridStorage, timeout: 12000 }))
+  .configure(auth({ storage: hybridStorage, timeout: 30000 }))
 
 export default feathersClient

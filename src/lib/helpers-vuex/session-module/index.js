@@ -1,12 +1,12 @@
 import setupState from './state'
-// import setupGetters from './getters'
+import setupGetters from './getters'
 import setupMutations from './mutations'
 import setupActions from './actions'
 
 const defaults = {
   namespace: 'session',
   state: {}, // for custom state
-  // getters: {}, // for custom getters
+  getters: {}, // for custom getters
   mutations: {}, // for custom mutations
   actions: {} // for custom actions
 }
@@ -30,8 +30,8 @@ export default feathersClient => {
     const sessionChannel = new BroadcastChannel('session')
 
     const defaultState = setupState(options)
-    // const defaultGetters = setupGetters()
-    const defaultMutations = setupMutations(feathersClient)
+    const defaultGetters = setupGetters(feathersClient, sessionChannel)
+    const defaultMutations = setupMutations(feathersClient, sessionChannel)
     const defaultActions = setupActions(feathersClient, sessionChannel)
 
     return store => {
@@ -40,7 +40,7 @@ export default feathersClient => {
       store.registerModule(namespace, {
         namespaced: true,
         state: Object.assign({}, defaultState, options.state),
-        // getters: Object.assign({}, defaultGetters, options.getters),
+        getters: Object.assign({}, defaultGetters, options.getters),
         mutations: Object.assign({}, defaultMutations, options.mutations),
         actions: Object.assign({}, defaultActions, options.actions)
       })

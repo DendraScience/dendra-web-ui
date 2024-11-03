@@ -3,15 +3,44 @@
     <v-row>
       <v-col>
         <h2 class="display-2 font-weight-light my-2">Log in to Dendra</h2>
-        <h3 class="subtitle-1 mb-4">
-          Don’t have an account?
-          <nuxt-link to="/about">Contact us</nuxt-link>
-        </h3>
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" lg="6">
+        <h3 class="headline mb-2">For new users</h3>
+
+        <p class="body-1 mb-4">
+          Click below to log in or sign up using Single Sign-On (SSO). We
+          support both
+          <a href="https://orcid.org/" target="_blank">ORCID</a> and Google just
+          to name a few. You may also sign up using an email and password.
+        </p>
+
+        <v-btn :disabled="loading" color="primary" large @click="loginCanopy"
+          >Log In or Sign Up
+          <v-icon right>{{ mdiArrowRight }}</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" lg="6">
+        <v-divider />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="12" lg="6">
+        <h3 class="headline mb-2">For users set up before November 1, 2024</h3>
+
+        <p class="body-1 mb-4">
+          If our support team set you up with a user account anytime before
+          November 1, 2024, then log in below using your email and password.
+          Once logged in, you can migrate your classic Dendra account to Single
+          Sign-On at any time.
+        </p>
+
         <ValidationObserver ref="observer">
           <form @submit.prevent="submit">
             <ValidationProvider
@@ -50,10 +79,6 @@
             >
           </form>
         </ValidationObserver>
-
-        <v-btn :loading="loading" color="primary" @click="loginCanopy"
-          >Log In with Dendra Cloud</v-btn
-        >
       </v-col>
     </v-row>
   </v-container>

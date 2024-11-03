@@ -92,7 +92,9 @@
       </v-card>
     </v-menu>
 
-    <v-btn v-else color="white" nuxt outlined rounded to="/login">Log in</v-btn>
+    <v-btn v-else color="white" nuxt outlined rounded to="/login"
+      >Log in / Sign up</v-btn
+    >
   </v-app-bar>
 </template>
 

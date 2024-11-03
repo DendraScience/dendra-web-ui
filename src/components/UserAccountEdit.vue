@@ -32,7 +32,7 @@
           </ValidationProvider>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions v-if="isLocal">
           <v-btn
             :disabled="isPatchPending"
             :loading="isPatchPending"
@@ -48,7 +48,7 @@
 
 <script>
 import _pick from 'lodash/pick'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
@@ -72,6 +72,10 @@ export default {
   },
 
   computed: {
+    ...mapGetters({
+      isLocal: 'session/isLocal'
+    }),
+
     ...mapState('users', ['isPatchPending'])
   },
 

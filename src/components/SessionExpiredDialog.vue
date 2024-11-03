@@ -51,7 +51,12 @@
 
           <v-card-actions>
             <v-spacer />
-            <v-btn :disabled="invalid" color="primary" text type="submit"
+            <v-btn
+              :disabled="invalid"
+              :loading="loading"
+              color="primary"
+              text
+              type="submit"
               >Verify</v-btn
             >
           </v-card-actions>
@@ -72,6 +77,8 @@ export default {
   },
 
   data: () => ({
+    loading: false,
+
     password: null
   }),
 
@@ -106,6 +113,7 @@ export default {
 
   methods: {
     ...mapActions('auth', ['authenticate', 'logout']),
+    ...mapActions('session', ['broadcastLogin']),
     ...mapMutations({
       setLocal: 'session/setLocal'
     }),
@@ -119,16 +127,23 @@ export default {
     },
 
     submit() {
-      // Maintain JWT in local storage
-      this.setLocal(true)
+      this.loading = true
 
+      this.setLocal(true)
       return this.authenticate({
         strategy: 'local',
         email: this.auth.user.email,
         password: this.password
-      }).catch(err => {
-        this.$logger.error('submit', err)
       })
+        .then(() => {
+          this.broadcastLogin()
+        })
+        .catch(err => {
+          this.$logger.error('submit', err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
