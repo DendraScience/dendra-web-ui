@@ -139,8 +139,9 @@ Vue.mixin({
     mdiViewList,
     mdiWalletMembership,
 
-    canopyLoginURL: process.env.canopyLoginURL,
-    canopyLogoutURL: process.env.canopyLogoutURL,
+    canopyLoginURL: window.__env.canopyLoginURL || process.env.canopyLoginURL,
+    canopyLogoutURL:
+      window.__env.canopyLogoutURL || process.env.canopyLogoutURL,
     githubURL: process.env.githubURL,
     infoEmail: process.env.infoEmail,
     longSiteName: process.env.longSiteName,
