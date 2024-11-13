@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="isTokenExpired" max-width="500" persistent>
-    <form @submit.prevent="submit">
+    <form v-if="isLocal" @submit.prevent="submit">
       <v-card>
         <ValidationObserver ref="observer" v-slot="{ invalid }">
           <v-card-title class="headline grey lighten-4 mb-4"
@@ -35,6 +35,7 @@
                 >
                   <v-text-field
                     v-model.trim="password"
+                    :disabled="loading"
                     :error-messages="errors"
                     autofocus
                     label="Password"
@@ -63,12 +64,30 @@
         </ValidationObserver>
       </v-card>
     </form>
+
+    <v-card v-else>
+      <v-card-title class="headline grey lighten-4 mb-4"
+        >Session expired</v-card-title
+      >
+
+      <v-card-text>
+        There was a problem refreshing your access token. Please log out and
+        re-authenticate. If this persists, please email us at
+        <a :href="`mailto:${infoEmail}?subject=Session`">{{ infoEmail }}</a
+        >.
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn @click="logoutRedirect">Log Out</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -83,6 +102,10 @@ export default {
   }),
 
   computed: {
+    ...mapGetters({
+      isLocal: 'session/isLocal'
+    }),
+
     ...mapState(['auth']),
     ...mapState('session', ['isTokenExpired'])
   },
@@ -91,10 +114,20 @@ export default {
     auth: {
       handler(newValue) {
         if (newValue.errorOnAuthenticate) {
-          this.$emit('status', {
-            message: newValue.errorOnAuthenticate.message,
-            type: 'error'
-          })
+          if (
+            newValue.errorOnAuthenticate.code === 401 ||
+            newValue.errorOnAuthenticate.code === 405
+          ) {
+            this.$bus.$emit('status', {
+              message: 'Not a valid login',
+              type: 'error'
+            })
+          } else {
+            this.$bus.$emit('status', {
+              message: newValue.errorOnAuthenticate.message,
+              type: 'error'
+            })
+          }
         }
       },
       deep: true

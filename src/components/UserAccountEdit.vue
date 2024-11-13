@@ -12,6 +12,7 @@
           >
             <v-text-field
               v-model="name"
+              :disabled="!isLocal"
               :error-messages="errors"
               label="Preferred Name"
               required
@@ -25,6 +26,7 @@
           >
             <v-text-field
               v-model="email"
+              :disabled="!isLocal"
               :error-messages="errors"
               label="Email"
               required

@@ -23,6 +23,10 @@ export default {
     ValidationObserver
   },
 
+  beforeRouteLeave(to, from, next) {
+    this.$bus.$emit('edit-leave', { next })
+  },
+
   layout: 'editor',
 
   middleware: ['no-auth-redirect-home', 'check-org', 'reset-editing'],
@@ -61,10 +65,6 @@ export default {
   beforeDestroy() {
     this.$bus.$off('editor-cancel', this.cancel)
     this.$bus.$off('editor-save', this.save)
-  },
-
-  beforeRouteLeave(to, from, next) {
-    this.$bus.$emit('edit-leave', { next })
   },
 
   methods: {

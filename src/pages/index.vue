@@ -1,6 +1,6 @@
 <template>
   <v-container fluid pa-0>
-    <v-row no-gutters>
+    <v-row v-if="!noAboutLanding" no-gutters>
       <v-col>
         <v-img
           :max-height="$vuetify.breakpoint.smAndUp ? 540 : undefined"
@@ -82,7 +82,7 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters>
+    <v-row v-if="!noAboutLanding" no-gutters>
       <v-col class="grey lighten-4">
         <v-container pa-7>
           <!-- TODO: Finish widget page -->
@@ -272,7 +272,7 @@
       </v-col>
     </v-row>
 
-    <v-row no-gutters>
+    <v-row v-if="!noAboutLanding" no-gutters>
       <v-col class="grey darken-4">
         <v-container pa-7>
           <v-row>

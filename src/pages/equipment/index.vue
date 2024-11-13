@@ -59,9 +59,9 @@ export default {
     ThingTypeSearch
   },
 
-  middleware: ['no-org', 'fetch-company'],
-
   mixins: [routeQuery],
+
+  middleware: ['no-org', 'fetch-company'],
 
   data: () => ({
     tabIndex: 0

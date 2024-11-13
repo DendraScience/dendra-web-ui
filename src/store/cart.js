@@ -42,8 +42,10 @@ export const mutations = {
     const value = state.quantitiesById[id]
 
     if (!value) {
+      // eslint-disable-next-line import/no-named-as-default-member
       if (max > 0) Vue.set(state.quantitiesById, id, 1)
     } else if (value < max) {
+      // eslint-disable-next-line import/no-named-as-default-member
       Vue.set(state.quantitiesById, id, value + 1)
     } else {
       Vue.delete(state.quantitiesById, id)
@@ -51,6 +53,7 @@ export const mutations = {
   },
 
   setQuantity(state, { id, value }) {
+    // eslint-disable-next-line import/no-named-as-default-member
     if (value) Vue.set(state.quantitiesById, id, value)
     else Vue.delete(state.quantitiesById, id)
   }

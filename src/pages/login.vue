@@ -50,6 +50,7 @@
             >
               <v-text-field
                 v-model="email"
+                :disabled="loading"
                 :error-messages="errors"
                 filled
                 label="Email"
@@ -65,6 +66,7 @@
               <v-text-field
                 v-model="password"
                 :append-icon="isPasswordShown ? mdiEyeOff : mdiEye"
+                :disabled="loading"
                 :error-messages="errors"
                 :type="isPasswordShown ? 'text' : 'password'"
                 filled
@@ -112,10 +114,20 @@ export default {
     auth: {
       handler(newValue) {
         if (newValue.errorOnAuthenticate) {
-          this.$bus.$emit('status', {
-            message: newValue.errorOnAuthenticate.message,
-            type: 'error'
-          })
+          if (
+            newValue.errorOnAuthenticate.code === 401 ||
+            newValue.errorOnAuthenticate.code === 405
+          ) {
+            this.$bus.$emit('status', {
+              message: 'Not a valid login',
+              type: 'error'
+            })
+          } else {
+            this.$bus.$emit('status', {
+              message: newValue.errorOnAuthenticate.message,
+              type: 'error'
+            })
+          }
         }
       },
       deep: true

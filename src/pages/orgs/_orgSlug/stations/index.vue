@@ -81,9 +81,9 @@ export default {
     StationSearch
   },
 
-  middleware: ['check-org', 'fetch-annotation'],
-
   mixins: [routeQuery],
+
+  middleware: ['check-org', 'fetch-annotation'],
 
   data: () => ({
     tabIndex: 0

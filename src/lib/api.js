@@ -8,7 +8,7 @@ const parts = location.hostname.split('.')
 const api = {
   path: '',
   uri: 'http://localhost:3030',
-  rpc: 'http://localhost:8080'
+  rpc: 'http://localhost:8080/rpc'
 }
 
 // Production build automatic overrides
@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production' && !isIPv4 && parts.length >= 2) {
 
   api.path = '/v2'
   api.uri = `https://${parts.join('.')}`
-  api.rpc = api.uri.replace('api.', 'rpc.')
+  api.rpc = `https://${parts.join('.')}/v3/rpc`
 }
 
 // Build time environment variable overrides

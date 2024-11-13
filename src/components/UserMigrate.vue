@@ -4,14 +4,14 @@
 
     <v-card-text
       ><p>
-        You are currently logged in with a user account that was manually set up
-        by our support team. You may continue to use this account for now;
-        however, we encourage users to migrate to a Dendra Cloud account that
-        supports Single Sign-On (SSO).
+        You are currently logged in with a native Dendra user account that was
+        manually set up by our support team. You may continue to use this
+        account; however, we encourage users to migrate to a Dendra.Science
+        account that supports Single Sign-On (SSO).
       </p>
 
       <p>
-        By migrating to Dendra Cloud, you can log in using
+        By migrating this account, you can log in using
         <a href="https://orcid.org/" target="_blank">ORCID</a> and Google. You
         may also continue to use email and password, with the added benefit of
         resetting your password in case you forget it.
@@ -29,7 +29,7 @@
       <h4>Instructions</h4>
       <p>
         If you click Migrate below, you will be logged out and redirected to the
-        Dendra Cloud login page. On this page you can choose to continue with
+        Dendra.Science login page. On this page you can choose to continue with
         SSO, or click Sign up to create a new account with email and password.
         <strong
           >You must ensure that the SSO or new account is tied to the email

@@ -8,9 +8,9 @@ const apiPath = process.env.API_PATH
 const apiURI = process.env.API_URI
 const apiRPC = process.env.API_RPC
 const canopyLoginURL =
-  process.env.CANOPY_LOGIN_URL || 'http://localhost:8080/login'
+  process.env.CANOPY_LOGIN_URL || 'http://localhost:8080/auth/login'
 const canopyLogoutURL =
-  process.env.CANOPY_LOGOUT_URL || 'http://localhost:8080/logout'
+  process.env.CANOPY_LOGOUT_URL || 'http://localhost:8080/auth/logout'
 const githubURL = 'https://github.com/DendraScience'
 const googleMapsAPIKey = process.env.GOOGLE_MAPS_API_KEY
 const googleTrackingId = process.env.GOOGLE_TRACKING_ID
@@ -18,6 +18,7 @@ const infoEmail = 'metahuman@dendra.science'
 const noaaNWSIcons =
   process.env.NOAA_NWS_ICONS_URL ||
   'https://dendrascience.github.io/noaa-nws-icons/jpg'
+const noAboutLanding = process.env.NO_ABOUT_LANDING === 'true'
 const plausableDomain = process.env.PLAUSABLE_DOMAIN || 'dendra.science'
 const plausableEnabled = process.env.PLAUSABLE_ENABLED
 const slackURL = 'https://dendra-science.slack.com'
@@ -88,6 +89,7 @@ module.exports = {
     googleTrackingId,
     infoEmail,
     noaaNWSIcons,
+    noAboutLanding,
     plausableDomain,
     plausableEnabled,
     slackURL,
@@ -230,6 +232,11 @@ module.exports = {
    ** Customize the progress-bar color
    */
   loading: { color: '#4caf50' },
+
+  /*
+   ** Customize the loading page for account setup
+   */
+  loadingIndicator: '~/templates/loading.html',
 
   messages: {
     error_404: 'Page not found.',

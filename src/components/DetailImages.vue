@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container fluid>
-      <v-row v-if="!!this.$scopedSlots.default" dense>
+      <v-row v-if="!!$scopedSlots.default" dense>
         <v-col class="headline">
           <slot>Images</slot>
         </v-col>

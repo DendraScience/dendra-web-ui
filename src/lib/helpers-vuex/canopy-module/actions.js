@@ -1,3 +1,5 @@
+import logger from '@dendra-science/console-logger'
+
 export default (_, api) => {
   return {
     async authenticate({ dispatch }) {
@@ -20,6 +22,9 @@ export default (_, api) => {
       if (resp.ok) {
         const json = await resp.json()
         jwt = json.token
+      } else {
+        const json = await resp.json()
+        logger.info('AcquireV2TokenWithProvisioning response', json)
       }
 
       if (!jwt) return

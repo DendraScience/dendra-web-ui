@@ -77,44 +77,78 @@ export default {
     return {
       lists: [
         {
-          items: [
-            {
-              icon: mdiHome,
-              title: `${process.env.title || 'Dendra'} home`,
-              to: '/'
-            },
-            {
-              can: ['read', 'organizations'],
-              icon: mdiFileTree,
-              title: 'Organization list',
-              to: '/orgs'
-            },
-            {
-              icon: mdiTag,
-              org: false,
-              title: 'Vocabulary',
-              to: '/vocabulary'
-            },
-            {
-              hidden: process.env.NODE_ENV === 'production',
-              icon: mdiFormatPaint,
-              org: false,
-              title: 'Theme',
-              to: '/theme'
-            },
-            {
-              icon: mdiInformation,
-              org: false,
-              title: 'About',
-              to: '/about'
-            },
-            {
-              auth: false,
-              icon: mdiLoginVariant,
-              title: 'Log in',
-              to: '/login'
-            }
-          ]
+          items:
+            window.__env.noAboutLanding || process.env.noAboutLanding
+              ? [
+                  {
+                    icon: mdiHome,
+                    title: 'Home',
+                    to: '/'
+                  },
+                  {
+                    can: ['read', 'organizations'],
+                    icon: mdiFileTree,
+                    title: 'Organization list',
+                    to: '/orgs'
+                  },
+                  {
+                    icon: mdiTag,
+                    org: false,
+                    title: 'Vocabulary',
+                    to: '/vocabulary'
+                  },
+                  {
+                    hidden: process.env.NODE_ENV === 'production',
+                    icon: mdiFormatPaint,
+                    org: false,
+                    title: 'Theme',
+                    to: '/theme'
+                  },
+                  {
+                    auth: false,
+                    icon: mdiLoginVariant,
+                    title: 'Log in',
+                    to: '/login'
+                  }
+                ]
+              : [
+                  {
+                    icon: mdiHome,
+                    title: `${process.env.title || 'Dendra'} home`,
+                    to: '/'
+                  },
+                  {
+                    can: ['read', 'organizations'],
+                    icon: mdiFileTree,
+                    title: 'Organization list',
+                    to: '/orgs'
+                  },
+                  {
+                    icon: mdiTag,
+                    org: false,
+                    title: 'Vocabulary',
+                    to: '/vocabulary'
+                  },
+                  {
+                    hidden: process.env.NODE_ENV === 'production',
+                    icon: mdiFormatPaint,
+                    org: false,
+                    title: 'Theme',
+                    to: '/theme'
+                  },
+                  {
+                    icon: mdiInformation,
+                    org: false,
+                    title: 'About',
+                    to: '/about'
+                  },
+                  {
+                    auth: false,
+                    icon: mdiLoginVariant,
+                    title: 'Log in',
+                    to: '/login'
+                  }
+                ]
         },
         {
           header: 'Equipment Library',

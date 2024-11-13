@@ -67,9 +67,9 @@ export default {
     QueryHeader
   },
 
-  middleware: ['no-org'],
-
   mixins: [routeQuery],
+
+  middleware: ['no-org'],
 
   data: () => ({
     tabIndex: 0

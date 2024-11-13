@@ -67,9 +67,9 @@ export default {
     QueryHeader
   },
 
-  middleware: ['check-org', 'fetch-station', 'fetch-datastream'],
-
   mixins: [routeQuery],
+
+  middleware: ['check-org', 'fetch-station', 'fetch-datastream'],
 
   data: () => ({
     tabIndex: 0

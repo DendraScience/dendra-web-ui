@@ -11,7 +11,7 @@
     "dev-edge": "cross-env API_PATH=/v2 API_URI=https://api.edge.dendra.science nuxt",
     "dev-local": "cross-env API_URI=http://192.168.1.60:30080 nuxt",
     "dev-live": "cross-env API_PATH=/v2 API_URI=https://api.dendra.science nuxt",
-    "dev-preview": "cross-env API_PATH=/v2 API_URI=http://api.preview.dendra.science nuxt",
+    "dev-preview": "cross-env API_PATH=/v2 API_URI=https://api.dendra.science API_RPC=https://api.preview.dendra.science/v3/rpc CANOPY_LOGIN_URL=https://api.preview.dendra.science/v3/auth/login CANOPY_LOGOUT_URL=https://api.preview.dendra.science/v3/auth/logout NO_ABOUT_LANDING=true nuxt",
     "dev2": "cross-env NODE_ENV=development nodemon src/server/index.js --watch src/server",
     "build": "nuxt build",
     "start": "nuxt start",
