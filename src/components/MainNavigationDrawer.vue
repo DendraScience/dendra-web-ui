@@ -63,6 +63,7 @@ import {
   mdiFormatPaint,
   mdiHexagonSlice6,
   mdiLoginVariant,
+  mdiMapMarkerMultiple,
   mdiNature,
   mdiNoteOutline,
   mdiTag,
@@ -81,8 +82,8 @@ export default {
             window.__env.noAboutLanding || process.env.noAboutLanding
               ? [
                   {
-                    icon: mdiHome,
-                    title: 'Home',
+                    icon: mdiMapMarkerMultiple,
+                    title: 'Station map',
                     to: '/'
                   },
                   {
@@ -190,7 +191,7 @@ export default {
                 faceted: true,
                 scheme: 'dq'
               },
-              title: 'Data query'
+              title: 'Explore data'
             }
           ]
         },

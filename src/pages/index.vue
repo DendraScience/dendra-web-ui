@@ -166,8 +166,11 @@
 
     <v-row no-gutters>
       <v-col>
-        <v-container pa-7>
-          <v-row>
+        <v-container :class="noAboutLanding ? '' : 'pa-7'">
+          <v-row v-if="noAboutLanding">
+            <v-col><h2 class="display-1 my-2">Stations on Dendra</h2></v-col>
+          </v-row>
+          <v-row v-else>
             <v-col
               ><h5 class="headline">
                 Organizations on Dendra

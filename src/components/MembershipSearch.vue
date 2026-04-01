@@ -40,7 +40,7 @@
             </template>
 
             <template #item.person="{ item }">
-              <span @click="handleRoute(item.person)"
+              <span @click.prevent="handleUserClick(item.person, $event)"
                 ><a>
                   {{ item.person ? item.person.name : '--' }}
                 </a></span
@@ -56,6 +56,39 @@
         </feathers-vuex-find>
       </v-col>
     </v-row>
+
+    <v-menu
+      v-model="userMenu"
+      :position-x="userMenuX"
+      :position-y="userMenuY"
+      absolute
+      offset-y
+      max-width="220"
+    >
+      <v-list v-if="users.length === 0">
+        <v-list-item>
+          <v-progress-circular color="primary" indeterminate />
+        </v-list-item>
+      </v-list>
+
+      <v-list v-else two-line>
+        <v-list-item
+          v-for="(item, index) in users"
+          :key="index"
+          :to="{
+            name: 'users-userId',
+            params: { userId: item._id }
+          }"
+        >
+          <v-list-item-content>
+            <v-list-item-title>{{
+              item.full_name || item.name
+            }}</v-list-item-title>
+            <v-list-item-subtitle>{{ item.email }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-container>
 </template>
 
@@ -106,7 +139,13 @@ export default {
       page: 1,
       itemsPerPage: 100,
       totalItems: null
-    }
+    },
+
+    userMenu: false,
+    userMenuX: 0,
+    userMenuY: 0,
+
+    users: []
   }),
 
   computed: {
@@ -227,6 +266,21 @@ export default {
           name: 'users-userId',
           params: { userId: response.data[0]._id }
         })
+      }
+    },
+
+    async handleUserClick(person, event) {
+      this.users = []
+      this.userMenuX = event.clientX
+      this.userMenuY = event.clientY
+      this.userMenu = true
+
+      const response = await this.fetchUsers({
+        query: { person_id: person._id, $limit: 10 }
+      })
+
+      if (response.data && response.data.length) {
+        this.users = response.data
       }
     }
   }

@@ -5,7 +5,7 @@
         <v-container>
           <v-row>
             <v-col>
-              <h2 class="display-2 font-weight-light my-2">
+              <h2 class="display-1 my-2">
                 {{ station.name }}
               </h2>
               <h3 v-if="station.description" class="subtitle-2 mb-2">
@@ -82,7 +82,9 @@
                       <v-icon>{{ mdiChartMultiple }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title>Data query</v-list-item-title>
+                      <v-list-item-title
+                        >Explore data (query)</v-list-item-title
+                      >
                     </v-list-item-content>
                   </v-list-item>
 

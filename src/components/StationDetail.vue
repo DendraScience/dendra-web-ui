@@ -135,7 +135,7 @@
                 dark
                 nuxt
                 ><v-icon left flat>{{ mdiChartMultiple }}</v-icon
-                >Data Query</v-btn
+                >Explore Data</v-btn
               >
             </v-card-actions>
           </v-card>

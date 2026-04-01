@@ -15,7 +15,10 @@
                     <v-text-field
                       v-model.trim="value.email"
                       :error-messages="errors"
-                      :readonly="!editing"
+                      :readonly="
+                        !editing ||
+                        value.email.endsWith('@managed-user.dendra.science')
+                      "
                       label="Email"
                       required
                     ></v-text-field>

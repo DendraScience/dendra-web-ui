@@ -9,12 +9,19 @@
     <v-row>
       <v-col>
         <ValidationObserver ref="observer">
-          <User-detail v-model="instance" :editing="editing" />
+          <user-detail v-model="instance" :editing="editing" />
         </ValidationObserver>
       </v-col>
     </v-row>
 
-    <v-row v-if="!editing && $canPatch('users', instance)">
+    <v-row
+      v-if="
+        !editing &&
+        $canPatch('users', instance) &&
+        instance.email &&
+        !instance.email.endsWith('@managed-user.dendra.science')
+      "
+    >
       <v-col>
         <user-password-edit
           :current-password-required="

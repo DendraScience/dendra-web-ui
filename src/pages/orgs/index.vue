@@ -2,7 +2,12 @@
   <v-container>
     <v-row>
       <v-col>
-        <h2 class="display-2 font-weight-light my-2">Organizations</h2>
+        <h2 class="display-1 my-2">Choose an Organization</h2>
+        <h3 class="subtitle-1 mb-2">
+          To see all of our locations where we have automated monitoring
+          stations
+          <nuxt-link to="/" exact>click here</nuxt-link>.
+        </h3>
       </v-col>
     </v-row>
 
@@ -58,7 +63,7 @@
                   ><v-icon>{{ mdiCheckCircle }}</v-icon></v-list-item-action
                 >
                 <v-list-item-content>
-                  <v-list-item-title>Station status</v-list-item-title>
+                  <v-list-item-title>Station status map</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
@@ -78,11 +83,12 @@
                   ><v-icon>{{ mdiChartMultiple }}</v-icon></v-list-item-action
                 >
                 <v-list-item-content>
-                  <v-list-item-title>Data query</v-list-item-title>
+                  <v-list-item-title>Explore data (query)</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-list-item
+                v-if="!isExplore"
                 :disabled="!organization.slug"
                 :to="{
                   name: 'orgs-orgSlug-datastreams',
@@ -101,6 +107,7 @@
               </v-list-item>
 
               <v-list-item
+                v-if="!isExplore"
                 :disabled="!organization.slug"
                 :to="{
                   name: 'orgs-orgSlug-annotations',
@@ -117,6 +124,7 @@
               </v-list-item>
 
               <v-list-item
+                v-if="!isExplore"
                 :disabled="!organization.url"
                 :href="organization.url"
                 target="_blank"
@@ -138,6 +146,12 @@
 
 <script>
 export default {
-  middleware: ['no-org']
+  middleware: ['no-org'],
+
+  computed: {
+    isExplore() {
+      return new URL(window.location.href).searchParams.has('explore')
+    }
+  }
 }
 </script>

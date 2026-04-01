@@ -1,93 +1,95 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <h2 class="display-2 font-weight-light my-2">Log in to Dendra</h2>
-      </v-col>
-    </v-row>
+    <template v-if="canopyLoginURL">
+      <v-row>
+        <v-col>
+          <h2 class="display-1 my-2">Log in to Dendra</h2>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="12" lg="6">
-        <h3 class="headline mb-2">For new users</h3>
+      <v-row>
+        <v-col cols="12" lg="6">
+          <h3 class="headline mb-2">Attention</h3>
 
-        <p class="body-1 mb-4">
-          Click below to log in or sign up using Single Sign-On (SSO). We
-          support both
-          <a href="https://orcid.org/" target="_blank">ORCID</a> and Google just
-          to name a few. You may also sign up using an email and password.
-        </p>
+          <p class="body-1 mb-4">
+            We have recently upgraded our security to allow new users to set up
+            their own account and to support Single Sign-On (SSO) with providers
+            such as ORCID. Click the button below to sign in using the new login
+            experience.
+          </p>
 
-        <v-btn :disabled="loading" color="primary" large @click="loginCanopy"
-          >Log In or Sign Up
-          <v-icon right>{{ mdiArrowRight }}</v-icon>
-        </v-btn>
-      </v-col>
-    </v-row>
+          <p class="body-1 mb-4 font-weight-bold">
+            If you already have a Dendra account, we have migrated your account
+            and you will need to reset your password to log in.
+          </p>
 
-    <v-row>
-      <v-col cols="12" lg="6">
-        <v-divider />
-      </v-col>
-    </v-row>
+          <v-btn color="primary" large @click="loginCanopy"
+            >Log In or Sign Up
+            <v-icon right>{{ mdiArrowRight }}</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </template>
 
-    <v-row>
-      <v-col cols="12" lg="6">
-        <h3 class="headline mb-2">For users set up before November 1, 2024</h3>
+    <template v-else>
+      <v-row>
+        <v-col>
+          <h2 class="display-2 font-weight-light my-2">Log in to Dendra</h2>
+          <h3 class="subtitle-1 mb-4">
+            Don’t have an account?
+            <nuxt-link to="/about">Contact us</nuxt-link>
+          </h3>
+        </v-col>
+      </v-row>
 
-        <p class="body-1 mb-4">
-          If our support team set you up with a user account anytime before
-          November 1, 2024, then log in below using your email and password.
-          Once logged in, you can migrate your classic Dendra account to Single
-          Sign-On at any time.
-        </p>
+      <v-row>
+        <v-col cols="12" md="6">
+          <ValidationObserver ref="observer">
+            <form @submit.prevent="submit">
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="email"
+                rules="required|email"
+              >
+                <v-text-field
+                  v-model="email"
+                  :error-messages="errors"
+                  filled
+                  label="Email"
+                  required
+                ></v-text-field>
+              </ValidationProvider>
 
-        <ValidationObserver ref="observer">
-          <form @submit.prevent="submit">
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="email"
-              rules="required|email"
-            >
-              <v-text-field
-                v-model="email"
-                :disabled="loading"
-                :error-messages="errors"
-                filled
-                label="Email"
-                required
-              ></v-text-field>
-            </ValidationProvider>
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="password"
+                rules="required|min:6|max:100"
+              >
+                <v-text-field
+                  v-model="password"
+                  :append-icon="isPasswordShown ? mdiEyeOff : mdiEye"
+                  :error-messages="errors"
+                  :type="isPasswordShown ? 'text' : 'password'"
+                  filled
+                  label="Password"
+                  required
+                  @click:append="isPasswordShown = !isPasswordShown"
+                ></v-text-field>
+              </ValidationProvider>
 
-            <ValidationProvider
-              v-slot="{ errors }"
-              name="password"
-              rules="required|min:6|max:100"
-            >
-              <v-text-field
-                v-model="password"
-                :append-icon="isPasswordShown ? mdiEyeOff : mdiEye"
-                :disabled="loading"
-                :error-messages="errors"
-                :type="isPasswordShown ? 'text' : 'password'"
-                filled
-                label="Password"
-                required
-                @click:append="isPasswordShown = !isPasswordShown"
-              ></v-text-field>
-            </ValidationProvider>
-
-            <v-btn :loading="loading" color="primary" type="submit"
-              >Log In</v-btn
-            >
-          </form>
-        </ValidationObserver>
-      </v-col>
-    </v-row>
+              <v-btn :loading="loading" color="primary" type="submit"
+                >Log In</v-btn
+              >
+            </form>
+          </ValidationObserver>
+        </v-col>
+      </v-row>
+    </template>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 
 export default {
@@ -114,20 +116,10 @@ export default {
     auth: {
       handler(newValue) {
         if (newValue.errorOnAuthenticate) {
-          if (
-            newValue.errorOnAuthenticate.code === 401 ||
-            newValue.errorOnAuthenticate.code === 405
-          ) {
-            this.$bus.$emit('status', {
-              message: 'Not a valid login',
-              type: 'error'
-            })
-          } else {
-            this.$bus.$emit('status', {
-              message: newValue.errorOnAuthenticate.message,
-              type: 'error'
-            })
-          }
+          this.$bus.$emit('status', {
+            message: newValue.errorOnAuthenticate.message,
+            type: 'error'
+          })
         }
       },
       deep: true
@@ -136,11 +128,6 @@ export default {
 
   methods: {
     ...mapActions('auth', ['authenticate']),
-    ...mapActions('session', ['broadcastLogin']),
-    ...mapMutations({
-      clearAll: 'ability/clearAll',
-      setLocal: 'session/setLocal'
-    }),
 
     loginCanopy() {
       window.location.assign(this.canopyLoginURL)
@@ -151,15 +138,13 @@ export default {
 
       this.loading = true
 
-      this.setLocal(true)
       return this.authenticate({
         strategy: 'local',
         email: this.email.toLowerCase(),
         password: this.password
       })
         .then(() => {
-          this.clearAll()
-          this.broadcastLogin()
+          this.$store.commit('ability/clearAll')
           this.$tracker.event('loginSuccess')
           this.$router.push({ name: 'orgs' })
         })

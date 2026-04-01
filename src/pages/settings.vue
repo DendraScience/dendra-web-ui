@@ -17,25 +17,17 @@
         <user-password-edit :user="getUser(auth.user._id)" />
       </v-col>
     </v-row>
-
-    <v-row v-if="isLocal">
-      <v-col cols="12" lg="8">
-        <user-migrate :user="getUser(auth.user._id)" />
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
 import UserAccountEdit from '@/components/UserAccountEdit'
-import UserMigrate from '@/components/UserMigrate'
 import UserPasswordEdit from '@/components/UserPasswordEdit'
 
 export default {
   components: {
     UserAccountEdit,
-    UserMigrate,
     UserPasswordEdit
   },
 
