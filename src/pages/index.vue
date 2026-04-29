@@ -291,7 +291,7 @@
               </p>
 
               <p class="text-body-2 white--text">
-                Copyright © 2016-{{ year }} Dendra.Science. All rights reserved.
+                Copyright © 2016-{{ year }} Dendra Science. All rights reserved.
               </p>
             </v-col>
 

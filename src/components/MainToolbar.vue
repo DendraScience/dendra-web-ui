@@ -25,7 +25,7 @@
       </nuxt-link>
 
       <nuxt-link v-else to="/" class="text-decoration-none white--text" exact>
-        {{ longSiteName || 'Dendra.Science' }}</nuxt-link
+        {{ longSiteName || 'Dendra' }}</nuxt-link
       >
     </v-toolbar-title>
 
