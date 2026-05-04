@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production' && !isIPv4 && parts.length >= 2) {
 
   api.path = '/v2'
   api.uri = `https://${parts.join('.')}`
-  api.rpc = `https://${parts.join('.')}/v3/rpc`
+  api.rpc = `https://${parts.join('.')}/rpc`
 }
 
 // Build time environment variable overrides

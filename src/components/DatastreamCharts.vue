@@ -5,7 +5,9 @@
         <datastream-chart
           :value="chart"
           :hide-legend.sync="hideLegend"
+          :org="org"
           :pin-tooltip.sync="pinTooltip"
+          :show-annotations="showAnnotations"
           :show-controls="showControls"
           :show-reset-zoom="showResetZoom"
           :worker="Object.freeze(worker)"
@@ -102,6 +104,8 @@ export default {
   },
 
   props: {
+    org: { default: null, type: Object },
+    showAnnotations: { default: false, type: Boolean },
     showControls: { default: false, type: Boolean },
     showRemove: { default: false, type: Boolean },
     showResetZoom: { default: false, type: Boolean },

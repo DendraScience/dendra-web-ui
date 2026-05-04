@@ -286,7 +286,9 @@
       <v-col>
         <datastream-charts
           :value="charts"
+          :org="org"
           :worker="Object.freeze(seriesFetchWorker)"
+          show-annotations
           show-controls
           show-remove
           show-reset-zoom
@@ -548,6 +550,7 @@ export default {
       const { getUnitText, quantitiesById, selectedDatastreams } = this
       const colors = Highcharts.getOptions().colors
       const options = defaultOptions(this.chartTitle)
+      const seriesMeta = []
       const seriesOptions = []
       const fetchSpec = {
         queries: [],
@@ -612,6 +615,10 @@ export default {
             })
           }
 
+          seriesMeta.push({
+            datastream,
+            seriesName
+          })
           seriesOptions.push({
             color,
             name: seriesName,
@@ -637,6 +644,7 @@ export default {
         id,
         isReady: false,
         options,
+        seriesMeta,
         seriesOptions,
         sync: false
       })

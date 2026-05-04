@@ -47,6 +47,28 @@
 
       <v-divider />
     </div>
+
+    <v-list>
+      <v-list-item href="https://docs.dendra.science/" target="_blank">
+        <v-list-item-action>
+          <v-icon>{{ mdiHelpCircleOutline }}</v-icon>
+        </v-list-item-action>
+
+        <v-list-item-content>
+          <v-list-item-title>Documentation</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-item href="https://dendra.science/" target="_blank">
+        <v-list-item-action>
+          <v-icon>{{ mdiOpenInNew }}</v-icon>
+        </v-list-item-action>
+
+        <v-list-item-content>
+          <v-list-item-title>Main site</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
 </template>
 

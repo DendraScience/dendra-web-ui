@@ -32,6 +32,8 @@
           :fetch-spec="Object.freeze(value.fetchSpec)"
           :worker="Object.freeze(worker)"
           tooltip-container-class="datastream-chart-tooltip-container"
+          @hide-series="hideSeries"
+          @show-series="showSeries"
           @y-extremes="yExtremes"
           @zoomed="zoomed"
         />
@@ -53,6 +55,16 @@
           icon
           @click="value.bus.$emit('reset-zoom')"
           ><v-icon>{{ mdiMagnifyClose }}</v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="showAnnotations && (value?.seriesMeta?.length ?? 0) <= 10"
+          :color="isShowingAnnotations ? 'primary' : undefined"
+          :disabled="!value.isReady"
+          icon
+          @click="isShowingAnnotations = !isShowingAnnotations"
+        >
+          <v-icon>{{ mdiNoteOutline }}</v-icon>
         </v-btn>
 
         <v-btn
@@ -100,10 +112,20 @@
         </v-menu>
       </div>
     </div>
+
+    <datastream-chart-annotations
+      v-if="showAnnotations && isShowingAnnotations"
+      :datastreams="shownDatastreams"
+      :org="org"
+      :qid="value.id"
+      :start-time="startTime"
+      :until-time="untilTime"
+    />
   </v-card>
 </template>
 
 <script>
+import DatastreamChartAnnotations from '@/components/DatastreamChartAnnotations'
 import HcTimeSeries from '@/components/HcTimeSeries'
 import WorkerFetch from '@/components/WorkerFetch'
 import YAxisSettings from '@/components/YAxisSettings'
@@ -114,6 +136,7 @@ function fixedPositioner() {
 
 export default {
   components: {
+    DatastreamChartAnnotations,
     HcTimeSeries,
     WorkerFetch,
     YAxisSettings
@@ -121,7 +144,9 @@ export default {
 
   props: {
     hideLegend: { default: false, type: Boolean },
+    org: { default: null, type: Object },
     pinTooltip: { default: false, type: Boolean },
+    showAnnotations: { default: false, type: Boolean },
     showControls: { default: false, type: Boolean },
     showResetZoom: { default: false, type: Boolean },
     value: { type: Object, required: true },
@@ -139,7 +164,13 @@ export default {
       }
     },
 
+    hiddenSeries: new Set(),
+
+    isShowingAnnotations: false,
     isZoomed: false,
+
+    userMax: undefined,
+    userMin: undefined,
 
     yAxisSettings: {
       index: null,
@@ -147,6 +178,34 @@ export default {
       min: null
     }
   }),
+
+  computed: {
+    shownDatastreams() {
+      return this.value?.seriesMeta
+        ?.filter(meta => !this.hiddenSeries.has(meta.seriesName))
+        .map(({ datastream }) => datastream)
+    },
+
+    startTime() {
+      return (
+        this.userMin ||
+        (Array.isArray(this.value?.fetchSpec?.startTime)
+          ? this.value.fetchSpec.startTime[0]
+          : this.value.fetchSpec.startTime) ||
+        0
+      )
+    },
+
+    untilTime() {
+      return (
+        this.userMax ||
+        (Array.isArray(this.value?.fetchSpec?.untilTime)
+          ? this.value.fetchSpec.untilTime[0]
+          : this.value.fetchSpec.untilTime) ||
+        0
+      )
+    }
+  },
 
   watch: {
     hideLegend(newValue) {
@@ -170,6 +229,18 @@ export default {
   },
 
   methods: {
+    hideSeries(e) {
+      const newSet = new Set([...this.hiddenSeries.values()])
+      newSet.add(e.target.name)
+      this.hiddenSeries = newSet
+    },
+
+    showSeries(e) {
+      const newSet = new Set([...this.hiddenSeries.values()])
+      newSet.delete(e.target.name)
+      this.hiddenSeries = newSet
+    },
+
     update({ hideLegend, pinTooltip }) {
       this.value.options.legend.enabled = !hideLegend
       this.value.options.tooltip = Object.assign(
@@ -188,8 +259,10 @@ export default {
       this.yAxisSettings.min = extremes.min
     },
 
-    zoomed(state) {
+    zoomed(state, e) {
       this.isZoomed = state
+      this.userMax = e.userMax
+      this.userMin = e.userMin
     }
   }
 }

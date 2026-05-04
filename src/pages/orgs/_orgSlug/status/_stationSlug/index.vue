@@ -247,6 +247,7 @@
       <v-col>
         <datastream-charts
           :value="charts"
+          :org="org"
           :worker="Object.freeze(seriesFetchWorker)"
           show-reset-zoom
         />

@@ -142,7 +142,7 @@ export default {
 
   methods: {
     afterSetXExtremesHandler(e) {
-      this.$emit('zoomed', !!e.userMin)
+      this.$emit('zoomed', !!e.userMin, e)
     },
 
     downloadCSV() {
@@ -180,7 +180,12 @@ export default {
             }
           : null
 
-      return _merge({}, xAxisOptions, options)
+      const merged = _merge({}, xAxisOptions, options)
+      merged.plotOptions.series.events = {
+        hide: this.hideSeriesHandler,
+        show: this.showSeriesHandler
+      }
+      return merged
     },
 
     removeAllSeries() {
@@ -198,6 +203,14 @@ export default {
       this.$nextTick(() => {
         if (chart) chart.zoomOut()
       })
+    },
+
+    hideSeriesHandler(e) {
+      this.$emit('hide-series', e)
+    },
+
+    showSeriesHandler(e) {
+      this.$emit('show-series', e)
     },
 
     setYExtremes({ index, max, min }) {
