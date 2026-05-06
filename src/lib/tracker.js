@@ -101,13 +101,13 @@ export class Tracker {
 
     if (plausableEnabled) {
       const props = {
-        url: new URL(normalizedPath, webSiteURL).toString(),
         subject,
         user
       }
-      trackPageview(props)
-      // eslint-disable-next-line no-console
-      console.log('plausable', props)
+      trackPageview(
+        { url: new URL(normalizedPath, webSiteURL).toString() },
+        { props }
+      )
       logger.info('plausable "%s" %o', 'pageview', props)
     }
 
