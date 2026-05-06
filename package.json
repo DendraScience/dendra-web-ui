@@ -42,6 +42,7 @@
     "nuxt": "^2.18.1",
     "nuxt-compress": "^5.0.0",
     "plausible-tracker": "^0.3.9",
+    "posthog-js": "^1.372.9",
     "socket.io-client": "^2.5.0",
     "validator": "^13.12.0",
     "vee-validate": "^3.4.15"

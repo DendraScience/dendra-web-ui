@@ -1,4 +1,21 @@
 import Plausible from 'plausible-tracker'
+import Posthog from 'posthog-js'
+
+const MANAGED_USER_DOMAIN = '@managed-user.dendra.science'
+
+function getSubject(store) {
+  const email =
+    store &&
+    store.state &&
+    store.state.auth &&
+    store.state.auth.user &&
+    store.state.auth.user.email
+
+  if (typeof email === 'string' && email.endsWith(MANAGED_USER_DOMAIN)) {
+    return email.replace(MANAGED_USER_DOMAIN, '')
+  }
+  return 'anonymous'
+}
 
 function getUser(store) {
   const user =
@@ -16,6 +33,14 @@ export class Tracker {
       domain: options.plausableDomain,
       trackLocalhost: true
     })
+    if (options.posthogAPIHost && options.posthogKey) {
+      Posthog.init(options.posthogKey, {
+        api_host: options.posthogAPIHost,
+        defaults: '2026-01-30',
+        person_profiles: 'identified_only',
+        persistence: 'localStorage+cookie'
+      })
+    }
 
     Object.assign(this, { trackEvent, trackPageview }, options)
   }
@@ -30,15 +55,17 @@ export class Tracker {
       store,
       trackEvent
     } = this
+    const subject = getSubject(store)
     const user = getUser(store)
     const newProps = Object.assign({}, props, { user })
+    const subProps = Object.assign({}, props, { subject, user })
 
     if (!(googleTrackingId || plausableEnabled))
       logger.info('tracker "%s" %o', event, newProps)
 
     if (plausableEnabled) {
-      trackEvent(event, { props: newProps })
-      logger.info('plausable "%s" %o', event, newProps)
+      trackEvent(event, { props: subProps })
+      logger.info('plausable "%s" %o', event, subProps)
     }
 
     if (googleTrackingId) {
@@ -60,10 +87,13 @@ export class Tracker {
       gtm,
       logger,
       plausableEnabled,
+      posthogAPIHost,
+      posthogKey,
       store,
       trackPageview,
       webSiteURL
     } = this
+    const subject = getSubject(store)
     const user = getUser(store)
 
     if (!(googleTrackingId || plausableEnabled))
@@ -72,10 +102,18 @@ export class Tracker {
     if (plausableEnabled) {
       const props = {
         url: new URL(normalizedPath, webSiteURL).toString(),
+        subject,
         user
       }
       trackPageview(props)
       logger.info('plausable "%s" %o', 'pageview', props)
+    }
+
+    if (posthogAPIHost && posthogKey && subject) {
+      Posthog.identify(subject)
+      logger.info('posthog identify "%s"', subject)
+    } else {
+      Posthog.reset()
     }
 
     if (googleTrackingId) {

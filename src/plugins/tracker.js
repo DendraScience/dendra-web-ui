@@ -8,6 +8,8 @@ const plausableDomain =
   window.__env.plausableDomain || process.env.plausableDomain
 const plausableEnabled =
   (window.__env.plausableEnabled || process.env.plausableEnabled) === 'true'
+const posthogAPIHost = process.env.posthogAPIHost
+const posthogKey = process.env.posthogKey
 const webSiteURL = window.__env.webSiteURL || process.env.webSiteURL
 
 export default ({ app, store }, inject) => {
@@ -18,6 +20,8 @@ export default ({ app, store }, inject) => {
     logger,
     plausableDomain,
     plausableEnabled,
+    posthogAPIHost,
+    posthogKey,
     store,
     webSiteURL
   })

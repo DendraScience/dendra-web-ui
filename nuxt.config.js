@@ -21,6 +21,9 @@ const noaaNWSIcons =
 const noAboutLanding = process.env.NO_ABOUT_LANDING === 'true'
 const plausableDomain = process.env.PLAUSABLE_DOMAIN || 'dendra.science'
 const plausableEnabled = process.env.PLAUSABLE_ENABLED
+const posthogAPIHost =
+  process.env.POSTHOG_API_HOST || 'https://us.i.posthog.com'
+const posthogKey = process.env.POSTHOG_KEY
 const slackURL = 'https://dendra-science.slack.com'
 const systemStatusURL = 'https://status.dendra.science'
 const twitterURL = 'https://twitter.com/DendraScience'
@@ -92,6 +95,8 @@ module.exports = {
     noAboutLanding,
     plausableDomain,
     plausableEnabled,
+    posthogAPIHost,
+    posthogKey,
     slackURL,
     systemStatusURL,
     twitterURL,
