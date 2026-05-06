@@ -106,10 +106,12 @@ export class Tracker {
         user
       }
       trackPageview(props)
+      // eslint-disable-next-line no-console
+      console.log('plausable', props)
       logger.info('plausable "%s" %o', 'pageview', props)
     }
 
-    if (posthogAPIHost && posthogKey && subject) {
+    if (posthogAPIHost && posthogKey && subject !== 'anonymous') {
       Posthog.identify(subject)
       logger.info('posthog identify "%s"', subject)
     } else {
