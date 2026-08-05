@@ -8,20 +8,6 @@
           stations
           <nuxt-link to="/" exact>click here</nuxt-link>.
         </h3>
-        <v-alert :value="true" type="warning" class="mb-4">
-          <strong>Scheduled downtime August 4–5, 2026.</strong>
-          Dendra will be offline from Tuesday, August 4 at 3:30 AM Pacific Time
-          through Wednesday, August 5 at 2:30 PM Pacific Time due to Indiana
-          University Jetstream2 data center maintenance.
-          <a
-            href="https://status.dendra.science/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Status page</a
-          >. Questions:
-          <a href="mailto:metahuman@dendra.science">metahuman@dendra.science</a
-          >.
-        </v-alert>
       </v-col>
     </v-row>
 
