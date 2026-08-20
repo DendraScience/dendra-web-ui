@@ -8,6 +8,62 @@ import _debounce from 'lodash/debounce'
 import _merge from 'lodash/merge'
 import { GROUP_KEY, RENDERER_KEY, TOUCH_EVENTS } from '@/lib/chart'
 
+// Highcharts Boost 10.x calls boost.clear() during zoom/redraw after the
+// canvas <image> target is gone (chart- vs series-level switch, crop below
+// boostThreshold, or synced setExtremes on stacked charts).
+// SEE: https://github.com/highcharts/highcharts/issues/20574
+const BOOST_CLEAR_GUARD = '___dendraBoostClearGuard'
+
+function patchBoostClear(owner) {
+  const boost = owner && owner.boost
+  if (
+    !boost ||
+    typeof boost.clear !== 'function' ||
+    boost.clear[BOOST_CLEAR_GUARD]
+  ) {
+    return
+  }
+
+  const originalClear = boost.clear
+  const safeClear = function () {
+    if (!boost.target || typeof boost.target.attr !== 'function') return
+    return originalClear.apply(this, arguments)
+  }
+  safeClear[BOOST_CLEAR_GUARD] = true
+  boost.clear = safeClear
+}
+
+function patchChartBoostClear(chart) {
+  if (!chart) return
+  patchBoostClear(chart)
+  if (!chart.series) return
+  for (let i = 0; i < chart.series.length; i++) {
+    patchBoostClear(chart.series[i])
+  }
+}
+
+function installBoostClearGuard() {
+  if (Highcharts[BOOST_CLEAR_GUARD]) return
+  Highcharts[BOOST_CLEAR_GUARD] = true
+
+  Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
+    patchChartBoostClear(this)
+    return proceed.apply(this, [].slice.call(arguments, 1))
+  })
+
+  Highcharts.wrap(
+    Highcharts.Series.prototype,
+    'processData',
+    function (proceed) {
+      patchBoostClear(this)
+      if (this.chart) patchBoostClear(this.chart)
+      return proceed.apply(this, [].slice.call(arguments, 1))
+    }
+  )
+}
+
+installBoostClearGuard()
+
 export default {
   props: {
     bus: {
