@@ -28,6 +28,7 @@ async function processFetch({ id, fetchSpec }) {
     const data = []
     const toTime = Array.isArray(untilTime) ? untilTime[index] : untilTime
     let currTime
+    let fetched = 0
     let fromTime = Array.isArray(startTime) ? startTime[index] : startTime
     let nextTime
     let prevTime
@@ -54,7 +55,8 @@ async function processFetch({ id, fetchSpec }) {
         query,
         {
           time_local: timeLocal,
-          [data.length ? 'time[$gt]' : 'time[$gte]']: fromTime,
+          // Rows already read. data.length stays 0 when water-year drops every point.
+          [fetched ? 'time[$gt]' : 'time[$gte]']: fromTime,
           '$sort[time]': 1
         }
       )
@@ -143,6 +145,7 @@ async function processFetch({ id, fetchSpec }) {
         }
       }
 
+      fetched += json.data.length
       total += json.data.length
 
       self.postMessage({ id, total })

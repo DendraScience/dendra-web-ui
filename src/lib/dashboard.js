@@ -35,6 +35,29 @@ export function newRainfall() {
   }
 }
 
+// Cumulative rainfall resets at the water year. Sum the rises. A drop starts a new counter.
+export function cumulativeIncrease(points) {
+  if (!(points && points.length)) return null
+
+  let total = 0
+  let prev = points[0][1]
+
+  for (let i = 1; i < points.length; i++) {
+    const value = points[i][1]
+
+    if (typeof value !== 'number') continue
+    if (typeof prev !== 'number') {
+      prev = value
+      continue
+    }
+
+    if (value > prev) total += value - prev
+    prev = value
+  }
+
+  return total
+}
+
 export const unitsData = {
   imp(getUnitText) {
     return {

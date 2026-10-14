@@ -2,7 +2,12 @@ import { mapGetters, mapState } from 'vuex'
 import moment from 'moment'
 import math from '@/lib/math'
 import { pressure } from '@/lib/barometric'
-import { newCurrent, newForecast, newRainfall } from '@/lib/dashboard'
+import {
+  cumulativeIncrease,
+  newCurrent,
+  newForecast,
+  newRainfall
+} from '@/lib/dashboard'
 
 export default {
   middleware: [
@@ -248,6 +253,15 @@ export default {
       }
     },
 
+    cumulativeRainfall(series, last) {
+      const increase = cumulativeIncrease(series && series.data)
+      if (increase == null) return null
+
+      return Object.assign({}, last, {
+        value: math.round(increase, 4)
+      })
+    },
+
     fetchCumulativeRainfall(
       id,
       { startTime, untilTime },
@@ -275,7 +289,7 @@ export default {
 
     fetchForecast(
       id,
-      { startTime },
+      _,
       {
         nwsConditionsIcon,
         nwsTemperatureMaximum,
@@ -420,9 +434,8 @@ export default {
           datastreamsByKey.cumulativePrecipitation &&
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
-          current.rainfallToday = Object.assign({}, last, {
-            value: math.round(last.value - first.value, 4)
-          })
+          current.rainfallToday = this.cumulativeRainfall(series, last)
+          if (!current.rainfallToday) return
           current.wyPrecipToDate = last
           rainfall.today = current.rainfallToday
           rainfall.wyToDate = current.wyPrecipToDate
@@ -443,9 +456,8 @@ export default {
           datastreamsByKey.cumulativePrecipitation &&
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
-          current.rainfallYesterday = Object.assign({}, last, {
-            value: math.round(last.value - first.value, 4)
-          })
+          current.rainfallYesterday = this.cumulativeRainfall(series, last)
+          if (!current.rainfallYesterday) return
           rainfall.yesterday = current.rainfallYesterday
           return
         }
@@ -463,9 +475,7 @@ export default {
           datastreamsByKey.cumulativePrecipitation &&
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
-          rainfall.total7Days = Object.assign({}, last, {
-            value: math.round(last.value - first.value, 4)
-          })
+          rainfall.total7Days = this.cumulativeRainfall(series, last)
           return
         }
       }
@@ -482,9 +492,7 @@ export default {
           datastreamsByKey.cumulativePrecipitation &&
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
-          rainfall.total14Days = Object.assign({}, last, {
-            value: math.round(last.value - first.value, 4)
-          })
+          rainfall.total14Days = this.cumulativeRainfall(series, last)
           return
         }
       }
@@ -501,9 +509,7 @@ export default {
           datastreamsByKey.cumulativePrecipitation &&
           datastreamsByKey.cumulativePrecipitation._id === query.datastream_id
         ) {
-          rainfall.total30Days = Object.assign({}, last, {
-            value: math.round(last.value - first.value, 4)
-          })
+          rainfall.total30Days = this.cumulativeRainfall(series, last)
           return
         }
       }
